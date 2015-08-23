@@ -11,25 +11,27 @@ router.$inject = ['$routeProvider'];
 function router($routeProvider) {
   $routeProvider
     .when('/', {
-      template: require('./controllers/search-lc.html'),
+      template: require('./search-lc/search-lc.html'),
       controller: 'LetterOfCreditSearchController',
       controllerAs: 'vm'
     }
   )
     .when('/new', {
-      template: require('./controllers/new-lc.html'),
+      template: require('./new-lc/new-lc.html'),
       controller: 'LetterOfCreditNewController',
       controllerAs: 'newLc'
     }
   )
     .when('/details/:id', {
-      template: require('./controllers/detail-lc.html'),
+      template: require('./detail-lc/detail-lc.html'),
       controller: 'LetterOfCreditDetailController',
       controllerAs: 'vm'
     }
   );
 }
 
-require('./services');
-require('./directives/displayed-lcees-table.js');
-require('./controllers');
+require('./commons');
+require('./display-lc-table');
+require('./new-lc');
+require('./search-lc');
+require('./detail-lc');

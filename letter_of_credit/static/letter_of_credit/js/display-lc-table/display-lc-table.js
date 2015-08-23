@@ -66,7 +66,7 @@ function displayedLceesTable(parseBidDate, ModalService, xhrErrorDisplay, $locat
     restrict: 'E',
     link: link,
     scope: {lcees: '=lcList'},
-    template: require('./displayed-lcees-table.html')
+    template: require('./display-lc-table.html')
   };
 
   function attachEvent(elm) {
@@ -112,7 +112,7 @@ function displayedLceesTable(parseBidDate, ModalService, xhrErrorDisplay, $locat
     $scope.deleteLc = function deleteLc(lcObj) {
       ModalService.showModal(
         {
-          template: require('./delete-lc-confirmation-dialog.html'),
+          template: require('./delete-confirmation-dialog.html'),
           controller: 'LetterOfCreditDeleteController',
           inputs: {lc: lcObj}
         }
@@ -131,16 +131,16 @@ function displayedLceesTable(parseBidDate, ModalService, xhrErrorDisplay, $locat
                      function(err) {
                        xhrErrorDisplay('Error occured while doing delete\n' + err);
                      }
-                   );
+                   )
                  }
-               });
+               })
              }
-      );
-    };
+      )
+    }
 
     $scope.editLcees = function editLcees(lcObj) {
       ModalService.showModal({
-        template: require('./displayed-lcees-table-edit-lc-modal.html'),
+        template: require('./edit-lc-modal.html'),
         controller: 'LetterOfCreditEditController',
         inputs: {lc: lcObj}
 
