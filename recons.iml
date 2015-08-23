@@ -121,9 +121,6 @@
         <option value="$MODULE_DIR$/node_modules/grunt-contrib-watch/node_modules/tiny-lr-fork/node_modules/faye-websocket/examples" />
         <option value="$MODULE_DIR$/node_modules/grunt-contrib-cssmin/node_modules/maxmin/node_modules/gzip-size/node_modules/browserify-zlib/node_modules/pako/doc" />
         <option value="$MODULE_DIR$/node_modules/grunt-contrib-uglify/node_modules/maxmin/node_modules/gzip-size/node_modules/browserify-zlib/node_modules/pako/doc" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/services" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/directives" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/controllers" />
         <option value="$MODULE_DIR$/letter_of_credit/templates/letter_of_credit" />
         <option value="$MODULE_DIR$/contingent_report/static/contingent_report/js/income2-test" />
         <option value="$MODULE_DIR$/contingent_report/templates" />
@@ -136,7 +133,6 @@
         <option value="$MODULE_DIR$/contingent_report/static/contingent_report/js" />
         <option value="$MODULE_DIR$/core_recons/templates" />
         <option value="$MODULE_DIR$/core_recons/static" />
-        <option value="$MODULE_DIR$/core_recons/static/bower_components" />
         <option value="$MODULE_DIR$/core_recons/static/core_recons" />
         <option value="$MODULE_DIR$/core_recons/static/core_recons/ajax_select" />
         <option value="$MODULE_DIR$/core_recons/static/core_recons/css" />
@@ -183,6 +179,11 @@
         <option value="$MODULE_DIR$/unmatched/static/unmatched/js" />
         <option value="$MODULE_DIR$/unmatched/static/unmatched/js/clirec-modals" />
         <option value="$MODULE_DIR$/unmatched/templates/unmatched/forms" />
+        <option value="$MODULE_DIR$/payment/static/payment/css" />
+        <option value="$MODULE_DIR$/payment/static/payment/js/payment-commons" />
+        <option value="$MODULE_DIR$/payment/static/payment/js/post-neg" />
+        <option value="$MODULE_DIR$/payment/static/payment/js/pre-neg" />
+        <option value="$MODULE_DIR$/payment/static/payment/js/post-neg/table-display" />
       </list>
     </option>
   </component>

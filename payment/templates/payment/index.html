@@ -4,7 +4,7 @@
 {% block title %}LC Payment{% endblock title %}
 
 {% block page_css %}
-  <link rel="stylesheet" href="{% static 'letter_of_credit/css/letter-of-credit.css' %}"/>
+  <link rel="stylesheet" href="{% static 'payment/css/letter-of-credit-payment.min.css' %}"/>
 {% endblock page_css %}
 
 {% block page_js_up %}
@@ -16,25 +16,14 @@
 {% block page_content %}
   <div ng-app="letterOfCreditPayment">
 
-    <div class="dropdown">
-      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
-        Select An Action
-        <span class="caret"></span>
+    <div class="letter-of-credit-payment-nav-btns">
+      <button class="btn btn-info" ng-class="{active: $state.includes('post_neg')}" ng-click="$state.go('post_neg')">
+        ITF - (Post Negotiation Financing)
       </button>
-      <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
 
-        <li role="presentation" ui-sref-active="active">
-          <a role="menuitem" tabindex="-1" ui-sref="home">Home</a>
-        </li>
-
-        <li role="presentation" ui-sref-active="active">
-          <a role="menuitem" tabindex="-1" ui-sref="post_neg">ITF - (Post Negotiation Financing)</a>
-        </li>
-
-        <li role="presentation" ui-sref-active="active">
-          <a role="menuitem" tabindex="-1" ui-sref="pre_neg">Deferred Payments - (Pre Negotiation)</a>
-        </li>
-      </ul>
+      <button class="btn btn-info" ng-class="{active: $state.includes('pre_neg')}" ng-click="$state.go('pre_neg')">
+        Deferred Payments - (Pre Negotiation)
+      </button>
     </div>
 
     <hr/>

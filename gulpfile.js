@@ -12,6 +12,10 @@ var bower = './bower_components'
 var letterOfCredit = require('./letter_of_credit/build.config')
 var payment = require('./payment/build.config')
 
+var lessFiles = [
+  './payment/static/payment/**/*.less'
+]
+
 gulp.task('initial-css', function() {
   return gulp.src([
     bower + '/bootstrap/dist/css/bootstrap.css',
@@ -52,6 +56,16 @@ gulp.task('initial-js', function() {
     .pipe(gulp.dest(baseStaticJs))
 })
 
+gulp.task('less', function() {
+  return gulp.src(lessFiles, {base: '.'})
+    .pipe(plugins.sourcemaps.init())
+    .pipe(plugins.less())
+    .pipe(plugins.minifyCss())
+    .pipe(plugins.rename({suffix: '.min', extname: '.css'}))
+    .pipe(plugins.sourcemaps.write('.'))
+    .pipe(gulp.dest(''))
+})
+
 gulp.task('webpack-letter-of-credit', function() {
   return gulp.src(letterOfCredit.entry)
     .pipe(plugins.webpack(letterOfCredit.webpackConfig, webpack))
@@ -83,4 +97,8 @@ gulp.task('initial', ['initial-js', 'initial-css'])
 
 gulp.task('webpack', ['webpack-letter-of-credit', 'webpack-payment'])
 
-gulp.task('default', ['initial', 'webpack'])
+gulp.task('watch', function() {
+  gulp.watch(lessFiles, ['less'])
+})
+
+gulp.task('default', ['initial', 'watch', 'webpack'])

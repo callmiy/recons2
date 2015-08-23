@@ -32,6 +32,7 @@
     "$",
     "Papa",
     "mappings",
-    "saveAs"
+    "saveAs",
+    "angular"
   ]
 }
