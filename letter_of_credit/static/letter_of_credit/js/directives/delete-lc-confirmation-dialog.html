@@ -1,0 +1,20 @@
+<div id="delete-lc" title="Confirm Delete Letter Of Credit">
+	<p>Applicant: {$lc.applicant_data.name$}</p>
+
+	<p ng-show="lc.mf">Form M: {$lc.mf$}</p>
+
+	<p>Currency: {$lc.ccy_obj.code$}</p>
+
+	<p>Amount: {$lc.amount | number:2$}</p>
+
+	<p ng-show="lc.bid_date">Bid Date: {$lc.bid_date | date:'dd-MMM-yyyy'$}</p>
+
+	<p ng-show="lc.ti_mf">TI Form M: {$lc.ti_mf$}</p>
+
+	<p ng-show="lc.lc_ref">LC Reference: {$lc.lc_ref$}</p>
+
+	<div class="btn-group">
+		<button class="btn btn-danger" ng-click="confirmDelete(true)">Yes</button>
+		<button class="btn btn-success" ng-click="confirmDelete(false)">No</button>
+	</div>
+</div>

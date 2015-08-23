@@ -1,0 +1,72 @@
+{% extends 'cbn-eformm-root.html' %}
+
+{% block page_title %}LC Volume Statistics-{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="/static/css/lc-volume-statistics.css">
+{% endblock %}
+
+{% block page_content %}
+<div>
+	<div class="input-caption caption">Input</div>
+	<form action="" method="post" data-csrf="{{ csrf_token }}" class="row display input-form">
+		{% csrf_token %}
+		<input type="hidden" name="selected-yrs-mons">
+		<div class="yrs-mons-selectors col-xs-3 col-md-2">
+			<span>Available</span>
+			<select name="available" id="available" multiple="multiple">
+				{% for yr, mon in yrs_months %}
+				<option value="{{ yr }}-{{ mon }}" id="available-{{ yr }}-{{ mon }}" data-pos="{{ forloop.counter|add:"-1" }}">{{ yr }} - {{ mon }}</option>
+				{% endfor %}
+			</select>
+		</div>
+
+		<div class="selector-buttons col-xs-3 col-md-1">
+			<button id="select-one">&gt;</button>
+			<button id="deselect-one">&lt;</button>
+			<button id="select-all">&gt;&gt;</button>
+			<button id="deselect-all">&lt;&lt;</button>
+		</div>
+
+		<div class="yrs-mons-selecteds col-xs-3 col-md-2">
+			<span>Selected</span>
+			<select name="selected" id="selected" multiple="multiple"></select>
+		</div>
+
+		<div class="col-xs-3 col-md-2 submit">
+			<button type="submit" name="submit-form">Submit</button>
+		</div>
+	</form>
+</div>
+
+<div>
+	<div class="result-caption caption">Result</div>
+	<div class="result row display">
+		<table class="table table-bordered table-condensed table-striped">
+			<thead>
+				<tr>
+					<th>S/N</th>
+					<th>Year - Month</th>
+					<th>Volume (units)</th>
+					<th>Value (USD)</th>
+					<th>Value (NGN)</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in results %}
+				<tr>
+					<td>{{ forloop.counter }}</td>
+					{% for val in row %}
+					<td>{{ val }}</td>
+					{% endfor %}
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+{% endblock %}
+
+{% block page_js %}
+<script src="/static/js/lc-volume-statistics.js"></script>
+{% endblock page_js %}

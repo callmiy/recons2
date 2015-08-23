@@ -1,0 +1,4 @@
+[{"pk": 1, "model": "postentry.entrycode", "fields": {"code": "AVL", "description": "AVAILMENT"}},
+ {"pk": 2, "model": "postentry.entrycode", "fields": {"code": "TRF", "description": "TRANSFER"}},
+ {"pk": 3, "model": "postentry.entrycode", "fields": {"code": "AAT", "description": "ACCT. TRANSFER"}}
+]

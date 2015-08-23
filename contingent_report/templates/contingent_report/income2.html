@@ -1,0 +1,56 @@
+{% extends 'cbn-eformm-root.html' %}
+{% block page_title %}INCOME2 - {% endblock %}
+{% block page_css %} <link rel="stylesheet" href="/static/contingent_report/css/income2.css">
+{% endblock %}
+{% block page_content %}
+    <form action="" data-url="{% url 'income2' %}" id="income2-form">
+      <div class="control-group">
+        <div class="col-md-12">
+          <textarea id="income2-text" class="form-control" name="" id="" cols="30" rows="10"></textarea>
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="col-md-12">
+          <button class="btn btn-default" disabled="true" id="get-btn">Get Incomes</button>
+        </div>
+      </div>
+    </form>
+
+    <table class="table table-bordered table-condensed table-responsive">
+      <thead>
+        <tr>
+          <th class="gl">GL Account Number</th>
+          <th class="trxn-dt">Transaction Date</th>
+          <th class="ref">Reference Number</th>
+          <th class="narr">Narration</th>
+          <th class="val-dt">Value Date</th>
+          <th class="ccy">Currency Code</th>
+          <th class="lcy-amt">LCY Amount</th>
+          <th class="fcy-amt">FCY Amount</th>
+          <th class="acct">Customer Account Number</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="display:none" id="tr-clonable">
+          <td class="gl"></td>
+          <td class="trxn-dt"></td>
+          <td class="ref"></td>
+          <td class="narr"></td>
+          <td class="val-dt"></td>
+          <td class="ccy"></td>
+          <td class="lcy-amt"></td>
+          <td class="fcy-amt"></td>
+          <td class="acct"></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="9">
+            <button class="btn btn-default" id="download-btn" disabled="true">Download</button>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+{% endblock page_content %}
+{% block page_js %} <script src="/static/contingent_report/js/income2.js"></script>
+{% endblock page_js %}

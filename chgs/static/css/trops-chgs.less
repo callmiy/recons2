@@ -1,0 +1,103 @@
+.wrap {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 18px;
+	margin: 5px auto 0px;
+	padding: 2px;
+	border: 1px solid #D4D4D4;;
+}
+
+.date-section{
+	font-size: 25px;
+	margin-bottom: 30px;
+	margin-top: 10px;
+}
+
+.addressee{
+	margin-bottom: 50px;
+	font-weight: bolder;
+	text-decoration: underline;
+	font-size: 36px;
+}
+
+.subject{
+	margin-bottom: 30px;
+	margin-top: 50px;
+	text-align: center;
+	text-decoration: underline;
+	font-size: 30px;
+}
+
+table.data-table{
+	margin-bottom: 50px;
+}
+
+table.table-condensed.sign {
+	font-size: 25px;
+	font-weight: bold;
+
+	tbody > tr > td{
+		vertical-align: bottom;
+		height: 150px;
+		border: 0;
+
+		&:last-child{
+			text-align: right;
+		}
+	}
+}
+
+table.bank-info{
+
+	tbody{
+
+		tr{
+
+			th{
+				width: 30%;
+				text-align: right;
+				border-top: 1px solid #F2F2F2;
+				&:last-of-type{
+					border-bottom: 1px solid #F2F2F2;
+				}
+			}
+
+			td{
+				text-align: left;
+				border-top: 1px solid #F2F2F2;
+
+				&:last-of-type{
+					border-bottom: 1px solid #F2F2F2;
+				}
+
+				&.focused{
+					border: 1px solid #BCEBAD;
+				}
+			}
+
+		}
+	}
+}
+
+.prev-next{
+	margin: 0px auto 0px;
+	min-height: 10px;
+	max-height: 10px;
+
+	a{
+		color: #331616;
+		font-size: 8px;
+		display: none;
+
+		&:hover{
+			cursor: pointer;
+		}
+
+		&.next{
+			text-align: left;
+		}
+
+		&.prev{
+			text-align: right;
+		}		
+	}
+}

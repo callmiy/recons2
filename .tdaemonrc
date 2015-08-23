@@ -1,0 +1,1 @@
+tdaemon.py   -t django -d --ignore-dirs=templates,static

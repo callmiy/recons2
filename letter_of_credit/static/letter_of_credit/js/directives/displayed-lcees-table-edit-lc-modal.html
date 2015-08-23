@@ -1,0 +1,119 @@
+<div id="editLc">
+  <form novalidate class="form-horizontal" ng-submit="editLc(lc, statusText)" name="editLcForm">
+    <fieldset>
+
+      <div class="form-group">
+        <label class="control-label col-md-2 col-lg-2 col-sm-3" for="applicant">Applicant</label>
+
+        <div class="col-md-10 col-lg-10 col-sm-9">
+          <input class="form-control" type="text" min="3" id="applicant" required
+                 ng-model="lc.applicant_data"
+                 ng-pattern="/.{4,}/"
+                 typeahead-min-length="3"
+                 typeahead="customer as customer.name for customer in getCustomers($viewValue)"
+              />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-md-2 col-lg-2 col-sm-3" for="form-m">Form M Number</label>
+
+        <div class="col-md-10 col-lg-10 col-sm-9">
+          <input class="form-control" id="form-m" maxlength="13"
+                 ng-pattern="/^MF\d{11}/"
+                 ng-model="lc.mf"
+                 to-upper
+              />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-md-2 col-lg-2 col-sm-3" for="ccy">Currency</label>
+
+        <div class="col-md-10 col-lg-10 col-sm-9">
+          <input class="form-control" id="ccy" required maxlength="3"
+                 ng-model="lc.ccy_obj"
+                 typeahead="ccy as ccy.code for ccy in getCurrencies($viewValue)"
+                 typeahead-editable="false"
+                 typeahead-min-length="3"
+              />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-md-2 col-lg-2 col-sm-3" for="amount">Amount</label>
+
+        <div class="col-md-10 col-lg-10 col-sm-9">
+          <input class="form-control" id="amount" required
+                 ng-model="lc.amount"
+                 number-format
+              />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-md-2 col-lg-2 col-sm-3" for="bid-date">Bid Date</label>
+
+        <div class="col-md-10 col-lg-10 col-sm-9">
+          <input class="form-control" id="bid-date"
+                 ng-model="lc.bid_date"
+                 datepicker-popup="dd-MMMM-yyyy"
+              />
+        </div>
+      </div>
+
+      <div class="form-group ti-mf-group">
+        <label class="control-label col-md-2 col-lg-2 col-sm-3" for="ti-mf">TI Form M Number</label>
+
+        <div class="col-md-10 col-lg-10 col-sm-9">
+          <input class="form-control" id="ti-mf" maxlength="12"
+                 ng-pattern="/^CBN\d{9}/"
+                 ng-model="lc.ti_mf"
+                 to-upper
+              />
+        </div>
+      </div>
+
+      <div class="form-group lc-ref-group">
+        <label class="control-label col-md-2 col-lg-2 col-sm-3" for="lc-ref">LC Ref</label>
+
+        <div class="col-md-10 col-lg-10 col-sm-9">
+          <input class="form-control" id="lc-ref" maxlength="16"
+                 ng-pattern="/^ILCL[A-Z]{3}\d{9}/"
+                 ng-model="lc.lc_ref"
+                 to-upper
+              />
+        </div>
+      </div>
+
+      <div class="form-group lc-status-group">
+        <label class="control-label col-md-2 col-lg-2 col-sm-3" for="status-text">Status</label>
+
+        <div class="col-md-10 col-lg-10 col-sm-9">
+          <input class="form-control" id="status-text"
+                 ng-model="statusText"
+                 to-upper
+              />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-md-2 col-lg-2 col-sm-3" for="released-date">Date Released</label>
+
+        <div class="col-md-10 col-lg-10 col-sm-9">
+          <input class="form-control" id="released-date"
+                 ng-model="lc.date_released"
+                 datepicker-popup="dd-MMMM-yyyy"
+              />
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="row">
+      <div class="col-md-6 col-lg-6 col-sm-6">
+        <button type="submit" class="btn btn-info" ng-disabled="editLcForm.$invalid">Save</button>
+        <span class="btn btn-default" ng-click="close(oldLc)">Close</span>
+      </div>
+    </div>
+  </form>
+</div>

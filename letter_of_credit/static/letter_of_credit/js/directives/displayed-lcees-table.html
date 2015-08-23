@@ -1,0 +1,67 @@
+<div class="form-group row">
+  <label class="control-label col-md-2 col-lg-2 col-sm-2" for="filter-query">Filter List</label>
+
+  <div class="col-md-4 col-lg-4 col-sm-4">
+    <input id="filter-query" class="form-control" type="text" ng-model="query"/>
+  </div>
+</div>
+
+<div class="form-group row">
+  <label class="control-label col-md-2 col-lg-2 col-sm-2" for="order">Sort By</label>
+
+  <div class="col-md-4 col-lg-4 col-sm-4">
+    <select id="order" class="form-control" ng-model="orderProp">
+      <option value="-bid_date">Bid Date</option>
+      <option value="-ti_mf">TI Form M Ref</option>
+      <option value="amount">Amount</option>
+      <option value="-id">Tracking ID</option>
+      <option value="-date_released">Date Released</option>
+    </select>
+  </div>
+</div>
+
+<table class="table table-condensed table-bordered lc-display-table">
+  <caption>Recently Added Letters of Credit</caption>
+
+  <thead>
+    <tr>
+      <th>S/N</th>
+      <th>Tracking ID</th>
+      <th>LC Ref</th>
+      <th>Applicant</th>
+      <th>Form M</th>
+      <th>TI Form M</th>
+      <th>Currency</th>
+      <th>Amount</th>
+      <th>Bid Date</th>
+      <th>Status</th>
+      <th>Date Started</th>
+      <th>Date Released</th>
+      <th>Controls</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="lc in lcees | filter:query | orderBy:orderProp"
+        ng-dblclick="goToDetailPage(lc)">
+      <td class="clickable">{$$index+1$}</td>
+      <td class="clickable">{$lc.id$}</td>
+      <td class="clickable">{$lc.lc_ref$}</td>
+      <td class="clickable">{$lc.applicant_data.name$}</td>
+      <td class="clickable">{$lc.mf$}</td>
+      <td class="clickable">{$lc.ti_mf$}</td>
+      <td class="clickable">{$lc.ccy_obj.code$}</td>
+      <td class="clickable">{$lc.amount | number:2$}</td>
+      <td class="clickable">{$lc.bid_date | date:'dd-MMM-yyyy'$}</td>
+      <td class="clickable">{$lc.status$}</td>
+      <td class="clickable">{$lc.date_started | date:'dd-MMM-yyyy'$}</td>
+      <td class="clickable">{$lc.date_released | date:'dd-MMM-yyyy'$}</td>
+      <td class="controls" style="min-width: 50px;">
+        <span class="clickable glyphicon glyphicon-edit" ng-click="editLcees(lc)"></span>
+
+        &nbsp;&nbsp;&nbsp;
+
+        <span class="clickable glyphicon glyphicon-trash" ng-click="deleteLc(lc)"></span>
+      </td>
+    </tr>
+  </tbody>
+</table>

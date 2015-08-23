@@ -1,0 +1,23 @@
+{% extends 'from-to-date.html' %}
+
+
+{% block other_content %}
+<h1 style="margin-top: 20px;">Non Post Earnings Investigation - Copy And Paste Data Below - See Placeholder for Data Format</h1>
+<div class="row">
+	<form action="" class="from-to-date-form col-lg-12 align-vertical" method="post">
+		{% csrf_token %}
+		<div class="">
+			<fieldset>
+				<div class="startdate form-row">
+					<textarea name="non-post-earnings-investigate" id="id_non-post-earnings" placeholder="" class="non-post-earnings" style="width:100%; height:300px;"></textarea>
+					</div>				
+			</fieldset>
+
+			<div class="submit-row">
+				<input type="submit" value="Investigate Earnings" name="investigate-earnings">
+			</div>
+		</div>
+	</form>
+</div>
+{% endblock other_content %}
+

@@ -1,0 +1,8 @@
+[{"pk": 1, "model": "postentry.entrygeneratingtransaction", "fields": {"description": "AVAILMENT", "short_name": "AVAILMENT"}},
+ {"pk": 2, "model": "postentry.entrygeneratingtransaction", "fields": {"description": "CHARGES", "short_name": "CHARGES"}},
+ {"pk": 3, "model": "postentry.entrygeneratingtransaction", "fields": {"description": "ITF INTEREST", "short_name": "ITF INTEREST"}},
+ {"pk": 4, "model": "postentry.entrygeneratingtransaction", "fields": {"description": "GUARANTEE COMMISSION", "short_name": "GUARANTEE COMMISSION"}},
+ {"pk": 5, "model": "postentry.entrygeneratingtransaction", "fields": {"description": "DISCREPANCY CHARGES", "short_name": "DISCREPANCY CHARGES"}},
+ {"pk": 6, "model": "postentry.entrygeneratingtransaction", "fields": {"description": "COMMENTED", "short_name": "COMMENTED"}},
+ {"pk": 7, "model": "postentry.entrygeneratingtransaction", "fields": {"description": "PASS TO UNCLAIMED", "short_name": "PASS TO UNCLAIMED"}},
+ {"pk": 8, "model": "postentry.entrygeneratingtransaction", "fields": {"description": "PASS TO P AND L", "short_name": "PASS TO P AND L"}}, {"pk": 9, "model": "postentry.entrygeneratingtransaction", "fields": {"description": "GENERAL EXPENSES", "short_name": "GENERAL EXPENSES"}}, {"pk": 10, "model": "postentry.entrygeneratingtransaction", "fields": {"description": "LC UNDRAWN BALANCES", "short_name": "UNDRAWN BALANCE"}}]

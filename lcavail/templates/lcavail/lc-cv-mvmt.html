@@ -1,0 +1,62 @@
+{% extends 'core_recons/recons-base.html' %}
+  {% block title %}Cover Movement{% endblock title %}
+  {% block page_css %}{{ form.media.css }}{% endblock page_css %}
+    {% block page_content %}
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <form action="{%url 'lc-cv-mvmt-create'%}" class="form-horizontal" role="form" id="lc-cv-mvt-form" type="post" data-csrf="{{ csrf_token }}" data-create-url="{% url 'lc-cv-mvmt-list' %}"> <input type="hidden" id="default-memo-url" value="{% url 'get-default-memos' %}">
+          <div class="form-group">
+            <label for="{{ form.lc_number.id_for_label }}" class="control-label col-md-4">{{ form.lc_number.label }}:</label>
+            <div class="col-md-8">
+              {{ form.lc_number }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.amount_text.id_for_label }}" class="control-label col-md-4">{{ form.amount_text.label }}:</label>
+            <div class="col-md-8">
+              {{ form.amount_text }}
+              {{ form.amount }}
+            </div>
+          </div>
+
+        <div class="form-group">
+           <label for="{{ form.acct.id_for_label }}" class="control-label col-md-4">{{ form.acct.label }}:</label>
+            <div class="col-md-8">{{ form.acct }}</div>
+        </div>
+
+'        <div class="form-group">
+           <label for="{{ form.memo_acct.id_for_label }}" class="control-label col-md-4">{{ form.memo_acct.label }}:</label>
+            <div class="col-md-8">{{ form.memo_acct }}</div>
+        </div>
+
+        <div class="form-group">
+           <label for="" class="control-label col-md-4"></label>
+            <div class="col-md-8">
+              <div class="btn-group">
+                <button class="btn btn-default" id="create">Create</button>
+                <button disabled="true" class="btn btn-default" id="post">Post</button>
+              </div>
+            </div>
+        </div>
+
+        </form>
+      </div>
+      <div class="col-md-3"></div>
+    </div>
+
+    <table class="table table-condensed table-bordered table-stripped" id="lc-cv-mvmt-display">
+      <thead>
+        <tr>
+          <th><input type="checkbox"></th>
+          <th>LC Number</th>
+          <th>Amount</th>
+          <th>Nostro</th>
+          <th>Memo Account</th>
+          <th class="post-status">Posting Status</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    {% endblock page_content %}
+    {% block page_js %}{{ form.media.js }}{% endblock page_js %}

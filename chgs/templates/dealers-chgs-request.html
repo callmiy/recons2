@@ -1,0 +1,64 @@
+{% extends 'core_recons/recons-base.html' %}
+{% block title %}Note To Treasury - Charges{% endblock title %}
+{% block page_css %}<link rel="stylesheet" href="/static/css/dealer-chgs.css">{% endblock page_css %}
+{% block page_content %}
+    <div class="prev-next row">
+      <div class="col-md-4"><a class="next">----------&gt;</a></div>
+      <div class="col-md-4"><a href="{% url 'printchgs' 'move_instr' %}?ids={{ ids }}">NOTE TO TROPS</a></div>
+      <div class="col-md-4"><a class="prev">&lt;----------</a></div>
+    </div>
+
+    <div class="wrap">
+      <p style="margin-bottom: 30px; margin-top: 30px;"><strong>DATE: {{ date }}</strong></p>
+      <p style="margin-bottom: 20px; font-weight: bolder; text-decoration: underline; font-size: 20px;">
+        <strong>NOTE TO DEALERS</strong>
+      </p>
+   	  <p style="margin-bottom: 10px; margin-top: 10px; text-align: center; text-decoration: underline; font-size: 20px;">
+        <strong>TICKET REQUEST FOR PAYMENT OF CHARGES</strong>
+      </p>
+    	<table class="table table-bordered table-responsive">
+    		<thead>
+      		<tr>
+      			<th class="seq">S/N</th>
+      			<th class="customer-name">CUSTOMER NAME</th>
+      			<th class="lc-numb">LC NUMBER</th>
+      			<th class="branch">BRANCH</th>
+      			<th class="acct-numb">ACCOUNT NO.</th>
+      			<th class="amount">AMOUNT</th>
+      		</tr>
+    		</thead>
+    		<tbody>
+      		{% for chg in chgs %}
+      		<tr>
+      			<td>{{ forloop.counter }}</td>
+      			<td class="customer-name">{{ chg.customer.name }}</td>
+      			<td class="lc-numb">{{ chg.lc_number }}</td>
+      			<td>{{ chg.customer_brn_name }}</td>
+      			<td class="acct-numb">{{ chg.customer_acct_numb }}</td>
+      			<td class="amount">{{ chg.ccy.code }} {{ chg.amountformated }}</td>
+      		</tr>
+      		{% endfor %}
+    		</tbody>
+    	</table>
+
+   	  <div class="sign">
+        <div class="sign1">
+        	<p>&nbsp;</p>
+        	<p>&nbsp;</p>
+          <p>&nbsp;</p>
+          <!-- <p>&nbsp;</p> -->
+        	<P>AUTHORIZED SIGNATURE</P>
+			  	ADEMIIJU ADEKANMI - EXT. 2478
+        </div>
+
+        <div class="sign2">
+          <p>&nbsp;</p>
+          <p>&nbsp;</p>
+          <p>&nbsp;</p>
+          <!-- <p>&nbsp;</p> -->
+          <P>AUTHORIZED SIGNATURE</P>
+        </div>
+      </div>
+    </div>
+{% endblock page_content %}
+{% block page_js %}<script src="/static/js/dealers-tkt-request.js"></script>{% endblock page_js %}

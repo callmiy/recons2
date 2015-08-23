@@ -1,0 +1,40 @@
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title" id="unmatched-clirec-modal-Label">LC Cover Movement</h4>
+      </div>
+      <div class="modal-body">
+        <form action="" class="form-horizontal" id="clirec-modal-lccovermovement-form" name="clirec-modal-lccovermovement-form"> {{ form.clirec_id }}
+          <fieldset>
+            <div class="form-group">
+              <label for="{{ form.lc_number.id_for_label }}" class="control-label col-md-4">{{ form.lc_number.label }}:</label>
+              <div class="col-md-8">
+                {{ form.lc_number }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.amount_text.id_for_label }}" class="control-label col-md-4">{{ form.amount_text.label }}:</label>
+              <div class="col-md-8">
+                {{ form.amount_text }}
+                {{ form.amount }}
+              </div>
+            </div>
+
+            <div class="form-group">
+               <label for="{{ form.acct.id_for_label }}" class="control-label col-md-4">{{ form.acct.label }}:</label>
+                <div class="col-md-8">{{ form.acct }}</div>
+            </div>
+
+    '        <div class="form-group">
+               <label for="{{ form.memo_acct.id_for_label }}" class="control-label col-md-4">{{ form.memo_acct.label }}:</label>
+                <div class="col-md-8">{{ form.memo_acct }}</div>
+            </div> {{ form.lc_cvmvmt_clirec_detail }}
+          </fieldset>
+          <div class="form-group">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+              <button class="btn btn-default" id="lc-cvmvmt-post-btn">Post Entries</button>
+            </div>
+          </div>
+        </form>
+      </div><!-- / .modal-body -->

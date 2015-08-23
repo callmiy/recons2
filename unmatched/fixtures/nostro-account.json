@@ -1,0 +1,36 @@
+[
+{
+    "pk": 1, 
+    "model": "adhocmodels.currency", 
+    "fields": {
+        "code": "USD", 
+        "name": "US DOLLAR"
+    }
+},
+{
+    "pk": 1, 
+    "model": "adhocmodels.overseasbank", 
+    "fields": {
+        "swift_bic": "UBNIGB2L", 
+        "name": "UNION BANK UK PLC"
+    }
+},
+{
+    "pk": 1, 
+    "model": "adhocmodels.nostroaccount", 
+    "fields": {
+        "ccy": 1, 
+        "number": "010902-USD-UBNNET-10", 
+        "bank": 1
+    }
+},
+{
+    "pk": 2, 
+    "model": "adhocmodels.nostroaccount", 
+    "fields": {
+        "ccy": 1, 
+        "number": "010904-USD-CSPUBN-17", 
+        "bank": 1
+    }
+}
+]

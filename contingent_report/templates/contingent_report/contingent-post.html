@@ -1,0 +1,45 @@
+{% extends 'cbn-eformm-root.html' %}
+{% block page_title %}Contingent Postings Writer-{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="/static/contingent_report/css/contingent-posting.css">{% endblock %}
+{% block page_content %}
+  <div class="row">
+    <div class="col-md-10 col-md-offset-1 contingent-posting-data">
+      <pre data-label-for="id_contingent_data-input">
+          Copy and past oustanding LC Data with the following headers
+          1. S/NO
+          2. CUSTOMER NAME
+          3. LC REFERENCE NO
+          4. CCY
+          5. LC AMOUNT
+          6. OUTSTANDING
+          7. ESTB DATE
+          8. EXPIRE DATE
+          9. ACTION (E.G DR ASSET)
+          10. AMOUNT TO POST
+      </pre>
+      <textarea name="" id="id_contingent_data-input" rows="15" cols="60" wrap="hard"></textarea>
+      <div class="button-group">
+          <button class="btn btn-default">Reset All</button>
+          <button class="btn btn-default">Get Postings</button>
+      </div>
+      <table class="table table-bordered table-condensed table-responsive table-striped">
+          <thead>
+            <tr>
+              <th>S/N</th>
+              <th>ACCOUNT</th>
+              <th>AMOUNT</th>
+              <th>DR/CR</th>
+              <th>CODE</th>
+              <th>NARRATION</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+      </table>
+      <button class="btn btn-default">Download</button>
+    </div>
+    <div class="col-md-1"></div>
+  </div>
+{% endblock %}
+{% block page_js %}
+  <script src="/static/contingent_report/js/contingent-post.js"></script>
+{% endblock %}

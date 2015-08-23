@@ -1,0 +1,65 @@
+{% extends 'core_recons/recons-base.html' %}
+{% block title %}Note To Treasury Ops - Charges{% endblock title %}
+{% block page_css %}<link rel="stylesheet" href="/static/css/trops-chgs.css">{% endblock page_css %}
+
+{% block page_content %}
+<div class="prev-next row">
+  <div class="col-md-4"><a class="next">----------&gt;</a></div>
+  <div class="col-md-4"><a href="{% url 'printchgs' 'dealers' %}?ids={{ ids }}">NOTE TO DEALERS</a></div>
+  <div class="col-md-4"><a class="prev">&lt;----------</a></div>
+</div>
+
+{% for chg in chgs %}
+<div class="wrap" id="{{ forloop.counter }}">
+
+  {% with cust_name=chg.customer.name %}
+  <section class="date-section"><strong>DATE: {{ date }}</strong></section>
+  <section class="addressee"><strong>{% if 'ZAKHEM' in cust_name %}NOTE TO MANAGER CFC{% else %}NOTE TO TREASURY OPS{% endif %}</strong></section>
+  <section class="subject"><strong>PAYMENT OF CHARGES</strong></section>
+
+  <table class="table table-bordered table-condensed data-table">
+     <tr>
+       <th>S/N</th>
+       <th>CUSTOMER NAME</th>
+       <th>LC NUMBER</th>
+       <th>BRANCH</th>
+       <th>ACCOUNT NO.</th>
+       <th>AMOUNT</th>
+     </tr>
+     <tr>
+       <td>{{ forloop.counter }}</td>
+       <td>{{ cust_name }}</td>
+       <td>{{ chg.lc_number }}</td>
+       <td>{{ chg.customer_brn_name }}</td>
+       <td>{{ chg.customer_acct_numb }}</td>
+       <td>{{ chg.ccy.code }} {{ chg.amountformated }}</td>
+     </tr>
+  </table>
+  {% endwith %}
+
+  <table class="table table-condensed bank-info">
+    <tbody>
+        <tr>
+          <th>BANK NAME:</th>
+          <td>{{ chg.req_bank.swift_bic }}</td>
+        </tr>
+        <tr>
+          <th>BANK ACOUNT NUMBER:</th>
+          <td>{% if chg.val_date_dr %}{{ chg.cr_acct.number }}{% else %}{{ chg.swift_txt }}{% endif %}</td>
+        </tr>
+    </tbody>
+  </table>
+
+  <table class="table table-condensed sign">
+    <tr>
+      <td>AUTHORIZED SIGNATURE</td>
+      <td>AUTHORIZED SIGNATURE</td>
+    </tr>
+  </table>
+</div>
+{% endfor %}
+{% endblock page_content %}
+
+{% block page_js %}
+<script src="/static/js/trops-chgs-request.js"></script>
+{% endblock page_js %}

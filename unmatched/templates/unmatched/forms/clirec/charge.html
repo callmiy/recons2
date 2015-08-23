@@ -1,0 +1,65 @@
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title" id="unmatched-clirec-modal-Label">Charge</h4>
+      </div>
+      <div class="modal-body">
+        <form action="" class="form-horizontal" id="clirec-modal-charge-form" name="clirec-modal-charge-form"> {{ form.clirec_id }}
+          <fieldset>
+            <div class="form-group">
+              <label class="control-label col-md-4" for="{{ form.lc_number.id_for_label }}">{{ form.lc_number.label }}:</label>
+              <div class="col-md-8">
+                {{ form.lc_number }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="control-label col-md-4" for="{{ form.customer.id_for_label }}">{{ form.customer.label }}:</label>
+              <div class="col-md-8">
+                {{ form.customer }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="control-label col-md-4" for="{{ form.amount_text.id_for_label }}">{{ form.amount_text.label }}:</label>
+              <div class="col-md-8">
+                {{ form.amount_text }}
+                {{ form.amount }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="control-label col-md-4" for="{{ form.cr_acct.id_for_label }}">{{ form.cr_acct.label }}:</label>
+              <div class="col-md-8">
+                {{ form.cr_acct }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="control-label col-md-4" for="{{ form.val_date_dr.id_for_label }}">{{ form.val_date_dr.label }}:</label>
+              <div class="col-md-8">
+                {{ form.val_date_dr }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="control-label col-md-4" for="{{ form.clirec_details.id_for_label }}">{{ form.clirec_details.label }}:</label>
+              <div class="col-md-8">
+                {{ form.clirec_details }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="control-label col-md-4" for="{{ form.swift_txt.id_for_label }}">{{ form.swift_txt.label }}:</label>
+              <div class="col-md-8">
+                {{ form.swift_txt }}
+              </div>
+            </div>
+          </fieldset>
+          <div class="form-group">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+              <button class="btn btn-default" id="create-chg-btn">Create Charge</button>
+            </div>
+          </div>
+        </form>
+      </div><!-- / .modal-body -->

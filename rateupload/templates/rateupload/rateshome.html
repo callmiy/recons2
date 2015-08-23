@@ -1,0 +1,49 @@
+{% extends 'core_recons/recons-base.html' %}
+{% load static %}
+
+{% block title %}TI Misys Rate Upload{% endblock title %}
+{% block page_css %}
+  <link rel="stylesheet" href="{% static 'rateupload/css/rate-upload.css' %}">{% endblock page_css %}
+{% block page_content %}
+  <form action="{% url 'rate_home' %}" method="post" name="rate-parse-form">{% csrf_token %}
+    <div class="format-1 row">
+      <div class="col-lg-2"></div>
+      <div class="col-lg-3">
+        <label for="">
+          <pre>{{ form.format1.label }}</pre>
+        </label>
+        {{ form.format1 }}
+        {{ form.format1.errors }}
+        <input type="submit" value="Get Rates" class="btn btn-info" name="get-rate-btn">
+      </div>
+      <div class="col-lg-3">
+        <table class="table table-bordered table-condensed">
+          <thead>
+            <tr>
+              <th>Currency</th>
+              <th>Rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ccy, xchg_rate in rates.items %}
+              <tr>
+                <td class="rate-data ccy">{{ ccy }}</td>
+                <td class="rate-data xchg-rate-val">{{ xchg_rate }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <input type="submit" value="Download" class="btn btn-info download-btn">
+      </div>
+      <div class="col-lg-2"></div>
+    </div>
+    <!-- <div class="format-1 row"> -->
+
+    <div class="format-2 row"></div>
+  </form>
+
+{% endblock page_content %}
+
+{% block page_js %}
+  <script src="{% static 'rateupload/js/rates-upload.js' %}"></script>
+{% endblock page_js %}

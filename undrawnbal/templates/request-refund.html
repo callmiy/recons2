@@ -1,0 +1,110 @@
+{% extends 'recons-base.html' %}
+{% load recons_custom_tags %}
+{% block title %}Undrawn Balance Print{% endblock title %}
+{% block page_css %} <link rel="stylesheet" href="/static/css/request-refund.css">{% endblock page_css %}
+{% block page_content %}
+  {% for obj in objects %}
+  <div class="undrawn-data">
+    <p>DATE: {% now 'd-b-Y' %}</p>
+    <div class="double-underline underline-dashed border-2">
+      <p>NOTE TO SENIOR MANAGER – FEM/CFC</p>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <td></td>
+          <td>FORM 'M' NO: ……………………………</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>RATE: ………………………………………</td>
+        </tr>
+      </thead>
+    </table>
+    <div class="double-underline underline-dashed border-2">
+      <p>RE: CABLE CLAIMS AND ALLOCATIONS</p>
+    </div>
+    <table>
+      <tbody>
+        <tr>
+          <td>OUR LC:</td>
+          <td><div class="underline underline-dashed border-2">{{ obj.lc_number }}</div></td>
+          <td>CBN  <input name="source_of_fund" type="checkbox" {% if obj.source_fund.code == 'CBN' %}checked{% endif %}></td>
+        </tr>
+        <tr>
+          <td>BRANCH:</td>
+          <td><div class="underline underline-dashed border-2">{{ obj.customer.brn_name }} ({{ obj.customer.brn_code }})</div></td>
+          <td>AUTO  <input name="source_of_fund" type="checkbox" {% if obj.source_fund.code == 'AUTO' %}checked{% endif %}></td>
+        </tr>
+        <tr>
+          <td>ESTABLISHED AMOUNT:</td>
+          <td><div class="underline underline-dashed border-2">{{ obj.estb_amt_ccy.code }} {{ obj.estb_amt | amtfmt }}</div></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>CLAIM AMOUNT:</td>
+          <td><div class="underline underline-dashed border-2">{{ obj.claim_amt_ccy.code }} {{ obj.claim_amt | amtfmt }}</div></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>SURPLUS:</td>
+          <td><div class="underline underline-dashed border-2">{{ obj.surplus_amt_ccy.code }} {{ obj.surplus_amt | amtfmt }}</div></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>ACCREDITORS:</td>
+          <td><div class="underline underline-dashed border-2">{{ obj.customer.name }}</div></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>ACCOUNT NO.:</td>
+          <td><div class="underline underline-dashed border-2">{{ obj.customer.acct_numb }}</div></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      We advise having received cable claims in respect of the LC and passed the relative entries/advised FEM/CFC Unit accordingly.
+    </p>
+    <ul>
+      <li>Please credit customer’s foreign account with the surplus fund.</li>
+      <li>Please do not credit back the surplus funds as further drawing are still being expected.</li>
+      <li>Please repurchase the surplus funds and avoid duplication and advise us when balance repurchased.</li>
+      <li>Please do not repurchase the surplus funds as drawings are still being expected.</li>
+    </ul>
+    <p>
+      N.B. we shall instruct you to repurchase funds as soon as the funds is placed in our overseas current account.
+    </p>
+    <table>
+      <tbody>
+        <tr>
+          <td>AUTHORIZED SIGNATURE</td>
+          <td>AUTHORIZED SIGNATURE</td>
+        </tr>
+      </tbody>
+    </table>
+    <table>
+      <caption>I confirm the following to be in C/A {{ obj.nostro.number }}:</caption>
+      <tbody>
+        <tr>
+          <td class="header">AMOUNT:</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="header">DATE:</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="header">NAME:</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="header">SIGN:</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  {% endfor %}
+{% endblock page_content %}
+{% block page_js %}{% endblock page_js %}

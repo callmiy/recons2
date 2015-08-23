@@ -1,0 +1,15 @@
+{% extends 'core_recons/cbn-eformm-root.html' %}
+{% block page_title %}TI EARNINGS REPORT{% endblock %}
+{% block page_content %}
+<form action="" method="post" name="earnings_report_form" id="id_earnings_report_form">{% csrf_token %}
+	<div class="form-row">
+		<label for="id_from_date">{{ form.from_date.label }}</label>
+		{{ form.from_date }}
+	</div>
+	<div class="form-row">
+		<label for="id_to_date">{{ form.to_date.label }}</label>
+		{{ form.to_date }}
+	</div>
+	<input type="submit" value="Submit">
+</form>
+{% endblock %}

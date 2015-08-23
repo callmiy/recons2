@@ -1,0 +1,16 @@
+play.py
+*.ipynb
+node_modules
+database
+*.pyc
+__pycache__
+*89eugebfb9056539j289jbc54
+*.fuse_hidden*
+recons.log
+.TODO.md
+static-files
+*.sublime-*
+media
+.idea
+.coverage
+bower_components

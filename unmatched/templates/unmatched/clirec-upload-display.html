@@ -1,0 +1,106 @@
+{% extends 'core_recons/recons-base.html' %}
+{% load static %}
+{% load recons_custom_tags %}
+
+{% block title %}Unmatched Records File Upload{% endblock title %}
+{% block page_css %}
+  <link rel="stylesheet" href="{% static 'unmatched/css/clirec-upload-display.css' %}">
+  <link rel="stylesheet" href="{% static 'ajax_select/css/ajax_select.css' %}">
+
+  <!-- this is necessary to make the ajax-auto-complete dropdown show -->
+  <style>
+    .ui-autocomplete.ui-front.ui-menu.ui-widget.ui-widget-content.ui-corner-all {
+      z-index: 1040;
+    }
+  </style>
+{% endblock page_css %}
+{% block page_content %}
+  <ul class="nav nav-tabs" id="clarec-tab"><!-- tab navs -->
+    <li class="active"><a href="#form" data-toggle="tab">Upload</a></li>
+    <li><a href="#display" data-toggle="tab">Display</a></li>
+  </ul><!-- tab navs -->
+
+  <div class="tab-content"><!-- tab panes -->
+    <form class="form-horizontal clarec-form" role="form" method="post" id="id-clarec-upload-form">
+      <input type="hidden" id="default-memos" data-memos="{{ default_memos }}">
+
+      <div class="form-group">
+        <label for="{{ clarec_form.clirec_nostro.id_for_label }}"
+               class="col-md-1 control-label">{{ clarec_form.clirec_nostro.label }}</label>
+
+        <div class="col-md-11">{{ clarec_form.clirec_nostro }}</div>
+      </div>
+    </form>
+
+    <div class="tab-pane" id="form"><!-- class="tab-pane" id="form" -->
+      <form class="form-horizontal" role="form">
+        <div class="form-group">
+          <label for="{{ clarec_form.details.id_for_label }}"
+                 class="control-label col-md-1">{{ clarec_form.details.label }}</label>
+
+          <div class="col-md-11 entries">
+            {{ clarec_form.details }}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-10 col-md-offset-1">
+            <button disabled="true" id="clirec-upload-btn" class="btn btn-default" type="submit">Upload</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- class="tab-pane" id="form" -->
+
+    <!-- class="tab-pane data-table" id="display" -->
+    <div class="tab-pane data-table" id="display">
+      <div class="row display-input-controls">
+        <div class="col-md-3 col-md-offset-1aaa">
+          <button disabled class="btn btn-default clarec-download" type="submit">Download</button>
+        </div>
+        <label for="{{ clarec_form.recons_actions.id_for_label }}" class="control-label col-md-1 col-md-offset-2">
+          {{ clarec_form.recons_actions.label }}
+        </label>
+
+        <div class="col-md-5">
+          {{ clarec_form.recons_actions }}
+        </div>
+        <div class="col-md-1">
+          <button disabled id="run-recons-action-btn" class="btn btn-default">Go</button>
+        </div>
+      </div>
+
+      <div class="clirec-instance-total">Total: 0</div>
+      <table class="table table-bordered table-responsive table-condensed">
+        <thead>
+          <tr>
+            <th class="tr-meta-info"></th>
+            <!-- <input type="checkbox"> -->
+            <th class="date">Post Date</th>
+            <th class="date">Value Date</th>
+            <th class="lc-number">LC Number</th>
+            <th>Amount</th>
+            <th class="clirec-details">Details</th>
+            <th class="date">Date Processed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- the tbody inner html will be provided by unmatched/js/clirec-template-utils.js -->
+        </tbody>
+      </table>
+    </div>
+    <!-- class="tab-pane data-table" id="display" -->
+  </div><!-- tab panes -->
+
+  <!-- modal for getting transaction types -->
+  {% include 'unmatched/forms/clirec/ajax-modal.html' %}
+  <!-- end modal for getting transaction types -->
+
+{% endblock page_content %}
+{% block page_js %}
+  <script src="{% static 'ajax_select/js/ajax_select.js' %}"></script>
+  <script>
+    var clirecUtilUrls = JSON.parse('{{ clirec_util_urls|escapejs }}');
+  </script>
+  {{ clarec_form.media.js }}
+{% endblock page_js %}

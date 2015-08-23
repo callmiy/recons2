@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ITF Report</title>
+</head>
+<body>
+	<pre>{{ summary }}</pre>
+	<form method="post" style="visibility:hidden;">
+		{% csrf_token %}
+		<input type="submit" value="Download" id="download-itf-report">
+	</form>
+
+	<script src="/static/js/jquery.js"></script>
+	<script type="text/javascript">
+		$('#download-itf-report').trigger('click')
+	</script>
+</body>
+</html>

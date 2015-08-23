@@ -1,0 +1,21 @@
+{% extends 'core_recons/recons-base.html' %}
+{% block title %}IBD Int written to posting{% endblock title %}
+{% block page_css %}
+	<link rel="stylesheet" href="/static/css/unmatched-detailed.css">
+{% endblock page_css %}
+
+{% block page_content %}
+
+{{ admin_url }}
+
+{% endblock page_content %}
+{% block page_js %}
+<script>
+	(function($) {
+		$("input[type=text]").each(function(index, el){
+			charsWidth = el.value.length > 0 ? el.value.length: 16
+			$(this).css('width', charsWidth * 15);
+		})
+	})(jQuery);
+</script>
+{% endblock page_js %}

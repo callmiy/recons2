@@ -1,0 +1,38 @@
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title" id="unmatched-clirec-modal-Label">UBUK DEPOSIT 1 GBP|GBP26</h4>
+      </div>
+      <div class="modal-body">
+        <form action="" class="form-horizontal" id="clirec-modal-ubuk-depo-1gbp-26-form"> {{ form.manual_post_amount }}{{ form.clirec_ids }}
+          <fieldset>
+            {{ form.posting_enum }}
+
+            <div class="form-group">
+              <label class="control-label col-md-4" for="dr_acct_text">
+                Debit Account
+              </label>
+              <div class="col-md-8">
+                <input readonly class="form-control" id="id_dr_acct_text">
+                <input type="hidden" id="id_dr_acct" name="dr_acct">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="control-label col-md-4" for="cr_acct_text">
+                Credit Account
+              </label>
+              <div class="col-md-8">
+                <input readonly value="{{ contra_name }}" class="form-control" id="id_cr_acct_text">
+                <input value="{{ contra_id }}" type="hidden" id="id_cr_acct" name="cr_acct">
+              </div>
+            </div>
+          </fieldset>
+
+          <div class="form-group">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+              <button class="btn btn-info" id="create-ubuk-depo-1-gbp-26-post-btn">Go</button>
+            </div>
+          </div>
+        </form>
+      </div><!-- / .modal-body -->
