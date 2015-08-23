@@ -2,9 +2,9 @@
 
 var angular = require('angular');
 
-angular
-  .module('letterOfCreditApp')
-  .config(router);
+angular.module('letterOfCreditApp', ['rootApp'])
+  .config(require('commons').interpolateProviderConfig)
+  .config(router)
 
 router.$inject = ['$routeProvider'];
 

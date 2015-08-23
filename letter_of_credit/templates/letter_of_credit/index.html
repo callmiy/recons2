@@ -10,16 +10,6 @@
 {% block page_js_up %}
   {{ block.super }}
 
-  <script>
-    (function() {
-      "use strict";
-
-      var letterOfCredit = angular.module('letterOfCreditApp', ['rootApp']);
-
-      letterOfCredit.config(interpolateProviderConfig);
-    })();
-  </script>
-
   <script src="{% static 'letter_of_credit/js/app.min.js' %}"></script>
 {% endblock page_js_up %}
 

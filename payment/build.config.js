@@ -18,10 +18,6 @@ var webpackConfig = {
   output: {
     path: destDir,
     filename: 'app.js'
-  },
-
-  resolve: {
-    root: [payment]
   }
 }
 

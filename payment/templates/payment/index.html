@@ -1,2 +1,47 @@
 {% extends 'core_recons/recons-base.html' %}
 {% load static %}
+
+{% block title %}LC Payment{% endblock title %}
+
+{% block page_css %}
+  <link rel="stylesheet" href="{% static 'letter_of_credit/css/letter-of-credit.css' %}"/>
+{% endblock page_css %}
+
+{% block page_js_up %}
+  {{ block.super }}
+
+  <script src="{% static 'payment/js/app.min.js' %}"></script>
+{% endblock page_js_up %}
+
+{% block page_content %}
+  <div ng-app="letterOfCreditPayment">
+
+    <div class="dropdown">
+      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+        Select An Action
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+
+        <li role="presentation" ui-sref-active="active">
+          <a role="menuitem" tabindex="-1" ui-sref="home">Home</a>
+        </li>
+
+        <li role="presentation" ui-sref-active="active">
+          <a role="menuitem" tabindex="-1" ui-sref="post_neg">ITF - (Post Negotiation Financing)</a>
+        </li>
+
+        <li role="presentation" ui-sref-active="active">
+          <a role="menuitem" tabindex="-1" ui-sref="pre_neg">Deferred Payments - (Pre Negotiation)</a>
+        </li>
+      </ul>
+    </div>
+
+    <hr/>
+    <h1 class="current-state-title">Payment of Letter Of Credit: {$ $state.current.title $}</h1>
+    <hr/>
+
+    <div class="slide" ui-view></div>
+  </div>
+
+{% endblock page_content %}
