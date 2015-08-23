@@ -29,6 +29,8 @@ gulp.task('initial-js', function() {
   return gulp.src(bower + '/jquery/dist/jquery.js')
     .pipe(plugins.addSrc.append(bower + '/angular/angular.js'))
     .pipe(plugins.addSrc.append(bower + '/angular-route/angular-route.js'))
+    .pipe(plugins.addSrc.append(bower + '/angular-animate/angular-animate.js'))
+    .pipe(plugins.addSrc.append(bower + '/angular-ui-router/release/angular-ui-router.js'))
     .pipe(plugins.addSrc.append(bower + '/angular-resource/angular-resource.js'))
     .pipe(plugins.addSrc.append(bower + '/angular-cookies/angular-cookies.js'))
     .pipe(plugins.addSrc.append(bower + '/angular-bootstrap/ui-bootstrap-tpls.js'))
