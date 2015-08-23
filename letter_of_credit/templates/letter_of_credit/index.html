@@ -8,12 +8,14 @@
 {% endblock page_css %}
 
 {% block page_js_up %}
+  {{ block.super }}
 
   <script>
     (function() {
       "use strict";
 
       var letterOfCredit = angular.module('letterOfCreditApp', [
+        'rootApp',
         'ngRoute',
         'ui.bootstrap',
         'kanmii.numberFormatDirective',
@@ -21,14 +23,7 @@
         'ngResource',
         'angularModalService']);
 
-      letterOfCredit.config(['$interpolateProvider',
-                             function($interpolateProvider) {
-                               $interpolateProvider.startSymbol('{$');
-                               $interpolateProvider.endSymbol('$}');
-                             }]);
-
-      letterOfCredit.value('urls', JSON.parse('{{ urls | escapejs }}'));
-
+      letterOfCredit.config(interpolateProviderConfig);
     })();
   </script>
 

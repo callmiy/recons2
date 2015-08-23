@@ -303,11 +303,11 @@ $.ajaxSetup(
 //using angular
 angular
   .module('ngResource')
-  .config(configureCsrf);
+  .config(doConfig);
 
-configureCsrf.$inject = ['$httpProvider'];
+doConfig.$inject = ['$httpProvider'];
 
-function configureCsrf($httpProvider) {
+function doConfig($httpProvider) {
   $httpProvider.defaults.xsrfCookieName = 'csrftoken'
   $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken'
 }
