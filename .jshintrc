@@ -20,12 +20,9 @@
   "trailing": false,
   "smarttabs": true,
   "white": true,
+  "jasmine": true,
   "predef": [
     "inject",
-    "describe",
-    "it",
-    "expect",
-    "beforeEach",
     "_",
     "kanmii",
     "letterOfCreditUrls",

@@ -7,7 +7,7 @@ var browserSync = require('browser-sync').create()
 
 var baseStaticJs = './core_recons/static/core_recons/js'
 var baseStaticCss = './core_recons/static/core_recons/css'
-var bower = './core_recons/static/bower_components'
+var bower = './bower_components'
 
 var letterOfCredit = require('./letter_of_credit/build.config')
 var payment = require('./payment/build.config')
