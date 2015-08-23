@@ -10,6 +10,7 @@ var baseStaticCss = './core_recons/static/core_recons/css'
 var bower = './core_recons/static/bower_components'
 
 var letterOfCredit = require('./letter_of_credit/build.config')
+var payment = require('./payment/build.config')
 
 gulp.task('initial-css', function() {
   return gulp.src([
@@ -61,6 +62,16 @@ gulp.task('webpack-letter-of-credit', function() {
     .pipe(gulp.dest(letterOfCredit.destDir))
 })
 
+gulp.task('webpack-payment', function() {
+  return gulp.src(payment.entry)
+    .pipe(plugins.webpack(payment.webpackConfig, webpack))
+    .pipe(plugins.sourcemaps.init())
+    .pipe(plugins.uglify())
+    .pipe(plugins.rename({suffix: '.min'}))
+    .pipe(plugins.sourcemaps.write('.'))
+    .pipe(gulp.dest(payment.destDir))
+})
+
 gulp.task('browser-sync', function() {
   browserSync.init({
     proxy: 'localhost:8000',
@@ -70,4 +81,6 @@ gulp.task('browser-sync', function() {
 
 gulp.task('initial', ['initial-js', 'initial-css'])
 
-gulp.task('default', ['initial-js'])
+gulp.task('webpack', ['webpack-letter-of-credit', 'webpack-payment'])
+
+gulp.task('default', ['initial', 'webpack'])
