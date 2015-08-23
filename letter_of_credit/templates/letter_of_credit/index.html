@@ -14,14 +14,7 @@
     (function() {
       "use strict";
 
-      var letterOfCredit = angular.module('letterOfCreditApp', [
-        'rootApp',
-        'ngRoute',
-        'ui.bootstrap',
-        'kanmii.numberFormatDirective',
-        'kanmii.toUpperDirective',
-        'ngResource',
-        'angularModalService']);
+      var letterOfCredit = angular.module('letterOfCreditApp', ['rootApp']);
 
       letterOfCredit.config(interpolateProviderConfig);
     })();

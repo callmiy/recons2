@@ -22,7 +22,15 @@
         $interpolateProvider.endSymbol('$}');
       }];
 
-      angular.module('rootApp', []).value('urls', JSON.parse('{{ urls | escapejs }}'));
+      angular.module('rootApp', [
+        'ngRoute',
+        'ui.bootstrap',
+        'kanmii.numberFormatDirective',
+        'kanmii.toUpperDirective',
+        'ngResource',
+        'angularModalService'
+      ])
+          .value('urls', JSON.parse('{{ urls | escapejs }}'));
     </script>
   {% endblock page_js_up %}
 </head>
@@ -33,7 +41,7 @@
       {% if not user.is_anonymous %}
         <div class="col-md-3 col-sm-4 col-lg-3 col-xs-4 left-nav">{% include 'core_recons/left-nav.html' %}</div>
       {% endif %}
-      <div class="col-md-10 col-sm-9 col-lg-10 col-xs-8 main-content">
+      <div class="col-md-9 col-sm-8 col-lg-9 col-xs-8 main-content">
         {% block recons_app_login %}{% endblock recons_app_login %}
 
         {% if not user.is_anonymous %}
