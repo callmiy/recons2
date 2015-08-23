@@ -12,5 +12,11 @@ module.exports = {
     loaders: [
       {test: /\.html$/, loader: 'html'}
     ]
+  },
+
+  resolve: {
+    alias: {
+      commons: __dirname + '/core_recons/commonsjs'
+    }
   }
 }

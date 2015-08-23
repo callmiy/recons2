@@ -17,11 +17,6 @@
   {% block page_js_up %}
 
     <script>
-      var interpolateProviderConfig = ['$interpolateProvider', function($interpolateProvider) {
-        $interpolateProvider.startSymbol('{$');
-        $interpolateProvider.endSymbol('$}');
-      }];
-
       angular.module('rootApp', [
         'ngRoute',
         'ui.bootstrap',
@@ -33,6 +28,7 @@
       ])
           .value('urls', JSON.parse('{{ urls | escapejs }}'));
     </script>
+
   {% endblock page_js_up %}
 </head>
 <body>
