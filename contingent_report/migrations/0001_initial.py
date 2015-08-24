@@ -8,35 +8,6 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'LCRegister'
-        db.create_table('lc_register', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('lc_number', self.gf('django.db.models.fields.CharField')(max_length=20)),
-            ('mf', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True)),
-            ('estb_date', self.gf('django.db.models.fields.DateField')()),
-            ('expiry_date', self.gf('django.db.models.fields.DateField')()),
-            ('confirmation', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
-            ('lc_class', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
-            ('applicant', self.gf('django.db.models.fields.CharField')(max_length=200)),
-            ('address', self.gf('django.db.models.fields.CharField')(max_length=200, null=True, blank=True)),
-            ('bene', self.gf('django.db.models.fields.CharField')(max_length=200, null=True, blank=True)),
-            ('bene_country', self.gf('django.db.models.fields.CharField')(max_length=200, null=True, blank=True)),
-            ('advising_bank', self.gf('django.db.models.fields.CharField')(max_length=200, null=True, blank=True)),
-            ('ccy', self.gf('django.db.models.fields.CharField')(max_length=3, null=True, blank=True)),
-            ('ccy_obj', self.gf('django.db.models.fields.related.ForeignKey')(related_name='lc_reg_ccy', to=orm['adhocmodels.Currency'])),
-            ('lc_amt_org_ccy', self.gf('django.db.models.fields.DecimalField')(max_digits=100, decimal_places=2)),
-            ('lc_amt_usd', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=100, decimal_places=2, blank=True)),
-            ('supply_country', self.gf('django.db.models.fields.CharField')(max_length=200, null=True, blank=True)),
-            ('port', self.gf('django.db.models.fields.CharField')(max_length=200, null=True, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('ba', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True)),
-            ('acct_numb', self.gf('django.db.models.fields.CharField')(max_length=13, null=True, blank=True)),
-            ('brn_code', self.gf('django.db.models.fields.CharField')(max_length=3, null=True, blank=True)),
-            ('brn_name', self.gf('django.db.models.fields.CharField')(max_length=200, null=True, blank=True)),
-            ('post_status', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='lc_reg', null=True, to=orm['contingent_report.TIPostingStatusReport'])),
-        ))
-        db.send_create_signal(u'contingent_report', ['LCRegister'])
-
         # Adding model 'LCClass'
         db.create_table('lc_class', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -169,33 +140,6 @@ class Migration(SchemaMigration):
             'desc': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'prod_code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '4'})
-        },
-        u'contingent_report.lcregister': {
-            'Meta': {'ordering': "('-estb_date',)", 'object_name': 'LCRegister', 'db_table': "'lc_register'"},
-            'acct_numb': ('django.db.models.fields.CharField', [], {'max_length': '13', 'null': 'True', 'blank': 'True'}),
-            'address': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
-            'advising_bank': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
-            'applicant': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
-            'ba': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
-            'bene': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
-            'bene_country': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
-            'brn_code': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True', 'blank': 'True'}),
-            'brn_name': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
-            'ccy': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True', 'blank': 'True'}),
-            'ccy_obj': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'lc_reg_ccy'", 'to': u"orm['adhocmodels.Currency']"}),
-            'confirmation': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'estb_date': ('django.db.models.fields.DateField', [], {}),
-            'expiry_date': ('django.db.models.fields.DateField', [], {}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'lc_amt_org_ccy': ('django.db.models.fields.DecimalField', [], {'max_digits': '100', 'decimal_places': '2'}),
-            'lc_amt_usd': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '100', 'decimal_places': '2', 'blank': 'True'}),
-            'lc_class': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'lc_number': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
-            'mf': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
-            'port': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
-            'post_status': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'lc_reg'", 'null': 'True', 'to': u"orm['contingent_report.TIPostingStatusReport']"}),
-            'supply_country': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'})
         },
         u'contingent_report.tiflexrecons': {
             'Meta': {'ordering': "('-val_date',)", 'object_name': 'TIFlexRecons', 'db_table': "'ti_flex'"},
