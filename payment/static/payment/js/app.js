@@ -3,12 +3,12 @@
 /*globals angular*/
 
 require('./post-neg')
-require('./pre-neg')
+require('./deferred-payment')
 
 angular.module('letterOfCreditPayment',
   ['rootApp',
    'ui.router',
-   'letterOfCreditPayment.pre_neg',
+   'letterOfCreditPayment.deferred_payment',
    'letterOfCreditPayment.post_neg'
   ])
 

@@ -9,32 +9,30 @@ angular.module('letterOfCreditPayment.post_neg',
     'ui.router'
   ])
   .config(require('commons').interpolateProviderConfig)
-  .config(letterOfCreditPaymentPostNegURLConfig)
-  .controller('itfMaturesInTwoWeeksCtrl', itfMaturesInTwoWeeksCtrl)
+  .config(letterOfCreditPaymentPostNegStateConfig)
+  .controller('PostNegCtrl', PostNegCtrl)
 
-letterOfCreditPaymentPostNegURLConfig.$inject = ['$stateProvider']
+letterOfCreditPaymentPostNegStateConfig.$inject = ['$stateProvider']
 
-function letterOfCreditPaymentPostNegURLConfig($stateProvider) {
+function letterOfCreditPaymentPostNegStateConfig($stateProvider) {
   $stateProvider
     .state('post_neg', {
-      title: 'ITF - (Post Negotiation Financing)',
+      data: {
+        title: 'ITF - (Post Negotiation Financing)'
+      },
 
       url: '/itf',
 
       templateUrl: paymentCommons.buildUrl('post-neg/post-neg.html'),
 
-      controller: 'itfMaturesInTwoWeeksCtrl as itfMaturesSoon'
-    })
-
-    .state('post_neg.matures_in_two_weeks', {
-
-      template: ''
+      controller: 'PostNegCtrl as postNeg'
     })
 }
 
-function itfMaturesInTwoWeeksCtrl() {
+function PostNegCtrl() {
+  /*jshint validthis:true*/
   var vm = this
-  vm.itfDisplayTableCaption = 'ITF Maturing In Next Two Weeks'
+  vm.itfDisplayTableCaption = 'ITF Maturity Table'
 }
 
 require('./table-display')

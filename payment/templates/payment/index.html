@@ -21,13 +21,13 @@
         ITF - (Post Negotiation Financing)
       </button>
 
-      <button class="btn btn-info" ng-class="{active: $state.includes('pre_neg')}" ng-click="$state.go('pre_neg')">
-        Deferred Payments - (Pre Negotiation)
+      <button class="btn btn-info" ng-class="{active: $state.includes('deferred_payment')}" ng-click="$state.go('deferred_payment')">
+        Deferred Payments
       </button>
     </div>
 
     <hr/>
-    <h1 class="current-state-title">Payment of Letter Of Credit: {$ $state.current.title $}</h1>
+    <h1 class="current-state-title">Payment of Letter Of Credit: {$ $state.current.data.title $}</h1>
     <hr/>
 
     <div class="slide" ui-view></div>
