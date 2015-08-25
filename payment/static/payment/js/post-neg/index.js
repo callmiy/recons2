@@ -35,4 +35,4 @@ function PostNegCtrl() {
   vm.itfDisplayTableCaption = 'ITF Maturity Table'
 }
 
-require('./table-display')
+require('./display')

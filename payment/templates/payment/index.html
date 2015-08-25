@@ -16,21 +16,25 @@
 {% block page_content %}
   <div ng-app="letterOfCreditPayment">
 
-    <div class="letter-of-credit-payment-nav-btns">
-      <button class="btn btn-info" ng-class="{active: $state.includes('post_neg')}" ng-click="$state.go('post_neg')">
-        ITF - (Post Negotiation Financing)
-      </button>
+    <div class="letter-of-credit-payment-home-topic-container clearfix">
+      <span class="glyphicon glyphicon-home" ng-click="$state.go('home')"
+            data-toggle="tooltip" title="Home - Navigation"></span>
 
-      <button class="btn btn-info" ng-class="{active: $state.includes('deferred_payment')}" ng-click="$state.go('deferred_payment')">
-        Deferred Payments
-      </button>
+      <h1 class="current-state-title">Payment of Letter Of Credit: {$ $state.current.data.title $}</h1>
     </div>
-
-    <hr/>
-    <h1 class="current-state-title">Payment of Letter Of Credit: {$ $state.current.data.title $}</h1>
     <hr/>
 
-    <div class="slide" ui-view></div>
+    <div class="slide" ui-view>
+      <div class="letter-of-credit-payment-nav-btns btn-group-vertical" role="group"  >
+        <button class="btn btn-info" ng-click="$state.go('post_neg')">
+          ITF - (Post Negotiation Financing)
+        </button>
+
+        <button class="btn btn-info" ng-click="$state.go('deferred_payment.display')">
+          Deferred Payments
+        </button>
+      </div>
+    </div>
   </div>
 
 {% endblock page_content %}

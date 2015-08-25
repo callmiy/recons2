@@ -3,17 +3,17 @@
 var paymentCommons = require('./../../payment-commons')
 
 angular
-  .module('letterOfCreditPayment.post_neg')
-  .directive('postNegTableDisplay', postNegTableDisplay)
-  .controller('postNegTableDisplayCtrl', postNegTableDisplayCtrl)
+  .module('letterOfCreditPayment.deferred_payment')
+  .directive('deferredPaymentDisplay', deferredPaymentDisplay)
+  .controller('deferredPaymentDisplayCtrl', deferredPaymentDisplayCtrl)
 
-function postNegTableDisplay() {
+function deferredPaymentDisplay() {
   return {
     restrict: 'E',
 
-    controller: 'postNegTableDisplayCtrl as itfDisplay',
+    controller: 'deferredPaymentDisplayCtrl as deferredPaymentDisplay',
 
-    templateUrl: paymentCommons.buildUrl('post-neg/table-display/table-display.html'),
+    templateUrl: paymentCommons.buildUrl('deferred-payment/display/display.html'),
 
     scope: {},
 
@@ -23,8 +23,8 @@ function postNegTableDisplay() {
   }
 }
 
-function postNegTableDisplayCtrl() {
+function deferredPaymentDisplayCtrl() {
   /*jshint validthis:true*/
   var vm = this
-  vm.css = paymentCommons.buildUrl('post-neg/table-display/table-display.min.css')
+  vm.css = paymentCommons.buildUrl('deferred-payment/display/display.min.css')
 }

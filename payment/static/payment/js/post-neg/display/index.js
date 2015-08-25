@@ -13,7 +13,7 @@ function postNegTableDisplay() {
 
     controller: 'postNegTableDisplayCtrl as itfDisplay',
 
-    templateUrl: paymentCommons.buildUrl('post-neg/table-display/table-display.html'),
+    templateUrl: paymentCommons.buildUrl('post-neg/display/display.html'),
 
     scope: {},
 
@@ -26,5 +26,5 @@ function postNegTableDisplay() {
 function postNegTableDisplayCtrl() {
   /*jshint validthis:true*/
   var vm = this
-  vm.css = paymentCommons.buildUrl('post-neg/table-display/table-display.min.css')
+  vm.css = paymentCommons.buildUrl('post-neg/display/display.min.css')
 }
