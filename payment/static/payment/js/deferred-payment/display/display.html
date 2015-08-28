@@ -1,49 +1,50 @@
-<div class="deferred-payment-display-element">
-
+<div>
   <link rel="stylesheet" href="{$deferredPaymentDisplay.css$}" property="stylesheet"/>
+  <div class="deferred-payment-table-display-element">
 
-  <div class="deferred-payment-display-controls">
-    <div class="form-group row">
-      <label class="control-label col-md-2 col-lg-2 col-sm-2" for="filter-query">Filter List</label>
+    <div class="deferred-payment-display-controls">
+      <div class="form-group row">
+        <label class="control-label col-md-2 col-lg-2 col-sm-2" for="filter-query">Filter List</label>
 
-      <div class="col-md-4 col-lg-4 col-sm-4">
-        <input id="filter-query" class="form-control" type="text" ng-model="query"/>
+        <div class="col-md-4 col-lg-4 col-sm-4">
+          <input id="filter-query" class="form-control" type="text" ng-model="query"/>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="control-label col-md-2 col-lg-2 col-sm-2" for="order">Sort By</label>
+
+        <div class="col-md-4 col-lg-4 col-sm-4">
+          <select id="order" class="form-control" ng-model="orderProp">
+            <option value="-maturity_date">Maturity</option>
+            <option value="-currency">Currency</option>
+            <option value="document_amount">Document Amount</option>
+            <option value="-offshore_bank">Offshore Bank</option>
+          </select>
+        </div>
       </div>
     </div>
 
-    <div class="form-group row">
-      <label class="control-label col-md-2 col-lg-2 col-sm-2" for="order">Sort By</label>
+    <table class="table table-condensed table-bordered deferred-payment-table-display">
+      <caption>{$deferredPaymentDisplay.caption$}</caption>
 
-      <div class="col-md-4 col-lg-4 col-sm-4">
-        <select id="order" class="form-control" ng-model="orderProp">
-          <option value="-maturity_date">Maturity</option>
-          <option value="-currency">Currency</option>
-          <option value="document_amount">Document Amount</option>
-          <option value="-offshore_bank">Offshore Bank</option>
-        </select>
-      </div>
-    </div>
+      <thead>
+        <tr>
+          <th>S/N</th>
+          <th>LC Reference</th>
+          <th>Applicant's Name</th>
+          <th>Offshore Bank</th>
+          <th>Their References</th>
+          <th>Currency</th>
+          <th>Document Amount</th>
+          <th>Document Date</th>
+          <th>Maturity Date</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+      </tbody>
+    </table>
   </div>
-
-  <table class="table table-condensed table-bordered itf-table-display">
-    <caption>{$deferredPaymentDisplay.caption$}</caption>
-
-    <thead>
-      <tr>
-        <th>S/N</th>
-        <th>LC Reference</th>
-        <th>Applicant's Name</th>
-        <th>Offshore Bank</th>
-        <th>Their References</th>
-        <th>Currency</th>
-        <th>Document Amount</th>
-        <th>Document Date</th>
-        <th>Maturity Date</th>
-      </tr>
-    </thead>
-
-    <tbody>
-
-    </tbody>
-  </table>
 </div>

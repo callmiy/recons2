@@ -1,7 +1,5 @@
 "use strict";
 
-/*globals angular*/
-
 var paymentCommons = require('../payment-commons')
 
 angular.module('letterOfCreditPayment.deferred_payment',

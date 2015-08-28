@@ -1,13 +1,13 @@
 "use strict";
 
-/*globals angular*/
-
 require('./post-neg')
 require('./deferred-payment')
+require('./create-new')
 
 angular.module('letterOfCreditPayment',
   ['rootApp',
    'ui.router',
+   'letterOfCreditPayment.create_new',
    'letterOfCreditPayment.deferred_payment',
    'letterOfCreditPayment.post_neg'
   ])
