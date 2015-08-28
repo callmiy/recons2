@@ -26,26 +26,20 @@
         'ngAnimate',
         'angularModalService'
       ])
-          .value('urls', JSON.parse('{{ urls | escapejs }}'));
+        .value('urls', JSON.parse('{{ urls | escapejs }}'));
     </script>
 
   {% endblock page_js_up %}
 </head>
 <body>
   {% block main_nav_top %} {% include 'core_recons/top-nav.html' %} {% endblock main_nav_top %}
-  <div class="container-fluid">
-    <div class="row">
-      {% if not user.is_anonymous %}
-        <div class="col-md-3 col-sm-3 col-lg-2 col-xs-4 left-nav">{% include 'core_recons/left-nav.html' %}</div>
-      {% endif %}
-      <div class="col-md-9 col-sm-9 col-lg-10 col-xs-8 main-content">
-        {% block recons_app_login %}{% endblock recons_app_login %}
 
-        {% if not user.is_anonymous %}
-          {% block page_content %}{% endblock page_content %}
-        {% endif %}
-      </div>
-    </div>
+  <div class="container-fluid">
+    {% block recons_app_login %}{% endblock recons_app_login %}
+
+    {% if not user.is_anonymous %}
+      {% block page_content %}{% endblock page_content %}
+    {% endif %}
   </div>
   {% block page_js %}{% endblock page_js %}
 

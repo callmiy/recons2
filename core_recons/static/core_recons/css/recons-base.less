@@ -1,205 +1,205 @@
 .nav-link {
-	padding: 6px 5px;
+  padding: 6px 5px;
 }
 
 // this is necessary to make jquery-ui components show
-.ui-front{
-	z-index: 2050;
+.ui-front {
+  z-index: 2050;
 }
 
-body{
-	font-size: 12px;
-	margin: 5px;
+body {
+  font-size: 12px;
+  margin: 5px;
 }
 
-.navbar-default{
-	background-color: #417690;
+.navbar-default {
+  background-color: #417690;
 
-	.navbar-brand{
-		color: #E8E37E;
-	}
+  .navbar-brand {
+    color: #E8E37E;
+  }
 
-	ul.nav.navbar-nav{
+  ul.nav.navbar-nav {
 
-		li{
-			&.active{
+    li {
+      &.active {
 
-				a{
-					background-color: #418999;
+        a {
+          background-color: #418999;
 
-					&:hover{
-						background-color: #417690;
-					}
-				}
-			}
+          &:hover {
+            background-color: #417690;
+          }
+        }
+      }
 
-			&.dropdown{
-				a{
-					.caret{
-						border-top-color: white;
-						border-bottom-color: white;
-					}
-				}
-			}
+      &.dropdown {
+        a {
+          .caret {
+            border-top-color: white;
+            border-bottom-color: white;
+          }
+        }
+      }
 
-			a{
-				color: #F5FBFB;
-			}
-		}
-	}
+      a {
+        color: #F5FBFB;
+      }
+    }
+  }
 }
 
-.container-fluid{
-	margin: 10px 15px;
+.container-fluid {
+  margin: 10px 15px;
 
-	input, textarea{
-		margin: 2px 0;
-		padding: 2px 3px;
-		border: 1px solid #ccc;
-	}
+  input, textarea {
+    margin: 2px 0;
+    padding: 2px 3px;
+    border: 1px solid #ccc;
+  }
 
-	h1 {
-		font-size: 18px;
-		color: #666;
-		padding: 0 6px 0 0;
-		margin: 0 0 .2em 0;
-	}
-	h1, h2, h3, h4, h5, h6{
-		font-weight: bold;
-	}
+  h1 {
+    font-size: 18px;
+    color: #666;
+    padding: 0 6px 0 0;
+    margin: 0 0 .2em 0;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+  }
 }
 
-.form-group > label.control-label{
-	text-align: left;
+.form-group > label.control-label {
+  text-align: left;
 }
 
 input.ng-invalid.ng-dirty {
-	color: red;
-	border: 1px solid red;
-	box-shadow: 0 0 2px red;
+  color: red;
+  border: 1px solid red;
+  box-shadow: 0 0 2px red;
 }
 
-form.align-vertical{
-	fieldset{
-		border: 1px solid #ccc;
-		margin-bottom: 5px;
-		background: white;
+form.align-vertical {
+  fieldset {
+    border: 1px solid #ccc;
+    margin-bottom: 5px;
+    background: white;
 
-		&.disabled{
-			label{
-				font-weight: normal;
-			}
-		}
-
-		.form-row{
-			overflow: hidden;
-			padding: 8px 12px;
-			font-size: 14px;
-			border-bottom: 1px solid #eee;
-		}
-
-		label.aligned {
-			display: block;
-			padding: 3px 10px 0 0;
-			float: left;
-			width: 8em;
-		}
-	}
-
-	.submit-row{
-		padding: 5px 7px;
-		text-align: left;
-		background: white url(/static/img/nav-bg.gif) 0 100% repeat-x;
-		border: 1px solid #ccc;
-		margin: 5px 0;
-		overflow: hidden;
-	}
-}
-
-.show-date-picker{
-	border: 1px solid #ccc;
-}
-
-.recons-base-nav{
-	ul{
-		padding-left: 0;
-
-		li{
-			display: inline-block;
-			list-style-type: none;
-
-			a{
-				text-decoration: underline;
-			}
-		}
-	}
-}
-
-.dropdown-submenu{
-    position:relative;
-    > .dropdown-menu{
-	    top:0;
-	    left:100%;
-	    margin-top:-6px;
-	    margin-left:-1px;
-	    -webkit-border-radius:0 6px 6px 6px;
-	    -moz-border-radius:0 6px 6px 6px;
-	    border-radius:0 6px 6px 6px;
-    }
-    &:hover{
-    	// background-color: @dropdown-link-hover-bg;
-    	> .dropdown-menu{
-    		display:block;
-		}
-
-		> a:after{
-    		border-left-color:#ffffff;
-		}
+    &.disabled {
+      label {
+        font-weight: normal;
+      }
     }
 
-    > a:after{
-	    display:block;
-	    content:" ";
-	    float:right;
-	    width:0;
-	    height:0;
-	    border-color:transparent;
-	    border-style:solid;
-	    border-width:4px 0 4px 4px;
-	    border-left-color:white;
-	    margin-top:5px;
-	    margin-right:-10px;
-	}
+    .form-row {
+      overflow: hidden;
+      padding: 8px 12px;
+      font-size: 14px;
+      border-bottom: 1px solid #eee;
+    }
 
-	.pull-left{
-    	float:none;
-    	> .dropdown-menu{
-		    left:-100%;
-		    margin-left:10px;
-		    -webkit-border-radius:6px 0 6px 6px;
-		    -moz-border-radius:6px 0 6px 6px;
-		    border-radius:6px 0 6px 6px;
-		}
-	}
+    label.aligned {
+      display: block;
+      padding: 3px 10px 0 0;
+      float: left;
+      width: 8em;
+    }
+  }
+
+  .submit-row {
+    padding: 5px 7px;
+    text-align: left;
+    background: white url(/static/img/nav-bg.gif) 0 100% repeat-x;
+    border: 1px solid #ccc;
+    margin: 5px 0;
+    overflow: hidden;
+  }
 }
 
-.left-nav{
-	padding: 0;
-	border: 1px solid #D3D3CE;
-	min-height: 400px;
+.show-date-picker {
+  border: 1px solid #ccc;
+}
 
-	a.single-btn {
-		.nav-link;
-		border-right: none;
-	}
+.recons-base-nav {
+  ul {
+    padding-left: 0;
 
-	.btn-group-vertical {
-		display: block;
-		width: 100%;
-		.btn {
-			text-align: left;
-			color: #0D355A;
-		}
+    li {
+      display: inline-block;
+      list-style-type: none;
 
-	}
+      a {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.dropdown-submenu {
+  position: relative;
+  > .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    -webkit-border-radius: 0 6px 6px 6px;
+    -moz-border-radius: 0 6px 6px 6px;
+    border-radius: 0 6px 6px 6px;
+  }
+  &:hover {
+     background-color: @dropdown-link-hover-bg;
+    > .dropdown-menu {
+      display: block;
+    }
+
+    > a:after {
+      border-left-color: #ffffff;
+    }
+  }
+
+  > a:after {
+    display: block;
+    content: " ";
+    float: right;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 4px 0 4px 4px;
+    border-left-color: white;
+    margin-top: 5px;
+    margin-right: -10px;
+  }
+
+  .pull-left {
+    float: none;
+    > .dropdown-menu {
+      left: -100%;
+      margin-left: 10px;
+      -webkit-border-radius: 6px 0 6px 6px;
+      -moz-border-radius: 6px 0 6px 6px;
+      border-radius: 6px 0 6px 6px;
+    }
+  }
+}
+
+.left-nav {
+  padding: 0;
+  border: 1px solid #D3D3CE;
+  min-height: 400px;
+
+  a.single-btn {
+    .nav-link;
+    border-right: none;
+  }
+
+  .btn-group-vertical {
+    display: block;
+    width: 100%;
+    .btn {
+      text-align: left;
+      color: #0D355A;
+    }
+
+  }
 }
