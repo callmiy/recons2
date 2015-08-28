@@ -22,7 +22,7 @@ function LetterOfCreditEditController($scope, lc, close, getCurrencies, getCusto
   $scope.getCustomers = getCustomers;
   $scope.statusText = null;
 
-  $scope.editLc = function(editedLc, statusText) {
+  $scope.editLc = function (editedLc, statusText) {
     close({
       mode: MODE_SAVE,
       editedLc: editedLc,
@@ -30,24 +30,26 @@ function LetterOfCreditEditController($scope, lc, close, getCurrencies, getCusto
     });
   };
 
-  $scope.close = function(oldLc) {
+  $scope.close = function (oldLc) {
     $scope.lc = oldLc
     close(500);
   };
 }
 
-letterOfCredit.controller('LetterOfCreditDeleteController', ['$scope', 'lc', 'close',
-                                                             function LetterOfCreditDeleteController($scope, lc,
-                                                               close) {
+letterOfCredit.controller('LetterOfCreditDeleteController', LetterOfCreditDeleteController)
 
-                                                               $scope.lc = lc;
-                                                               $scope.confirmDelete = function(response) {
-                                                                 close(response, 500);
-                                                               };
-                                                               $scope.close = function() {
-                                                                 close();
-                                                               };
-                                                             }]);
+LetterOfCreditDeleteController.$inject = ['$scope', 'lc', 'close']
+
+function LetterOfCreditDeleteController($scope, lc, close) {
+
+  $scope.lc = lc;
+  $scope.confirmDelete = function (response) {
+    close(response, 500);
+  };
+  $scope.close = function () {
+    close();
+  };
+}
 
 letterOfCredit.directive('displayedLceesTable', displayedLceesTable);
 
@@ -60,7 +62,7 @@ displayedLceesTable.$inject = [
 ];
 
 function displayedLceesTable(parseBidDate, ModalService, xhrErrorDisplay, $location,
-  LetterOfCreditStatuses) {
+                             LetterOfCreditStatuses) {
 
   return {
     restrict: 'E',
@@ -116,25 +118,25 @@ function displayedLceesTable(parseBidDate, ModalService, xhrErrorDisplay, $locat
           controller: 'LetterOfCreditDeleteController',
           inputs: {lc: lcObj}
         }
-      ).then(function(modal) {
-               modal.element.dialog({
-                 dialogClass: 'no-close'
-               });
+      ).then(function (modal) {
+          modal.element.dialog({
+            dialogClass: 'no-close'
+          });
 
-               modal.close.then(function(shouldDelete) {
-                 if (shouldDelete) {
-                   lcObj.$delete(
-                     function(successData) {
-                       console.log('\n\n\nsuccessData = ', successData, '\n\n\n');
-                       $scope.lcees = _.without($scope.lcees, successData);
-                     },
-                     function(err) {
-                       xhrErrorDisplay('Error occured while doing delete\n' + err);
-                     }
-                   )
-                 }
-               })
-             }
+          modal.close.then(function (shouldDelete) {
+            if (shouldDelete) {
+              lcObj.$delete(
+                function (successData) {
+                  console.log('\n\n\nsuccessData = ', successData, '\n\n\n');
+                  $scope.lcees = _.without($scope.lcees, successData);
+                },
+                function (err) {
+                  xhrErrorDisplay('Error occured while doing delete\n' + err);
+                }
+              )
+            }
+          })
+        }
       )
     }
 
@@ -144,7 +146,7 @@ function displayedLceesTable(parseBidDate, ModalService, xhrErrorDisplay, $locat
         controller: 'LetterOfCreditEditController',
         inputs: {lc: lcObj}
 
-      }).then(function(modal) {
+      }).then(function (modal) {
         modal.element.dialog({
           dialogClass: 'no-close',
           title: 'Edit Letter of Credit ' + (lcObj.mf || lcObj.applicant_data.name),
@@ -153,7 +155,7 @@ function displayedLceesTable(parseBidDate, ModalService, xhrErrorDisplay, $locat
           minHeight: 600
         });
 
-        modal.close.then(function(lcData) {
+        modal.close.then(function (lcData) {
 
           switch (lcData.mode) {
             case MODE_SAVE:
@@ -173,12 +175,12 @@ function displayedLceesTable(parseBidDate, ModalService, xhrErrorDisplay, $locat
                 delete lcToSave.ccy_obj;
 
                 lcToSave.$put(
-                  function(data) {
+                  function (data) {
                     if (lcData.statusText) {
                       createLcStatus(lcData.statusText, editedLc.url);
                     }
                   },
-                  function(err) {
+                  function (err) {
                     xhrErrorDisplay(err);
                   }
                 );
@@ -195,7 +197,7 @@ function displayedLceesTable(parseBidDate, ModalService, xhrErrorDisplay, $locat
       });
     };
 
-    $scope.goToDetailPage = function(lcObj) {
+    $scope.goToDetailPage = function (lcObj) {
       $location.path('details/' + lcObj.id);
     };
 
@@ -203,7 +205,7 @@ function displayedLceesTable(parseBidDate, ModalService, xhrErrorDisplay, $locat
       new LetterOfCreditStatuses({
         text: text,
         lc: lcUrl
-      }).$save(function() {}, function(error) {xhrErrorDisplay(error);}
+      }).$save(function () {}, function (error) {xhrErrorDisplay(error);}
       );
     }
   }

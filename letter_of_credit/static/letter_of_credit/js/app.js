@@ -1,7 +1,5 @@
 "use strict";
 
-var angular = require('angular');
-
 angular.module('letterOfCreditApp', ['rootApp'])
   .config(require('commons').interpolateProviderConfig)
   .config(router)
