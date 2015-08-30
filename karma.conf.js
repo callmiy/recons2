@@ -18,27 +18,7 @@ module.exports = function(config) {
 
     browsers: ['Chrome'],
 
-    webpack: {
-      cache: true,
-
-      debug: true,
-
-      devtool: '@inline-source-map',
-
-      resolve: {
-        alias: {
-          commons: __dirname + '/core_recons/commonsjs'
-        }
-      },
-
-      module: {
-        postLoaders: [{
-          test: /\.js$/,
-          exclude: /(spec\.js|node_modules)\//,
-          loader: 'istanbul-instrumenter'
-        }]
-      }
-    },
+    webpack: require('./webpack.config.base.js').webpackTestConfig,
 
     webpackMiddleware: {
       noInfo: true
