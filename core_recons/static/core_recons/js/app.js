@@ -10,4 +10,5 @@ angular.module('rootApp', [
 
 require('./commons/number-format.js')
 require('./commons/to-upper.js')
+require('./commons/commons.services.js')
 require('./search-lc')

@@ -16,13 +16,9 @@ function searchLc() {
 
     templateUrl: rootCommons.buildUrl(rootCommons.rootAppName, 'search-lc/search-lc.html'),
 
-    controller: 'SearchLcCtrl',
-
-    controllerAs: 'searchLc'
+    controller: 'SearchLcCtrl as searchLc'
   }
 }
-
-//CreateNewPaymentCtrl.$inject = ['$element']
 
 function SearchLcCtrl() {
   //var vm = this;
