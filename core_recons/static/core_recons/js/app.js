@@ -3,11 +3,11 @@
 angular.module('rootApp', [
   'ngRoute',
   'ui.bootstrap',
-  'kanmii.numberFormatDirective',
-  'kanmii.toUpperDirective',
   'ngResource',
   'ngAnimate',
   'angularModalService'
 ])
 
+require('./commons/number-format.js')
+require('./commons/to-upper.js')
 require('./search-lc')
