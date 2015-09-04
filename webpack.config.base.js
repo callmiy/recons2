@@ -20,7 +20,7 @@ var webpackTestConfig = {
   module: {
     postLoaders: [{
       test: /\.js$/,
-      exclude: /(spec\.js|node_modules)\//,
+      exclude: /(spec\.js|node_modules\/|compiled\.js|compiled\.min\.js)/,
       loader: 'istanbul-instrumenter'
     }]
   }

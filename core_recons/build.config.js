@@ -5,23 +5,22 @@
 var path = require('path')
 var baseConfig = require('../webpack.config.base').webpackBaseConfig
 
-var letterOfCredit = path.join(__dirname, 'static', 'letter_of_credit')
-var entry = path.join(letterOfCredit, 'js', 'app.js');
-var destDir = path.join(letterOfCredit, 'js');
-var jsMinify = [
-  path.join(letterOfCredit, 'js', 'app.js')
-]
+var rootApp = path.join(__dirname, 'static', 'core_recons')
+var destDir = path.join(rootApp, 'js')
+var entryFileName = 'app.js'
+var destFileName = 'app.js'
+var destFilePath = path.join(destDir, destFileName)
+var entry = path.join(destDir, entryFileName)
+var jsMinify = [entry]
 
 var webpackConfig = {
+  cache: true,
+  watch: true,
   entry: entry,
 
   output: {
     path: destDir,
-    filename: 'app.js'
-  },
-
-  resolve: {
-    root: [letterOfCredit]
+    filename: destFileName
   }
 }
 
@@ -31,8 +30,9 @@ for (var key in baseConfig) {
 
 module.exports = {
   destDir: destDir,
-  base: letterOfCredit,
+  base: rootApp,
   entry: entry,
   webpackConfig: webpackConfig,
-  jsMinify: jsMinify
+  jsMinify: jsMinify,
+  destFilePath: destFilePath
 }

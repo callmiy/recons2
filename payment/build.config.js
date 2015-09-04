@@ -3,7 +3,7 @@
 /*jshint camelcase:false*/
 
 var path = require('path')
-var baseConfig = require('../webpack.config.base')
+var baseConfig = require('../webpack.config.base').webpackBaseConfig
 
 var payment = path.join(__dirname, 'static', 'payment')
 var entry = path.join(payment, 'js', 'app.js');
