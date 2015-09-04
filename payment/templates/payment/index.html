@@ -22,6 +22,7 @@
 
       <h1 class="current-state-title">Payment of Letter Of Credit: {$ $state.current.data.title $}</h1>
     </div>
+
     <hr/>
 
     <div class="slide" ui-view>
@@ -33,9 +34,9 @@
         <button class="btn btn-info" ng-click="$state.go('deferred_payment.display')">
           Deferred Payments
         </button>
-
-        <create-new-payment></create-new-payment>
       </div>
+
+      <search-lc></search-lc>
     </div>
   </div>
 

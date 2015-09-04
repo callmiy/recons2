@@ -7,7 +7,7 @@ angular.module('letterOfCreditPayment.deferred_payment',
 
   .controller('DeferredPaymentDisplayCtrl', DeferredPaymentDisplayCtrl)
 
-  .config(['$stateProvider', function letterOfCreditPaymentPreNegURLConfig($stateProvider) {
+  .config(['$stateProvider', function letterOfCreditDeferredPaymentStateConfig($stateProvider) {
     $stateProvider
       .state('deferred_payment', {
         data: {
@@ -22,12 +22,12 @@ angular.module('letterOfCreditPayment.deferred_payment',
       })
 
     $stateProvider.state('deferred_payment.display', {
-        url: '',
+      url: '',
 
-        templateUrl: paymentCommons.buildUrl('/deferred-payment/deferred-payment.display.html'),
+      templateUrl: paymentCommons.buildUrl('/deferred-payment/deferred-payment.display.html'),
 
-        controller: 'DeferredPaymentDisplayCtrl as defPayDisplay'
-      })
+      controller: 'DeferredPaymentDisplayCtrl as defPayDisplay'
+    })
 
     $stateProvider.state('deferred_payment.new', {
       url: '/new'
@@ -39,4 +39,4 @@ function DeferredPaymentDisplayCtrl() {
   vm.tableCaption = 'Deferred Payment Maturity Profile (Outstanding)'
 }
 
-require('./display')
+require('./table')

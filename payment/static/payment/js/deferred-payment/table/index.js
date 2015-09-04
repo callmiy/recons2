@@ -11,9 +11,9 @@ function deferredPaymentDisplay() {
   return {
     restrict: 'E',
 
-    controller: 'deferredPaymentDisplayCtrl as deferredPaymentDisplay',
+    controller: 'deferredPaymentDisplayCtrl as defPayTable',
 
-    templateUrl: paymentCommons.buildUrl('deferred-payment/display/display.html'),
+    templateUrl: paymentCommons.buildUrl('deferred-payment/table/display.html'),
 
     scope: {},
 
@@ -26,5 +26,5 @@ function deferredPaymentDisplay() {
 function deferredPaymentDisplayCtrl() {
   /*jshint validthis:true*/
   var vm = this
-  vm.css = paymentCommons.buildUrl('deferred-payment/display/display.min.css')
+  vm.css = paymentCommons.buildUrl('deferred-payment/table/display.min.css')
 }

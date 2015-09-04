@@ -22,8 +22,7 @@ function createNewPayment() {
   }
 }
 
-function CreateNewPaymentCtrl(scope, element) {
-
+function CreateNewPaymentCtrl() {
 }
 
 app.directive('createNewPaymentSearchLc', createNewPaymentSearchLc)
@@ -43,6 +42,7 @@ function createNewPaymentSearchLc() {
 app.controller('createNewPaymentSearchLcController', createNewPaymentSearchLcController)
 
 function createNewPaymentSearchLcController(scope, element) {
+  /*jshint validthis:true*/
   var vm = this;
   vm.element = element
 }

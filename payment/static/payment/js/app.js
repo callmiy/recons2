@@ -7,7 +7,7 @@ require('./create-new')
 angular.module('letterOfCreditPayment',
   ['rootApp',
    'ui.router',
-   'letterOfCreditPayment.create_new',
+    'rootApp.search_lc',
    'letterOfCreditPayment.deferred_payment',
    'letterOfCreditPayment.post_neg'
   ])
