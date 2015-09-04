@@ -1,4 +1,9 @@
 /////////////////  COMMONS ///////////////////////////////////////////
+Object.defineProperty(window, 'staticPrefix', {value: '/static/'})
+
+var commonsTestsContext = require.context('./core_recons/static/core_recons/js', true, /spec\.js$/)
+commonsTestsContext.keys().forEach(commonsTestsContext)
+
 var commonsContext = require.context('./core_recons/static/core_recons/js', true, /^index(?!spec)\.js$/)
 commonsContext.keys().forEach(commonsContext)
 /////////////////  COMMONS ///////////////////////////////////////////
