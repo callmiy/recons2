@@ -4,9 +4,9 @@ angular
   .module('letterOfCreditApp')
   .factory('LetterOfCredit', LetterOfCredit);
 
-LetterOfCredit.$inject = ['$resource', '$http', 'urls'];
+LetterOfCredit.$inject = ['$resource', 'urls'];
 
-function LetterOfCredit($resource, $http, urls) {
+function LetterOfCredit($resource, urls) {
   var url = appendToUrl(urls.letterOfCreditAPIUrl, ':id');
   return $resource(url, {id: '@id'}, {
       'put': {

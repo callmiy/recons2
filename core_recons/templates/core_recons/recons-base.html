@@ -1,37 +1,5 @@
-{% load static %}
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>{% block title %}Home{% endblock title %} - Recons App</title>
-  <link rel="stylesheet" href="{% static 'core_recons/css/compiled.min.css' %}">
-
-  {% block page_css %}{% endblock page_css %}
-
-  <script src="{% static 'core_recons/js/initial/compiled.min.js' %}"></script>
-  <script src="{% static 'core_recons/js/app.min.js' %}"></script>
-
-  <script>
+{% load static %}<!doctype html><html lang="en"><head><meta charset="UTF-8"><title>{% block title %}Home{% endblock title %} - Recons App</title><link rel="stylesheet" href="{% static 'core_recons/css/compiled.min.css' %}">{% block page_css %}{% endblock page_css %}<script src="{% static 'core_recons/js/initial/compiled.min.js' %}"></script><script src="{% static 'core_recons/js/app.min.js' %}"></script><script>
     var staticPrefix = '{% static "" %}';
-  </script>
-
-  {% block page_js_up %}
-    <script>
+  </script>{% block page_js_up %}<script>
       angular.module('rootApp').value('urls', JSON.parse('{{ urls | escapejs }}'));
-    </script>
-  {% endblock page_js_up %}
-</head>
-<body>
-  {% block main_nav_top %} {% include 'core_recons/top-nav.html' %} {% endblock main_nav_top %}
-
-  <div class="container-fluid">
-    {% block recons_app_login %}{% endblock recons_app_login %}
-
-    {% if not user.is_anonymous %}
-      {% block page_content %}{% endblock page_content %}
-    {% endif %}
-  </div>
-  {% block page_js %}{% endblock page_js %}
-
-</body>
-</html>
+    </script>{% endblock page_js_up %}</head><body>{% block main_nav_top %} {% include 'core_recons/top-nav.html' %} {% endblock main_nav_top %}<div class="container-fluid">{% block recons_app_login %}{% endblock recons_app_login %} {% if not user.is_anonymous %} {% block page_content %}{% endblock page_content %} {% endif %}</div>{% block page_js %}{% endblock page_js %}</body></html>

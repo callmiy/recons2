@@ -5,10 +5,10 @@ var services = angular.module('rootApp.services', [])
 services.factory('getCurrencies', getCurrencies)
 getCurrencies.$inject = ['$http', 'urls'];
 function getCurrencies($http, urls) {
-  return function (searchQuery) {
+  return function(searchQuery) {
     return $http.get(urls.currencyAPIUrl, {
       params: {code: searchQuery}
-    }).then(function (response) {
+    }).then(function(response) {
       return response.data;
     });
   };
@@ -17,10 +17,10 @@ function getCurrencies($http, urls) {
 services.factory('getCustomers', getCustomers);
 getCustomers.$inject = ['$http', 'urls'];
 function getCustomers($http, urls) {
-  return function (searchQuery) {
+  return function(searchQuery) {
     return $http.get(urls.customerAPIUrl, {
       params: {name: searchQuery}
-    }).then(function (response) {
+    }).then(function(response) {
       return response.data;
     });
   };
@@ -28,7 +28,7 @@ function getCustomers($http, urls) {
 
 services.factory('parseDate', parseDate);
 function parseDate() {
-  return function (aDate) {
+  return function(aDate) {
     //bid date is a date string and not datetime
     if ((typeof aDate === 'string') && /\d{4}-\d{2}-\d{2}/.test(aDate)) {
       return aDate;
@@ -38,6 +38,20 @@ function parseDate() {
 
     return null;
   };
+}
+
+services.factory('LetterOfCredit', LetterOfCredit);
+
+LetterOfCredit.$inject = ['$resource', 'urls'];
+
+function LetterOfCredit($resource, urls) {
+  var url = appendToUrl(urls.letterOfCreditAPIUrl, ':id');
+  return $resource(url, {id: '@id'}, {
+      'put': {
+        method: 'PUT'
+      }
+    }
+  );
 }
 
 services.controller('XhrErrorDisplayCtrl', XhrErrorDisplayCtrl)

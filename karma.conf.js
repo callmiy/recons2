@@ -13,7 +13,8 @@ module.exports = function(config) {
     ],
 
     preprocessors: {
-      './karma-all-webpack-tests.js': ['webpack']
+      './karma-all-webpack-tests.js': ['webpack'],
+      '**/*.html': ['ng-html2js']
     },
 
     browsers: ['Chrome'],
