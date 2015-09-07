@@ -27,8 +27,7 @@ class LetterOfCredit(models.Model):
 
         if instance.lc_ref is not None:
             lc_ref = str(instance.lc_ref).strip().upper()
-            existing_with_same_ref = LetterOfCredit.objects.filter(
-                lc_ref=lc_ref)
+            existing_with_same_ref = LetterOfCredit.objects.filter(lc_ref=lc_ref)
             if instance.pk:
                 existing_with_same_ref = existing_with_same_ref.exclude(pk=instance.pk)
             if existing_with_same_ref.exists():
@@ -49,8 +48,7 @@ class LetterOfCredit(models.Model):
             instance.mf = mf
 
     def __unicode__(self):
-        return '%s | %s | %s' % (
-            self.applicant.name, self.mf, '{:,.2f}'.format(self.amount))
+        return '%s | %s | %s' % (self.applicant.name, self.mf, '{:,.2f}'.format(self.amount))
 
     def applicant_data(self):
         return self.applicant
@@ -125,7 +123,14 @@ class LCRegister(models.Model):
         ordering = ('-estb_date',)
 
     def __unicode__(self):
-        return '%s | %s | %s | %s%s' % (self.lc_number, self.applicant, self.mf, self.ccy_obj.code, '{:,.2f}'.format(self.lc_amt_org_ccy))
+        return '%s | %s | %s | %s%s' % (
+            self.lc_number, self.applicant, self.mf, self.ccy_obj.code, '{:,.2f}'.format(self.lc_amt_org_ccy))
+
+    def applicant_data(self):
+        return self.applicant_obj
+
+    def ccy_data(self):
+        return self.ccy_obj
 
     def update_acct_numb(self):
         if not self.acct_numb:

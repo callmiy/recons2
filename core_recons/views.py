@@ -13,6 +13,7 @@ class CoreAppsView(View):
             'customerAPIUrl': reverse('customer-list'),
             'currencyAPIUrl': reverse('currency-list'),
             'letterOfCreditAPIUrl': reverse('letterofcredit-list'),
+            'letterOfCredit1APIUrl': reverse('lcregister-list'),
             'letterOfCreditStatusesAPIUrl': reverse('lcstatus-list'),
         })
 

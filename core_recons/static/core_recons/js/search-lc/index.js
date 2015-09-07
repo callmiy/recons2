@@ -5,6 +5,7 @@
 var rootCommons = require('commons')
 
 var app = angular.module('rootApp.search_lc', ['rootApp', 'rootApp.services'])
+app.config(rootCommons.interpolateProviderConfig)
 
 app.controller('SearchLcCtrl', SearchLcCtrl)
 
@@ -21,7 +22,6 @@ function searchLc() {
       })
 
       if (searchLcForm) {
-        //console.log(searchLcForm.$error); return
         searchLcForm.$error = {}
         searchLcForm.$setPristine()
         searchLcForm.$setUntouched()
@@ -54,13 +54,14 @@ SearchLcCtrl.$inject = ['getCustomers', 'LetterOfCredit']
 function SearchLcCtrl(getCustomers, LetterOfCredit) {
   var vm = this;
 
+  vm.cssPath = rootCommons.buildUrl(rootCommons.rootAppName, 'search-lc/search-lc.min.css')
   vm.lcees = []
   vm.searchParams = {}
   vm.getCustomers = getCustomers
   vm.getLcees = getLcees
 
   function getLcees(searchParams) {
-    if (_.isEmpty(searchParams)) return
+    //if (_.isEmpty(searchParams)) return
 
     if (searchParams.applicant) searchParams.applicant = searchParams.applicant.name
 
