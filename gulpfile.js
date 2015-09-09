@@ -27,26 +27,26 @@ var initialCssFiles = [
 
 var lessNoCssMinFiles = [baseStaticCss + '/recons-base.less']
 
-gulp.task('minify-html', function() {
+gulp.task('minify-html', function () {
   return gulp.src(['./**/*.raw.html'], {base: '.'})
     .pipe(plugins.changed('.', {
-            hasChanged: function(stream, cb, sourceFile, targetPath) {
-              targetPath = targetPath.replace(/\.raw\.html$/, '.html')
-              plugins.changed.compareLastModifiedTime(stream, cb, sourceFile, targetPath)
-            }
-          }))
+      hasChanged: function (stream, cb, sourceFile, targetPath) {
+        targetPath = targetPath.replace(/\.raw\.html$/, '.html')
+        plugins.changed.compareLastModifiedTime(stream, cb, sourceFile, targetPath)
+      }
+    }))
     .pipe(plugins.minifyHtml({
-            empty: true,
-            spare: true,
-            quotes: true
-          }))
-    .pipe(plugins.rename(function(path) {
-            path.basename = path.basename.replace('.raw', '')
-                   }))
+      empty: true,
+      spare: true,
+      quotes: true,
+    }))
+    .pipe(plugins.rename(function (path) {
+      path.basename = path.basename.replace('.raw', '')
+    }))
     .pipe(gulp.dest("."))
 })
 
-gulp.task('initial-css', function() {
+gulp.task('initial-css', function () {
   return gulp.src(initialCssFiles)
     .pipe(plugins.concat('compiled.css'))
     .pipe(plugins.sourcemaps.init())
@@ -56,7 +56,7 @@ gulp.task('initial-css', function() {
     .pipe(gulp.dest(baseStaticCss))
 })
 
-gulp.task('initial-js', function() {
+gulp.task('initial-js', function () {
   return gulp.src(bower + '/jquery/dist/jquery.js')
     .pipe(plugins.addSrc.append(bower + '/angular/angular.js'))
     .pipe(plugins.addSrc.append(bower + '/angular-route/angular-route.js'))
@@ -82,7 +82,7 @@ gulp.task('initial-js', function() {
     .pipe(gulp.dest(baseStaticJs + '/initial'))
 })
 
-gulp.task('webpack-root-app', function() {
+gulp.task('webpack-root-app', function () {
   return gulp.src(rootApp.entry)
     .pipe(plugins.webpack(rootApp.webpackConfig, webpack))
     .pipe(plugins.sourcemaps.init())
@@ -92,14 +92,14 @@ gulp.task('webpack-root-app', function() {
     .pipe(gulp.dest(rootApp.destDir))
 })
 
-gulp.task('less-no-css-min', function() {
+gulp.task('less-no-css-min', function () {
   return gulp.src(lessNoCssMinFiles, {base: '.'})
     .pipe(plugins.less())
     .pipe(plugins.rename({suffix: '', extname: '.css'}))
     .pipe(gulp.dest(''))
 })
 
-gulp.task('less', function() {
+gulp.task('less', function () {
   return gulp.src(lessFiles, {base: '.'})
     .pipe(plugins.sourcemaps.init())
     .pipe(plugins.less())
@@ -109,7 +109,7 @@ gulp.task('less', function() {
     .pipe(gulp.dest(''))
 })
 
-gulp.task('webpack-letter-of-credit', function() {
+gulp.task('webpack-letter-of-credit', function () {
   return gulp.src(letterOfCredit.entry)
     .pipe(plugins.webpack(letterOfCredit.webpackConfig, webpack))
     .pipe(plugins.sourcemaps.init())
@@ -119,7 +119,7 @@ gulp.task('webpack-letter-of-credit', function() {
     .pipe(gulp.dest(letterOfCredit.destDir))
 })
 
-gulp.task('webpack-payment', function() {
+gulp.task('webpack-payment', function () {
   return gulp.src(payment.entry)
     .pipe(plugins.webpack(payment.webpackConfig, webpack))
     .pipe(plugins.sourcemaps.init())
@@ -129,7 +129,7 @@ gulp.task('webpack-payment', function() {
     .pipe(gulp.dest(payment.destDir))
 })
 
-gulp.task('browser-sync', function() {
+gulp.task('browser-sync', function () {
   browserSync.init({
     proxy: 'localhost:8000',
     files: ['**/*.html', '**/*.css', '**/*.js']
@@ -140,7 +140,7 @@ gulp.task('initial', ['initial-js', 'initial-css'])
 
 gulp.task('webpack', ['webpack-letter-of-credit', 'webpack-payment', 'webpack-root-app'])
 
-gulp.task('watch', function() {
+gulp.task('watch', function () {
   gulp.watch(lessFiles, ['less'])
   gulp.watch(['./**/*.raw.html'], ['minify-html'])
   gulp.watch(lessNoCssMinFiles, ['less-no-css-min', 'initial-css'])
