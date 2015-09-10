@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
@@ -6,7 +7,7 @@ import re
 
 prepend_zeros = lambda reqd, available: ''.join('0' for c in range(
     reqd - available)
-)
+                                                )
 
 
 class Branch(models.Model):
@@ -26,6 +27,13 @@ class Branch(models.Model):
 
     def __unicode__(self):
         return '%s: %s' % (self.name, self.code,)
+
+    @classmethod
+    def search_param(cls, qs, name_code):
+        if not name_code:
+            return qs
+
+        return qs.filter(Q(code__contains=name_code) | Q(name__icontains=name_code))
 
     class Meta:
         db_table = 'branch'
@@ -101,7 +109,7 @@ class AccountNumber(models.Model):
         'Customer', related_name='acct_numbs', verbose_name='Customer Name')
     branch = models.ForeignKey(Branch, related_name='accts')
     acct_id = models.CharField(
-        'Customer ID For Acct.', max_length=10, unique=True,)
+        'Customer ID For Acct.', max_length=10, unique=True, )
 
     def save(self, *args, **kwargs):
         if not self.nuban.isdigit:
@@ -196,6 +204,7 @@ class Customer(models.Model):
             return 'SUBSIDIARY'
         else:
             return 'NONE'
+
     subsidiary_status.short_description = 'STATUS'
 
     @property
@@ -210,6 +219,7 @@ class Customer(models.Model):
         with @ property.
         """
         return self.rm
+
     rman.short_description = 'Relationship Manager'
 
     def brn_name(self):
@@ -316,43 +326,44 @@ class LedgerAccount(models.Model):
 
     def acct_type_display(self):
         return self.acct_type.code
+
     acct_type_display.short_description = 'Account Type'
 
 
 @receiver(pre_save, sender=LedgerAccount, dispatch_uid='1403736920.856/-9-45298328huEb')
 def ledger_acct_pre_save(sender, **kwargs):
-        self = kwargs['instance']
-        self.number = self.number.upper().strip(' \t\n\r')
+    self = kwargs['instance']
+    self.number = self.number.upper().strip(' \t\n\r')
 
-        if self.acct_type.code == 'CASH' and 'CASH' not in self.number:
-            raise ValidationError(
-                'Incorrect Number for a cash security account.')
+    if self.acct_type.code == 'CASH' and 'CASH' not in self.number:
+        raise ValidationError(
+            'Incorrect Number for a cash security account.')
 
-        if self.acct_type.code == 'MCSH' and 'MCSH' not in self.number:
-            raise ValidationError(
-                'Incorrect number for a memo cash account.')
+    if self.acct_type.code == 'MCSH' and 'MCSH' not in self.number:
+        raise ValidationError(
+            'Incorrect number for a memo cash account.')
 
-        if self.acct_type.code == 'OTHN' and 'OTHN' not in self.number:
-            raise ValidationError(
-                'Incorrect number for a nostro other account')
+    if self.acct_type.code == 'OTHN' and 'OTHN' not in self.number:
+        raise ValidationError(
+            'Incorrect number for a nostro other account')
 
-        if self.external_number and self.external_number.ccy != self.ccy:
-            raise ValidationError(
-                "This ledger's currency must be %s" %
-                "the same as external account's currency")
+    if self.external_number and self.external_number.ccy != self.ccy:
+        raise ValidationError(
+            "This ledger's currency must be %s" %
+            "the same as external account's currency")
 
-        ccy_re = re.compile('(%s)' % '|'.join(
-            Currency.objects.values_list('code', flat=True)))
+    ccy_re = re.compile('(%s)' % '|'.join(
+        Currency.objects.values_list('code', flat=True)))
 
-        ccy_found = ccy_re.search(self.number)
+    ccy_found = ccy_re.search(self.number)
 
-        if ccy_found and ccy_found.group(0) != self.ccy.code:
-            raise ValidationError(
-                "Wrong currency for this account type")
+    if ccy_found and ccy_found.group(0) != self.ccy.code:
+        raise ValidationError(
+            "Wrong currency for this account type")
 
-        if self.is_default_memo and 'MCSH' not in self.number:
-            raise ValidationError(
-                'Only memo cash account can be set as a default memo')
+    if self.is_default_memo and 'MCSH' not in self.number:
+        raise ValidationError(
+            'Only memo cash account can be set as a default memo')
 
 
 def get_default_memos():

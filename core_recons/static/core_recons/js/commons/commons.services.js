@@ -9,15 +9,28 @@ function getCurrencies($http, urls) {
     return $http.get(urls.currencyAPIUrl, {
       params: {code: searchQuery}
     }).then(function(response) {
-      return response.data;
+      return response.data
     })
   }
 }
 
-services.factory('Customer', Customer);
-Customer.$inject = ['$resource', 'urls'];
+services.factory('Customer', Customer)
+Customer.$inject = ['$resource', 'urls']
 function Customer($resource, urls) {
-  var url = appendToUrl(urls.customerAPIUrl, ':id');
+  var url = appendToUrl(urls.customerAPIUrl, ':id')
+  return $resource(url, {id: '@id'}, {
+      'put': {
+        method: 'PUT'
+      }
+    }
+  )
+}
+
+
+services.factory('Branch', Branch)
+Branch.$inject = ['$resource', 'urls']
+function Branch($resource, urls) {
+  var url = appendToUrl(urls.branchAPIUrl, ':id')
   return $resource(url, {id: '@id'}, {
       'put': {
         method: 'PUT'

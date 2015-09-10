@@ -7,8 +7,6 @@ var rootCommons = require('commons')
 var app = angular.module('rootApp.search_lc', ['rootApp'])
 app.config(rootCommons.interpolateProviderConfig)
 
-app.controller('SearchLcCtrl', SearchLcCtrl)
-
 app.directive('searchLc', searchLcDirective)
 
 searchLcDirective.$inject = ['resetForm']
@@ -38,15 +36,15 @@ function searchLcDirective(resetForm) {
 
     templateUrl: rootCommons.buildUrl(rootCommons.rootAppName, 'search-lc/search-lc.html'),
 
-    controller: 'SearchLcCtrl as searchLc',
+    controller: 'SearchLcDirectiveCtrl as searchLc',
 
     link: link
   }
 }
 
-SearchLcCtrl.$inject = ['Customer', 'LetterOfCredit']
-
-function SearchLcCtrl(Customer, LetterOfCredit) {
+app.controller('SearchLcDirectiveCtrl', SearchLcDirectiveCtrl)
+SearchLcDirectiveCtrl.$inject = ['Customer', 'LetterOfCredit']
+function SearchLcDirectiveCtrl(Customer, LetterOfCredit) {
   var vm = this;
 
   vm.cssPath = rootCommons.buildUrl(rootCommons.rootAppName, 'search-lc/search-lc.min.css')

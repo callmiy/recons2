@@ -17,14 +17,14 @@ function resetForm() {
    *
    * @param form - an angular form instance
    * @param el - an angular element which wraps the form i.e the form is a descendant of the element
-   * @param controlClass - a unique class name for all controls of the form we wish to reset
+   * @param controlCssClass - a unique class name for all controls of the form we wish to reset
    */
-  function reset(form, el, controlClass) {
-    el.find('.' + controlClass).each(function() {
+  function reset(form, el, controlCssClass) {
+    el.find('.' + controlCssClass).each(function () {
       $(this).val('')
     })
 
-    form.$error = {}
+    //form.$error = {}
     form.$setPristine()
     form.$setUntouched()
   }
@@ -34,14 +34,15 @@ function resetForm() {
 
 app.controller('CustomerModalCtrl', CustomerModalCtrl)
 
-CustomerModalCtrl.$inject = ['resetForm', '$element', 'close']
+CustomerModalCtrl.$inject = ['resetForm', '$element', 'close', 'Branch']
 
-function CustomerModalCtrl(resetForm, element, close) {
+function CustomerModalCtrl(resetForm, element, close, Branch) {
   var vm = this
   vm.customer = {}
   vm.close = closeModal
   vm.reset = reset
   vm.addCustomer = addCustomer
+  vm.getBranch = getBranch
 
   function closeModal() {
     console.log('am closing');
@@ -54,6 +55,10 @@ function CustomerModalCtrl(resetForm, element, close) {
 
   function addCustomer(customer) {
     close(customer)
+  }
+
+  function getBranch(branchParam) {
+    return Branch.query({filter: branchParam}).$promise
   }
 }
 
@@ -83,26 +88,26 @@ addCustomerDirective.$inject = ['ModalService']
 function addCustomerDirective(ModalService) {
   return {
     restrict: 'A',
-    link: function(scope, elm, attributes, self) {
+    link: function (scope, elm, attributes, self) {
       elm
         .css({cursor: 'pointer'})
-        .bind('click', function() {
-                ModalService.showModal({
-                  template: require('./add-customer.html'),
-                  controller: 'CustomerModalCtrl as customerModal'
-                }).then(function(modal) {
-                  modal.element.dialog({
-                    dialogClass: 'no-close',
-                    modal: true,
-                    minWidth: 600,
-                    minHeight: 270
-                  })
+        .bind('click', function () {
+          ModalService.showModal({
+            template: require('./add-customer.html'),
+            controller: 'CustomerModalCtrl as customerModal'
+          }).then(function (modal) {
+            modal.element.dialog({
+              dialogClass: 'no-close',
+              modal: true,
+              minWidth: 600,
+              minHeight: 450
+            })
 
-                  modal.close.then(function(customer) {
-                    self.addCustomer(customer);
-                  })
-                })
-              })
+            modal.close.then(function (customer) {
+              self.addCustomer(customer);
+            })
+          })
+        })
     },
 
     controller: 'AddCustomerDirectiveCtrl as addCustomer',

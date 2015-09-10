@@ -54,9 +54,18 @@ class CustomerUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
         return super(CustomerUpdateAPIView, self).update(request, *args, **kwargs)
 
 
+class BranchFilter(django_filters.FilterSet):
+    filter = django_filters.CharFilter(action=Branch.search_param)
+
+    class Meta:
+        model = Branch
+        fields = ('filter',)
+
+
 class BranchListCreateAPIView(generics.ListCreateAPIView):
     queryset = Branch.objects.all()
     serializer_class = BranchSerializer
+    filter_class = BranchFilter
 
 
 class BranchUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):

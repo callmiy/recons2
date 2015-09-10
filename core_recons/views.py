@@ -6,19 +6,21 @@ from datetime import date
 import json
 import re
 
+
 class CoreAppsView(View):
     @staticmethod
     def get_core_app_urls():
         return json.dumps({
             'customerAPIUrl': reverse('customer-list'),
+            'branchAPIUrl': reverse('branch-list'),
             'currencyAPIUrl': reverse('currency-list'),
             'letterOfCreditAPIUrl': reverse('letterofcredit-list'),
             'letterOfCredit1APIUrl': reverse('lcregister-list'),
             'letterOfCreditStatusesAPIUrl': reverse('lcstatus-list'),
         })
 
-date_re = re.compile(
-    "^(?P<day>\d{1,2})[-/:](?P<mon>\d{1,2})[-/:](?P<yr>\d{4})$")
+
+date_re = re.compile("^(?P<day>\d{1,2})[-/:](?P<mon>\d{1,2})[-/:](?P<yr>\d{4})$")
 
 
 class UpdateModelDate(View):
