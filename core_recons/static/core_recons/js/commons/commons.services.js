@@ -1,6 +1,6 @@
 "use strict";
 
-var services = angular.module('rootApp.services', [])
+var services = angular.module('rootApp')
 
 services.factory('getCurrencies', getCurrencies)
 getCurrencies.$inject = ['$http', 'urls'];
@@ -10,20 +10,20 @@ function getCurrencies($http, urls) {
       params: {code: searchQuery}
     }).then(function(response) {
       return response.data;
-    });
-  };
+    })
+  }
 }
 
-services.factory('getCustomers', getCustomers);
-getCustomers.$inject = ['$http', 'urls'];
-function getCustomers($http, urls) {
-  return function(searchQuery) {
-    return $http.get(urls.customerAPIUrl, {
-      params: {name: searchQuery}
-    }).then(function(response) {
-      return response.data;
-    });
-  };
+services.factory('Customer', Customer);
+Customer.$inject = ['$resource', 'urls'];
+function Customer($resource, urls) {
+  var url = appendToUrl(urls.customerAPIUrl, ':id');
+  return $resource(url, {id: '@id'}, {
+      'put': {
+        method: 'PUT'
+      }
+    }
+  )
 }
 
 services.factory('parseDate', parseDate);
@@ -41,9 +41,7 @@ function parseDate() {
 }
 
 services.factory('LetterOfCredit', LetterOfCredit);
-
 LetterOfCredit.$inject = ['$resource', 'urls'];
-
 function LetterOfCredit($resource, urls) {
   var url = appendToUrl(urls.letterOfCredit1APIUrl, ':id');
   return $resource(url, {id: '@id'}, {
@@ -51,7 +49,7 @@ function LetterOfCredit($resource, urls) {
         method: 'PUT'
       }
     }
-  );
+  )
 }
 
 services.controller('XhrErrorDisplayCtrl', XhrErrorDisplayCtrl)

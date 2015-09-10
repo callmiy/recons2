@@ -5,7 +5,6 @@ from letter_of_credit.models import LetterOfCredit, LcStatus, LCRegister
 from letter_of_credit.serializers import LetterOfCreditSerializer, LCStatusSerializer, LetterOfCreditRegisterSerializer
 from core_recons.views import CoreAppsView
 
-
 import logging
 logger = logging.getLogger('recons_logger')
 

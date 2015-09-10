@@ -4,28 +4,23 @@
 
 var rootCommons = require('commons')
 
-var app = angular.module('rootApp.search_lc', ['rootApp', 'rootApp.services'])
+var app = angular.module('rootApp.search_lc', ['rootApp'])
 app.config(rootCommons.interpolateProviderConfig)
 
 app.controller('SearchLcCtrl', SearchLcCtrl)
 
-app.directive('searchLc', searchLc)
+app.directive('searchLc', searchLcDirective)
 
-function searchLc() {
+searchLcDirective.$inject = ['resetForm']
+
+function searchLcDirective(resetForm) {
 
   function link(scope, el, attr, controller) {
     function reset(searchLcForm) {
       controller.searchParams = {}
 
-      el.find('.form-control').each(function() {
-        $(this).val('')
-      })
-
       if (searchLcForm) {
-        searchLcForm.$error = {}
-        searchLcForm.$setPristine()
-        searchLcForm.$setUntouched()
-        searchLcForm.$invalid = false
+        resetForm(searchLcForm, el, 'form-control')
       }
     }
 
@@ -49,47 +44,27 @@ function searchLc() {
   }
 }
 
-SearchLcCtrl.$inject = ['getCustomers', 'LetterOfCredit']
+SearchLcCtrl.$inject = ['Customer', 'LetterOfCredit']
 
-function SearchLcCtrl(getCustomers, LetterOfCredit) {
+function SearchLcCtrl(Customer, LetterOfCredit) {
   var vm = this;
 
   vm.cssPath = rootCommons.buildUrl(rootCommons.rootAppName, 'search-lc/search-lc.min.css')
   vm.lcees = []
   vm.searchParams = {}
-  vm.getCustomers = getCustomers
+  vm.getCustomer = getCustomer
   vm.getLcees = getLcees
 
+  function getCustomer(customerName) {
+    return Customer.query({name: customerName}).$promise
+  }
+
   function getLcees(searchParams) {
-    //if (_.isEmpty(searchParams)) return
+    if (_.isEmpty(searchParams)) return //:TODO - tell user that search query matches nothing on server
 
     if (searchParams.applicant) searchParams.applicant = searchParams.applicant.name
 
     vm.lcees = LetterOfCredit.query(searchParams)
     console.log(vm.lcees)
   }
-}
-
-app.directive('createNewPaymentSearchLc', createNewPaymentSearchLc)
-
-function createNewPaymentSearchLc() {
-  return {
-    restrict: 'E',
-
-    bindToController: true,
-
-    templateUrl: rootCommons.buildUrl(rootCommons.rootAppName, 'create-new/create-new-payment-search.html'),
-
-    controller: 'createNewPaymentSearchLcController as createNewPaymentSearch'
-  }
-}
-
-app.controller('createNewPaymentSearchLcController', createNewPaymentSearchLcController)
-
-createNewPaymentSearchLcController.$inject = ['$element']
-
-function createNewPaymentSearchLcController(element) {
-  /*jshint validthis:true*/
-  var vm = this;
-  vm.element = element
 }

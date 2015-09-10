@@ -1,13 +1,16 @@
 import django_filters
 from rest_framework.viewsets import ModelViewSet
-from adhocmodels.models import Customer, Currency
-from adhocmodels.serializers import CustomerSerializer, CurrencySerializer
-from .models import NostroAccount, LedgerAccount, get_default_memos
-from .serializers import NostroAccountSerializer, LedgerAccountSerializer
+from adhocmodels.models import Customer, Currency, RelationshipManager
+from adhocmodels.serializers import CustomerSerializer, CurrencySerializer, RelationshipManagerSerializer
+from .models import NostroAccount, LedgerAccount, get_default_memos, Branch
+from .serializers import NostroAccountSerializer, LedgerAccountSerializer, BranchSerializer
 from django.http import HttpResponse
-from rest_framework import filters
 from rest_framework import generics
 import json
+
+import logging
+
+logger = logging.getLogger('recons_logger')
 
 
 def get_default_memos_view(request):
@@ -36,10 +39,47 @@ class CustomerFilter(django_filters.FilterSet):
         fields = ('name',)
 
 
-class CustomerListCreateViewSet(generics.ListCreateAPIView):
+class CustomerListCreateAPIView(generics.ListCreateAPIView):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
     filter_class = CustomerFilter
+
+
+class CustomerUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
+
+    def update(self, request, *args, **kwargs):
+        logger.info('Updating customer details with incoming data = \n%r', request.DATA)
+        return super(CustomerUpdateAPIView, self).update(request, *args, **kwargs)
+
+
+class BranchListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Branch.objects.all()
+    serializer_class = BranchSerializer
+
+
+class BranchUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Branch.objects.all()
+    serializer_class = BranchSerializer
+
+    def update(self, request, *args, **kwargs):
+        logger.info('Updating branch details with incoming data = \n%r', request.DATA)
+        return super(BranchUpdateAPIView, self).update(request, *args, **kwargs)
+
+
+class RelationshipManagerListCreateAPIView(generics.ListCreateAPIView):
+    queryset = RelationshipManager.objects.all()
+    serializer_class = RelationshipManagerSerializer
+
+
+class RelationshipManagerUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = RelationshipManager.objects.all()
+    serializer_class = RelationshipManagerSerializer
+
+    def update(self, request, *args, **kwargs):
+        logger.info('Updating relationship manager details with incoming data = \n%r', request.DATA)
+        return super(RelationshipManagerUpdateAPIView, self).update(request, *args, **kwargs)
 
 
 class CurrencyFilter(django_filters.FilterSet):
@@ -54,4 +94,3 @@ class CurrencyListCreateViewSet(generics.ListCreateAPIView):
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
     filter_class = CurrencyFilter
-

@@ -1,13 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.conf.urls import url, patterns
-from letter_of_credit.views import (
+from .views import (
+    Home,
     LetterOfCreditListCreateAPIView,
     LetterOfCreditUpdateAPIView,
     LCStatusListCreateAPIView,
     LCStatusUpdateAPIView,
     LetterOfCreditRegisterListCreateAPIView,
     LetterOfCreditRegisterUpdateAPIView)
-from .views import Home
 from .views.upload_lc_register import LCRegisterUploadView, ReleaseTelexView
 
 urlpatterns = patterns(

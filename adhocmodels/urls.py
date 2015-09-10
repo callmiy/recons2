@@ -1,7 +1,13 @@
 from django.conf.urls import url, patterns
-from adhocmodels.views import CustomerListCreateViewSet, CurrencyListCreateViewSet
-from .views import NostroAccountViewSet, LedgerAccountViewSet
-
+from rest_framework.generics import UpdateAPIView
+from .views import (
+    NostroAccountViewSet,
+    LedgerAccountViewSet,
+    CustomerUpdateAPIView,
+    CustomerListCreateAPIView,
+    CurrencyListCreateViewSet,
+    RelationshipManagerListCreateAPIView, RelationshipManagerUpdateAPIView, BranchListCreateAPIView,
+    BranchUpdateAPIView)
 
 urlpatterns = patterns(
     '',
@@ -28,13 +34,39 @@ urlpatterns += patterns(
     # </editor-fold>
 )
 
+# customer API
 urlpatterns += patterns(
     # <editor-fold description='customer api'>
     '',
 
-    url(r'^customers/?$', CustomerListCreateViewSet.as_view(), name='customer-list'),
+    url(r'^customers/?$', CustomerListCreateAPIView.as_view(), name='customer-list'),
 
-    url(r'^customers/(?P<pk>\d+)/?$', CustomerListCreateViewSet.as_view(), name='customer-detail')
+    url(r'^customers/(?P<pk>\d+)/?$', CustomerUpdateAPIView.as_view(), name='customer-detail')
+    # </editor-fold>
+)
+
+# Branch API
+urlpatterns += patterns(
+    # <editor-fold description='customer api'>
+    '',
+
+    url(r'^branches/?$', BranchListCreateAPIView.as_view(), name='branch-list'),
+
+    url(r'^branches/(?P<pk>\d+)/?$', BranchUpdateAPIView.as_view(), name='branch-detail')
+    # </editor-fold>
+)
+
+# RelationshipManager API
+urlpatterns += patterns(
+    # <editor-fold description='customer api'>
+    '',
+
+    url(r'^relationship-managers/?$', RelationshipManagerListCreateAPIView.as_view(), name='relationshipmanager-list'),
+
+    url(
+        r'^relationship-managers/(?P<pk>\d+)/?$',
+        RelationshipManagerUpdateAPIView.as_view(),
+        name='relationshipmanager-detail')
     # </editor-fold>
 )
 
@@ -49,7 +81,7 @@ urlpatterns += patterns(
     url(r'^ccy/(?P<pk>\d+)/?$',
         CurrencyListCreateViewSet.as_view(),
         name='currency-detail')
-    #</editor-fold>
+    # </editor-fold>
 )
 
 urlpatterns += patterns(
@@ -66,5 +98,5 @@ urlpatterns += patterns(
                                       'patch': 'partial_update',
                                       'delete': 'destroy'}),
         name='ledgeraccount-detail')
-    #</editor-fold>
+    # </editor-fold>
 )

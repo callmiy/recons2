@@ -22,7 +22,7 @@
 				       ng-model="vm.searchParams.applicant"
 				       ng-pattern="/.{4,}/"
 				       typeahead-min-length="3"
-				       typeahead="customer as customer.name for customer in vm.getCustomers($viewValue)"
+				       typeahead="customer as customer.name for customer in vm.getCustomer($viewValue)"
 					/>
 			</div>
 		</div>

@@ -25,7 +25,6 @@
 
               <input class="form-control" id="form-m" maxlength="13" ng-pattern="/^MF\d{3,}/"
                      ng-model="searchLc.searchParams.mf" to-upper/>
-              <img src="/static/core_recons/css/images/icon_addposting.gif" alt="" add-customer/>
             </div>
           </div>
 
@@ -37,8 +36,9 @@
                      ng-model="searchLc.searchParams.applicant"
                      ng-pattern="/.{4,}/"
                      typeahead-min-length="3"
-                     typeahead="customer as customer.name for customer in searchLc.getCustomers($viewValue)"
+                     typeahead="customer as customer.name for customer in searchLc.getCustomer($viewValue)"
                   />
+              <img src="/static/core_recons/css/images/icon_addposting.gif" alt="" add-customer/>
             </div>
           </div>
         </div>

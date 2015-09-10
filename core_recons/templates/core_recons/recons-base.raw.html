@@ -26,10 +26,10 @@
 
   <div class="container-fluid">
     {% block recons_app_login %}{% endblock recons_app_login %}
-    <a href="{% url 'process-for-posting' %}">process-for-posting</a>
+
     {% if not user.is_anonymous %}
       {% block page_content %}
-        <a href="{% url 'process-for-posting' %}">process-for-posting</a>
+
       {% endblock page_content %}
     {% endif %}
   </div>

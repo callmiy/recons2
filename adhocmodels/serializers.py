@@ -1,11 +1,20 @@
 from rest_framework import serializers
-from adhocmodels.models import Customer
-from .models import Currency, NostroAccount, LedgerAccount
+from .models import Currency, NostroAccount, LedgerAccount, Customer, RelationshipManager, Branch
 
 
-class CustomerSerializer(serializers.ModelSerializer):
+class CustomerSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Customer
+
+
+class RelationshipManagerSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = RelationshipManager
+
+
+class BranchSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Branch
 
 
 class CurrencySerializer(serializers.ModelSerializer):
