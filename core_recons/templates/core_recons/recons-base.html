@@ -3,4 +3,4 @@
     angular.module('rootApp').constant('staticPrefix', staticPrefix);
   </script>{% block page_js_up %}<script>
       angular.module('rootApp').value('urls', JSON.parse('{{ urls | escapejs }}'));
-    </script>{% endblock page_js_up %}</head><body>{% block main_nav_top %} {% include 'core_recons/top-nav.html' %} {% endblock main_nav_top %}<div class="container-fluid">{% block recons_app_login %}{% endblock recons_app_login %} {% if not user.is_anonymous %} {% block page_content %} {% endblock page_content %} {% endif %}</div>{% block page_js %}{% endblock page_js %}</body></html>
+    </script>{% endblock page_js_up %}</head><body>{% block main_nav_top %} {% include 'core_recons/top-nav.html' %} {% endblock main_nav_top %}<div class="container-fluid">{% block recons_app_login %}{% endblock recons_app_login %}<ul class="filetree"><li><span class="folder">Letter Of Credit</span><ul><li><span class="file"><a href="/admin/letter_of_credit/lcregister/" tabindex="-1">LC Register</a></span></li></ul></li></ul>{% if not user.is_anonymous %} {% block page_content %} {% endblock page_content %} {% endif %}</div>{% block page_js %}{% endblock page_js %}</body></html>

@@ -22,7 +22,8 @@ var lessFiles = [
 var initialCssFiles = [
   bower + '/bootstrap/dist/css/bootstrap.css',
   bower + '/jquery-ui/themes/smoothness/jquery-ui.css',
-  baseStaticCss + '/recons-base.css'
+  baseStaticCss + '/recons-base.css',
+  baseStaticCss + '/jquery.treeview.css'
 ]
 
 var lessNoCssMinFiles = [baseStaticCss + '/recons-base.less']
@@ -72,8 +73,7 @@ gulp.task('initial-js', function () {
     .pipe(plugins.addSrc.append(bower + '/underscore/underscore.js'))
     .pipe(plugins.addSrc.append(baseStaticJs + '/initial/lib.js'))
     .pipe(plugins.addSrc.append(baseStaticJs + '/initial/FileSaver.js'))
-    .pipe(plugins.addSrc.append(baseStaticJs + '/initial/directives/kanmii-number-format.js'))
-    .pipe(plugins.addSrc.append(baseStaticJs + '/initial/directives/kanmii-to-upper.js'))
+    .pipe(plugins.addSrc.append(baseStaticJs + '/initial/jquery.treeview.js'))
     .pipe(plugins.sourcemaps.init())
     .pipe(plugins.concat('compiled.js'))
     .pipe(plugins.uglify())

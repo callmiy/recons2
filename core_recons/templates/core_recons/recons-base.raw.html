@@ -28,6 +28,19 @@
   <div class="container-fluid">
     {% block recons_app_login %}{% endblock recons_app_login %}
 
+    <ul class="filetree">
+      <li>
+        <span class="folder">Letter Of Credit</span>
+        <ul>
+          <li>
+            <span class="file">
+              <a href="/admin/letter_of_credit/lcregister/" tabindex="-1">LC Register</a>
+            </span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
     {% if not user.is_anonymous %}
       {% block page_content %}
 
