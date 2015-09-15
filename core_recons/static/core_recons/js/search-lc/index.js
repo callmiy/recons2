@@ -6,6 +6,7 @@ var rootCommons = require('commons')
 
 var app = angular.module('rootApp.search_lc', ['rootApp'])
 app.config(rootCommons.interpolateProviderConfig)
+rootCommons.setStaticPrefix(app)
 
 app.directive('searchLc', searchLcDirective)
 

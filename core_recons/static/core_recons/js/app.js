@@ -1,5 +1,7 @@
 "use strict";
 
+var rootCommons = require('commons')
+
 var app = angular.module('rootApp', [
   'ngRoute',
   'ui.bootstrap',
@@ -7,7 +9,7 @@ var app = angular.module('rootApp', [
   'ngAnimate',
   'angularModalService'
 ])
-
+rootCommons.setStaticPrefix(app)
 app.factory('resetForm', resetForm)
 
 function resetForm() {

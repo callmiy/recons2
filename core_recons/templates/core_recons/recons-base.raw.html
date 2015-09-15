@@ -13,6 +13,7 @@
 
   <script>
     var staticPrefix = '{% static "" %}';
+    angular.module('rootApp').constant('staticPrefix', staticPrefix);
   </script>
 
   {% block page_js_up %}

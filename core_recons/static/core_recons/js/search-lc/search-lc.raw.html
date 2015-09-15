@@ -37,8 +37,8 @@
                      ng-pattern="/.{4,}/"
                      typeahead-min-length="3"
                      typeahead="customer as customer.name for customer in searchLc.getCustomer($viewValue)"
-                  />
-              <img src="/static/core_recons/css/images/icon_addposting.gif" alt="" add-customer/>
+                />
+              <img ng-src="{$$root.addIconSrc$}" alt="" add-customer/>
             </div>
           </div>
         </div>
@@ -51,3 +51,4 @@
     </form>
   </div>
 </div>
+
