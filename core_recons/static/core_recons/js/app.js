@@ -22,7 +22,7 @@ function resetForm() {
    * @param controlCssClass - a unique class name for all controls of the form we wish to reset
    */
   function reset(form, el, controlCssClass) {
-    el.find('.' + controlCssClass).each(function () {
+    el.find('.' + controlCssClass).each(function() {
       $(this).val('')
     })
 
@@ -36,18 +36,21 @@ function resetForm() {
 
 app.controller('CustomerModalCtrl', CustomerModalCtrl)
 
-CustomerModalCtrl.$inject = ['resetForm', '$element', 'close', 'Branch']
+CustomerModalCtrl.$inject = ['resetForm', '$element', 'close', 'Branch', 'xhrErrorDisplay']
 
-function CustomerModalCtrl(resetForm, element, close, Branch) {
+function CustomerModalCtrl(resetForm, element, close, Branch, xhrErrorDisplay) {
   var vm = this
   vm.customer = {}
   vm.close = closeModal
   vm.reset = reset
   vm.addCustomer = addCustomer
   vm.getBranch = getBranch
+  vm.createNewBranch = createNewBranch
+  vm.revealNewBranchForm = revealNewBranchForm
+  vm.dismissNewBranchForm = dismissNewBranchForm
 
   function closeModal() {
-    console.log('am closing');
+    close()
   }
 
   function reset(form) {
@@ -61,6 +64,42 @@ function CustomerModalCtrl(resetForm, element, close, Branch) {
 
   function getBranch(branchParam) {
     return Branch.query({filter: branchParam}).$promise
+  }
+
+  function createNewBranch(newBranch) {
+    if (!newBranch) return
+
+    var branch = new Branch(newBranch)
+    branch.$save(newBranchedSavedSuccess, newBranchedSavedError)
+
+    function newBranchedSavedSuccess(data){
+      vm.customer.branch = data
+      dismissNewBranchForm()
+    }
+
+    function newBranchedSavedError(xhr){
+      xhrErrorDisplay(xhr);
+    }
+  }
+
+  var $addNewCustomerContainer = element.find('.add-new-customer-container')
+  var $addCustomerFormCtrl = element.find('.add-customer-form-control')
+  var $newBranchContainer = element.find('.new-branch-form-container')
+
+  function dismissNewBranchForm() {
+    $newBranchContainer.hide()
+    $addCustomerFormCtrl.show()
+    $addNewCustomerContainer.removeClass('ui-widget-overlay ui-front').find('.form-control').each(function() {
+      $(this).prop('disabled', false)
+    })
+  }
+
+  function revealNewBranchForm() {
+    $addCustomerFormCtrl.hide()
+    $newBranchContainer.show()
+    $addNewCustomerContainer.addClass('ui-widget-overlay ui-front').find('.form-control').each(function() {
+      $(this).prop('disabled', true)
+    })
   }
 }
 
@@ -90,26 +129,28 @@ addCustomerDirective.$inject = ['ModalService']
 function addCustomerDirective(ModalService) {
   return {
     restrict: 'A',
-    link: function (scope, elm, attributes, self) {
+    link: function(scope, elm, attributes, self) {
       elm
         .css({cursor: 'pointer'})
-        .bind('click', function () {
-          ModalService.showModal({
-            template: require('./add-customer.html'),
-            controller: 'CustomerModalCtrl as customerModal'
-          }).then(function (modal) {
-            modal.element.dialog({
-              dialogClass: 'no-close',
-              modal: true,
-              minWidth: 600,
-              minHeight: 450
-            })
+        .bind('click', function() {
+                ModalService.showModal({
+                  template: require('./add-customer.html'),
+                  controller: 'CustomerModalCtrl as customerModal'
+                }).then(function(modal) {
+                  modal.element.dialog({
+                    dialogClass: 'no-close',
+                    modal: true,
+                    minWidth: 600,
+                    minHeight: 450
+                  })
 
-            modal.close.then(function (customer) {
-              self.addCustomer(customer);
-            })
-          })
-        })
+                  modal.close.then(function(customer) {
+                    if (customer && angular.isObject(customer)) {
+                      self.addCustomer(customer)
+                    }
+                  })
+                })
+              })
     },
 
     controller: 'AddCustomerDirectiveCtrl as addCustomer',
