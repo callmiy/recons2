@@ -2,52 +2,79 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>{% block title %}Home{% endblock title %} - Recons App</title>
-  <link rel="stylesheet" href="{% static 'core_recons/css/compiled.min.css' %}">
+    <meta charset="UTF-8">
+    <title>{% block title %}Home{% endblock title %} - Recons App</title>
+    <link rel="stylesheet" href="{% static 'core_recons/css/compiled.min.css' %}">
 
-  {% block page_css %}{% endblock page_css %}
+    {% block page_css %}{% endblock page_css %}
 
-  <script src="{% static 'core_recons/js/initial/compiled.min.js' %}"></script>
-  <script src="{% static 'core_recons/js/app.min.js' %}"></script>
+    <script src="{% static 'core_recons/js/initial/compiled.min.js' %}"></script>
+    <script src="{% static 'core_recons/js/app.min.js' %}"></script>
 
-  <script>
-    var staticPrefix = '{% static "" %}';
-    angular.module('rootApp').constant('staticPrefix', staticPrefix);
-  </script>
-
-  {% block page_js_up %}
     <script>
-      angular.module('rootApp').value('urls', JSON.parse('{{ urls | escapejs }}'));
+        var staticPrefix = '{% static "" %}';
+        angular.module('rootApp').constant('staticPrefix', staticPrefix);
     </script>
-  {% endblock page_js_up %}
+
+    {% block page_js_up %}
+        <script>
+            angular.module('rootApp').value('urls', JSON.parse('{{ urls | escapejs }}'));
+        </script>
+    {% endblock page_js_up %}
 </head>
 <body>
-  {% block main_nav_top %} {% include 'core_recons/top-nav.html' %} {% endblock main_nav_top %}
+{% block main_nav_top %} {% include 'core_recons/top-nav.html' %} {% endblock main_nav_top %}
 
-  <div class="container-fluid">
+<div class="container-fluid">
     {% block recons_app_login %}{% endblock recons_app_login %}
 
-    <ul class="filetree">
-      <li>
-        <span class="folder">Letter Of Credit</span>
-        <ul>
-          <li>
-            <span class="file">
-              <a href="/admin/letter_of_credit/lcregister/" tabindex="-1">LC Register</a>
-            </span>
-          </li>
-        </ul>
-      </li>
-    </ul>
-
     {% if not user.is_anonymous %}
-      {% block page_content %}
+        {% block page_content %}
+            <div id="main-menu-tree">
+                <ul class="">
+                    <li>Letter of Credit
+                        <ul>
+                            <li>
+                                <span>
+                                    <a href="/admin/letter_of_credit/lcregister/" tabindex="-1">LC Register</a>
+                                </span>
+                            </li>
 
-      {% endblock page_content %}
+                            <li>
+                                <span>
+                                    <a href="{% url 'letter-of-credit' %}" tabindex="-1">Manage Letters of Credit</a>
+                                </span>
+                            </li>
+
+                            <li>
+                                <span>
+                                    <a href="{% url 'upload_lc_register' %}" tabindex="-1">Upload LC Register</a>
+                                </span>
+                            </li>
+
+                            <li>
+                                <span>
+                                    <a href="{% url 'release-telex-mt-700' %}" tabindex="-1">Release Telex MT700</a>
+                                </span>
+                            </li>
+
+                            <li>
+                                <span>
+                                    <a href="{% url 'payment-home' %}" tabindex="-1">Payments</a>
+                                </span>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        {% endblock page_content %}
     {% endif %}
-  </div>
-  {% block page_js %}{% endblock page_js %}
+</div>
+{% block page_js %}
+    <script>
+        $('#main-menu-tree').jstree()
+    </script>
+{% endblock page_js %}
 
 </body>
 </html>

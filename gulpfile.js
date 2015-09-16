@@ -22,8 +22,9 @@ var lessFiles = [
 var initialCssFiles = [
   bower + '/bootstrap/dist/css/bootstrap.css',
   bower + '/jquery-ui/themes/smoothness/jquery-ui.css',
-  baseStaticCss + '/recons-base.css',
-  baseStaticCss + '/jquery.treeview.css'
+  bower + '/jstree/dist/themes/default/style.css',
+  //baseStaticCss + '/jquery.treeview.css',
+  baseStaticCss + '/recons-base.css'
 ]
 
 var lessNoCssMinFiles = [baseStaticCss + '/recons-base.less']
@@ -48,13 +49,19 @@ gulp.task('minify-html', function () {
 })
 
 gulp.task('initial-css', function () {
-  return gulp.src(initialCssFiles)
-    .pipe(plugins.concat('compiled.css'))
+  var gulpInitialCss = gulp.src(initialCssFiles[0])
+
+  for (var i = 1; i < initialCssFiles.length; i++) {
+    gulpInitialCss = gulpInitialCss.pipe(plugins.addSrc.append(initialCssFiles[i]))
+  }
+  gulpInitialCss.pipe(plugins.concat('compiled.css'))
     .pipe(plugins.sourcemaps.init())
     .pipe(plugins.minifyCss())
     .pipe(plugins.rename({suffix: '.min'}))
     .pipe(plugins.sourcemaps.write('.'))
     .pipe(gulp.dest(baseStaticCss))
+
+  return gulpInitialCss
 })
 
 gulp.task('initial-js', function () {
@@ -71,9 +78,10 @@ gulp.task('initial-js', function () {
     .pipe(plugins.addSrc.append(bower + '/jquery-ui/jquery-ui.js'))
     .pipe(plugins.addSrc.append(bower + '/papa-parse/papaparse.js'))
     .pipe(plugins.addSrc.append(bower + '/underscore/underscore.js'))
+    .pipe(plugins.addSrc.append(bower + '/jstree/dist/jstree.js'))
     .pipe(plugins.addSrc.append(baseStaticJs + '/initial/lib.js'))
     .pipe(plugins.addSrc.append(baseStaticJs + '/initial/FileSaver.js'))
-    .pipe(plugins.addSrc.append(baseStaticJs + '/initial/jquery.treeview.js'))
+    //.pipe(plugins.addSrc.append(baseStaticJs + '/initial/jquery.treeview.js'))
     .pipe(plugins.sourcemaps.init())
     .pipe(plugins.concat('compiled.js'))
     .pipe(plugins.uglify())
