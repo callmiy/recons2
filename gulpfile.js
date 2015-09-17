@@ -16,6 +16,7 @@ var rootApp = require('./core_recons/build.config')
 var lessFiles = [
   './payment/static/payment/**/*.less',
   './core_recons/static/core_recons/**/*.less',
+  '!./core_recons/static/core_recons/css/recons-base.less',
   './letter_of_credit/static/letter_of_credit/**/*.less'
 ]
 
