@@ -168,3 +168,7 @@ form.align-vertical .submit-row {
 .jstree-default > .jstree-container-ul > .jstree-node {
   margin-bottom: 20px;
 }
+.jstree-default > .jstree-container-ul > .jstree-node > .jstree-anchor {
+  font-weight: 500;
+  font-size: 15px;
+}

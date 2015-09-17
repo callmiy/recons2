@@ -1,14 +1,15 @@
 "use strict";
 
+var rootCommons = require('commons')
 var services = angular.module('rootApp')
 
 services.factory('getCurrencies', getCurrencies)
 getCurrencies.$inject = ['$http', 'urls'];
 function getCurrencies($http, urls) {
-  return function(searchQuery) {
+  return function (searchQuery) {
     return $http.get(urls.currencyAPIUrl, {
       params: {code: searchQuery}
-    }).then(function(response) {
+    }).then(function (response) {
       return response.data
     })
   }
@@ -41,7 +42,7 @@ function Branch($resource, urls) {
 
 services.factory('parseDate', parseDate);
 function parseDate() {
-  return function(aDate) {
+  return function (aDate) {
     //bid date is a date string and not datetime
     if ((typeof aDate === 'string') && /\d{4}-\d{2}-\d{2}/.test(aDate)) {
       return aDate;
@@ -68,9 +69,9 @@ function LetterOfCredit($resource, urls) {
 services.controller('XhrErrorDisplayCtrl', XhrErrorDisplayCtrl)
 services.factory('xhrErrorDisplay', xhrErrorDisplay);
 
-XhrErrorDisplayCtrl.$inject = ['$scope', 'error']
+XhrErrorDisplayCtrl.$inject = ['error']
 
-function XhrErrorDisplayCtrl($scope, error) {
+function XhrErrorDisplayCtrl(error) {
   error = angular.copy(error);
 
   console.log(error);//TODO: remove console logging
@@ -78,7 +79,7 @@ function XhrErrorDisplayCtrl($scope, error) {
   if (error.status === 400) {
     error.messages = error.data;
   }
-  $scope.error = error;
+  this.error = error;
 }
 
 xhrErrorDisplay.$inject = ['ModalService'];
@@ -86,8 +87,8 @@ xhrErrorDisplay.$inject = ['ModalService'];
 function xhrErrorDisplay(ModalService) {
   return function handleError(errorObj) {
     ModalService.showModal({
-      template: require('./xhr-error-display.service.html'),
-      controller: 'XhrErrorDisplayCtrl',
+      templateUrl: rootCommons.buildUrl('core_recons' ,'commons/./xhr-error-display.service.html'),
+      controller: 'XhrErrorDisplayCtrl as xhrErrorDisplay',
       inputs: {error: errorObj}
     }).then(modalHandler);
 
@@ -95,7 +96,7 @@ function xhrErrorDisplay(ModalService) {
       modal.element.dialog({
         modal: true,
         dialogClass: 'no-close',
-        title: 'Error ' + errorObj.status
+        title: 'Request Not Completed'
       });
     }
   }
