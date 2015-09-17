@@ -83,7 +83,6 @@ pre_save.connect(
     dispatch_uid='bhv1409846567.90687&EHIJG^644+78//4'
 )
 
-
 class LCRegister(models.Model):
     lc_number = models.CharField('LC Number', max_length=20)
     mf = models.CharField('Form M Number', max_length=20, null=True, blank=True)

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from letter_of_credit.models import LetterOfCredit, LCRegister
+# from letter_of_credit.models.lc_register import LCRegister
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
 
