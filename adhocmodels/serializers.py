@@ -13,8 +13,12 @@ class RelationshipManagerSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class BranchSerializer(serializers.HyperlinkedModelSerializer):
+    view_value = serializers.Field(source='view_value', )
+
     class Meta:
         model = Branch
+
+        fields = ('code', 'name', 'view_value')
 
 
 class CurrencySerializer(serializers.ModelSerializer):

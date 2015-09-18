@@ -28,6 +28,9 @@ class Branch(models.Model):
     def __unicode__(self):
         return '%s: %s' % (self.name, self.code,)
 
+    def view_value(self):
+        return self.__unicode__()
+
     @classmethod
     def search_param(cls, qs, name_code):
         if not name_code:
