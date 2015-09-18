@@ -9,7 +9,8 @@ from .views import (
     LetterOfCreditRegisterListCreateAPIView,
     LetterOfCreditRegisterUpdateAPIView,
     FormMListCreateAPIView,
-    FormMUpdateAPIView, )
+    FormMUpdateAPIView,
+    FormMHomeView)
 from .views.upload_lc_register import LCRegisterUploadView, ReleaseTelexView
 
 urlpatterns = patterns(
@@ -67,15 +68,13 @@ urlpatterns += patterns(
 )
 
 urlpatterns += patterns(
-    # <editor-fold description='letter of credit api'>
+    # <editor-fold description='form M'>
     '',
 
-    url(r'^form-m/?$',
-        FormMListCreateAPIView.as_view(),
-        name='formm-list'),
+    url(r'^form-m/?$', FormMListCreateAPIView.as_view(), name='formm-list'),
 
-    url(r'^form-m/(?P<pk>\d+)/?$',
-        FormMUpdateAPIView.as_view(),
-        name='formm-detail')
+    url(r'^form-m/(?P<pk>\d+)/?$', FormMUpdateAPIView.as_view(), name='formm-detail'),
+
+    url(r'^form-m/home/?$', FormMHomeView.as_view(), name='form-m')
     # </editor-fold>
 )

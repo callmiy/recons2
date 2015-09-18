@@ -13,7 +13,8 @@ from letter_of_credit.views.lc_register import (
 
 from letter_of_credit.views.form_m import (
     FormMListCreateAPIView,
-    FormMUpdateAPIView, )
+    FormMUpdateAPIView,
+    FormMHomeView)
 
 
 class Home(CoreAppsView):
