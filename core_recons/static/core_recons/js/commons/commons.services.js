@@ -129,6 +129,18 @@ function LCIssue($resource, urls) {
   )
 }
 
+services.factory('LCIssueConcrete', LCIssueConcrete)
+LCIssueConcrete.$inject = ['$resource', 'urls']
+function LCIssueConcrete($resource, urls) {
+  var url = appendToUrl(urls.lcIssueConcreteAPIUrl, ':id');
+  return $resource(url, {id: '@id'}, {
+      'put': {
+        method: 'PUT'
+      }
+    }
+  )
+}
+
 services.controller('XhrErrorDisplayCtrl', XhrErrorDisplayCtrl)
 XhrErrorDisplayCtrl.$inject = ['error', 'errorKeyMap']
 function XhrErrorDisplayCtrl(error, errorKeyMap) {

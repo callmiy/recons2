@@ -4,7 +4,8 @@ var rootCommons = require('commons')
 
 var app = angular.module('form-m',
   ['rootApp',
-   'ui.router'
+   'ui.router',
+   'kanmii-underscore'
   ])
 
 //rootCommons.setStaticPrefix(app)
@@ -37,7 +38,7 @@ function HomeController(FormM, scope) {
   vm.formMs = FormM.getPaginated()
 
   scope.$watch(function getNewFormM() {return vm.newFormM}, function(newFormM) {
-    if (newFormM){
+    if (newFormM) {
       vm.formMs.results.pop()
       vm.formMs.results.unshift(newFormM)
     }

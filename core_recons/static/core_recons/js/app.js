@@ -2,6 +2,11 @@
 
 var rootCommons = require('commons')
 
+var underscore = angular.module('kanmii-underscore', []);
+underscore.factory('kanmiiUnderscore', function() {
+  return window._
+});
+
 var app = angular.module('rootApp', [
   'ngRoute',
   'ui.bootstrap',
@@ -31,7 +36,7 @@ function resetForm() {
     form.$setPristine()
     form.$setUntouched()
 
-    cb ? cb() : angular.noop
+    cb ? cb() : angular.noop()
   }
 
   return reset

@@ -57,10 +57,12 @@ AddFormMModalCtrl.$inject = [
   'xhrErrorDisplay',
   'getTypeAheadCurrency',
   'FormM',
-  'formatDate'
+  'formatDate',
+  'kanmiiUnderscore',
+  'LCIssueConcrete'
 ]
 function AddFormMModalCtrl(resetForm, element, close, getTypeAheadCustomer, xhrErrorDisplay,
-  getTypeAheadCurrency, FormM, formatDate) {
+  getTypeAheadCurrency, FormM, formatDate, kanmiiUnderscore, LCIssueConcrete) {
 
   var vm = this
 
@@ -103,6 +105,12 @@ function AddFormMModalCtrl(resetForm, element, close, getTypeAheadCustomer, xhrE
     formM.$save(formMSavedSuccess, formMSavedError)
 
     function formMSavedSuccess(data) {
+      kanmiiUnderscore.each(vm.selectedLcIssues, function(val, key) {
+        if (val) {
+          new LCIssueConcrete({issue: key, mf: data.url})
+            .$save(function(data) { console.log(data); }, function(xhr) {console.log(xhr);})
+        }
+      })
       close(data)
     }
 
