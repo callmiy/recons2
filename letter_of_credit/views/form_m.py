@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics, pagination
 from core_recons.views import CoreAppsView
 from letter_of_credit.models import FormM
 from letter_of_credit.serializers import FormMSerializer
@@ -9,9 +9,14 @@ import logging
 logger = logging.getLogger('recons_logger')
 
 
+class FormMListPagination(pagination.PageNumberPagination):
+    page_size = 20
+
+
 class FormMListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = FormMSerializer
     queryset = FormM.objects.all()
+    pagination_class = FormMListPagination
     # filter_class = FormMFilter
 
     def create(self, request, *args, **kwargs):

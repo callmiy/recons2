@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <table class="table table-condensed table-bordered form-m-table-display">
+    <table class="table table-striped table-condensed table-bordered form-m-table-display" style="margin-bottom: 13px;">
       <caption>Form M</caption>
 
       <thead>
@@ -41,7 +41,7 @@
       </thead>
 
       <tbody>
-        <tr ng-repeat="formM in formMTable.formMs|orderBy:formMTable.orderProp|filter:formMTable.query">
+        <tr ng-repeat="formM in formMTable.formMs.results|orderBy:formMTable.orderProp|filter:formMTable.query">
           <td>{$$index + 1$}</td>
           <td>{$formM.number$}</td>
           <td>{$formM.applicant_data.name$}</td>
@@ -52,5 +52,26 @@
         </tr>
       </tbody>
     </table>
+
+    <nav>
+      <ul class="pagination" style="margin-top: 0;">
+        <li ng-class="['previous', {disabled: !formMTable.prevPageLink}]">
+          <a ng-href="{$formMTable.prevPageLink$}" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+
+        <li ng-repeat="link in [].constructor(formMTable.numLinks) track by $index"
+            ng-class="{active: (formMTable.currentLink == ($index + 1))}">
+          <a ng-href="{$formMTable.formMLinkUrl + '?page=' + ($index + 1)$}">{$($index + 1)$}</a>
+        </li>
+
+        <li>
+          <a ng-href="{$formMTable.nextPageLink$}" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
   </div>
 </div>

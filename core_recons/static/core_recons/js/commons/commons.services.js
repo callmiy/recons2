@@ -56,6 +56,10 @@ function FormM($resource, urls) {
   return $resource(url, {id: '@id'}, {
       'put': {
         method: 'PUT'
+      },
+
+      'getPaginated': {
+        method: 'GET'
       }
     }
   )

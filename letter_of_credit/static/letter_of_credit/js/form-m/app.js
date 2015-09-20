@@ -25,24 +25,19 @@ function formMURLConfig($stateProvider, $urlRouterProvider) {
     .state('home', {
       url: '/',
 
-      resolve: {
-        formMs: ['FormM', function(FormM) {
-          return FormM.query().$promise
-        }]
-      },
-
       controller: 'HomeController as formMHome'
     })
 }
 
 app.controller('HomeController', HomeController)
-HomeController.$inject = ['formMs', '$scope']
-function HomeController(formMs, scope) {
+HomeController.$inject = ['FormM', '$scope']
+function HomeController(FormM, scope) {
   var vm = this;
-  vm.formMs = formMs
+
+  vm.formMs = FormM.getPaginated()
 
   scope.$watch(function getNewFormM() {return vm.newFormM}, function(newFormM) {
-    if (newFormM)vm.formMs.unshift(newFormM)
+    if (newFormM)vm.formMs.results.unshift(newFormM)
   })
 }
 
