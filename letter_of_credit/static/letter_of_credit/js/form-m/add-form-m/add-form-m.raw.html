@@ -25,7 +25,8 @@
                    typeahead="applicant as applicant.name for applicant in addFormMModal.getApplicant($viewValue)"
                 />
             <span class="input-group-addon">
-              <img ng-src="{$$root.addIconSrc$}" alt="" add-customer dim-parent="addFormMModal.element"/>
+              <img ng-src="{$$root.addIconSrc$}" alt="" add-customer dim-parent="addFormMModal.element"
+                  added-new-customer="addFormMModal.formM.applicant"/>
             </span>
           </div>
         </div>

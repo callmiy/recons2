@@ -21,8 +21,8 @@ function CustomerModalCtrl(resetForm, element, close, Branch, xhrErrorDisplay) {
     resetForm(form, element, 'form-control')
   }
 
-  vm.addCustomer = addCustomer
-  function addCustomer(customer) {
+  vm.submitCustomer = injectCustomer
+  function injectCustomer(customer) {
     close(customer)
   }
 
@@ -69,27 +69,6 @@ function CustomerModalCtrl(resetForm, element, close, Branch, xhrErrorDisplay) {
   }
 }
 
-app.controller('AddCustomerDirectiveCtrl', AddCustomerDirectiveCtrl)
-AddCustomerDirectiveCtrl.$inject = ['Customer', 'xhrErrorDisplay']
-function AddCustomerDirectiveCtrl(Customer, xhrErrorDisplay) {
-  var vm = this
-  vm.customer = {}
-  vm.addCustomer = addCustomer
-
-  function addCustomer(customerObj) {
-    var newCustomer = new Customer(customerObj)
-    newCustomer.$save(newCustomerSaveSuccess, newCustomerSaveError)
-
-    function newCustomerSaveSuccess(data) {
-      console.log(data);
-    }
-
-    function newCustomerSaveError(xhr) {
-      xhrErrorDisplay(xhr);
-    }
-  }
-}
-
 app.directive('addCustomer', addCustomerDirective)
 addCustomerDirective.$inject = ['ModalService', '$parse']
 function addCustomerDirective(ModalService, $parse) {
@@ -132,6 +111,10 @@ function addCustomerDirective(ModalService, $parse) {
 
             open: function() {
               if (parentEl) dimParent()
+            },
+
+            close: function() {
+              if (parentEl) unDimParent()
             }
           })
 
@@ -141,7 +124,6 @@ function addCustomerDirective(ModalService, $parse) {
             }
 
             if (parentEl) unDimParent()
-
           })
         })
       }
@@ -151,6 +133,29 @@ function addCustomerDirective(ModalService, $parse) {
 
     scope: {},
 
-    bindToController: true
+    bindToController: {
+      newCustomer: '=addedNewCustomer'
+    }
+  }
+}
+
+app.controller('AddCustomerDirectiveCtrl', AddCustomerDirectiveCtrl)
+AddCustomerDirectiveCtrl.$inject = ['Customer', 'xhrErrorDisplay']
+function AddCustomerDirectiveCtrl(Customer, xhrErrorDisplay) {
+  var vm = this
+  vm.customer = {}
+  vm.addCustomer = addCustomer
+
+  function addCustomer(customerObj) {
+    var newCustomer = new Customer(customerObj)
+    newCustomer.$save(newCustomerSaveSuccess, newCustomerSaveError)
+
+    function newCustomerSaveSuccess(data) {
+      vm.newCustomer = data
+    }
+
+    function newCustomerSaveError(xhr) {
+      xhrErrorDisplay(xhr);
+    }
   }
 }
