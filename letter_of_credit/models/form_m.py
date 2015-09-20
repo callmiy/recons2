@@ -44,3 +44,19 @@ class FormM(models.Model):
 
     def currency_data(self):
         return self.currency
+
+
+class LCIssueConcrete(models.Model):
+    issue = models.ForeignKey(LCIssue, verbose_name='Issue')
+    mf = models.ForeignKey(FormM, verbose_name='Related Form M')
+    created_at = models.DateField('Date Created', auto_now_add=True)
+    closed_at = models.DateField('Date Closed', null=True, blank=True)
+
+    class Meta:
+        db_table = 'lc_issue_concrete'
+        app_label = 'letter_of_credit'
+        verbose_name = 'LC Issue Concrete'
+        verbose_name_plural = 'LC Issue Concrete'
+
+    def __unicode__(self):
+        return '%s: %s' % (self.mf.number, self.issue.text)

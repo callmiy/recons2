@@ -1,6 +1,5 @@
 "use strict";
-
-var formMCommons = require('./../commons')
+/*jshint camelcase:false*/
 
 var app = angular.module('form-m')
 
@@ -67,13 +66,23 @@ function AddFormMModalCtrl(resetForm, element, close, getTypeAheadCustomer, xhrE
 
   vm.element = element
 
+  initForm()
   function initForm() {
     vm.formM = {
       date_received: new Date()
     }
+
+    vm.showLcIssueContainer = false
+    vm.addLcIssuesTitle = 'Add Letter Of Credit Issues'
+    vm.selectedLcIssues = {}
   }
 
-  initForm()
+  vm.toggleShowLcIssueContainer = toggleShowLcIssueContainer
+  function toggleShowLcIssueContainer() {
+    vm.showLcIssueContainer = !vm.showLcIssueContainer
+
+    vm.addLcIssuesTitle = !vm.showLcIssueContainer ? 'Add Letter Of Credit Issues' : 'Dismiss'
+  }
 
   vm.close = close
 
@@ -84,16 +93,6 @@ function AddFormMModalCtrl(resetForm, element, close, getTypeAheadCustomer, xhrE
   }
 
   vm.addFormM = addFormM
-  vm.getApplicant = getTypeAheadCustomer
-  vm.getCurrency = getTypeAheadCurrency
-
-  vm.datePickerFormat = 'dd-MMMM-yyyy'
-  vm.datePickerIsOpen = false
-  vm.openDatePicker = openDatePicker
-  function openDatePicker() {
-    vm.datePickerIsOpen = true
-  }
-
   function addFormM(newFormM) {
     var formMToSave = angular.copy(newFormM)
     formMToSave.applicant = newFormM.applicant.url
@@ -103,15 +102,22 @@ function AddFormMModalCtrl(resetForm, element, close, getTypeAheadCustomer, xhrE
     var formM = new FormM(formMToSave)
     formM.$save(formMSavedSuccess, formMSavedError)
 
-    var savedFormM
-
     function formMSavedSuccess(data) {
-      savedFormM = data
-      close(savedFormM)
+      close(data)
     }
 
     function formMSavedError(xhr) {
       xhrErrorDisplay(xhr, {date_received: 'date received'})
     }
+  }
+
+  vm.getApplicant = getTypeAheadCustomer
+  vm.getCurrency = getTypeAheadCurrency
+
+  vm.datePickerFormat = 'dd-MMMM-yyyy'
+  vm.datePickerIsOpen = false
+  vm.openDatePicker = openDatePicker
+  function openDatePicker() {
+    vm.datePickerIsOpen = true
   }
 }

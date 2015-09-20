@@ -1,12 +1,48 @@
 from django.shortcuts import render
 from rest_framework import generics, pagination
 from core_recons.views import CoreAppsView
-from letter_of_credit.models import FormM
-from letter_of_credit.serializers import FormMSerializer
+from letter_of_credit.models import FormM, LCIssue, LCIssueConcrete
+from letter_of_credit.serializers import FormMSerializer, LCIssueSerializer, LCIssueConcreteSerializer
 
 import logging
 
 logger = logging.getLogger('recons_logger')
+
+
+class LCIssueConcreteListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = LCIssueConcreteSerializer
+    queryset = LCIssueConcrete.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        logger.info('Creating new letter of credit issue with incoming data = \n%r', request.data)
+        return super(LCIssueConcreteListCreateAPIView, self).create(request, *args, **kwargs)
+
+
+class LCIssueConcreteUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = LCIssueConcrete.objects.all()
+    serializer_class = LCIssueConcreteSerializer
+
+    def update(self, request, *args, **kwargs):
+        logger.info('Updating letter of credit with incoming data = \n%r', request.data)
+        return super(LCIssueConcreteUpdateAPIView, self).update(request, *args, **kwargs)
+
+
+class LCIssueListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = LCIssueSerializer
+    queryset = LCIssue.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        logger.info('Creating new letter of credit issue with incoming data = \n%r', request.data)
+        return super(LCIssueListCreateAPIView, self).create(request, *args, **kwargs)
+
+
+class LCIssueUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = LCIssue.objects.all()
+    serializer_class = LCIssueSerializer
+
+    def update(self, request, *args, **kwargs):
+        logger.info('Updating letter of credit with incoming data = \n%r', request.data)
+        return super(LCIssueUpdateAPIView, self).update(request, *args, **kwargs)
 
 
 class FormMListPagination(pagination.PageNumberPagination):

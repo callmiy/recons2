@@ -12,7 +12,11 @@ from .views import (
     FormMUpdateAPIView,
     FormMHomeView,
     LCRegisterUploadView,
-    ReleaseTelexView)
+    ReleaseTelexView,
+    LCIssueUpdateAPIView,
+    LCIssueListCreateAPIView,
+    LCIssueConcreteListCreateAPIView,
+    LCIssueConcreteUpdateAPIView)
 
 urlpatterns = patterns(
     # <editor-fold description='home view and upload'>
@@ -77,5 +81,25 @@ urlpatterns += patterns(
     url(r'^form-m/(?P<pk>\d+)/?$', FormMUpdateAPIView.as_view(), name='formm-detail'),
 
     url(r'^form-m/home/?$', FormMHomeView.as_view(), name='form-m')
+    # </editor-fold>
+)
+
+urlpatterns += patterns(
+    # <editor-fold description='LC Issue'>
+    '',
+
+    url(r'^lc-issue/?$', LCIssueListCreateAPIView.as_view(), name='lcissue-list'),
+
+    url(r'^lc-issue/(?P<pk>\d+)/?$', LCIssueUpdateAPIView.as_view(), name='lcissue-detail'),
+    # </editor-fold>
+)
+
+urlpatterns += patterns(
+    # <editor-fold description='LC Issue concrete'>
+    '',
+
+    url(r'^lc-issue-concrete/?$', LCIssueConcreteListCreateAPIView.as_view(), name='lcissueconcrete-list'),
+
+    url(r'^lc-issue-concrete/(?P<pk>\d+)/?$', LCIssueConcreteUpdateAPIView.as_view(), name='lcissueconcrete-detail'),
     # </editor-fold>
 )

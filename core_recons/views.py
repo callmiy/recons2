@@ -14,6 +14,8 @@ class CoreAppsView(View):
             'customerAPIUrl': reverse('customer-list'),
             'branchAPIUrl': reverse('branch-list'),
             'currencyAPIUrl': reverse('currency-list'),
+            'lcIssueAPIUrl': reverse('lcissue-list'),
+            'lcIssueConcreteAPIUrl': reverse('lcissueconcrete-list'),
             'formMAPIUrl': reverse('formm-list'),
             'letterOfCreditAPIUrl': reverse('letterofcredit-list'),
             'letterOfCredit1APIUrl': reverse('lcregister-list'),

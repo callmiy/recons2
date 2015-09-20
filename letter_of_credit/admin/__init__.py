@@ -3,7 +3,7 @@ from letter_of_credit.models import LetterOfCredit, LCRegister
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
 
-from letter_of_credit.admin.form_m import FormMAdmin, LCIssueAdmin
+from letter_of_credit.admin.form_m import FormMAdmin, LCIssueAdmin, LCIssueConcreteAdmin
 
 
 class LetterOfCreditAdmin(admin.ModelAdmin):

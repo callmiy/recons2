@@ -117,6 +117,18 @@ function LetterOfCredit($resource, urls) {
   )
 }
 
+services.factory('LCIssue', LCIssue)
+LCIssue.$inject = ['$resource', 'urls']
+function LCIssue($resource, urls) {
+  var url = appendToUrl(urls.lcIssueAPIUrl, ':id');
+  return $resource(url, {id: '@id'}, {
+      'put': {
+        method: 'PUT'
+      }
+    }
+  )
+}
+
 services.controller('XhrErrorDisplayCtrl', XhrErrorDisplayCtrl)
 XhrErrorDisplayCtrl.$inject = ['error', 'errorKeyMap']
 function XhrErrorDisplayCtrl(error, errorKeyMap) {

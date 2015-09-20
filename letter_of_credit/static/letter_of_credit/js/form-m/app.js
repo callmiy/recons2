@@ -45,4 +45,5 @@ function HomeController(FormM, scope) {
 }
 
 require('./table')
+require('./lc-issue')
 require('./add-form-m')
