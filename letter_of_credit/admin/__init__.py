@@ -1,7 +1,9 @@
 from django.contrib import admin
-from letter_of_credit.models import LetterOfCredit, LCRegister, FormM
+from letter_of_credit.models import LetterOfCredit, LCRegister
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
+
+from letter_of_credit.admin.form_m import FormMAdmin, LCIssueAdmin
 
 
 class LetterOfCreditAdmin(admin.ModelAdmin):
@@ -28,9 +30,5 @@ class LCRegisterAdmin(AjaxSelectAdmin):
     lc_amt_org_ccy_fmt.short_description = 'FX Amount'
 
 
-class FormMAdmin(admin.ModelAdmin):
-    pass
-
 admin.site.register(LetterOfCredit, LetterOfCreditAdmin)
 admin.site.register(LCRegister, LCRegisterAdmin)
-admin.site.register(FormM, FormMAdmin)

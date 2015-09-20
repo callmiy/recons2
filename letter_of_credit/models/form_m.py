@@ -3,8 +3,21 @@ from adhocmodels.models import Customer, Currency
 from letter_of_credit.models import LCRegister
 
 
+class LCIssue(models.Model):
+    text = models.CharField('Issue Text', max_length=300)
+
+    class Meta:
+        app_label = 'letter_of_credit'
+        db_table = 'lc_issue'
+        verbose_name = 'LC Issue'
+        verbose_name_plural = 'LC Issue'
+
+    def __unicode__(self):
+        return self.text
+
+
 class FormM(models.Model):
-    number = models.CharField('Number', max_length=13)
+    number = models.CharField('Number', max_length=13, unique=True)
     applicant = models.ForeignKey(Customer, verbose_name='Applicant')
     currency = models.ForeignKey(Currency, verbose_name='Currency')
     amount = models.DecimalField('Amount', max_digits=20, decimal_places=2)
@@ -15,6 +28,8 @@ class FormM(models.Model):
     class Meta:
         app_label = 'letter_of_credit'
         db_table = 'form_m'
+        verbose_name = 'Form M'
+        verbose_name_plural = 'Form M'
 
     def __unicode__(self):
         return '[%s | %s%s | %s]' % (
