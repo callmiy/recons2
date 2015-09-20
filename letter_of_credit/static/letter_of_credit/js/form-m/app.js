@@ -36,10 +36,14 @@ function formMURLConfig($stateProvider, $urlRouterProvider) {
 }
 
 app.controller('HomeController', HomeController)
-HomeController.$inject = ['formMs']
-function HomeController(formMs) {
+HomeController.$inject = ['formMs', '$scope']
+function HomeController(formMs, scope) {
   var vm = this;
   vm.formMs = formMs
+
+  scope.$watch(function getNewFormM() {return vm.newFormM}, function(newFormM) {
+    if (newFormM)vm.formMs.unshift(newFormM)
+  })
 }
 
 require('./table')

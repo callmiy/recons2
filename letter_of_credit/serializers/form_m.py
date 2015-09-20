@@ -10,6 +10,7 @@ class FormMSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = FormM
         fields = (
+            'id',
             'number',
             'applicant',
             'applicant_data',
@@ -17,4 +18,5 @@ class FormMSerializer(serializers.HyperlinkedModelSerializer):
             'currency_data',
             'amount',
             'date_received',
+            'url',
         )

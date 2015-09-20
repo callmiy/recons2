@@ -16,15 +16,20 @@ function formMDisplay() {
     scope: {},
 
     bindToController: {
-      formMs: '=formM'
+      formMs: '=formM',
+      newFormM: '='
     }
   }
 }
 
 app.controller('formMDisplayCtrl', formMDisplayCtrl)
-formMDisplayCtrl.$inject = []
-function formMDisplayCtrl() {
+formMDisplayCtrl.$inject = ['$scope']
+function formMDisplayCtrl(scope) {
   /*jshint validthis:true*/
   var vm = this
   vm.css = formMCommons.buildUrl('table/table.min.css')
+
+  scope.$watch(function getFormMs() {return vm.formMs}, function formMsChanged() {
+    vm.orderProp = '-id'
+  })
 }

@@ -7,7 +7,7 @@
         <label class="control-label col-md-2 col-lg-1 col-sm-2" for="filter-query">Filter List</label>
 
         <div class="col-md-4 col-lg-4 col-sm-4">
-          <input id="filter-query" class="form-control" type="text" ng-model="query"/>
+          <input id="filter-query" class="form-control" type="text" ng-model="formMTable.query"/>
         </div>
       </div>
 
@@ -15,11 +15,11 @@
         <label class="control-label col-md-2 col-lg-1 col-sm-2" for="order">Sort By</label>
 
         <div class="col-md-4 col-lg-4 col-sm-4">
-          <select id="order" class="form-control" ng-model="orderProp">
-            <option value="-bid_date">Bid Date</option>
-            <option value="-currency">Currency</option>
+          <select id="order" class="form-control" ng-model="formMTable.orderProp">
+            <option value="date_received">Date Received</option>
+            <option value="currency_data.code">Currency</option>
             <option value="amount">Amount</option>
-            <option value="-applicant">Applicant</option>
+            <option value="applicant_data.name">Applicant</option>
           </select>
         </div>
       </div>
@@ -41,7 +41,7 @@
       </thead>
 
       <tbody>
-        <tr ng-repeat="formM in formMTable.formMs">
+        <tr ng-repeat="formM in formMTable.formMs|orderBy:formMTable.orderProp|filter:formMTable.query">
           <td>{$$index + 1$}</td>
           <td>{$formM.number$}</td>
           <td>{$formM.applicant_data.name$}</td>

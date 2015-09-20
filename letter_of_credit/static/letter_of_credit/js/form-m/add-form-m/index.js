@@ -27,7 +27,7 @@ function addFormMDirective(ModalService) {
 
                   modal.close.then(function(savedFormM) {
                     if (savedFormM && angular.isObject(savedFormM)) {
-                      console.log(savedFormM);
+                      self.newFormM = savedFormM
                     }
                   })
                 })
@@ -38,7 +38,9 @@ function addFormMDirective(ModalService) {
 
     scope: {},
 
-    bindToController: true
+    bindToController: {
+      newFormM: '='
+    }
   }
 }
 
@@ -102,6 +104,7 @@ function AddFormMModalCtrl(resetForm, element, close, getTypeAheadCustomer, xhrE
     formM.$save(formMSavedSuccess, formMSavedError)
 
     var savedFormM
+
     function formMSavedSuccess(data) {
       savedFormM = data
       close(savedFormM)
