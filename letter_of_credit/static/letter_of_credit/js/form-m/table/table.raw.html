@@ -41,7 +41,8 @@
       </thead>
 
       <tbody>
-        <tr ng-repeat="formM in formMTable.formMs.results|orderBy:formMTable.orderProp|filter:formMTable.query">
+        <tr ng-repeat="formM in formMTable.formMs.results|orderBy:formMTable.orderProp|filter:formMTable.query"
+            class="form-m-display-table-row" style="cursor:pointer;">
           <td>{$$index + 1$}</td>
           <td>{$formM.number$}</td>
           <td>{$formM.applicant_data.name$}</td>

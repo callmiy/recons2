@@ -99,7 +99,7 @@ function displayedLceesTable(parseBidDate, ModalService, xhrErrorDisplay, $locat
 
     elm.find('tbody').on({
       click: toggleBg
-    }, 'td');
+    }, 'td')
 
     elm.find('tbody').on({
       click: toggleBg
