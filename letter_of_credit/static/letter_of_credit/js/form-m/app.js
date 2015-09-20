@@ -37,7 +37,10 @@ function HomeController(FormM, scope) {
   vm.formMs = FormM.getPaginated()
 
   scope.$watch(function getNewFormM() {return vm.newFormM}, function(newFormM) {
-    if (newFormM)vm.formMs.results.unshift(newFormM)
+    if (newFormM){
+      vm.formMs.results.pop()
+      vm.formMs.results.unshift(newFormM)
+    }
   })
 }
 

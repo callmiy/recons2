@@ -10,8 +10,9 @@ from .views import (
     LetterOfCreditRegisterUpdateAPIView,
     FormMListCreateAPIView,
     FormMUpdateAPIView,
-    FormMHomeView)
-from .views.upload_lc_register import LCRegisterUploadView, ReleaseTelexView
+    FormMHomeView,
+    LCRegisterUploadView,
+    ReleaseTelexView)
 
 urlpatterns = patterns(
     # <editor-fold description='home view and upload'>

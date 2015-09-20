@@ -1,4 +1,4 @@
-<div>
+<div class="form-m-display-root-container">
   <link rel="stylesheet" href="" property="stylesheet"/>
   <div class="form-m-table-display-element">
 
@@ -53,21 +53,24 @@
       </tbody>
     </table>
 
-    <nav>
+    <nav id="form-m-pager-nav">
       <ul class="pagination" style="margin-top: 0;">
         <li ng-class="['previous', {disabled: !formMTable.prevPageLink}]">
-          <a ng-href="{$formMTable.prevPageLink$}" aria-label="Previous">
+          <a ng-href="{$formMTable.prevPageLink$}" aria-label="Previous" class="form-m-pager-nav-link">
             <span aria-hidden="true">&laquo;</span>
           </a>
         </li>
 
         <li ng-repeat="link in [].constructor(formMTable.numLinks) track by $index"
             ng-class="{active: (formMTable.currentLink == ($index + 1))}">
-          <a ng-href="{$formMTable.formMLinkUrl + '?page=' + ($index + 1)$}">{$($index + 1)$}</a>
+          <a ng-href="{$formMTable.formMLinkUrl + '?page=' + ($index + 1)$}"
+             ng-class="['form-m-pager-nav-link', {active: (formMTable.currentLink == ($index + 1))}]">
+            {$($index + 1)$}
+          </a>
         </li>
 
-        <li>
-          <a ng-href="{$formMTable.nextPageLink$}" aria-label="Next">
+        <li ng-class="['previous', {disabled: !formMTable.nextPageLink}]">
+          <a ng-href="{$formMTable.nextPageLink$}" aria-label="Next" class="form-m-pager-nav-link">
             <span aria-hidden="true">&raquo;</span>
           </a>
         </li>

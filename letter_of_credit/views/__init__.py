@@ -9,7 +9,9 @@ from letter_of_credit.views.lc import (
 
 from letter_of_credit.views.lc_register import (
     LetterOfCreditRegisterListCreateAPIView,
-    LetterOfCreditRegisterUpdateAPIView, )
+    LetterOfCreditRegisterUpdateAPIView,
+    LCRegisterUploadView,
+    ReleaseTelexView)
 
 from letter_of_credit.views.form_m import (
     FormMListCreateAPIView,
