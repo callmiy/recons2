@@ -5,14 +5,14 @@ angular
   .module('letterOfCreditApp')
   .controller('LetterOfCreditSearchController', LetterOfCreditSearchController)
 
-LetterOfCreditSearchController.$inject = ['Customer', 'LetterOfCredit']
+LetterOfCreditSearchController.$inject = ['getTypeAheadCustomer', 'LetterOfCredit']
 
-function LetterOfCreditSearchController(Customer, LetterOfCredit) {
+function LetterOfCreditSearchController(getTypeAheadCustomer, LetterOfCredit) {
   var vm = this;
 
   vm.foundLcees = []
   vm.searchParams = {released: ''}
-  vm.getCustomer = getCustomer
+  vm.getCustomer = getTypeAheadCustomer
   vm.searchLc = searchLc
 
   function searchLc(searchParams) {
@@ -39,9 +39,5 @@ function LetterOfCreditSearchController(Customer, LetterOfCredit) {
     }
 
     vm.foundLcees = LetterOfCredit.query(queryParams);
-  }
-
-  function getCustomer(customerName) {
-    return Customer.query({name: customerName}).$promise
   }
 }

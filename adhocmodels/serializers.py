@@ -13,7 +13,7 @@ class RelationshipManagerSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class BranchSerializer(serializers.HyperlinkedModelSerializer):
-    view_value = serializers.Field(source='view_value', )
+    view_value = serializers.ReadOnlyField()
 
     class Meta:
         model = Branch
@@ -21,13 +21,13 @@ class BranchSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('code', 'name', 'view_value')
 
 
-class CurrencySerializer(serializers.ModelSerializer):
+class CurrencySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Currency
 
 
 class NostroAccountLedgerField(serializers.Field):
-    def to_native(self, value):
+    def to_representation(self, value):
         if value.exists():
             return {'id': value[0].id, 'number': value[0].number}
         return {'id': None, 'number': None}
@@ -35,8 +35,8 @@ class NostroAccountLedgerField(serializers.Field):
 
 class NostroAccountSerializer(serializers.ModelSerializer):
     ledger_acct = NostroAccountLedgerField(source='ledger_acct.all')
-    ccy = serializers.RelatedField(source='ccy.code')
-    bank = serializers.RelatedField(source='bank.__unicode__')
+    ccy = serializers.RelatedField(source='ccy.code', read_only=True)
+    bank = serializers.RelatedField(source='bank.__unicode__', read_only=True)
 
     class Meta:
         model = NostroAccount
@@ -44,7 +44,8 @@ class NostroAccountSerializer(serializers.ModelSerializer):
 
 
 class LedgerAccountSerializer(serializers.HyperlinkedModelSerializer):
-    external_number = serializers.HyperlinkedRelatedField(view_name='nostroaccount-detail')
+    external_number = serializers.HyperlinkedRelatedField(
+        view_name='nostroaccount-detail', queryset=NostroAccount.objects.all())
 
     class Meta:
         model = LedgerAccount

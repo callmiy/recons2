@@ -20,3 +20,11 @@ paymentsContext.keys().forEach(paymentsContext)
 
 require('./payment/static/payment/js/app.js')
 /////////////////  PAYMENT ///////////////////////////////////////////
+
+/////////////////  PAYMENT ///////////////////////////////////////////
+var lcTestsContext = require.context('./letter_of_credit/static/letter_of_credit/js', true, /spec\.js$/)
+lcTestsContext.keys().forEach(lcTestsContext)
+
+var lcContext = require.context('./letter_of_credit/static/letter_of_credit/js', true, /^index(?!spec)\.js$/)
+lcContext.keys().forEach(lcContext)
+/////////////////  PAYMENT ///////////////////////////////////////////

@@ -34,5 +34,8 @@ module.exports = {
   base: letterOfCredit,
   entry: entry,
   webpackConfig: webpackConfig,
-  jsMinify: jsMinify
+  jsMinify: jsMinify,
+  subApps: {
+    mf: require('./build.config.mf.js')
+  }
 }

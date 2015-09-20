@@ -23,7 +23,7 @@ class LetterOfCreditRegisterListCreateAPIView(generics.ListCreateAPIView):
     filter_class = LetterOfCreditRegisterFilter
 
     def create(self, request, *args, **kwargs):
-        logger.info('Creating new letter of credit with incoming data = \n%r', request.DATA)
+        logger.info('Creating new letter of credit with incoming data = \n%r', request.data)
         return super(LetterOfCreditRegisterListCreateAPIView, self).create(request, *args, **kwargs)
 
 
@@ -32,5 +32,5 @@ class LetterOfCreditRegisterUpdateAPIView(generics.RetrieveUpdateDestroyAPIView)
     serializer_class = LetterOfCreditRegisterSerializer
 
     def update(self, request, *args, **kwargs):
-        logger.info('Updating letter of credit with incoming data = \n%r', request.DATA)
+        logger.info('Updating letter of credit with incoming data = \n%r', request.data)
         return super(LetterOfCreditRegisterUpdateAPIView, self).update(request, *args, **kwargs)

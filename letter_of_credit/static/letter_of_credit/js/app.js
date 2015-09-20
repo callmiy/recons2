@@ -28,7 +28,7 @@ function router($routeProvider) {
   );
 }
 
-require('./commons');
+require('./commons/letter-of-credit-statuses.service.js');
 require('./display-lc-table');
 require('./new-lc');
 require('./search-lc');

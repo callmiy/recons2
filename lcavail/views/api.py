@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.decorators import link, action
+from rest_framework.decorators import detail_route
 from lcavail.models import LCCoverMovement
 from lcavail.serializers import LCCoverMovementSerializer
 from lcavail.forms import LCCoverMovementForm
@@ -12,7 +12,7 @@ class LCCoverMovementViewSet(ModelViewSet):
     queryset = LCCoverMovement.objects.all()
     serializer_class = LCCoverMovementSerializer
 
-    @link()
+    @detail_route()
     def render_template(self, request, *args, **kwargs):
         return render(
             request,
@@ -20,7 +20,7 @@ class LCCoverMovementViewSet(ModelViewSet):
             {"form": LCCoverMovementForm()}
         )
 
-    @action()
+    @detail_route(methods=['post'])
     def post_cover(self, request, *args, **kwargs):
         post_status = {}
         for pk in request.DATA:

@@ -3,24 +3,24 @@
 /*jshint camelcase:false*/
 
 var MODE_SAVE = 'save'
-var MODE_CLOSE = 'close';
+var MODE_CLOSE = 'close'
 
-var angular = require('angular');
+var angular = require('angular')
 
-var letterOfCredit = angular.module('letterOfCreditApp');
+var letterOfCredit = angular.module('letterOfCreditApp')
 
-letterOfCredit.controller('LetterOfCreditEditController', LetterOfCreditEditController);
+letterOfCredit.controller('LetterOfCreditEditController', LetterOfCreditEditController)
 
-LetterOfCreditEditController.$inject = ['$scope', 'lc', 'close', 'getCurrencies', 'getCustomers']
+LetterOfCreditEditController.$inject = ['$scope', 'lc', 'close', 'getCurrencies', 'getTypeAheadCustomer']
 
-function LetterOfCreditEditController($scope, lc, close, getCurrencies, getCustomers) {
+function LetterOfCreditEditController($scope, lc, close, getCurrencies, getTypeAheadCustomer) {
 
   $scope.lc = lc;
   $scope.oldLc = angular.copy(lc)
 
-  $scope.getCurrencies = getCurrencies;
-  $scope.getCustomers = getCustomers;
-  $scope.statusText = null;
+  $scope.getCurrencies = getCurrencies
+  $scope.getCustomers = getTypeAheadCustomer
+  $scope.statusText = null
 
   $scope.editLc = function (editedLc, statusText) {
     close({
@@ -54,7 +54,7 @@ function LetterOfCreditDeleteController($scope, lc, close) {
 letterOfCredit.directive('displayedLceesTable', displayedLceesTable);
 
 displayedLceesTable.$inject = [
-  'parseBidDate',
+  'parseDate',
   'ModalService',
   'xhrErrorDisplay',
   '$location',

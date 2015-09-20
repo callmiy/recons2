@@ -9,23 +9,23 @@ angular
   .controller('LetterOfCreditNewController', LetterOfCreditNewController);
 
 LetterOfCreditNewController.$inject = [
-  'getCustomers',
+  'getTypeAheadCustomer',
   'LetterOfCredit',
-  'getCurrencies',
-  'parseBidDate',
+  'getTypeAheadCurrency',
+  'parseDate',
   'xhrErrorDisplay',
   'LetterOfCreditStatuses',
   'urls'
 ];
 
-function LetterOfCreditNewController(getCustomers, LetterOfCredit, getCurrencies, parseBidDate, xhrErrorDisplay,
+function LetterOfCreditNewController(getTypeAheadCustomer, LetterOfCredit, getTypeAheadCurrency, parseBidDate, xhrErrorDisplay,
   LetterOfCreditStatuses, urls) {
 
   var vm = this;
 
-  vm.getCustomers = getCustomers;
-  vm.getCurrencies = getCurrencies;
-  vm.createNewLc = createNewLc;
+  vm.getCustomers = getTypeAheadCustomer
+  vm.getCurrencies = getTypeAheadCurrency
+  vm.createNewLc = createNewLc
   vm.reset = reset;
   vm.newLc = {};
   vm.newLcees = [];

@@ -3,11 +3,15 @@
   <h4>{$::xhrErrorDisplay.error.statusText$}</h4>
 
   <div>
-    <div ng-repeat="messages in ::xhrErrorDisplay.error.messages">
-      <!--:TODO - display the error key -->
-      <ul>
-        <li ng-repeat="msg in messages"> {$::msg$}</li>
-      </ul>
+    <div ng-repeat="(key, messages) in ::xhrErrorDisplay.error.messages">
+      <div>
+        Error in
+        <span style="font-weight: 600; text-transform: uppercase">
+          {$::xhrErrorDisplay.errorKeyMap ? xhrErrorDisplay.errorKeyMap[key] : key$}
+        </span>
+
+        <p ng-repeat="msg in ::messages" style="margin-left: 15px">- {$::msg$}</p>
+      </div>
     </div>
   </div>
 

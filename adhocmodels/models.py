@@ -391,8 +391,7 @@ class ValidTransactionRef(models.Model):
     @classmethod
     def is_valid_trxn_ref(cls, inref):
         return any(
-            [inref[:4].upper() == ref.valid_ref_start
-             for ref in cls.objects.all()])
+            [inref[:4].upper() == ref.valid_ref_start for ref in cls.objects.all()])
 
     class Meta:
         db_table = 'valid_refs'

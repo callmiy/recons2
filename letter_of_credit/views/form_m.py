@@ -15,7 +15,7 @@ class FormMListCreateAPIView(generics.ListCreateAPIView):
     # filter_class = FormMFilter
 
     def create(self, request, *args, **kwargs):
-        logger.info('Creating new form M with incoming data = \n%r', request.DATA)
+        logger.info('Creating new form M with incoming data = \n%r', request.data)
         return super(FormMListCreateAPIView, self).create(request, *args, **kwargs)
 
 
@@ -24,7 +24,7 @@ class FormMUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = FormMSerializer
 
     def update(self, request, *args, **kwargs):
-        logger.info('Updating form M with incoming data = \n%r', request.DATA)
+        logger.info('Updating form M with incoming data = \n%r', request.data)
         return super(FormMUpdateAPIView, self).update(request, *args, **kwargs)
 
 

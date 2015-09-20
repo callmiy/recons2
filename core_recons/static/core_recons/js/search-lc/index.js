@@ -9,9 +9,7 @@ app.config(rootCommons.interpolateProviderConfig)
 rootCommons.setStaticPrefix(app)
 
 app.directive('searchLc', searchLcDirective)
-
 searchLcDirective.$inject = ['resetForm']
-
 function searchLcDirective(resetForm) {
 
   function link(scope, el, attr, controller) {

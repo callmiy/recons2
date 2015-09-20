@@ -3,16 +3,27 @@
 var rootCommons = require('commons')
 var services = angular.module('rootApp')
 
-services.factory('getCurrencies', getCurrencies)
-getCurrencies.$inject = ['$http', 'urls'];
-function getCurrencies($http, urls) {
-  return function (searchQuery) {
-    return $http.get(urls.currencyAPIUrl, {
-      params: {code: searchQuery}
-    }).then(function (response) {
-      return response.data
-    })
+services.factory('Currency', Currency)
+Currency.$inject = ['$resource', 'urls']
+function Currency($resource, urls) {
+  var url = appendToUrl(urls.currencyAPIUrl, ':id')
+  return $resource(url, {id: '@id'}, {
+      'put': {
+        method: 'PUT'
+      }
+    }
+  )
+}
+
+services.factory('getTypeAheadCurrency', getTypeAheadCurrency)
+getTypeAheadCurrency.$inject = ['Currency']
+function getTypeAheadCurrency(Currency) {
+
+  function getCurrency(currencyCode) {
+    return Currency.query({code: currencyCode}).$promise
   }
+
+  return getCurrency
 }
 
 services.factory('Customer', Customer)
@@ -27,6 +38,28 @@ function Customer($resource, urls) {
   )
 }
 
+services.factory('getTypeAheadCustomer', getTypeAheadCustomer)
+getTypeAheadCustomer.$inject = ['Customer']
+function getTypeAheadCustomer(Customer) {
+
+  function getCustomer(customerName) {
+    return Customer.query({name: customerName}).$promise
+  }
+
+  return getCustomer
+}
+
+services.factory('FormM', FormM)
+FormM.$inject = ['$resource', 'urls']
+function FormM($resource, urls) {
+  var url = appendToUrl(urls.formMAPIUrl, ':id')
+  return $resource(url, {id: '@id'}, {
+      'put': {
+        method: 'PUT'
+      }
+    }
+  )
+}
 
 services.factory('Branch', Branch)
 Branch.$inject = ['$resource', 'urls']
@@ -42,20 +75,34 @@ function Branch($resource, urls) {
 
 services.factory('parseDate', parseDate);
 function parseDate() {
-  return function (aDate) {
-    //bid date is a date string and not datetime
+  return function(aDate) {
+    //aDate is a date string and not datetime
     if ((typeof aDate === 'string') && /\d{4}-\d{2}-\d{2}/.test(aDate)) {
       return aDate;
     } else if (aDate instanceof Date) {
       return aDate.strftime('%Y-%m-%d');
     }
 
-    return null;
-  };
+    return null
+  }
 }
 
-services.factory('LetterOfCredit', LetterOfCredit);
-LetterOfCredit.$inject = ['$resource', 'urls'];
+services.factory('formatDate', formatDate);
+function formatDate() {
+  return function(aDate) {
+    //aDate is a date string and not datetime
+    if ((typeof aDate === 'string') && /\d{4}-\d{2}-\d{2}/.test(aDate)) {
+      return aDate;
+    } else if (aDate instanceof Date) {
+      return aDate.strftime('%Y-%m-%d');
+    }
+
+    return null
+  }
+}
+
+services.factory('LetterOfCredit', LetterOfCredit)
+LetterOfCredit.$inject = ['$resource', 'urls']
 function LetterOfCredit($resource, urls) {
   var url = appendToUrl(urls.letterOfCredit1APIUrl, ':id');
   return $resource(url, {id: '@id'}, {
@@ -67,29 +114,27 @@ function LetterOfCredit($resource, urls) {
 }
 
 services.controller('XhrErrorDisplayCtrl', XhrErrorDisplayCtrl)
-services.factory('xhrErrorDisplay', xhrErrorDisplay);
-
-XhrErrorDisplayCtrl.$inject = ['error']
-
-function XhrErrorDisplayCtrl(error) {
-  error = angular.copy(error);
+XhrErrorDisplayCtrl.$inject = ['error', 'errorKeyMap']
+function XhrErrorDisplayCtrl(error, errorKeyMap) {
+  error = angular.copy(error)
 
   console.log(error);//TODO: remove console logging
 
   if (error.status === 400) {
-    error.messages = error.data;
+    error.messages = error.data
+    this.errorKeyMap = errorKeyMap
   }
-  this.error = error;
+  this.error = error
 }
 
-xhrErrorDisplay.$inject = ['ModalService'];
-
+services.factory('xhrErrorDisplay', xhrErrorDisplay)
+xhrErrorDisplay.$inject = ['ModalService']
 function xhrErrorDisplay(ModalService) {
-  return function handleError(errorObj) {
+  return function handleError(errorObj, errorKeyMap) {
     ModalService.showModal({
-      templateUrl: rootCommons.buildUrl('core_recons' ,'commons/./xhr-error-display.service.html'),
+      templateUrl: rootCommons.buildUrl('core_recons', 'commons/./xhr-error-display.service.html'),
       controller: 'XhrErrorDisplayCtrl as xhrErrorDisplay',
-      inputs: {error: errorObj}
+      inputs: {error: errorObj, errorKeyMap: errorKeyMap}
     }).then(modalHandler);
 
     function modalHandler(modal) {

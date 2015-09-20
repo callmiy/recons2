@@ -21,7 +21,7 @@ class LCStatusListCreateAPIView(generics.ListCreateAPIView):
     filter_class = LcStatusFilter
 
     def create(self, request, *args, **kwargs):
-        logger.info('incoming data = \n%r', request.DATA)
+        logger.info('incoming data = \n%r', request.data)
         return super(LCStatusListCreateAPIView, self).create(request, *args, **kwargs)
 
 
@@ -30,7 +30,7 @@ class LCStatusUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LCStatusSerializer
 
     def update(self, request, *args, **kwargs):
-        logger.info('incoming data = \n%r', request.DATA)
+        logger.info('incoming data = \n%r', request.data)
         return super(LCStatusUpdateAPIView, self).update(request, *args, **kwargs)
 
 
@@ -51,7 +51,7 @@ class LetterOfCreditListCreateAPIView(generics.ListCreateAPIView):
     filter_class = LetterOfCreditFilter
 
     def create(self, request, *args, **kwargs):
-        logger.info('Creating new letter of credit with incoming data = \n%r', request.DATA)
+        logger.info('Creating new letter of credit with incoming data = \n%r', request.data)
         return super(LetterOfCreditListCreateAPIView, self).create(request, *args, **kwargs)
 
 
@@ -60,5 +60,5 @@ class LetterOfCreditUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LetterOfCreditSerializer
 
     def update(self, request, *args, **kwargs):
-        logger.info('Updating letter of credit with incoming data = \n%r', request.DATA)
+        logger.info('Updating letter of credit with incoming data = \n%r', request.data)
         return super(LetterOfCreditUpdateAPIView, self).update(request, *args, **kwargs)

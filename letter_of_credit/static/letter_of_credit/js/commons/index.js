@@ -1,6 +1,14 @@
-require('./customers.service.js');
-require('./currency.service.js');
-require('./parse-bid-date.service.js');
-require('./letter-of-credit.service.js');
-require('./xhr-error-display.service.js');
-require('./letter-of-credit-statuses.service.js');
+"use strict";
+
+var rootCommons = require('commons')
+
+var appName = 'letter_of_credit'
+
+function buildUrl(fsPath) {
+  return rootCommons.buildUrl(appName, fsPath)
+}
+
+module.exports = {
+  buildUrl: buildUrl,
+  appName: appName
+}
