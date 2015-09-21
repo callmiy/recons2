@@ -2,11 +2,11 @@
 
 var formMCommons = require('./../commons')
 
-var app = angular.module('form-m')
+var app = angular.module('form-m-display', [])
 
-app.directive('formMDisplay', formMDisplay)
-formMDisplay.$inject = ['urls', '$http']
-function formMDisplay(urls, $http) {
+app.directive('displayFormM', formMDisplay)
+formMDisplay.$inject = ['$http']
+function formMDisplay($http) {
 
   function attachEvent(elm) {
 
@@ -41,17 +41,14 @@ function formMDisplay(urls, $http) {
   }
 
   return {
-    restrict: 'E',
+    restrict: 'EA',
 
     controller: 'formMDisplayCtrl as formMTable',
 
-    templateUrl: formMCommons.buildUrl('table/table.html'),
+    template: require('./table.html'),
 
     link: function(scope, element, attributes, self) {
       attachEvent(element)
-
-      self.formMLinkUrl = urls.formMAPIUrl
-      self.formMs.$promise.then(setUpLinks)
 
       element.find('.form-m-display-root-container').on({
         'click': function(evt) {
@@ -62,44 +59,24 @@ function formMDisplay(urls, $http) {
           if ($target.is('.active') || $target.closest('li').is('.disabled')) return
 
           var linkUrl = $target.attr('href') || $target.parent().attr('href')
-
-          $http.get(linkUrl).then(function(response) {
-            var data = response.data
-            self.formMs = data
-            setUpLinks(data)
-          })
+          self.getFormMCollectionOnNavigation(linkUrl)
         }
       }, '.form-m-pager-nav-link')
-
-      function setUpLinks(serverResponse) {
-        var next = serverResponse.next
-        var prev = serverResponse.previous
-
-        self.nextPageLink = next
-        self.prevPageLink = prev
-
-        self.numLinks = Math.ceil(serverResponse.count / self.paginationSize)
-
-        var pageRegexp = new RegExp("\\?page=(\\d+)")
-
-        if (!next) self.currentLink = self.numLinks
-        else self.currentLink = !prev ? 1 : Number(pageRegexp.exec(prev)[1]) + 1
-
-      }
     },
 
     scope: {},
 
     bindToController: {
-      formMs: '=formM',
+      formMCollection: '=formMCollection',
       newFormM: '='
     }
   }
 }
 
 app.controller('formMDisplayCtrl', formMDisplayCtrl)
-formMDisplayCtrl.$inject = []
-function formMDisplayCtrl() {
+formMDisplayCtrl.$inject = ['$scope', 'urls', '$http']
+//TODO: where is this controller (plus this directive's link function) being called twice?
+function formMDisplayCtrl(scope, urls, $http) {
   /*jshint validthis:true*/
   var vm = this
 
@@ -110,4 +87,73 @@ function formMDisplayCtrl() {
   vm.paginationSize = 20
 
   vm.orderProp = '-date_received'
+
+  vm.setUpLinks = setUpLinks
+  /**
+   * The links that will be used to page through the form Ms retrieved from the server - we basic set up the models
+   * that will make working with the link easy.
+   *
+   * The data from retrieveing the form M collection will be an object with the following key:
+   * {
+   *  next - a url that points to the next collection in the result. Defaults to null if we already have all data
+   *  previous - a url that points to the previous data collection
+   *  count - total number of data available
+   *  results - the current collection of form Ms
+   * }
+   * @param {string} next
+   * @param {string} prev
+   * @param {int} count
+   */
+  function setUpLinks(next, prev, count) {
+
+    vm.nextPageLink = next
+    vm.prevPageLink = prev
+
+    vm.numLinks = Math.ceil(count / vm.paginationSize)
+
+    //url for fetching data will be in the format: http:host/pathname?page=integer
+    //the integer part is our current position in the navigation
+    var pageRegexp = new RegExp("\\?page=(\\d+)")
+
+    if (!next) vm.currentLink = vm.numLinks
+    else if (!prev) vm.currentLink = 1
+    else {
+      var pageExec = pageRegexp.exec(prev)
+      vm.currentLink = !pageExec ? 2 : Number(pageExec[1]) + 1
+    }
+
+    console.log(prev, vm.currentLink);
+  }
+
+  vm.formMLinkUrl = urls.formMAPIUrl
+  vm.formMCollection.$promise.then(function(data) {
+    setUpLinks(data.next, data.previous, data.count)
+  })
+
+  vm.getFormMCollectionOnNavigation = getFormMCollectionOnNavigation
+  /**
+   * when we navigate through the form Ms, we make an http request to the link contained in the navigation ui
+   * @param {string} linkUrl - please check this directive's link function for the origin of this parameter
+   */
+  function getFormMCollectionOnNavigation(linkUrl) {
+    $http.get(linkUrl).then(function(response) {
+      var data = response.data
+      vm.formMCollection = data
+      setUpLinks(data.next, data.previous, data.count)
+    })
+  }
+
+  scope.$watch(function getNewFormM() {return vm.newFormM}, function(newFormM) {
+    if (newFormM) {
+      if (vm.formMCollection.results.length === vm.paginationSize) vm.formMCollection.results.pop()
+      vm.formMCollection.results.unshift(newFormM)
+      vm.orderProp = '-id'
+    }
+  })
+
+  scope.$watch(function() {return vm.formMCollection}, function(newFormMs, oldFormMs) {
+    if (!angular.equals(newFormMs, oldFormMs)) {
+      //console.log(newFormMs);
+    }
+  })
 }

@@ -6,7 +6,7 @@ var path = require('path')
 var baseConfig = require('../webpack.config.base').webpackBaseConfig
 
 var app = path.join(__dirname, 'static', 'letter_of_credit', 'js', 'form-m')
-var entry = path.join(app, 'app.js');
+var entry = path.join(app, 'form-m.app.js');
 var destDir = app
 var jsMinify = [entry]
 
@@ -15,7 +15,7 @@ var webpackConfig = {
 
   output: {
     path: destDir,
-    filename: 'app.js'
+    filename: 'form-m.app.js'
   },
 
   resolve: {

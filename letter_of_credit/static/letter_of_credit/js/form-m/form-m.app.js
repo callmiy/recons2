@@ -2,10 +2,15 @@
 
 var rootCommons = require('commons')
 
+require('./table')
+require('./search-form-m')
+
 var app = angular.module('form-m',
   ['rootApp',
    'ui.router',
-   'kanmii-underscore'
+   'kanmii-underscore',
+   'form-m-display',
+   'form-m-search'
   ])
 
 //rootCommons.setStaticPrefix(app)
@@ -25,6 +30,8 @@ function formMURLConfig($stateProvider, $urlRouterProvider) {
   $stateProvider
     .state('home', {
       url: '/',
+
+      template: require('./home.html'),
 
       controller: 'HomeController as formMHome'
     })
@@ -46,21 +53,22 @@ function HomeController(FormM, scope) {
   /**
    * The 'new form M' model. When we create a new form M via the create/add form M directive, the result is
    * propagated from the creation directive into this model
-   * @type {object}
+   * @type {null|object}
    */
   vm.newFormM = null
 
   /**
-   *
+   * When the search-form-m directive returns, the result is propagated into this model
+   * @type {null|object}
    */
-  scope.$watch(function getNewFormM() {return vm.newFormM}, function(newFormM) {
-    if (newFormM) {
-      vm.formMs.results.unshift(newFormM)
+  vm.searchedFormMResult = null
+
+  scope.$watch(function getNewFormM() {return vm.searchedFormMResult}, function(searchedFormMResult) {
+    if (searchedFormMResult) {
+      vm.formMs = searchedFormMResult
     }
   })
 }
 
-require('./table')
 require('./lc-issue')
 require('./add-form-m')
-require('./search-form-m')

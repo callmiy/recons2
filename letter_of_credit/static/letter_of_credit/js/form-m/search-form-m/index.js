@@ -1,7 +1,7 @@
 "use strict";
 /*jshint camelcase:false*/
 
-var app = angular.module('form-m')
+var app = angular.module('form-m-search', [])
 
 app.directive('searchFormM', searchFormMDirective)
 searchFormMDirective.$inject = ['ModalService', 'kanmiiUnderscore']
@@ -47,13 +47,26 @@ function searchFormMDirective(ModalService, kanmiiUnderscore) {
 }
 
 app.controller('SearchFormMDirectiveCtrl', SearchFormMDirectiveCtrl)
-SearchFormMDirectiveCtrl.$inject = []
-function SearchFormMDirectiveCtrl() {
+SearchFormMDirectiveCtrl.$inject = ['FormM', 'xhrErrorDisplay']
+function SearchFormMDirectiveCtrl(FormM, xhrErrorDisplay) {
   var vm = this
 
   vm.searchFormM = searchFormM
   function searchFormM(submittedSearchParams) {
-    console.log(submittedSearchParams);
+    var searchParams = angular.copy(submittedSearchParams)
+
+    if (searchParams.applicant) searchParams.applicant = searchParams.applicant.name
+    if (searchParams.currency) searchParams.currency = searchParams.currency.code
+
+    FormM.getPaginated(searchParams).$promise.then(searchFormMSuccess, searchFormMError)
+
+    function searchFormMSuccess(data) {
+      vm.searchFormMResult = data
+    }
+
+    function searchFormMError(xhr) {
+      xhrErrorDisplay(xhr)
+    }
   }
 }
 

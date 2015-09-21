@@ -65,7 +65,7 @@ function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUndersc
     }
 
     function formMSavedError(xhr) {
-      xhrErrorDisplay(xhr, {date_received: 'date received'})
+      xhrErrorDisplay(xhr, {date_received: 'date received', number: 'form m number'})
     }
   }
 
