@@ -16,7 +16,8 @@
 
         <div class="col-md-4 col-lg-4 col-sm-4">
           <select id="order" class="form-control" ng-model="formMTable.orderProp">
-            <option value="date_received">Date Received</option>
+            <option value="-date_received">Latest Received</option>
+            <option value="date_received">Earliest Received</option>
             <option value="currency_data.code">Currency</option>
             <option value="amount">Amount</option>
             <option value="applicant_data.name">Applicant</option>

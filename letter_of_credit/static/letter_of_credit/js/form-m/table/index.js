@@ -25,10 +25,8 @@ function formMDisplay(urls, $http) {
       var selectedClassIndicator = 'form-m-display-table-selected'
 
       var $elm = $(this)
-      //console.log($elm);
-      $elm = $elm.parents('tr').addClass('form-m-display-table-selected')
 
-      console.log($elm)
+      $elm = $elm.parents('tr')
 
       if ($elm.hasClass(selectedClassIndicator)) {
         $elm.removeClass(selectedClassIndicator)
@@ -80,7 +78,7 @@ function formMDisplay(urls, $http) {
         self.nextPageLink = next
         self.prevPageLink = prev
 
-        self.numLinks = Math.ceil(serverResponse.count / 20)
+        self.numLinks = Math.ceil(serverResponse.count / self.paginationSize)
 
         var pageRegexp = new RegExp("\\?page=(\\d+)")
 
@@ -100,15 +98,16 @@ function formMDisplay(urls, $http) {
 }
 
 app.controller('formMDisplayCtrl', formMDisplayCtrl)
-formMDisplayCtrl.$inject = ['$scope']
-function formMDisplayCtrl(scope) {
+formMDisplayCtrl.$inject = []
+function formMDisplayCtrl() {
   /*jshint validthis:true*/
-
   var vm = this
 
-  //vm.css = formMCommons.buildUrl('table/table.min.css')
+  /**
+   * Maximum number of form Ms that can be shown to user.
+   * @type {number}
+   */
+  vm.paginationSize = 20
 
-  scope.$watch(function getFormMs() {return vm.formMs.results}, function formMsChanged() {
-    vm.orderProp = '-id'
-  })
+  vm.orderProp = '-date_received'
 }

@@ -16,9 +16,15 @@
 {% block page_content %}
   <div ng-app="form-m">
     <div class="slide" ui-view="">
-      <button class="btn btn-info" style="display: block;float: right;" add-form-m new-form-m="formMHome.newFormM">Add
-        Form M
-      </button>
+      <div class="action-buttons" style="float: right;">
+        <button class="btn btn-info" add-form-m new-form-m="formMHome.newFormM">
+          Add Form M
+        </button>
+
+        <button class="btn btn-info" search-form-m search-form-m-result="formMHome.searchedFormMResult">
+          Search Form M
+        </button>
+      </div>
 
       <div class="form-m-table">
         <form-m-display form-m="formMHome.formMs" new-form-m="formMHome.newFormM"></form-m-display>

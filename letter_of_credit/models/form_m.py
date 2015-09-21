@@ -30,6 +30,7 @@ class FormM(models.Model):
         db_table = 'form_m'
         verbose_name = 'Form M'
         verbose_name_plural = 'Form M'
+        ordering = ('-date_received',)
 
     def __unicode__(self):
         return '[%s | %s%s | %s]' % (

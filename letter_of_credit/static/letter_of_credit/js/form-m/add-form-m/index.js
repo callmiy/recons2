@@ -15,19 +15,20 @@ function addFormMDirective(ModalService) {
         .bind('click', function() {
                 ModalService.showModal({
                   template: require('./add-form-m.html'),
+
                   controller: 'AddFormMModalCtrl as addFormMModal'
+
                 }).then(function(modal) {
                   modal.element.dialog({
                     dialogClass: 'no-close',
                     modal: true,
                     minWidth: 600,
-                    minHeight: 450
+                    minHeight: 450,
+                    title: 'Add Form M'
                   })
 
-                  modal.close.then(function(savedFormM) {
-                    if (savedFormM && angular.isObject(savedFormM)) {
-                      self.newFormM = savedFormM
-                    }
+                  modal.close.then(function(submittedFormM) {
+                    if (submittedFormM) self.saveFormM(submittedFormM)
                   })
                 })
               })
@@ -44,8 +45,38 @@ function addFormMDirective(ModalService) {
 }
 
 app.controller('AddFormMDirectiveCtrl', AddFormMDirectiveCtrl)
-AddFormMDirectiveCtrl.$inject = []
-function AddFormMDirectiveCtrl() {
+AddFormMDirectiveCtrl.$inject = ['formatDate', 'FormM', 'xhrErrorDisplay', 'kanmiiUnderscore', 'LCIssueConcrete']
+function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUnderscore, LCIssueConcrete) {
+  var vm = this
+
+  vm.saveFormM = saveFormM
+  function saveFormM(newFormM) {
+    var formMToSave = angular.copy(newFormM)
+    formMToSave.applicant = newFormM.applicant.url
+    formMToSave.currency = newFormM.currency.url
+    formMToSave.date_received = formatDate(newFormM.date_received)
+
+    var formM = new FormM(formMToSave)
+    formM.$save(formMSavedSuccess, formMSavedError)
+
+    function formMSavedSuccess(data) {
+      saveLcIssues(data.url)
+      vm.newFormM = data
+    }
+
+    function formMSavedError(xhr) {
+      xhrErrorDisplay(xhr, {date_received: 'date received'})
+    }
+  }
+
+  function saveLcIssues(formMUrl) {
+    kanmiiUnderscore.each(vm.selectedLcIssues, function(val, key) {
+      if (val) {
+        new LCIssueConcrete({issue: key, mf: formMUrl})
+          .$save(function(data) { console.log(data); }, function(xhr) {console.log(xhr);})
+      }
+    })
+  }
 }
 
 app.controller('AddFormMModalCtrl', AddFormMModalCtrl)
@@ -54,15 +85,9 @@ AddFormMModalCtrl.$inject = [
   '$element',
   'close',
   'getTypeAheadCustomer',
-  'xhrErrorDisplay',
-  'getTypeAheadCurrency',
-  'FormM',
-  'formatDate',
-  'kanmiiUnderscore',
-  'LCIssueConcrete'
+  'getTypeAheadCurrency'
 ]
-function AddFormMModalCtrl(resetForm, element, close, getTypeAheadCustomer, xhrErrorDisplay,
-  getTypeAheadCurrency, FormM, formatDate, kanmiiUnderscore, LCIssueConcrete) {
+function AddFormMModalCtrl(resetForm, element, close, getTypeAheadCustomer, getTypeAheadCurrency) {
 
   var vm = this
 
@@ -94,29 +119,9 @@ function AddFormMModalCtrl(resetForm, element, close, getTypeAheadCustomer, xhrE
     resetForm(form, element, 'form-control', initForm)
   }
 
-  vm.addFormM = addFormM
-  function addFormM(newFormM) {
-    var formMToSave = angular.copy(newFormM)
-    formMToSave.applicant = newFormM.applicant.url
-    formMToSave.currency = newFormM.currency.url
-    formMToSave.date_received = formatDate(newFormM.date_received)
-
-    var formM = new FormM(formMToSave)
-    formM.$save(formMSavedSuccess, formMSavedError)
-
-    function formMSavedSuccess(data) {
-      kanmiiUnderscore.each(vm.selectedLcIssues, function(val, key) {
-        if (val) {
-          new LCIssueConcrete({issue: key, mf: data.url})
-            .$save(function(data) { console.log(data); }, function(xhr) {console.log(xhr);})
-        }
-      })
-      close(data)
-    }
-
-    function formMSavedError(xhr) {
-      xhrErrorDisplay(xhr, {date_received: 'date received'})
-    }
+  vm.submitFormM = submitFormM
+  function submitFormM(newFormM) {
+    close(newFormM)
   }
 
   vm.getApplicant = getTypeAheadCustomer

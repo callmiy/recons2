@@ -1,5 +1,5 @@
 <div id="add-form-m-root-container" class="add-form-m-root-container">
-  <form novalidate class="form-horizontal" ng-submit="addFormMModal.addFormM(addFormMModal.formM)"
+  <form novalidate class="form-horizontal" ng-submit="addFormMModal.submitFormM(addFormMModal.formM)"
         name="addFormMModalForm">
     <fieldset class="add-new-form-m-container" ng-form name="newFormMModalForm"
               style="position: relative;padding: 7px;">
@@ -26,7 +26,7 @@
                 />
             <span class="input-group-addon">
               <img ng-src="{$$root.addIconSrc$}" alt="" add-customer dim-parent="addFormMModal.element"
-                  added-new-customer="addFormMModal.formM.applicant"/>
+                   added-new-customer="addFormMModal.formM.applicant"/>
             </span>
           </div>
         </div>
@@ -39,7 +39,7 @@
           <input class="form-control" id="currency" required maxlength="3"
                  ng-model="addFormMModal.formM.currency"
                  typeahead="currency as currency.code for currency in addFormMModal.getCurrency($viewValue)"
-                 typeahead-min-length="3"
+                 typeahead-min-length="2"
               />
         </div>
       </div>
@@ -91,8 +91,8 @@
       </div>
     </div>
 
-    <div class="form-m-add-lc-issue-container">
-      <span ng-click="addFormMModal.toggleShowLcIssueContainer()" class="form-m-add-lc-issue-toggle-show">
+    <div class="form-m-lc-issue-container">
+      <span ng-click="addFormMModal.toggleShowLcIssueContainer()" class="form-m-lc-issue-toggle-show">
         <span
             ng-class="['glyphicon', {'glyphicon-chevron-down': !addFormMModal.showLcIssueContainer, 'glyphicon-chevron-up': addFormMModal.showLcIssueContainer}]">
         </span>
@@ -100,11 +100,12 @@
       </span>
 
       <div class="form-m-add-lc-issue" ng-show="addFormMModal.showLcIssueContainer">
-        <lc-issue lc-issue-show="addFormMModal.showLcIssueContainer" lc-issues-selected="addFormMModal.selectedLcIssues"/>
+        <lc-issue lc-issue-show="addFormMModal.showLcIssueContainer"
+                  lc-issues-selected="addFormMModal.selectedLcIssues"/>
       </div>
     </div>
 
-    <div class="row add-customer-form-control">
+    <div class="row add-form-m-form-control">
       <div class="col-md-4 col-lg-4 col-sm-4" style="text-align: left">
         <span class="btn btn-default"
               ng-click="addFormMModal.reset(addFormMModalForm)">
@@ -114,7 +115,7 @@
 
       <div class="col-md-4 col-lg-4 col-sm-4" style="text-align: center">
         <button type="submit" class="btn btn-info" ng-disabled="newFormMModalForm.$invalid">
-          Add Customer
+          Add Form M
         </button>
       </div>
 

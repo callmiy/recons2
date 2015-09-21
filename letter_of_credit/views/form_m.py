@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework import generics, pagination
+import django_filters
 from core_recons.views import CoreAppsView
 from letter_of_credit.models import FormM, LCIssue, LCIssueConcrete
 from letter_of_credit.serializers import FormMSerializer, LCIssueSerializer, LCIssueConcreteSerializer
@@ -49,11 +50,21 @@ class FormMListPagination(pagination.PageNumberPagination):
     page_size = 20
 
 
+class FormMFilter(django_filters.FilterSet):
+    number = django_filters.CharFilter(lookup_type='icontains')
+    applicant = django_filters.CharFilter(name='applicant__name', lookup_type='icontains')
+    currency = django_filters.CharFilter(name='currency__code', lookup_type='iexact')
+
+    class Meta:
+        model = FormM
+        fields = ('number', 'applicant', 'currency')
+
+
 class FormMListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = FormMSerializer
     queryset = FormM.objects.all()
     pagination_class = FormMListPagination
-    # filter_class = FormMFilter
+    filter_class = FormMFilter
 
     def create(self, request, *args, **kwargs):
         logger.info('Creating new form M with incoming data = \n%r', request.data)

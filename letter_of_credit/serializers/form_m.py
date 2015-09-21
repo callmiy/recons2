@@ -14,11 +14,14 @@ class LCIssueSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class LCIssueConcreteSerializer(serializers.HyperlinkedModelSerializer):
+    issue_text = serializers.ReadOnlyField(source='issue.text')
+
     class Meta:
         model = LCIssueConcrete
         fields = (
             'id',
             'issue',
+            'issue_text',
             'mf',
             'created_at',
             'closed_at',
