@@ -121,14 +121,9 @@ function formMDisplayCtrl(scope, urls, $http) {
       var pageExec = pageRegexp.exec(prev)
       vm.currentLink = !pageExec ? 2 : Number(pageExec[1]) + 1
     }
-
-    console.log(prev, vm.currentLink);
   }
 
   vm.formMLinkUrl = urls.formMAPIUrl
-  vm.formMCollection.$promise.then(function(data) {
-    setUpLinks(data.next, data.previous, data.count)
-  })
 
   vm.getFormMCollectionOnNavigation = getFormMCollectionOnNavigation
   /**
@@ -139,7 +134,6 @@ function formMDisplayCtrl(scope, urls, $http) {
     $http.get(linkUrl).then(function(response) {
       var data = response.data
       vm.formMCollection = data
-      setUpLinks(data.next, data.previous, data.count)
     })
   }
 
@@ -151,9 +145,16 @@ function formMDisplayCtrl(scope, urls, $http) {
     }
   })
 
-  scope.$watch(function() {return vm.formMCollection}, function(newFormMs, oldFormMs) {
-    if (!angular.equals(newFormMs, oldFormMs)) {
-      //console.log(newFormMs);
+  scope.$watch(function() {return vm.formMCollection}, function(newFormMs) {
+    if (newFormMs) {
+      if (newFormMs.$promise) {
+        newFormMs.$promise.then(function(data) {
+          setUpLinks(data.next, data.previous, data.count)
+        })
+
+      } else {
+        setUpLinks(newFormMs.next, newFormMs.previous, newFormMs.count)
+      }
     }
   })
 }
