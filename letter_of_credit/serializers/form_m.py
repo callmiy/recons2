@@ -13,9 +13,37 @@ class LCIssueSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
+class LCIssueConcreteSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = LCIssueConcrete
+        fields = (
+            'id',
+            'issue',
+            'mf',
+            'created_at',
+            'closed_at',
+            'url'
+        )
+
+
+class LCIssueConcreteSerializerFormM(serializers.HyperlinkedModelSerializer):
+    issue = serializers.ReadOnlyField(source='issue.text')
+
+    class Meta:
+        model = LCIssueConcrete
+        fields = (
+            'id',
+            'issue',
+            'created_at',
+            'closed_at',
+            'url'
+        )
+
+
 class FormMSerializer(serializers.HyperlinkedModelSerializer):
-    applicant_data = CustomerSerializer(required=False, )
-    currency_data = CurrencySerializer(required=False, )
+    applicant_data = CustomerSerializer(required=False, read_only=True)
+    currency_data = CurrencySerializer(required=False, read_only=True)
+    form_m_issues = LCIssueConcreteSerializerFormM(many=True, read_only=True)
 
     class Meta:
         model = FormM
@@ -29,17 +57,5 @@ class FormMSerializer(serializers.HyperlinkedModelSerializer):
             'amount',
             'date_received',
             'url',
-        )
-
-
-class LCIssueConcreteSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = LCIssueConcrete
-        fields = (
-            'id',
-            'issue',
-            'mf',
-            'created_at',
-            'closed_at',
-            'url'
+            'form_m_issues',
         )

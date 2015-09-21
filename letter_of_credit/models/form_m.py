@@ -48,7 +48,7 @@ class FormM(models.Model):
 
 class LCIssueConcrete(models.Model):
     issue = models.ForeignKey(LCIssue, verbose_name='Issue')
-    mf = models.ForeignKey(FormM, verbose_name='Related Form M')
+    mf = models.ForeignKey(FormM, verbose_name='Related Form M', related_name='form_m_issues')
     created_at = models.DateField('Date Created', auto_now_add=True)
     closed_at = models.DateField('Date Closed', null=True, blank=True)
 

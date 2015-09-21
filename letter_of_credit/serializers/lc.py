@@ -10,8 +10,8 @@ class LCStatusSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class LetterOfCreditSerializer(serializers.HyperlinkedModelSerializer):
-    applicant_data = CustomerSerializer(required=False)
-    ccy_obj = CurrencySerializer(required=False)
+    applicant_data = CustomerSerializer(required=False, read_only=True)
+    ccy_obj = CurrencySerializer(required=False, read_only=True)
 
     class Meta:
         model = LetterOfCredit

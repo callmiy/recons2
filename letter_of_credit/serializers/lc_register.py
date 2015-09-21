@@ -4,8 +4,8 @@ from rest_framework import serializers
 
 
 class LetterOfCreditRegisterSerializer(serializers.HyperlinkedModelSerializer):
-    applicant_data = CustomerSerializer(required=False)
-    ccy_data = CurrencySerializer(required=False)
+    applicant_data = CustomerSerializer(required=False, read_only=True)
+    ccy_data = CurrencySerializer(required=False, read_only=True)
 
     class Meta:
         model = LCRegister
