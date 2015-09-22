@@ -1,8 +1,8 @@
 "use strict";
 
-var formMCommons = require('./../commons')
 
-var app = angular.module('form-m')
+
+var app = angular.module('form-m-lc-issue', [])
 
 app.directive('lcIssue', lcIssueDirective)
 lcIssueDirective.$inject = ['LCIssue']
@@ -10,7 +10,7 @@ function lcIssueDirective(LCIssue) {
   return {
     restrict: 'E',
 
-    templateUrl: formMCommons.buildUrl('lc-issue/lc-issue.html'),
+    templateUrl: require('formMCommons').buildUrl('form-m/lc-issue/lc-issue.html'),
 
     link: function(scope, element, attributes, self) {
 

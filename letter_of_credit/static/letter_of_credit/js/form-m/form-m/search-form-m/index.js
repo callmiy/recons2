@@ -1,7 +1,7 @@
 "use strict";
 /*jshint camelcase:false*/
 
-var app = angular.module('form-m-search', [])
+var app = angular.module('form-m-search', ['kanmii-underscore'])
 
 app.directive('searchFormM', searchFormMDirective)
 searchFormMDirective.$inject = ['ModalService', 'kanmiiUnderscore']

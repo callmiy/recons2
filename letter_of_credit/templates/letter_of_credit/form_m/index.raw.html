@@ -14,7 +14,20 @@
 {% endblock page_js_up %}
 
 {% block page_content %}
-  <div ng-app="form-m">
+  <div ng-app="form-m-root-app">
+  <span class="glyphicon glyphicon-home" ng-click="$state.go('home')" data-toggle="tooltip" title="Home - Navigation">
+  </span>
+
+    <a class="btn btn-info" type="button" ui-sref="form-m">
+      Form M
+    </a>
+
+    <button class="btn btn-info" type="button">
+      FX Purchase
+    </button>
+
+    <hr/>
+
     <div class="slide" ui-view>
     </div>
   </div>

@@ -1,19 +1,15 @@
 "use strict";
 
+require('./form-m')
+
 var rootCommons = require('commons')
 
-require('./table')
-require('./search-form-m')
-
-var app = angular.module('form-m',
+var app = angular.module('form-m-root-app',
   ['rootApp',
    'ui.router',
-   'kanmii-underscore',
-   'form-m-display',
-   'form-m-search'
+   'form-m'
   ])
 
-//rootCommons.setStaticPrefix(app)
 app.config(rootCommons.interpolateProviderConfig)
 
 app.run(['$rootScope', '$state', '$stateParams', function($rootScope, $state, $stateParams) {
@@ -21,9 +17,9 @@ app.run(['$rootScope', '$state', '$stateParams', function($rootScope, $state, $s
   $rootScope.$stateParams = $stateParams
 }])
 
-app.config(formMURLConfig)
-formMURLConfig.$inject = ['$stateProvider', '$urlRouterProvider']
-function formMURLConfig($stateProvider, $urlRouterProvider) {
+app.config(formMRootAppURLConfig)
+formMRootAppURLConfig.$inject = ['$stateProvider', '$urlRouterProvider']
+function formMRootAppURLConfig($stateProvider, $urlRouterProvider) {
   $urlRouterProvider
     .otherwise('/')
 
@@ -31,44 +27,6 @@ function formMURLConfig($stateProvider, $urlRouterProvider) {
     .state('home', {
       url: '/',
 
-      template: require('./home.html'),
-
-      controller: 'HomeController as formMHome'
+      template: require('./home.html')
     })
 }
-
-app.controller('HomeController', HomeController)
-HomeController.$inject = ['FormM', '$scope']
-function HomeController(FormM, scope) {
-  var vm = this;
-
-  /**
-   * The form Ms retrieved from backend. Will contain a list of form Ms and pagination hooks for
-   * retrieving the next and previous sets of form Ms. This model is used by the display directive
-   * to display the form Ms in a table
-   * @type {object}
-   */
-  vm.formMs = FormM.getPaginated()
-
-  /**
-   * The 'new form M' model. When we create a new form M via the create/add form M directive, the result is
-   * propagated from the creation directive into this model
-   * @type {null|object}
-   */
-  vm.newFormM = null
-
-  /**
-   * When the search-form-m directive returns, the result is propagated into this model
-   * @type {null|object}
-   */
-  vm.searchedFormMResult = null
-
-  scope.$watch(function getNewFormM() {return vm.searchedFormMResult}, function(searchedFormMResult) {
-    if (searchedFormMResult) {
-      vm.formMs = searchedFormMResult
-    }
-  })
-}
-
-require('./lc-issue')
-require('./add-form-m')
