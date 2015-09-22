@@ -80,7 +80,7 @@ urlpatterns += patterns(
 
     url(r'^form-m/(?P<pk>\d+)/?$', FormMUpdateAPIView.as_view(), name='formm-detail'),
 
-    url(r'^form-m/home/?$', FormMHomeView.as_view(), name='form-m')
+    url(r'^form-m/home/?$', login_required(FormMHomeView.as_view()), name='form-m')
     # </editor-fold>
 )
 

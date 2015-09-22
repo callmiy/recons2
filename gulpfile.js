@@ -80,6 +80,7 @@ gulp.task('initial-js', function() {
     .pipe(plugins.addSrc.append(bower + '/papa-parse/papaparse.js'))
     .pipe(plugins.addSrc.append(bower + '/underscore/underscore.js'))
     .pipe(plugins.addSrc.append(bower + '/jstree/dist/jstree.js'))
+    .pipe(plugins.addSrc.append(bower + '/urijs/src/URI.js'))
     .pipe(plugins.addSrc.append(baseStaticJs + '/initial/lib.js'))
     .pipe(plugins.addSrc.append(baseStaticJs + '/initial/FileSaver.js'))
     //.pipe(plugins.addSrc.append(baseStaticJs + '/initial/jquery.treeview.js'))

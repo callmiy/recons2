@@ -1,6 +1,6 @@
 "use strict";
 
-var app = angular.module('form-m-display', [])
+var app = angular.module('form-m-display', ['kanmii-URI'])
 
 app.directive('displayFormM', formMDisplay)
 //formMDisplay.$inject = []
@@ -72,9 +72,8 @@ function formMDisplay() {
 }
 
 app.controller('formMDisplayCtrl', formMDisplayCtrl)
-formMDisplayCtrl.$inject = ['$scope', 'urls', '$http']
-//TODO: where is this controller (plus this directive's link function) being called twice?
-function formMDisplayCtrl(scope, urls, $http) {
+formMDisplayCtrl.$inject = ['$scope', 'urls', '$http', 'kanmiiUri']
+function formMDisplayCtrl(scope, urls, $http, kanmiiUri) {
   /*jshint validthis:true*/
   var vm = this
 
@@ -88,15 +87,16 @@ function formMDisplayCtrl(scope, urls, $http) {
 
   vm.setUpLinks = setUpLinks
   /**
-   * The links that will be used to page through the form Ms retrieved from the server - we basic set up the models
+   * The links that will be used to page through the form Ms retrieved from the server - we basically set up the models
    * that will make working with the link easy.
    *
-   * The data from retrieveing the form M collection will be an object with the following key:
+   * The data from retrieving the form M collection will be an object with the following key:
    * {
    *  next - a url that points to the next collection in the result. Defaults to null if we already have all data
-   *  previous - a url that points to the previous data collection
-   *  count - total number of data available
-   *  results - the current collection of form Ms
+   *  previous - a url that points to the previous data collection defaults to null if this is our first request to
+   * server
+   * count - total number of data available
+   * results - the current collection of form Ms
    * }
    * @param {string} next
    * @param {string} prev
@@ -109,35 +109,53 @@ function formMDisplayCtrl(scope, urls, $http) {
 
     var numLinks = Math.ceil(count / vm.paginationSize)
 
-    //url for fetching data will be in the format: http:host/pathname?{other optional queries}page=integer
-    //the integer part is our current position in the navigation
-    var pageRegexp = new RegExp("page=(\\d+)")
-    var pageExec = pageRegexp.exec(prev)
-
-    if (!next) vm.currentLink = numLinks
-    else if (!prev) vm.currentLink = 1
-    else {
-      vm.currentLink = !pageExec ? 2 : Number(pageExec[1]) + 1
-    }
-
-    var fullUrl = next || prev
     vm.linkUrls = []
 
-    console.log('next = ', next);
-    console.log('prev = ', prev);
-    console.log('pageExec = ', pageExec);
+    if (numLinks === 1) return //there is absolutely no need to render navigational links
 
-    if (fullUrl) {
-      for (var pageNumber = 1; pageNumber <= numLinks; pageNumber++) {
-        var replacedUrl = fullUrl.replace(pageRegexp, 'page=' + pageNumber)
-        vm.linkUrls.push(replacedUrl)
+    //NOW there are at least 2 links
+    //url for fetching data will be in the format: http:host/pathname?[other optional queries][&]page=integer
+
+    var uri, query, uriWithoutQuery, i
+
+    //if we are on link 1,
+    //prev = null (cos we can not go back - there is no position zero)
+    //next = url above with query 'page=2'
+    if (!prev) {
+      vm.currentLink = 1
+      uri = kanmiiUri(next)
+      query = uri.search(true)
+      uriWithoutQuery = uri.search('')
+
+      query.page = 1//query.page was '2'
+      vm.linkUrls = [
+        uriWithoutQuery.clone().search(query).toString(), next
+      ]
+
+      for (i = 3; i <= numLinks; i++) {
+        query.page = i
+        vm.linkUrls.push(uriWithoutQuery.clone().search(query).toString())
+      }
+
+    } else {//we are on any other link except link 1
+      uri = kanmiiUri(prev)
+      query = uri.search(true)
+
+      if (!query.page) {//if we are on 2nd page, the server will omit the page query from the previous link
+        vm.currentLink = 2
+
+      } else {
+        vm.currentLink = Number(query.page) + 1//the current link will always be one greater than previous link
+      }
+
+      uriWithoutQuery = uri.search('')
+
+      for (i = 1; i <= numLinks; i++) {
+        query.page = i
+        vm.linkUrls.push(uriWithoutQuery.clone().search(query).toString())
       }
     }
-
-    console.log(vm.linkUrls);
   }
-
-  vm.formMLinkUrl = urls.formMAPIUrl
 
   vm.getFormMCollectionOnNavigation = getFormMCollectionOnNavigation
   /**
@@ -146,8 +164,7 @@ function formMDisplayCtrl(scope, urls, $http) {
    */
   function getFormMCollectionOnNavigation(linkUrl) {
     $http.get(linkUrl).then(function(response) {
-      var data = response.data
-      vm.formMCollection = data
+      vm.formMCollection = response.data
     })
   }
 

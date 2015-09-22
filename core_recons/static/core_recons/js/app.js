@@ -2,10 +2,17 @@
 
 var rootCommons = require('commons')
 
-var underscore = angular.module('kanmii-underscore', []);
-underscore.factory('kanmiiUnderscore', function() {
-  return window._
-});
+angular
+  .module('kanmii-underscore', [])
+  .factory('kanmiiUnderscore', function() {
+             return window._
+           })
+
+angular
+  .module('kanmii-URI', [])
+  .factory('kanmiiUri', function() {
+             return window.URI
+           })
 
 var app = angular.module('rootApp', [
   'ngRoute',
