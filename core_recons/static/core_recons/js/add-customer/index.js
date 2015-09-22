@@ -18,7 +18,7 @@ function CustomerModalCtrl(resetForm, element, close, Branch, xhrErrorDisplay) {
   vm.reset = reset
   function reset(form) {
     vm.customer = {}
-    resetForm(form, element, 'form-control')
+    resetForm(form, element, '.form-control')
   }
 
   vm.submitCustomer = injectCustomer

@@ -1,5 +1,6 @@
 <div id="search-form-m-root-container" class="search-form-m-root-container">
-  <form novalidate class="form-horizontal" ng-submit="searchFormMModal.submitSearchParams(searchFormMModal.searchParams)"
+  <form novalidate class="form-horizontal"
+        ng-submit="searchFormMModal.submitSearchParams(searchFormMModal.searchParams)"
         name="searchFormMModalForm">
     <fieldset class="search-form-m-container" style="position: relative; padding: 7px;">
 
@@ -41,7 +42,8 @@
         <label class="control-label col-md-4 col-lg-4 col-sm-4" for="amount">Amount</label>
 
         <div class="col-md-8 col-lg-8 col-sm-8">
-          <input class="form-control" id="amount" ng-model="searchFormMModal.searchParams.amount" number-format/>
+          <input class="form-control" id="amount" min="0" ng-model="searchFormMModal.searchParams.amount" number-format
+                 ng-pattern="/^\d[\d,]*(?:\.\d*)?$/"/>
         </div>
       </div>
     </fieldset>

@@ -1,5 +1,6 @@
 <div id="add-form-m-root-container" class="add-form-m-root-container">
-  <form novalidate class="form-horizontal" ng-submit="addFormMModal.submitFormM(addFormMModal.formM)"
+  <form novalidate class="form-horizontal"
+        ng-submit="addFormMModal.submitFormM(addFormMModal.formM, addFormMModal.bidRequest)"
         name="addFormMModalForm">
     <fieldset class="add-new-form-m-container" ng-form name="newFormMModalForm"
               style="position: relative;padding: 7px;">
@@ -70,34 +71,52 @@
       </div>
     </fieldset>
 
-    <div class="bid-request-form-container" ng-form name="bidRequestForm" style="margin-left: 5%;display: none">
-      <h4>Make Bid Request</h4>
+    <div class="bid-request-form-container">
 
-      <div class="form-group">
-        <label class="control-label col-md-4 col-lg-4 col-sm-4" for="goods-description">Goods Description</label>
+      <div ng-click="addFormMModal.toggleShowBidContainer(bidRequestForm)" class="form-m-bid-toggle-show clearfix">
+        <span class="on-show-helper" ng-show="addFormMModal.showBidContainer">Make Bid Request</span>
 
-        <div class="col-md-8 col-lg-8 col-sm-8">
-          <input class="form-control" id="goods-description"
-                 ng-model="addFormMModal.bidRequest.goods_description" to-upper/>
+        <div class="show-icon">
+          <span
+              ng-class="['glyphicon', {'glyphicon-chevron-down': !addFormMModal.showBidContainer, 'glyphicon-chevron-up': addFormMModal.showBidContainer}]">
+          </span>
+
+          {$addFormMModal.makeBidTitle$}
         </div>
       </div>
 
-      <div class="form-group bid-request-amount-group">
-        <label class="control-label col-md-4 col-lg-4 col-sm-4" for="amount">Amount</label>
+      <fieldset ng-form name="bidRequestForm" ng-show="addFormMModal.showBidContainer">
+        <div class="form-group bid-request-goods_description">
+          <label class="control-label col-md-4 col-lg-4 col-sm-4" for="goods-description">Goods Description</label>
 
-        <div class="col-md-8 col-lg-8 col-sm-8">
-          <input class="form-control" id="amount" required ng-model="addFormMModal.bidRequest.amount" number-format/>
+          <div class="col-md-8 col-lg-8 col-sm-8">
+            <input class="form-control" id="goods-description" required min="5"
+                   ng-model="addFormMModal.bidRequest.goods_description" to-upper/>
+          </div>
         </div>
-      </div>
+
+        <div class="form-group bid-request-amount-group">
+          <label class="control-label col-md-4 col-lg-4 col-sm-4" for="bid-amount">Amount</label>
+
+          <div class="col-md-8 col-lg-8 col-sm-8">
+            <input class="form-control" id="bid-amount" required ng-model="addFormMModal.bidRequest.amount"
+                   number-format/>
+          </div>
+        </div>
+      </fieldset>
     </div>
 
     <div class="form-m-lc-issue-container">
-      <span ng-click="addFormMModal.toggleShowLcIssueContainer()" class="form-m-lc-issue-toggle-show">
-        <span
-            ng-class="['glyphicon', {'glyphicon-chevron-down': !addFormMModal.showLcIssueContainer, 'glyphicon-chevron-up': addFormMModal.showLcIssueContainer}]">
-        </span>
-        {$addFormMModal.addLcIssuesTitle$}
-      </span>
+      <div ng-click="addFormMModal.toggleShowLcIssueContainer()" class="form-m-lc-issue-toggle-show clearfix">
+        <span class="on-show-helper" ng-show="addFormMModal.showLcIssueContainer">Specify LC Request Issues</span>
+
+        <div class="show-icon">
+          <span
+              ng-class="['glyphicon', {'glyphicon-chevron-down': !addFormMModal.showLcIssueContainer, 'glyphicon-chevron-up': addFormMModal.showLcIssueContainer}]">
+          </span>
+          {$addFormMModal.addLcIssuesTitle$}
+        </div>
+      </div>
 
       <div class="form-m-add-lc-issue" ng-show="addFormMModal.showLcIssueContainer">
         <lc-issue lc-issue-show="addFormMModal.showLcIssueContainer"
@@ -114,7 +133,8 @@
       </div>
 
       <div class="col-md-4 col-lg-4 col-sm-4" style="text-align: center">
-        <button type="submit" class="btn btn-info" ng-disabled="newFormMModalForm.$invalid">
+        <button type="submit" class="btn btn-info"
+                ng-disabled="addFormMModal.disableSubmitBtn(newFormMModalForm.$invalid, bidRequestForm.$invalid)">
           Add Form M
         </button>
       </div>

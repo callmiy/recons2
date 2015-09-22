@@ -1,21 +1,67 @@
-.add-form-m-root-container {
+.form-add-on-toggle {
+  cursor: pointer;
+  display: block;
+  border: 1px solid #E8DFDF;
+  padding: 5px 5px;
+  border-radius: 3px;
+  background-color: #FDFDFD;
 }
 
-.form-m-lc-issue-container {
-  text-align: right;
-  margin-bottom: 60px;
-  margin-left: 80px;
+.form-add-on-container {
   border: 1px solid #E6E6E6;
   padding: 10px;
   border-radius: 2px;
+}
+
+.form-add-on-show-helper {
+  text-align: left;
+  float: left;
+  display: block;
+}
+
+.form-add-on-show-icon {
+  text-align: right;
+  float: right;
+  display: block;
+}
+
+.bid-request-form-container {
+  .form-add-on-container;
+  margin-bottom: 5px;
+
+  & > .form-m-bid-toggle-show {
+    .form-add-on-toggle;
+    margin-bottom: 5px;
+
+    & > .on-show-helper {
+      .form-add-on-show-helper;
+      width: 30%;
+    }
+
+    & > .show-icon {
+      .form-add-on-show-icon;
+      width: 30%;
+    }
+  }
+}
+
+.form-m-lc-issue-container {
+  .form-add-on-container;
+  text-align: right;
+  margin-bottom: 60px;
 
   & > .form-m-lc-issue-toggle-show {
-    cursor: pointer;
-    display: block;
-    border: 1px solid #E8DFDF;
-    padding: 5px 5px;
-    border-radius: 3px;
-    background-color: #FDFDFD;
+    .form-add-on-toggle;
+
+    & > .on-show-helper {
+      .form-add-on-show-helper;
+      width: 60%;
+    }
+
+    & > .show-icon {
+      .form-add-on-show-icon;
+      width: 40%;
+    }
   }
 }
 
@@ -32,8 +78,8 @@
   }
 }
 
-.form-m-table-display-element{
-  table>tbody>tr.form-m-display-table-selected {
+.form-m-table-display-element {
+  table > tbody > tr.form-m-display-table-selected {
     background-color: #46B8DA;
 
     & > td {

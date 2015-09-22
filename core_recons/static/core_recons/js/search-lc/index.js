@@ -17,7 +17,7 @@ function searchLcDirective(resetForm) {
       controller.searchParams = {}
 
       if (searchLcForm) {
-        resetForm(searchLcForm, el, 'form-control')
+        resetForm(searchLcForm, el, '.form-control')
       }
     }
 

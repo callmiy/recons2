@@ -31,11 +31,11 @@ function resetForm() {
    *
    * @param form - an angular form instance
    * @param el - an angular element which wraps the form i.e the form is a descendant of the element
-   * @param controlCssClass - a unique class name for all controls of the form we wish to reset
+   * @param selector
    * @param cb - optional callback
    */
-  function reset(form, el, controlCssClass, cb) {
-    el.find('.' + controlCssClass).each(function() {
+  function reset(form, el, selector, cb) {
+    el.find(selector).each(function() {
       $(this).val('')
     })
 

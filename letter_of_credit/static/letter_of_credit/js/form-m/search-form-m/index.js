@@ -94,7 +94,9 @@ function SearchFormMModalCtrl(close, resetForm, element, getTypeAheadCustomer, g
 
   vm.reset = reset
   function reset(form) {
-    resetForm(form, element, 'form-control', initForm)
+    resetForm(form, element, '.form-control', initForm)
+    form.$invalid = false
+    form.$error = {}
   }
 
   vm.submitSearchParams = submitSearchParams
