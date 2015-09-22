@@ -1,12 +1,10 @@
 "use strict";
 
-var formMCommons = require('./../commons')
-
 var app = angular.module('form-m-display', [])
 
 app.directive('displayFormM', formMDisplay)
-formMDisplay.$inject = ['$http']
-function formMDisplay($http) {
+//formMDisplay.$inject = []
+function formMDisplay() {
 
   function attachEvent(elm) {
 
@@ -109,18 +107,34 @@ function formMDisplayCtrl(scope, urls, $http) {
     vm.nextPageLink = next
     vm.prevPageLink = prev
 
-    vm.numLinks = Math.ceil(count / vm.paginationSize)
+    var numLinks = Math.ceil(count / vm.paginationSize)
 
-    //url for fetching data will be in the format: http:host/pathname?page=integer
+    //url for fetching data will be in the format: http:host/pathname?{other optional queries}page=integer
     //the integer part is our current position in the navigation
-    var pageRegexp = new RegExp("\\?page=(\\d+)")
+    var pageRegexp = new RegExp("page=(\\d+)")
+    var pageExec = pageRegexp.exec(prev)
 
-    if (!next) vm.currentLink = vm.numLinks
+    if (!next) vm.currentLink = numLinks
     else if (!prev) vm.currentLink = 1
     else {
-      var pageExec = pageRegexp.exec(prev)
       vm.currentLink = !pageExec ? 2 : Number(pageExec[1]) + 1
     }
+
+    var fullUrl = next || prev
+    vm.linkUrls = []
+
+    console.log('next = ', next);
+    console.log('prev = ', prev);
+    console.log('pageExec = ', pageExec);
+
+    if (fullUrl) {
+      for (var pageNumber = 1; pageNumber <= numLinks; pageNumber++) {
+        var replacedUrl = fullUrl.replace(pageRegexp, 'page=' + pageNumber)
+        vm.linkUrls.push(replacedUrl)
+      }
+    }
+
+    console.log(vm.linkUrls);
   }
 
   vm.formMLinkUrl = urls.formMAPIUrl

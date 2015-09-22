@@ -48,8 +48,8 @@
           <td>{$formM.number$}</td>
           <td>{$formM.applicant_data.name$}</td>
           <td>{$formM.currency_data.code$}</td>
-          <td>{$formM.amount|number:2$}</td>
-          <td>{$formM.date_received|date:'dd-MMM-yyyy'$}</td>
+          <td style="text-align: right">{$formM.amount|number:2$}</td>
+          <td style="text-align: right">{$formM.date_received|date:'dd-MMM-yyyy'$}</td>
           <td></td>
         </tr>
       </tbody>
@@ -63,9 +63,9 @@
           </a>
         </li>
 
-        <li ng-repeat="link in [].constructor(formMTable.numLinks) track by $index"
+        <li ng-repeat="link in formMTable.linkUrls"
             ng-class="{active: (formMTable.currentLink == ($index + 1))}">
-          <a ng-href="{$formMTable.formMLinkUrl + '?page=' + ($index + 1)$}"
+          <a ng-href="{$link$}"
              ng-class="['form-m-pager-nav-link', {active: (formMTable.currentLink == ($index + 1))}]">
             {$($index + 1)$}
           </a>

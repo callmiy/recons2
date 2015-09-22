@@ -10,7 +10,7 @@
           .on('select_node.jstree', function (evt, data) {
             var target = data.event.target
             if(target.nodeName === 'A') {
-              var href = target.href
+              var href = target.href;
 
               if(href.indexOf(window.location.host) != -1){
                 window.location.href = href;

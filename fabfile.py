@@ -49,5 +49,4 @@ def do_live():
     lrun('cd %s && git pull github master' % LIVE_FOLDER)
     lrun('cd %s && npm install' % LIVE_FOLDER)
     lrun('cd %s && bower install' % LIVE_FOLDER)
-    # lrun('cd %s && grunt deploy' % LIVE_FOLDER)
     do_no_network()
