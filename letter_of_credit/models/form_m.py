@@ -66,7 +66,7 @@ class LCIssueConcrete(models.Model):
 class LcBidRequest(models.Model):
     mf = models.ForeignKey(FormM, verbose_name='Related Form M', related_name='bids')
     created_at = models.DateField('Date Created', auto_now_add=True)
-    requested_at = models.DateField('Date Request To Treasury', auto_now_add=True)
+    requested_at = models.DateField('Date Request To Treasury')
     amount = models.DecimalField('Amount', max_digits=20, decimal_places=2)
 
     class Meta:

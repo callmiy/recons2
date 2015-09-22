@@ -43,7 +43,7 @@ function formMDisplay() {
 
     controller: 'formMDisplayCtrl as formMTable',
 
-    template: require('./table.html'),
+    templateUrl: require('formMCommons').buildUrl('form-m/table/table.html'),
 
     link: function(scope, element, attributes, self) {
       attachEvent(element)
@@ -72,8 +72,8 @@ function formMDisplay() {
 }
 
 app.controller('formMDisplayCtrl', formMDisplayCtrl)
-formMDisplayCtrl.$inject = ['$scope', 'urls', '$http', 'kanmiiUri']
-function formMDisplayCtrl(scope, urls, $http, kanmiiUri) {
+formMDisplayCtrl.$inject = ['$scope', '$http', 'kanmiiUri']
+function formMDisplayCtrl(scope, $http, kanmiiUri) {
   /*jshint validthis:true*/
   var vm = this
 

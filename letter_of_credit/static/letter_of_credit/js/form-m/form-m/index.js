@@ -16,16 +16,9 @@ var app = angular.module('form-m',
 
 app.config(rootCommons.interpolateProviderConfig)
 
-app.run(['$rootScope', '$state', '$stateParams', function($rootScope, $state, $stateParams) {
-  $rootScope.$state = $state
-  $rootScope.$stateParams = $stateParams
-}])
-
 app.config(formMURLConfig)
-formMURLConfig.$inject = ['$stateProvider', '$urlRouterProvider']
-function formMURLConfig($stateProvider, $urlRouterProvider) {
-  $urlRouterProvider
-    .otherwise('/')
+formMURLConfig.$inject = ['$stateProvider']
+function formMURLConfig($stateProvider) {
 
   $stateProvider
     .state('form-m', {

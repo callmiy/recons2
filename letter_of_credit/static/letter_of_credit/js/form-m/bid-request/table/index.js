@@ -2,6 +2,8 @@
 
 var app = angular.module('form-m-bid-request-display', [])
 
+app.config(require('commons').interpolateProviderConfig)
+
 app.directive('bidRequestDisplay', bidRequestDisplayDirective)
 function bidRequestDisplayDirective() {
 
@@ -12,16 +14,43 @@ function bidRequestDisplayDirective() {
     link: link,
     scope: {},
     bindToController: {
-      bidRequests: '=',
+      bidCollection: '=',
       newBid: '='
     },
-    controller: 'BidRequestDisplayDirectiveCtrl as bidTable',
-    template: require('./table.html')
+    controller: 'BidRequestDisplayDirectiveCtrl as formMBidTable',
+    templateUrl: require('formMCommons').buildUrl('bid-request/table/table.html')
   }
 }
 
 app.controller('BidRequestDisplayDirectiveCtrl', BidRequestDisplayDirectiveCtrl)
-BidRequestDisplayDirectiveCtrl.$inject = []
-function BidRequestDisplayDirectiveCtrl() {
+BidRequestDisplayDirectiveCtrl.$inject = ['$scope']
+function BidRequestDisplayDirectiveCtrl(scope) {
+  var vm = this
 
+  vm.paginationSize = 20
+  vm.orderProp = '-created_at'
+
+  function setUpLinks() {}
+
+  scope.$watch(function getNewFormM() {return vm.newBid}, function(newBid) {
+    if (newBid) {
+      if (vm.bidCollection.results.length === vm.paginationSize) vm.bidCollection.results.pop()
+      vm.bidCollection.results.unshift(newBid)
+      vm.orderProp = '-id'
+    }
+  })
+
+  scope.$watch(function() {return vm.bidCollection}, function(newBids) {
+    console.log('newBids = ', newBids);
+    if (newBids) {
+      if (newBids.$promise) {
+        newBids.$promise.then(function(data) {
+          setUpLinks(data.next, data.previous, data.count)
+        })
+
+      } else {
+        setUpLinks(newBids.next, newBids.previous, newBids.count)
+      }
+    }
+  })
 }

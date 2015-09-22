@@ -67,7 +67,7 @@ class FormMSerializer(serializers.HyperlinkedModelSerializer):
 
 class LcBidRequestSerializer(serializers.HyperlinkedModelSerializer):
     currency = serializers.ReadOnlyField(source='mf.currency.code')
-    form_number = serializers.ReadOnlyField(source='mf.number')
+    form_m_number = serializers.ReadOnlyField(source='mf.number')
     applicant = serializers.ReadOnlyField(source='mf.applicant.name')
     goods_description = serializers.ReadOnlyField(source='mf.goods_description')
 
@@ -81,7 +81,7 @@ class LcBidRequestSerializer(serializers.HyperlinkedModelSerializer):
             'requested_at',
             'amount',
             'mf',
-            'form_number',
+            'form_m_number',
             'applicant',
             'goods_description',
         )

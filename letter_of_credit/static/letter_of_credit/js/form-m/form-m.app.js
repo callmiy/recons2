@@ -1,13 +1,15 @@
 "use strict";
 
 require('./form-m')
+require('./bid-request')
 
 var rootCommons = require('commons')
 
 var app = angular.module('form-m-root-app',
   ['rootApp',
    'ui.router',
-   'form-m'
+   'form-m',
+   'form-m-bid'
   ])
 
 app.config(rootCommons.interpolateProviderConfig)
