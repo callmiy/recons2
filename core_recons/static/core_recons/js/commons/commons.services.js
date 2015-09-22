@@ -54,11 +54,11 @@ FormM.$inject = ['$resource', 'urls']
 function FormM($resource, urls) {
   var url = appendToUrl(urls.formMAPIUrl, ':id')
   return $resource(url, {id: '@id'}, {
-      'put': {
+      put: {
         method: 'PUT'
       },
 
-      'getPaginated': {
+      getPaginated: {
         method: 'GET'
       }
     }
@@ -136,6 +136,22 @@ function LCIssueConcrete($resource, urls) {
   return $resource(url, {id: '@id'}, {
       'put': {
         method: 'PUT'
+      }
+    }
+  )
+}
+
+services.factory('LcBidRequest', LcBidRequest)
+LcBidRequest.$inject = ['$resource', 'urls']
+function LcBidRequest($resource, urls) {
+  var url = appendToUrl(urls.lcBidRequestAPIUrl, ':id');
+  return $resource(url, {id: '@id'}, {
+      put: {
+        method: 'PUT'
+      },
+
+      getPaginated: {
+        method: 'GET'
       }
     }
   )

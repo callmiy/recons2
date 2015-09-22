@@ -6,41 +6,39 @@ var app = angular.module('form-m')
 app.directive('addFormM', addFormMDirective)
 addFormMDirective.$inject = ['ModalService']
 function addFormMDirective(ModalService) {
-  return {
-    restrict: 'A',
+  function link(scope, elm, attributes, self) {
+    elm
+      .css({cursor: 'pointer'})
+      .bind('click', function() {
+              ModalService.showModal({
+                template: require('./add-form-m.html'),
 
-    link: function(scope, elm, attributes, self) {
-      elm
-        .css({cursor: 'pointer'})
-        .bind('click', function() {
-                ModalService.showModal({
-                  template: require('./add-form-m.html'),
+                controller: 'AddFormMModalCtrl as addFormMModal'
 
-                  controller: 'AddFormMModalCtrl as addFormMModal'
+              }).then(function(modal) {
+                modal.element.dialog({
+                  dialogClass: 'no-close',
+                  modal: true,
+                  minWidth: 600,
+                  minHeight: 450,
+                  maxHeight: 600,
+                  title: 'Add Form M'
+                })
 
-                }).then(function(modal) {
-                  modal.element.dialog({
-                    dialogClass: 'no-close',
-                    modal: true,
-                    minWidth: 600,
-                    minHeight: 450,
-                    maxHeight: 600,
-                    title: 'Add Form M'
-                  })
-
-                  modal.close.then(function(submittedData) {
-                    if (submittedData && submittedData.submittedFormM) {
-                      self.saveFormM(submittedData)
-                    }
-                  })
+                modal.close.then(function(submittedData) {
+                  if (submittedData && submittedData.submittedFormM) {
+                    self.saveFormM(submittedData)
+                  }
                 })
               })
-    },
+            })
+  }
 
+  return {
+    restrict: 'A',
+    link: link,
     controller: 'AddFormMDirectiveCtrl as addFormM',
-
     scope: {},
-
     bindToController: {
       newFormM: '='
     }
@@ -48,8 +46,15 @@ function addFormMDirective(ModalService) {
 }
 
 app.controller('AddFormMDirectiveCtrl', AddFormMDirectiveCtrl)
-AddFormMDirectiveCtrl.$inject = ['formatDate', 'FormM', 'xhrErrorDisplay', 'kanmiiUnderscore', 'LCIssueConcrete']
-function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUnderscore, LCIssueConcrete) {
+AddFormMDirectiveCtrl.$inject = [
+  'formatDate',
+  'FormM',
+  'xhrErrorDisplay',
+  'kanmiiUnderscore',
+  'LCIssueConcrete',
+  'LcBidRequest'
+]
+function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUnderscore, LCIssueConcrete, LcBidRequest) {
   var vm = this
 
   vm.saveFormM = saveFormM
@@ -60,12 +65,22 @@ function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUndersc
     formMToSave.currency = newFormM.currency.url
     formMToSave.date_received = formatDate(newFormM.date_received)
 
+    var submittedBidRequest = submittedData.submittedBidRequest
+    if (submittedBidRequest && !kanmiiUnderscore.isEmpty(submittedBidRequest)) {
+      formMToSave.goods_description = submittedData.submittedBidRequest.goods_description
+    }
+
     var formM = new FormM(formMToSave)
     formM.$save(formMSavedSuccess, formMSavedError)
 
     function formMSavedSuccess(data) {
       saveLcIssues(data.url)
+      if (formMToSave.goods_description) {
+        makeBidRequest(data.url, submittedBidRequest)
+      }
       vm.newFormM = data
+
+      console.log('vm.newFormM = ', vm.newFormM);
     }
 
     function formMSavedError(xhr) {
@@ -80,6 +95,15 @@ function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUndersc
           .$save(function(data) { console.log(data); }, function(xhr) {console.log(xhr);})
       }
     })
+  }
+
+  function makeBidRequest(formMUrl, submittedBidRequest) {
+    submittedBidRequest.mf = formMUrl
+    var bid = new LcBidRequest(submittedBidRequest)
+    bid.$save(
+      function(data) {console.log('bid saved successfully with data = ', data);},
+      function(xhr) {xhrErrorDisplay(xhr)}
+    )
   }
 }
 

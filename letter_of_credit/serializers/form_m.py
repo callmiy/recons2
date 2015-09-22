@@ -1,4 +1,4 @@
-from letter_of_credit.models import FormM, LCIssue, LCIssueConcrete
+from letter_of_credit.models import FormM, LCIssue, LCIssueConcrete, LcBidRequest
 from rest_framework import serializers
 from adhocmodels.serializers import CustomerSerializer, CurrencySerializer
 
@@ -61,4 +61,27 @@ class FormMSerializer(serializers.HyperlinkedModelSerializer):
             'date_received',
             'url',
             'form_m_issues',
+            'goods_description',
+        )
+
+
+class LcBidRequestSerializer(serializers.HyperlinkedModelSerializer):
+    currency = serializers.ReadOnlyField(source='mf.currency.code')
+    form_number = serializers.ReadOnlyField(source='mf.number')
+    applicant = serializers.ReadOnlyField(source='mf.applicant.name')
+    goods_description = serializers.ReadOnlyField(source='mf.goods_description')
+
+    class Meta:
+        model = LcBidRequest
+        fields = (
+            'id',
+            'url',
+            'currency',
+            'created_at',
+            'requested_at',
+            'amount',
+            'mf',
+            'form_number',
+            'applicant',
+            'goods_description',
         )

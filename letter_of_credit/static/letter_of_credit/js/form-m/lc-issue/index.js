@@ -19,7 +19,6 @@ function lcIssueDirective(LCIssue) {
 
         if (showVal && !self.lcIssues.length) {
           self.lcIssues = LCIssue.query()
-          console.log(self.lcIssues);
         }
         else {
           element.find('.lc-issue-item-checkbox').each(function() {

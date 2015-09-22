@@ -20,7 +20,9 @@ from letter_of_credit.views.form_m import (
     LCIssueListCreateAPIView,
     LCIssueUpdateAPIView,
     LCIssueConcreteListCreateAPIView,
-    LCIssueConcreteUpdateAPIView)
+    LCIssueConcreteUpdateAPIView,
+    LcBidRequestListCreateAPIView,
+    LcBidRequestUpdateAPIView)
 
 
 class Home(CoreAppsView):
