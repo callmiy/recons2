@@ -33,7 +33,7 @@
         </tr>
       </thead>
 
-      <tbody>
+      <tbody toggle-bg-color row-selector="tr" selected-class-indicator="bid-display-table-selected">
         <tr ng-repeat="bid in formMBidTable.bidCollection.results|orderBy:formMBidTable.orderProp"
             class="form-m-bid-display-table-row" style="cursor:pointer;">
           <td>{$$index + 1$}</td>
@@ -47,28 +47,8 @@
       </tbody>
     </table>
 
-    <nav id="form-m-bid-pager-nav">
-      <ul class="pagination" style="margin-top: 0;">
-        <li ng-class="['previous', {disabled: !formMBidTable.prevPageLink}]">
-          <a ng-href="{$formMBidTable.prevPageLink$}" aria-label="Previous" class="form-m-bid-pager-nav-link">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-
-        <li ng-repeat="link in formMBidTable.linkUrls"
-            ng-class="{active: (formMBidTable.currentLink == ($index + 1))}">
-          <a ng-href="{$link$}"
-             ng-class="['form-m-bid-pager-nav-link', {active: (formMBidTable.currentLink == ($index + 1))}]">
-            {$($index + 1)$}
-          </a>
-        </li>
-
-        <li ng-class="['previous', {disabled: !formMBidTable.nextPageLink}]">
-          <a ng-href="{$formMBidTable.nextPageLink$}" aria-label="Next" class="form-m-bid-pager-nav-link">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
+    <pager-nav prev-page-link="formMBidTable.prevPageLink" link-urls="formMBidTable.linkUrls"
+               current-pager-link="formMBidTable.currentLink" nex-page-link="formMBidTable.nextPageLink"
+               target-clicked-callback="formMBidTable.getFormMCollectionOnNavigation(linkUrl)"/>
   </div>
 </div>

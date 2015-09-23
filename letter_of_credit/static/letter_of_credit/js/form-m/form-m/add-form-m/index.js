@@ -170,7 +170,7 @@ function AddFormMModalCtrl(resetForm, element, close, getTypeAheadCustomer, getT
   vm.reset = reset
   function reset(form) {
     vm.formM = {}
-    resetForm(form, element, 'form-control', initForm)
+    resetForm(form, element, '.form-control', initForm)
   }
 
   vm.submitFormM = submitFormM

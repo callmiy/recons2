@@ -2,10 +2,6 @@
 
 var rootCommons = require('commons')
 
-require('./table')
-require('./search-form-m')
-require('./lc-issue')
-
 var app = angular.module('form-m',
   ['rootApp',
    'ui.router',

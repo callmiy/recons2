@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from adhocmodels.models import Customer, Currency
 from letter_of_credit.models import LCRegister
 
@@ -46,6 +47,13 @@ class FormM(models.Model):
     def currency_data(self):
         return self.currency
 
+    @classmethod
+    def search_filter(cls, qs, param):
+        if not param:
+            return qs
+
+        return qs.filter(Q(number__icontains=param) | Q(applicant__name__icontains=param))
+
 
 class LCIssueConcrete(models.Model):
     issue = models.ForeignKey(LCIssue, verbose_name='Issue')
@@ -66,7 +74,7 @@ class LCIssueConcrete(models.Model):
 class LcBidRequest(models.Model):
     mf = models.ForeignKey(FormM, verbose_name='Related Form M', related_name='bids')
     created_at = models.DateField('Date Created', auto_now_add=True)
-    requested_at = models.DateField('Date Request To Treasury')
+    requested_at = models.DateField('Date Request To Treasury', blank=True, null=True)
     amount = models.DecimalField('Amount', max_digits=20, decimal_places=2)
 
     class Meta:

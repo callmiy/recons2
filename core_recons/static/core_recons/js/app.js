@@ -52,5 +52,7 @@ function resetForm() {
 require('./add-customer')
 require('./commons/number-format.js')
 require('./commons/to-upper.js')
+require('./commons/toggle-bg-color')
+require('./commons/pager-nav')
 require('./commons/commons.services.js')
 require('./search-lc')

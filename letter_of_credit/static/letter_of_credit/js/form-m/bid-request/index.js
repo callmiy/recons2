@@ -2,9 +2,12 @@
 
 var rootCommons = require('commons')
 
-require('./table')
-
-var app = angular.module('form-m-bid', ['ui.router', 'form-m-bid-request-display'])
+var app = angular.module('form-m-bid', [
+  'ui.router',
+  'form-m-bid-request-display',
+  'add-bid',
+  'form-m-search-service'
+])
 
 app.config(rootCommons.interpolateProviderConfig)
 
@@ -23,24 +26,31 @@ function bidURLConfig($stateProvider) {
 }
 
 app.controller('BidRequestController', BidRequestController)
-BidRequestController.$inject = ['LcBidRequest', '$scope']
-function BidRequestController(LcBidRequest, scope) {
+BidRequestController.$inject = ['LcBidRequest', '$scope', 'SearchFormMService']
+function BidRequestController(LcBidRequest, scope, SearchFormMService) {
   var vm = this;
 
+  vm.searchFormMs = searchFormMs
+  function searchFormMs() {
+    SearchFormMService.searchWithModal().then(function(data) {
+      console.log(data);
+    })
+  }
+
   /**
-   * The form Ms retrieved from backend. Will contain a list of form Ms and pagination hooks for
-   * retrieving the next and previous sets of form Ms. This model is used by the display directive
-   * to display the form Ms in a table
+   * The bids retrieved from backend. Will contain a list of bids and pagination hooks for
+   * retrieving the next and previous sets of bids. This model is used by the display directive
+   * to display the bids in a table
    * @type {object}
    */
   vm.bidRequests = LcBidRequest.getPaginated()
 
   /**
-   * The 'new form M' model. When we create a new form M via the create/add form M directive, the result is
+   * The 'new bid' model. When we create a new bid via the create/add bid directive, the result is
    * propagated from the creation directive into this model
    * @type {null|object}
    */
-  vm.newBidRequest = null
+  vm.newBid = null
 
   /**
    * When the search-form-m directive returns, the result is propagated into this model

@@ -1,6 +1,6 @@
 "use strict";
 
-var app = angular.module('form-m-bid-request-display', [])
+var app = angular.module('form-m-bid-request-display', ['toggle-bg-color'])
 
 app.config(require('commons').interpolateProviderConfig)
 
@@ -34,14 +34,12 @@ function BidRequestDisplayDirectiveCtrl(scope) {
 
   scope.$watch(function getNewFormM() {return vm.newBid}, function(newBid) {
     if (newBid) {
-      if (vm.bidCollection.results.length === vm.paginationSize) vm.bidCollection.results.pop()
       vm.bidCollection.results.unshift(newBid)
       vm.orderProp = '-id'
     }
   })
 
   scope.$watch(function() {return vm.bidCollection}, function(newBids) {
-    console.log('newBids = ', newBids);
     if (newBids) {
       if (newBids.$promise) {
         newBids.$promise.then(function(data) {

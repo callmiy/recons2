@@ -33,7 +33,7 @@
         </tr>
       </thead>
 
-      <tbody>
+      <tbody toggle-bg-color row-selector="tr" selected-class-indicator="form-m-display-table-selected">
         <tr ng-repeat="formM in formMTable.formMCollection.results|orderBy:formMTable.orderProp|filter:formMTable.query"
             class="form-m-display-table-row" style="cursor:pointer;">
           <td>{$$index + 1$}</td>
@@ -47,28 +47,8 @@
       </tbody>
     </table>
 
-    <nav id="form-m-pager-nav">
-      <ul class="pagination" style="margin-top: 0;">
-        <li ng-class="['previous', {disabled: !formMTable.prevPageLink}]">
-          <a ng-href="{$formMTable.prevPageLink$}" aria-label="Previous" class="form-m-pager-nav-link">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-
-        <li ng-repeat="link in formMTable.linkUrls"
-            ng-class="{active: (formMTable.currentLink == ($index + 1))}">
-          <a ng-href="{$link$}"
-             ng-class="['form-m-pager-nav-link', {active: (formMTable.currentLink == ($index + 1))}]">
-            {$($index + 1)$}
-          </a>
-        </li>
-
-        <li ng-class="['previous', {disabled: !formMTable.nextPageLink}]">
-          <a ng-href="{$formMTable.nextPageLink$}" aria-label="Next" class="form-m-pager-nav-link">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
+    <pager-nav prev-page-link="formMTable.prevPageLink" link-urls="formMTable.linkUrls"
+               current-pager-link="formMTable.currentLink" nex-page-link="formMTable.nextPageLink"
+               target-clicked-callback="formMTable.getFormMCollectionOnNavigation(linkUrl)"/>
   </div>
 </div>
