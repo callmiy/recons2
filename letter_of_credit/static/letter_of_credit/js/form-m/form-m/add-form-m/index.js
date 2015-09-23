@@ -75,12 +75,10 @@ function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUndersc
 
     function formMSavedSuccess(data) {
       saveLcIssues(data.url)
-      if (formMToSave.goods_description) {
-        makeBidRequest(data.url, submittedBidRequest)
-      }
-      vm.newFormM = data
 
-      console.log('vm.newFormM = ', vm.newFormM);
+      if (formMToSave.goods_description) makeBidRequest(data.url, submittedBidRequest)
+
+      vm.newFormM = data
     }
 
     function formMSavedError(xhr) {

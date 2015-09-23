@@ -23,16 +23,34 @@ function bidRequestDisplayDirective() {
 }
 
 app.controller('BidRequestDisplayDirectiveCtrl', BidRequestDisplayDirectiveCtrl)
-BidRequestDisplayDirectiveCtrl.$inject = ['$scope']
-function BidRequestDisplayDirectiveCtrl(scope) {
+BidRequestDisplayDirectiveCtrl.$inject = ['$scope', 'pagerNavSetUpLinks', '$http']
+function BidRequestDisplayDirectiveCtrl(scope, pagerNavSetUpLinks, $http) {
   var vm = this
 
   vm.paginationSize = 20
   vm.orderProp = '-created_at'
 
-  function setUpLinks() {}
+  function setUpLinks(next, prev, count) {
 
-  scope.$watch(function getNewFormM() {return vm.newBid}, function(newBid) {
+    var numLinks = Math.ceil(count / vm.paginationSize)
+
+    var linkProperties = pagerNavSetUpLinks(next, prev, numLinks)
+
+    vm.nextPageLink = next
+    vm.prevPageLink = prev
+
+    vm.linkUrls = linkProperties.linkUrls
+    vm.currentLink = linkProperties.currentLink
+  }
+
+  vm.getBidsOnNavigation = getBidsOnNavigation
+  function getBidsOnNavigation(linkUrl) {
+    $http.get(linkUrl).then(function(response) {
+      vm.bidCollection = response.data
+    })
+  }
+
+  scope.$watch(function getNewFormM() {return vm.newBid}, function updatedNewBid(newBid) {
     if (newBid) {
       vm.bidCollection.results.unshift(newBid)
       vm.orderProp = '-id'

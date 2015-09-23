@@ -40,7 +40,7 @@ function addBidDirective(ModalService) {
     controller: 'AddBidDirectiveCtrl as addBid',
     scope: {},
     bindToController: {
-      newFormM: '='
+      newBid: '='
     }
   }
 }
@@ -54,14 +54,19 @@ function AddBidDirectiveCtrl(xhrErrorDisplay, LcBidRequest) {
 
   vm.saveBid = saveBid
   function saveBid(submittedData) {
-    new LcBidRequest().then(bidSavedSuccess, bidSavedError)
+    var dataToSave = {
+      amount: submittedData.amount,
+      mf: submittedData.mf.url
+    }
+
+    new LcBidRequest(dataToSave).$save(bidSavedSuccess, bidSavedError)
 
     function bidSavedSuccess(data) {
       vm.newBid = data
     }
 
     function bidSavedError(xhr) {
-      xhrErrorDisplay(xhr, {date_received: 'date received', number: 'form m number'})
+      xhrErrorDisplay(xhr, {mf: 'form m', amount: 'amount'})
     }
   }
 }
@@ -96,7 +101,7 @@ function AddBidModalCtrl(resetForm, element, close, SearchFormMService, kanmiiUn
   vm.close = close
 
   vm.reset = function reset(form) {
-    resetForm(form, element, 'form-control', initForm)
+    resetForm(form, element, '.form-control', initForm)
   }
 
   vm.submitBid = submitBid
