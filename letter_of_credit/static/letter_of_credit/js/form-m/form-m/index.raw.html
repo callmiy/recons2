@@ -1,6 +1,6 @@
 <div class="form-m-home-view">
   <div class="action-buttons" style="float: right;">
-    <button class="btn btn-info" add-form-m new-form-m="formMHome.newFormM">
+    <button class="btn btn-info" add-form-m on-new-form-m="formMHome.receiveNewFormM(newFormM)">
       Add Form M
     </button>
 
@@ -9,5 +9,11 @@
     </button>
   </div>
 
-  <div display-form-m form-m-collection="formMHome.formMs" new-form-m="formMHome.newFormM"></div>
+  <model-table model-collection="formMHome.formMs"
+               table-model-manager="::formMHome.modelManager"
+               table-caption="::formMHome.tableCaption"
+               pagination-size="20"
+               update-collection="formMHome.getFormMCollectionOnNavigation(linkUrl)"
+               pager-object="formMHome.paginationHooks"
+      />
 </div>

@@ -172,3 +172,15 @@ form.align-vertical .submit-row {
   font-weight: 500;
   font-size: 15px;
 }
+.model-table-display-root-container table > caption {
+  text-align: center;
+  font-weight: 500;
+  font-size: 20px;
+  padding: 0;
+}
+.model-table-display-root-container table > tbody > tr.model-table-display-selected {
+  background-color: #46B8DA;
+}
+.model-table-display-root-container table > tbody > tr.model-table-display-selected > td {
+  color: white;
+}

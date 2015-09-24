@@ -1,6 +1,6 @@
 "use strict";
 
-var app = angular.module('model-table', ['toggle-bg-color', 'kanmii-underscore'])
+var app = angular.module('model-table', ['toggle-bg-color', 'kanmii-underscore', 'pager-nav'])
 
 app.config(require('commons').interpolateProviderConfig)
 

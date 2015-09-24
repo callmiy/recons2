@@ -227,3 +227,23 @@ form.align-vertical {
     }
   }
 }
+
+//model table angular directive
+.model-table-display-root-container {
+  table {
+    & > caption {
+      text-align: center;
+      font-weight: 500;
+      font-size: 20px;
+      padding: 0;
+    }
+
+    & > tbody > tr.model-table-display-selected {
+      background-color: #46B8DA;
+
+      & > td {
+        color: white;
+      }
+    }
+  }
+}
