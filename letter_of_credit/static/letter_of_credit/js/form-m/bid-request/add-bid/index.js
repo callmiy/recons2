@@ -40,7 +40,7 @@ function addBidDirective(ModalService) {
     controller: 'AddBidDirectiveCtrl as addBid',
     scope: {},
     bindToController: {
-      newBid: '='
+      onNewBid: '&'
     }
   }
 }
@@ -62,7 +62,7 @@ function AddBidDirectiveCtrl(xhrErrorDisplay, LcBidRequest) {
     new LcBidRequest(dataToSave).$save(bidSavedSuccess, bidSavedError)
 
     function bidSavedSuccess(data) {
-      vm.newBid = data
+      vm.onNewBid({newBid: data})
     }
 
     function bidSavedError(xhr) {

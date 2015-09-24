@@ -1,6 +1,6 @@
 <div class="form-m-home-view">
   <div class="action-buttons" style="float: right;">
-    <button class="btn btn-info" add-bid new-bid="bidHome.newBid">
+    <button class="btn btn-info" add-bid on-new-bid="bidHome.receiveNewBid(newBid)">
       Make a bid request
     </button>
 
@@ -9,5 +9,11 @@
     </button>
   </div>
 
-  <bid-request-display bid-collection="bidHome.bidRequests" new-bid="bidHome.newBid"></bid-request-display>
+  <model-table model-collection="bidHome.bidRequests"
+               table-model-manager="::bidHome.modelManager"
+               table-caption="::bidHome.tableCaption"
+               pagination-size="20"
+               update-collection="bidHome.getBidsOnNavigation(linkUrl)"
+               pager-object="bidHome.paginationHooks"
+      />
 </div>
