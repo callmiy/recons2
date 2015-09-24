@@ -34,11 +34,12 @@ class FormM(models.Model):
         ordering = ('-date_received',)
 
     def __unicode__(self):
-        return '[%s | %s%s | %s]' % (
+        return '[%s | %s%s | %s | %s]' % (
             self.number,
             self.currency.code,
             '{:,.2f}'.format(self.amount),
-            self.applicant.name
+            self.applicant.name,
+            self.goods_description and self.goods_description[:10] or ''
         )
 
     def applicant_data(self):

@@ -36,6 +36,10 @@ body {
   padding: 2px 3px;
   border: 1px solid #ccc;
 }
+.container-fluid input.form-control,
+.container-fluid textarea.form-control {
+  margin: 0;
+}
 .container-fluid h1 {
   font-size: 18px;
   color: #666;

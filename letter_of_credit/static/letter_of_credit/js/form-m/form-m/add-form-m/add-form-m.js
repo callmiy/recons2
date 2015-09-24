@@ -40,7 +40,7 @@ function addFormMDirective(ModalService) {
     controller: 'AddFormMDirectiveCtrl as addFormM',
     scope: {},
     bindToController: {
-      newFormM: '='
+      onNewMf: '&'
     }
   }
 }
@@ -78,7 +78,7 @@ function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUndersc
 
       if (formMToSave.goods_description) makeBidRequest(data.url, submittedBidRequest)
 
-      vm.newFormM = data
+      vm.onNewMf({newFormM: data})
     }
 
     function formMSavedError(xhr) {

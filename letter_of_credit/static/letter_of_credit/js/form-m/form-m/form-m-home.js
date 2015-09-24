@@ -5,9 +5,11 @@ var rootCommons = require('commons')
 var app = angular.module('form-m',
   ['rootApp',
    'ui.router',
+   'form-m-service',
    'form-m-search',
    'form-m-lc-issue',
-   'model-table'
+   'model-table',
+   'customer'
   ])
 
 app.config(rootCommons.interpolateProviderConfig)
@@ -22,61 +24,23 @@ function formMURLConfig($stateProvider) {
 
       kanmiiTitle: 'Form M',
 
-      template: require('./index.html'),
+      template: require('./form-m-home.html'),
 
       controller: 'FormMController as formMHome'
     })
 }
 
 app.controller('FormMController', FormMController)
-FormMController.$inject = ['FormM', '$scope', '$filter', '$http']
-function FormMController(FormM, scope, $filter, $http) {
+FormMController.$inject = ['FormM', '$scope', 'formMModelManager', '$http']
+function FormMController(FormM, scope, formMModelManager, $http) {
   var vm = this;
-
-  var numberCssStyle = {'text-align': 'right'}
 
   /**
    * The model manager will be used by the 'model-table' directive to manage the collection of form Ms retrieved
    * from the server
    * @type {[]}
    */
-  vm.modelManager = [
-    {
-      title: 'Form M', modelKey: 'number'
-    },
-
-    {
-      title: 'Applicant',
-      render: function(model) {
-        return model.applicant_data.name
-      }
-    },
-
-    {
-      title: 'Currency',
-      render: function(model) {
-        return model.currency_data.code
-      }
-    },
-
-    {
-      title: 'Amount', tdStyle: numberCssStyle,
-      render: function(model) {
-        return $filter('number')(model.amount, 2)
-      }
-    },
-
-    {
-      title: 'Date Received', tdStyle: numberCssStyle,
-      render: function(model) {
-        return $filter('date')(model.date_received, 'dd-MMM-yyyy')
-      }
-    },
-
-    {
-      title: 'Bid Date', modelKey: 'nothing'
-    }
-  ]
+  vm.modelManager = formMModelManager
 
   /**
    * Update the form Ms collection and pagination hooks
@@ -145,4 +109,4 @@ function FormMController(FormM, scope, $filter, $http) {
   })
 }
 
-require('./add-form-m')
+require('./add-form-m/add-form-m.js')

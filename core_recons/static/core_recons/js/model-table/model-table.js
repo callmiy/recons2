@@ -73,7 +73,9 @@ function modelTableDirective() {
        * See `pager-nav` directive for explanation of the object.
        * :TODO - should the parent render the pager-nav directly rather than have the model table render it?
        */
-      pager: '=pagerObject'
+      pager: '=pagerObject',
+
+      onDblClick: '&onRowDblClickCallback'
     },
 
     controller: 'ModelTableDirectiveCtrl as modelTable',

@@ -7,6 +7,7 @@ var rootCommons = require('commons')
 var app = angular.module('form-m-bid', [
   'ui.router',
   'model-table',
+  'add-bid-service',
   'add-bid',
   'form-m-search-service'
 ])
@@ -23,7 +24,7 @@ function bidURLConfig($stateProvider) {
 
       kanmiiTitle: 'Bid Requests',
 
-      template: require('./index.html'),
+      template: require('./bid-request-home.html'),
 
       controller: 'BidRequestController as bidHome'
     })

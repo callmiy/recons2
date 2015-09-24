@@ -76,9 +76,10 @@ AddBidModalCtrl.$inject = [
   '$element',
   'close',
   'SearchFormMService',
-  'kanmiiUnderscore'
+  'kanmiiUnderscore',
+  '$state'
 ]
-function AddBidModalCtrl(resetForm, element, close, SearchFormMService, kanmiiUnderscore) {
+function AddBidModalCtrl(resetForm, element, close, SearchFormMService, kanmiiUnderscore, state) {
 
   var vm = this
 
@@ -106,14 +107,14 @@ function AddBidModalCtrl(resetForm, element, close, SearchFormMService, kanmiiUn
     close(newBid)
   }
 
-  function executeAfterDim() {
-    element.find('.form-control').each(function() {
-      var $el = $(this)
-      $el.prop('disabled', !$el.prop('disabled'))
-    })
-  }
+  vm.getFormM = function getFormM() {
+    function executeAfterDim() {
+      element.find('.form-control').each(function() {
+        var $el = $(this)
+        $el.prop('disabled', !$el.prop('disabled'))
+      })
+    }
 
-  vm.getFormM = function() {
     SearchFormMService.searchWithModal({
       parent: element,
       dim: true,
@@ -123,6 +124,10 @@ function AddBidModalCtrl(resetForm, element, close, SearchFormMService, kanmiiUn
       var results = data.results
       if (results.length) {
         if (results.length === 1) vm.mfGetterSetter(results[0])
+        else {
+          close()
+          state.go('addBid', {formMsFromSearch: data})
+        }
       }
     })
   }

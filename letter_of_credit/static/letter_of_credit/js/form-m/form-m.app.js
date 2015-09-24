@@ -1,11 +1,12 @@
 "use strict";
 
-require('./bid-request/add-bid')
-require('./bid-request')
-require('./form-m/search-form-m-service')
+require('./bid-request/add-bid/add-bid.js')
+require('./bid-request/add-bid-service/add-bid-service.js')
+require('./bid-request/bid-request-home.js')
+require('./form-m/search-form-m-service/search-form-m-service.js')
 require('./form-m/search-form-m')
 require('./form-m/lc-issue')
-require('./form-m')
+require('./form-m/form-m-home.js')
 
 var rootCommons = require('commons')
 

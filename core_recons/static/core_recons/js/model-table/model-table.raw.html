@@ -12,8 +12,8 @@
     </thead>
 
     <tbody toggle-bg-color row-selector="tr" selected-class-indicator="model-table-display-selected">
-      <tr ng-repeat="aModel in modelTable.modelCollection"
-          class="model-table-display-table-row" style="cursor:pointer;">
+      <tr ng-repeat="aModel in modelTable.modelCollection" ng-dblclick="modelTable.onDblClick({rowModel: aModel})"
+          class="model-table-display-table-row" style="cursor: pointer;">
         <td>{$$index + 1$}</td>
 
         <td ng-repeat="modelManager in modelTable.modelManager" ng-style="::modelManager.tdStyle">

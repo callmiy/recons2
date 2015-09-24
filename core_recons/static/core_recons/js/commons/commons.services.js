@@ -26,45 +26,6 @@ function getTypeAheadCurrency(Currency) {
   return getCurrency
 }
 
-services.factory('Customer', Customer)
-Customer.$inject = ['$resource', 'urls']
-function Customer($resource, urls) {
-  var url = appendToUrl(urls.customerAPIUrl, ':id')
-  return $resource(url, {id: '@id'}, {
-      'put': {
-        method: 'PUT'
-      }
-    }
-  )
-}
-
-services.factory('getTypeAheadCustomer', getTypeAheadCustomer)
-getTypeAheadCustomer.$inject = ['Customer']
-function getTypeAheadCustomer(Customer) {
-
-  function getCustomer(customerName) {
-    return Customer.query({name: customerName}).$promise
-  }
-
-  return getCustomer
-}
-
-services.factory('FormM', FormM)
-FormM.$inject = ['$resource', 'urls']
-function FormM($resource, urls) {
-  var url = appendToUrl(urls.formMAPIUrl, ':id')
-  return $resource(url, {id: '@id'}, {
-      put: {
-        method: 'PUT'
-      },
-
-      getPaginated: {
-        method: 'GET'
-      }
-    }
-  )
-}
-
 services.factory('Branch', Branch)
 Branch.$inject = ['$resource', 'urls']
 function Branch($resource, urls) {

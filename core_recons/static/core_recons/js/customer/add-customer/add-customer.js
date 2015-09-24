@@ -1,6 +1,6 @@
 "use strict";
 
-var app = angular.module('rootApp')
+var app = angular.module('customer')
 
 app.controller('CustomerModalCtrl', CustomerModalCtrl)
 CustomerModalCtrl.$inject = [
