@@ -20,6 +20,8 @@ function formMURLConfig($stateProvider) {
     .state('form-m', {
       url: '/form-m',
 
+      kanmiiTitle: 'Form M',
+
       template: require('./index.html'),
 
       controller: 'FormMController as formMHome'

@@ -3,7 +3,13 @@
 var app = angular.module('rootApp')
 
 app.controller('CustomerModalCtrl', CustomerModalCtrl)
-CustomerModalCtrl.$inject = ['resetForm', '$element', 'close', 'Branch', 'xhrErrorDisplay']
+CustomerModalCtrl.$inject = [
+  'resetForm',
+  '$element',
+  'close',
+  'Branch',
+  'xhrErrorDisplay'
+]
 function CustomerModalCtrl(resetForm, element, close, Branch, xhrErrorDisplay) {
   var vm = this
   vm.customer = {}
@@ -70,8 +76,8 @@ function CustomerModalCtrl(resetForm, element, close, Branch, xhrErrorDisplay) {
 }
 
 app.directive('addCustomer', addCustomerDirective)
-addCustomerDirective.$inject = ['ModalService', '$parse']
-function addCustomerDirective(ModalService, $parse) {
+addCustomerDirective.$inject = ['ModalService', '$parse', 'ToggleDimElement']
+function addCustomerDirective(ModalService, $parse, ToggleDimElement) {
   return {
     restrict: 'A',
     link: function(scope, elm, attributes, self) {
@@ -86,15 +92,10 @@ function addCustomerDirective(ModalService, $parse) {
         }).then(function(modal) {
           var parentEl = $parse(attributes.dimParent)(scope.$parent)
 
-          var dimParent = function dimParent() {
-            parentEl.addClass('ui-widget-overlay ui-front').find('.form-control').each(function() {
-              $(this).prop('disabled', true)
-            })
-          }
-
-          var unDimParent = function unDimParent() {
-            parentEl.removeClass('ui-widget-overlay ui-front').find('.form-control').each(function() {
-              $(this).prop('disabled', false)
+          function executeAfterDim() {
+            parentEl.find('.form-control').each(function() {
+              var $el = $(this)
+              $el.prop('disabled', !$el.prop('disabled'))
             })
           }
 
@@ -110,11 +111,11 @@ function addCustomerDirective(ModalService, $parse) {
             minHeight: 450,
 
             open: function() {
-              if (parentEl) dimParent()
+              if (parentEl) ToggleDimElement.dim(parentEl, executeAfterDim)
             },
 
             close: function() {
-              if (parentEl) unDimParent()
+              if (parentEl) ToggleDimElement.unDim(parentEl, executeAfterDim)
             }
           })
 
@@ -123,7 +124,7 @@ function addCustomerDirective(ModalService, $parse) {
               self.addCustomer(customer)
             }
 
-            if (parentEl) unDimParent()
+            if (parentEl) ToggleDimElement.unDim(parentEl, executeAfterDim)
           })
         })
       }

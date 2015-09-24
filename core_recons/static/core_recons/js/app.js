@@ -19,7 +19,8 @@ var app = angular.module('rootApp', [
   'ui.bootstrap',
   'ngResource',
   'ngAnimate',
-  'angularModalService'
+  'angularModalService',
+  'toggle-dim-element'
 ])
 rootCommons.setStaticPrefix(app)
 
@@ -49,6 +50,7 @@ function resetForm() {
   return reset
 }
 
+require('./commons/toggle-dim-element')
 require('./add-customer')
 require('./commons/number-format.js')
 require('./commons/to-upper.js')

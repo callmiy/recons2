@@ -20,8 +20,7 @@ function addBidDirective(ModalService) {
                   dialogClass: 'no-close',
                   modal: true,
                   minWidth: 600,
-                  minHeight: 450,
-                  maxHeight: 600,
+                  maxHeight: 450,
                   title: 'Make Bid Request'
                 })
 
@@ -83,8 +82,6 @@ function AddBidModalCtrl(resetForm, element, close, SearchFormMService, kanmiiUn
 
   var vm = this
 
-  vm.element = element
-
   initForm()
   function initForm() {
     vm.bid = {
@@ -109,8 +106,20 @@ function AddBidModalCtrl(resetForm, element, close, SearchFormMService, kanmiiUn
     close(newBid)
   }
 
+  function executeAfterDim() {
+    element.find('.form-control').each(function() {
+      var $el = $(this)
+      $el.prop('disabled', !$el.prop('disabled'))
+    })
+  }
+
   vm.getFormM = function() {
-    SearchFormMService.searchWithModal().then(function(data) {
+    SearchFormMService.searchWithModal({
+      parent: element,
+      dim: true,
+      dimCb: executeAfterDim,
+      unDimCb: executeAfterDim
+    }).then(function(data) {
       var results = data.results
       if (results.length) {
         if (results.length === 1) vm.mfGetterSetter(results[0])

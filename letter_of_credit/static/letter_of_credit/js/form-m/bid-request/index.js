@@ -21,6 +21,8 @@ function bidURLConfig($stateProvider) {
     .state('bid', {
       url: '/bid',
 
+      kanmiiTitle: 'Bid Requests',
+
       template: require('./index.html'),
 
       controller: 'BidRequestController as bidHome'

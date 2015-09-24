@@ -33,6 +33,8 @@ function formMRootAppURLConfig($stateProvider, $urlRouterProvider) {
     .state('home', {
       url: '/',
 
+      kanmiiTitle: 'Home',
+
       template: require('./home.html')
     })
 }

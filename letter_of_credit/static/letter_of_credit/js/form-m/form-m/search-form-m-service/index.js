@@ -1,11 +1,18 @@
 "use strict";
 /*jshint camelcase:false*/
 
-var app = angular.module('form-m-search-service', ['kanmii-underscore'])
+var app = angular.module('form-m-search-service', ['kanmii-underscore', 'toggle-dim-element'])
 
 app.factory('SearchFormMService', SearchFormMService)
-SearchFormMService.$inject = ['FormM', 'xhrErrorDisplay', 'ModalService', 'kanmiiUnderscore', '$q']
-function SearchFormMService(FormM, xhrErrorDisplay, ModalService, kanmiiUnderscore, $q) {
+SearchFormMService.$inject = [
+  'FormM',
+  'xhrErrorDisplay',
+  'ModalService',
+  'kanmiiUnderscore',
+  '$q',
+  'ToggleDimElement'
+]
+function SearchFormMService(FormM, xhrErrorDisplay, ModalService, kanmiiUnderscore, $q, ToggleDimElement) {
 
   function searchFormM(submittedSearchParams) {
     var deferred = $q.defer()
@@ -49,13 +56,23 @@ function SearchFormMService(FormM, xhrErrorDisplay, ModalService, kanmiiUndersco
           modal: true,
           minWidth: 600,
           minHeight: 450,
-          title: 'Search Form M'
+          title: 'Search Form M',
+
+          open: function() {
+            config.dim && ToggleDimElement.dim(config.parent, config.dimCb)
+          },
+
+          close: function() {
+            config.dim && ToggleDimElement.unDim(config.parent, config.unDimCb)
+          }
         })
 
         modal.close.then(function(submittedSearchParams) {
           if (submittedSearchParams && angular.isObject(submittedSearchParams) && !kanmiiUnderscore.isEmpty(submittedSearchParams)) {
             deferred.resolve(searchFormM(submittedSearchParams))
           }
+
+          config.dim && ToggleDimElement.unDim(config.parent, config.unDimCb)
         })
       })
 
