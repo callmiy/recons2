@@ -1,5 +1,7 @@
 "use strict";
 
+/*jshint camelcase:false*/
+
 var app = angular.module('form-m-service', ['rootApp'])
 
 app.factory('FormM', FormM)
@@ -61,3 +63,5 @@ function formMModelManager($filter) {
     }
   ]
 }
+
+app.value('formMAttributesVerboseNames', {date_received: 'date received', number: 'form m number'})

@@ -100,6 +100,15 @@ function ModelTableDirectiveCtrl(scope, pagerNavSetUpLinks, kanmiiUnderscore) {
 
     vm.linkUrls = linkProperties.linkUrls
     vm.currentLink = linkProperties.currentLink
+
+    /**
+     * The row index offset. The row begin at one so in the view, we do `$index + 1` for row number. However, as we
+     * move from page to page, the `$index` view value is reset back to zero, so that row number always begin at 1.
+     * Since we know what the page number is (this.currentLink), we calculate the offset for the row (as an arithmetic
+     * progression)
+     * @type {number}
+     */
+    vm.rowIndexOffset = (vm.currentLink - 1) * vm.paginationSize
   }
 
   vm.onUpdateCollection = onUpdateCollection

@@ -52,11 +52,12 @@ function resetForm() {
 
 require('./commons/toggle-dim-element')
 require('./customer/customer.js')
+require('./lc-bid-request/lc-bid-request.js')
 require('./form-m/form-m.js')
 require('./commons/number-format.js')
 require('./commons/to-upper.js')
 require('./commons/toggle-bg-color')
-require('./commons/pager-nav')
+require('./pager-nav/pager-nav.js')
 require('./model-table/model-table.js')
 require('./commons/commons.services.js')
 require('./search-lc')

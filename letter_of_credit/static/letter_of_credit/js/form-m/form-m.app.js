@@ -3,6 +3,7 @@
 require('./bid-request/add-bid/add-bid.js')
 require('./bid-request/add-bid-service/add-bid-service.js')
 require('./bid-request/bid-request-home.js')
+require('./bid-request/edit-bid/edit-bid.js')
 require('./form-m/search-form-m-service/search-form-m-service.js')
 require('./form-m/search-form-m')
 require('./form-m/lc-issue')

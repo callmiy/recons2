@@ -102,22 +102,6 @@ function LCIssueConcrete($resource, urls) {
   )
 }
 
-services.factory('LcBidRequest', LcBidRequest)
-LcBidRequest.$inject = ['$resource', 'urls']
-function LcBidRequest($resource, urls) {
-  var url = appendToUrl(urls.lcBidRequestAPIUrl, ':id');
-  return $resource(url, {id: '@id'}, {
-      put: {
-        method: 'PUT'
-      },
-
-      getPaginated: {
-        method: 'GET'
-      }
-    }
-  )
-}
-
 services.controller('XhrErrorDisplayCtrl', XhrErrorDisplayCtrl)
 XhrErrorDisplayCtrl.$inject = ['error', 'errorKeyMap']
 function XhrErrorDisplayCtrl(error, errorKeyMap) {

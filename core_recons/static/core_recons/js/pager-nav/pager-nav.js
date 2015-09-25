@@ -73,7 +73,13 @@ function pagerNavSetUpLinks(kanmiiUri) {
    * @param {int} numLinks - total number of links that will be rendered - |link 1| |link 2| ... |link n|
    */
   function setUpLinks(next, prev, numLinks) {
-    var linkProperties = {}
+    var linkProperties = {
+      /**
+       * we always start at page 1. If the user is however on a different page, we will modify this property
+       * appropriately below
+       */
+      currentLink: 1
+    }
 
     linkProperties.linkUrls = []
 
@@ -88,7 +94,6 @@ function pagerNavSetUpLinks(kanmiiUri) {
     //prev = null (cos we can not go back - there is no position zero)
     //next = url above with query 'page=2'
     if (!prev) {
-      linkProperties.currentLink = 1
       uri = kanmiiUri(next)
       query = uri.search(true)
       uriWithoutQuery = uri.search('')

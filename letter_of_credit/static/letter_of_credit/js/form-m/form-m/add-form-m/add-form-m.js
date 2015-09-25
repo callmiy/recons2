@@ -52,9 +52,11 @@ AddFormMDirectiveCtrl.$inject = [
   'xhrErrorDisplay',
   'kanmiiUnderscore',
   'LCIssueConcrete',
-  'LcBidRequest'
+  'LcBidRequest',
+  'formMAttributesVerboseNames'
 ]
-function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUnderscore, LCIssueConcrete, LcBidRequest) {
+function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUnderscore, LCIssueConcrete, LcBidRequest,
+  formMAttributesVerboseNames) {
   var vm = this
 
   vm.saveFormM = saveFormM
@@ -82,7 +84,7 @@ function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUndersc
     }
 
     function formMSavedError(xhr) {
-      xhrErrorDisplay(xhr, {date_received: 'date received', number: 'form m number'})
+      xhrErrorDisplay(xhr, formAttributesVerboseNames)
     }
   }
 

@@ -9,7 +9,8 @@ var app = angular.module('form-m-bid', [
   'model-table',
   'add-bid-service',
   'add-bid',
-  'form-m-search-service'
+  'form-m-search-service',
+  'lc-bid-request'
 ])
 
 app.config(rootCommons.interpolateProviderConfig)
@@ -21,6 +22,8 @@ function bidURLConfig($stateProvider) {
   $stateProvider
     .state('bid', {
       url: '/bid',
+
+      params: {newBid: null},
 
       kanmiiTitle: 'Bid Requests',
 
@@ -35,10 +38,11 @@ BidRequestController.$inject = [
   'LcBidRequest',
   '$scope',
   'SearchFormMService',
-  '$filter',
-  '$http'
+  'lcBidRequestModelManager',
+  '$http',
+  '$stateParams'
 ]
-function BidRequestController(LcBidRequest, scope, SearchFormMService, $filter, $http) {
+function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequestModelManager, $http, stateParams) {
   var vm = this;
 
   vm.searchFormMs = searchFormMs
@@ -48,47 +52,12 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, $filter, 
     })
   }
 
-  var numberCssStyle = {'text-align': 'right'}
-
   /**
    * The model manager will be used by the 'model-table' directive to manage the collection of bid requests retrieved
    * from the server
    * @type {[]}
    */
-  vm.modelManager = [
-    {
-      title: 'Form M', modelKey: 'form_m_number'
-    },
-
-    {
-      title: 'Applicant', modelKey: 'applicant'
-    },
-
-    {
-      title: 'Currency', modelKey: 'currency'
-    },
-
-    {
-      title: 'Amount', tdStyle: numberCssStyle,
-      render: function(model) {
-        return $filter('number')(model.amount, 2)
-      }
-    },
-
-    {
-      title: 'Date Created', tdStyle: numberCssStyle,
-      render: function(model) {
-        return $filter('date')(model.created_at, 'dd-MMM-yyyy')
-      }
-    },
-
-    {
-      title: 'Date Requested', tdStyle: numberCssStyle,
-      render: function(model) {
-        return $filter('date')(model.requested_at, 'dd-MMM-yyyy')
-      }
-    }
-  ]
+  vm.modelManager = lcBidRequestModelManager
 
   /**
    * The bids retrieved from backend. Will contain a list of bids and pagination hooks for
@@ -144,7 +113,31 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, $filter, 
    * @param {object} data
    */
   function updateBids(data) {
-    vm.bidRequests = data.results
+
+    var results = data.results
+
+    /**
+     * if we are initializing this state with a new bid (because we are coming to this state from 'the create new bid
+     * state'), then we first find out if the new bid is among those downloaded from the server. if it is one, we
+     * delete it from the collection (because angular will complain if there are duplicate collection element) and
+     * we mark it as pre-selected so that background of the row displaying the new bid can be highlighted
+     */
+    if (stateParams.newBid) {
+
+      for (var bidIndex = 0; bidIndex < results.length; bidIndex++) {
+
+        if (results[bidIndex].id === stateParams.newBid.id) {
+          results.splice(bidIndex, 1)
+          break
+        }
+      }
+
+      stateParams.newBid.highlighted = true
+      results.unshift(stateParams.newBid)
+      stateParams.newBid = null
+    }
+
+    vm.bidRequests = results
 
     vm.paginationHooks = {next: data.next, previous: data.previous, count: data.count}
   }
