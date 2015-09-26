@@ -65,7 +65,7 @@ function FormMController(FormM, scope, formMModelManager, $http) {
    * @type {[]}
    */
   vm.formMs = []
-  FormM.getPaginated().$promise.then(function(data) {
+  FormM.getNoLcAttached().$promise.then(function(data) {
     updateFormMs(data)
   })
 
@@ -78,14 +78,17 @@ function FormMController(FormM, scope, formMModelManager, $http) {
 
   vm.receiveNewFormM = receiveNewFormM
   function receiveNewFormM(newFormM) {
-    if (newFormM) vm.formMs.unshift(newFormM)
+    if (newFormM) {
+      newFormM.highlighted = true
+      vm.formMs.unshift(newFormM)
+    }
   }
 
   /**
    * The table caption for the 'model-table' directive
    * @type {string}
    */
-  vm.tableCaption = 'Form Ms'
+  vm.tableCaption = 'Form M (LC Not Established)'
 
   vm.getFormMCollectionOnNavigation = getFormMCollectionOnNavigation
   /**

@@ -23,14 +23,12 @@ urlpatterns += patterns(
     '',
 
     url(r'^nostro-acct/?$',
-        NostroAccountViewSet.as_view({'get': 'list', 'post': 'create'}),
-        name='nostroaccount-list'),
+        NostroAccountViewSet.as_view({'get': 'list', 'post': 'create'}), name='nostroaccount-list'),
 
     url(r'^nostro-acct/(?P<pk>\d+)/$',
-        NostroAccountViewSet.as_view({'get': 'retrieve',
-                                      'put': 'update',
-                                      'patch': 'partial_update'}),
-        name='nostroaccount-detail')
+        NostroAccountViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update'}),
+        name='nostroaccount-detail'
+        )
     # </editor-fold>
 )
 

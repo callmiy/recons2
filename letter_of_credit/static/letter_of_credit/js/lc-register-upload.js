@@ -9,18 +9,18 @@ $(function() {
   }
 
   $preLabel.css({
-    position          : 'absolute',
-    top               : 10,
-    left              : 25,
-    margin            : 0,
-    padding           : 0,
-    color             : '#ADACAC',
-    display           : 'block',
-    border            : 0,
-    cursor            : 'text',
+    position: 'absolute',
+    top: 10,
+    left: 25,
+    margin: 0,
+    padding: 0,
+    color: '#ADACAC',
+    display: 'block',
+    border: 0,
+    cursor: 'text',
     'background-color': 'initial',
-    'white-space'     : 'pre-line',
-    'border-radius'   : 0
+    'white-space': 'pre-line',
+    'border-radius': 0
   }).on('click', function() {
     var $el;
     $el = $(this);
@@ -57,20 +57,25 @@ $(function() {
           }
         }
       },
-      'focusin' : function() { $(this).prev().hide();}
+      'focusin': function() { $(this).prev().hide();}
     });
 
-  var $idUpload    = $('#id_upload-lc-register'),
-      returnedData = [];
-
-  var $amountInCents = $('[name=amount-cents]');
+  var $idUpload = $('#id_upload-lc-register'),
+    returnedData = [],
+    reportText
 
   $idUpload.on('input', function() {
-    var results = Papa.parse($idUpload.val().trim(), {delimiter: '\t', header: true}).data;
+    var reportHeaderBeginText = 'APPLICANT REF	LC ESTABLISHMENT DATE'
+
+    reportText = $idUpload.val().trim()
+
+    reportText = reportText.slice(reportText.indexOf(reportHeaderBeginText))
+
+    var results = Papa.parse(reportText, {delimiter: '\t', header: true}).data;
 
     for (var i = 0; i < results.length; i++) {
-      var obj         = results[i],
-          returnedObj = {};
+      var obj = results[i],
+        returnedObj = {};
       for (var key in obj) {
         if (key in mappings) {
           var mappingsVal = mappings[key];
@@ -84,8 +89,14 @@ $(function() {
 
   $('.upload-lc-register-form').submit(function(evt) {
 
-    if (!$amountInCents.is(':checked') && !window.confirm('Amount is not in cents?')) {
-      evt.preventDefault();
+    if (/^\[\{".+/.test($idUpload.val())) {
+      $('#upload-lc-register-submit').prop('disabled', true)
+      $idUpload.prop('readonly', true)
+      $(this).addClass('ui-widget-overlay ui-front')
+
+    } else{
+      window.alert('Nothing to upload or invalid upload data!')
+      evt.preventDefault()
     }
-  });
+  })
 });

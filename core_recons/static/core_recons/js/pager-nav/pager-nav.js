@@ -83,7 +83,7 @@ function pagerNavSetUpLinks(kanmiiUri) {
 
     linkProperties.linkUrls = []
 
-    if (numLinks === 1) return linkProperties //there is absolutely no need to render navigational links
+    if (!numLinks || numLinks === 1) return linkProperties //there is absolutely no need to render navigational links
 
     //NOW there are at least 2 links
     //url for fetching data will be in the format: http:host/pathname[?other optional queries][&page=integer]

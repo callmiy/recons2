@@ -9,7 +9,7 @@ var letterOfCredit = path.join(__dirname, 'static', 'letter_of_credit')
 var entry = path.join(letterOfCredit, 'js', 'app.js');
 var destDir = path.join(letterOfCredit, 'js');
 var jsMinify = [
-  path.join(letterOfCredit, 'js', 'app.js')
+  path.join(letterOfCredit, 'js', 'lc-register-upload.js')
 ]
 
 var webpackConfig = {

@@ -15,6 +15,11 @@ function FormM($resource, urls) {
 
       getPaginated: {
         method: 'GET'
+      },
+
+      getNoLcAttached: {
+        method: 'GET',
+        params: {lc_not_attached: true}
       }
     }
   )

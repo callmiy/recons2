@@ -28,6 +28,8 @@ var initialCssFiles = [
   baseStaticCss + '/recons-base.css'
 ]
 
+var minifyJsFiles = [].concat(letterOfCredit.jsMinify)
+
 var lessNoCssMinFiles = [baseStaticCss + '/recons-base.less']
 
 gulp.task('minify-html', function() {
@@ -156,6 +158,15 @@ gulp.task('browser-sync', function() {
   })
 })
 
+gulp.task('minify-js', function() {
+  return gulp.src(minifyJsFiles, {base: '.'})
+    .pipe(plugins.sourcemaps.init())
+    .pipe(plugins.uglify())
+    .pipe(plugins.rename({suffix: '.min'}))
+    .pipe(plugins.sourcemaps.write('.'))
+    .pipe(gulp.dest('.'))
+})
+
 gulp.task('initial', ['initial-js', 'initial-css'])
 
 gulp.task('webpack', [
@@ -166,6 +177,7 @@ gulp.task('webpack', [
 ])
 
 gulp.task('watch', function() {
+  gulp.watch(minifyJsFiles, ['minify-js'])
   gulp.watch(lessFiles, ['less'])
   gulp.watch(['./**/*.raw.html'], ['minify-html'])
   gulp.watch(lessNoCssMinFiles, ['less-no-css-min', 'initial-css'])

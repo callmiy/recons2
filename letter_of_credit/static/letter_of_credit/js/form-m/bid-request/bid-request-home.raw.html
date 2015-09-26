@@ -1,12 +1,16 @@
 <div class="form-m-home-view">
-  <div class="action-buttons" style="float: right;">
+  <div class="action-buttons" style="text-align: right;margin-bottom: 30px;">
     <button type="button" class="btn btn-info" ng-click="$state.go('addBid')">
-      Make a bid request
+      Add bid request
     </button>
 
-    <button class="btn btn-info" ng-click="bidHome.searchFormMs()">
-      Browse Bid Requests
+    <button class="btn btn-info" ng-click="bidHome.searchBids()">
+      Search Bid Requests
     </button>
+
+    <a href="/letter-of-credit/lc-bid-request/download/" class="btn btn-success" ng-click="bidHome.downloadPendingBids()">
+      Download
+    </a>
   </div>
 
   <model-table model-collection="bidHome.bidRequests"

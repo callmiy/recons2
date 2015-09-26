@@ -31,9 +31,7 @@ class ClirecUploadDisplayView(View):
                 'default_memos': json.dumps(get_default_memos()),
                 'clirec_util_urls': json.dumps({
                     'clirecUploadUrl': reverse('unmatched-clarecs'),
-                    'clirecReconsActionUrl': reverse('clirec-recons-actions',
-                                                     args=('XXXXXX',)
-                                                     )
+                    'clirecReconsActionUrl': reverse('clirec-recons-actions', args=('XXXXXX',))
                 })
             }
         )
@@ -45,12 +43,14 @@ class ClirecHelper(object):
         self.request = request
 
     def bootstrap(self):
-        "entry point"
+        """entry point"""
         return getattr(self, self.request.method.lower())()
 
     def update_related_clirec_obj(self, obj, uploaded_comment=''):
-        "Update the clirec object from which the charge was created."
+        """Update the clirec object from which the charge was created."""
+
         clirec_id = self.request.POST.get('clirec_id')
+
         if clirec_id:
             clirec_obj = UnmatchedClarec.objects.get(pk=clirec_id)
             clirec_obj.clirec_obj = obj
@@ -86,8 +86,7 @@ class ClirecUbukDepo1Gbp26(ClirecHelper):
             if not old_comment:
                 clirec.comment = comment
             else:
-                clirec.comment = "%s\n\n========================\n\n%s" % (
-                    comment, clirec.comment)
+                clirec.comment = "%s\n\n========================\n\n%s" % (comment, clirec.comment)
             clirec.save()
 
             logger.info(
@@ -99,13 +98,13 @@ class ClirecUbukDepo1Gbp26(ClirecHelper):
 
     def post(self):
         form = ManualPostingForm(self.request.POST)
+
         if form.is_valid():
             cd = form.cleaned_data
             _ids = cd['clirec_ids'].split(',')
             self.clirecs = UnmatchedClarec.objects.filter(pk__in=_ids)
 
-            entry_gen_trxn = EntryGeneratingTransaction.objects.get(
-                short_name='ACCTTOACCTTRF')
+            entry_gen_trxn = EntryGeneratingTransaction.objects.get(short_name='ACCTTOACCTTRF')
             entry_code = EntryCode.objects.get(code='AAT')
             amount = float(cd['manual_post_amount'])
             post_data = []
@@ -131,10 +130,7 @@ class ClirecUbukDepo1Gbp26(ClirecHelper):
                     cd,
                 )
                 return HttpResponse(
-                    json.dumps(
-                        {'msg': 'Entries Posted',
-                         'ids': _ids, 'comment': comment,
-                         }),
+                    json.dumps({'msg': 'Entries Posted', 'ids': _ids, 'comment': comment, }),
                     content_type='application/json'
                 )
 
@@ -351,10 +347,7 @@ class ClirecLCCoverMovement(ClirecHelper):
 
 class ClirecCharge(ClirecHelper):
     def get(self):
-        return render(
-            self.request,
-            'unmatched/forms/clirec/charge.html',
-            {'form': ChargeAjaxForm()})
+        return render(self.request, 'unmatched/forms/clirec/charge.html', {'form': ChargeAjaxForm()})
 
     def post(self):
         form = ChargeAjaxForm(self.request.POST)
@@ -362,35 +355,23 @@ class ClirecCharge(ClirecHelper):
             chg = form.save()
             self.update_related_clirec_obj(chg)
 
-            return HttpResponse(
-                json.dumps(
-                    {'ref': chg.lc_number,
-                     'msg': 'Charge for %s created.' % chg.lc_number}))
+            return HttpResponse(json.dumps({'ref': chg.lc_number, 'msg': 'Charge for %s created.' % chg.lc_number}))
 
         return self.set_and_return_errors(form.errors)
 
 
 class ClirecLCAvail(ClirecHelper):
     def get(self):
-        return render(
-            self.request,
-            'unmatched/forms/clirec/availment.html',
-            {'form': LcAvailedAjaxForm()}
-        )
+        return render(self.request, 'unmatched/forms/clirec/availment.html', {'form': LcAvailedAjaxForm()})
 
     def post(self):
         form = LcAvailedAjaxForm(self.request.POST)
         if form.is_valid():
             lc = form.save()
             lc.avail()
-            self.update_related_clirec_obj(
-                lc, self.request.POST.get('lc_avail_clirec_detail'))
+            self.update_related_clirec_obj(lc, self.request.POST.get('lc_avail_clirec_detail'))
 
-            return HttpResponse(
-                json.dumps(
-                    {'msg': '%s availed.' % lc.lc_number,
-                     'ref': lc.lc_number
-                     }))
+            return HttpResponse(json.dumps({'msg': '%s availed.' % lc.lc_number, 'ref': lc.lc_number}))
         return self.set_and_return_errors(form.errors)
 
 
@@ -422,8 +403,7 @@ class ClirecReconsActionView(View):
 
     def render_response(self, request, form_name):
         helper = self.helpers[form_name]
-        assert hasattr(helper, 'bootstrap'), \
-            'helper class must have a bootstrap instance method'
+        assert hasattr(helper, 'bootstrap'), 'helper class must have a bootstrap instance method'
         return helper(request).bootstrap()
 
     def get(self, request, form_name):

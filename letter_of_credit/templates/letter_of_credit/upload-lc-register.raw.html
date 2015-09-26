@@ -15,22 +15,17 @@
 
   <h1>Use LC Register Internal Control Report From BO</h1>
   <div class="row upload-lc-register-form-row">
-    <form action="" class="upload-lc-register-form" method="post">{% csrf_token %}
+    <form action="" class="upload-lc-register-form" method="post" style="position: relative;">{% csrf_token %}
       <div class="row top-controls">
         <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
           <label for="id_upload-lc-register" class="sr-only">Upload textarea</label>
 
           <textarea name="upload-lc-register-text" id="id_upload-lc-register"></textarea>
         </div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"><input type="submit" value="Upload"></div>
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+          <input type="submit" value="Upload" id="upload-lc-register-submit">
+        </div>
       </div>
-
-
-      <label style="margin: 20px; " for="amount-cents">
-        Amount in cents?
-        <input type="checkbox" name="amount-cents" id="amount-cents"/>
-      </label>
-
     </form>
   </div>
 {% endblock %}

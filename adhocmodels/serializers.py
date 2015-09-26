@@ -35,8 +35,8 @@ class NostroAccountLedgerField(serializers.Field):
 
 class NostroAccountSerializer(serializers.ModelSerializer):
     ledger_acct = NostroAccountLedgerField(source='ledger_acct.all')
-    ccy = serializers.RelatedField(source='ccy.code', read_only=True)
-    bank = serializers.RelatedField(source='bank.__unicode__', read_only=True)
+    ccy = serializers.ReadOnlyField(source='ccy.code',)
+    bank = serializers.ReadOnlyField(source='bank.__unicode__',)
 
     class Meta:
         model = NostroAccount

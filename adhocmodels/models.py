@@ -108,8 +108,7 @@ class AccountNumber(models.Model):
     nuban = models.CharField("Nuban", max_length=10, unique=True)
     old_numb = models.CharField(
         'Old Acct. Number', max_length=13, null=True, blank=True)
-    owner = models.ForeignKey(
-        'Customer', related_name='acct_numbs', verbose_name='Customer Name')
+    owner = models.ForeignKey('Customer', related_name='acct_numbs', verbose_name='Customer Name')
     branch = models.ForeignKey(Branch, related_name='accts')
     acct_id = models.CharField(
         'Customer ID For Acct.', max_length=10, unique=True, )

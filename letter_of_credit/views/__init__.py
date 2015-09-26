@@ -24,6 +24,8 @@ from letter_of_credit.views.form_m import (
     LcBidRequestListCreateAPIView,
     LcBidRequestUpdateAPIView)
 
+from  letter_of_credit.views.download_bids import DownloadBidsView
+
 
 class Home(CoreAppsView):
     def get(self, request):

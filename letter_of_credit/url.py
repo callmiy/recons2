@@ -2,7 +2,6 @@ from django.contrib.auth.decorators import login_required
 from django.conf.urls import url, patterns
 from .views import (
     Home,
-    # <editor-fold 'imports'>
     LetterOfCreditListCreateAPIView,
     LetterOfCreditUpdateAPIView,
     LCStatusListCreateAPIView,
@@ -19,9 +18,8 @@ from .views import (
     LCIssueConcreteListCreateAPIView,
     LCIssueConcreteUpdateAPIView,
     LcBidRequestListCreateAPIView,
-    LcBidRequestUpdateAPIView
-    # </editor-fold>
-)
+    LcBidRequestUpdateAPIView,
+    DownloadBidsView)
 
 urlpatterns = patterns(
     # <editor-fold description='home view and upload'>
@@ -99,22 +97,22 @@ urlpatterns += patterns(
     # </editor-fold>
 )
 
+# lc issue
 urlpatterns += patterns(
-    # <editor-fold 'LC Issue concrete'>
     '',
 
     url(r'^lc-issue-concrete/?$', LCIssueConcreteListCreateAPIView.as_view(), name='lcissueconcrete-list'),
 
     url(r'^lc-issue-concrete/(?P<pk>\d+)/?$', LCIssueConcreteUpdateAPIView.as_view(), name='lcissueconcrete-detail'),
-    # </editor-fold>
 )
 
+# bid
 urlpatterns += patterns(
-    # <editor-fold 'LcBidRequest'>
     '',
 
     url(r'^lc-bid-request/?$', LcBidRequestListCreateAPIView.as_view(), name='lcbidrequest-list'),
 
     url(r'^lc-bid-request/(?P<pk>\d+)/?$', LcBidRequestUpdateAPIView.as_view(), name='lcbidrequest-detail'),
-    # </editor-fold>
+
+    url(r'^lc-bid-request/download/?$', DownloadBidsView.as_view(), name='lcbidrequest-download'),
 )

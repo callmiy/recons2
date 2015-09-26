@@ -23,7 +23,7 @@ class FormM(models.Model):
     currency = models.ForeignKey(Currency, verbose_name='Currency')
     amount = models.DecimalField('Amount', max_digits=20, decimal_places=2)
     date_received = models.DateField('Date Received')
-    lc = models.ForeignKey(LCRegister, null=True, blank=True, verbose_name='LC')
+    lc = models.ForeignKey(LCRegister, null=True, blank=True, verbose_name='LC', related_name='form_m')
     goods_description = models.CharField('Goods Description', max_length=1000, blank=True, null=True)
 
     class Meta:
@@ -54,6 +54,15 @@ class FormM(models.Model):
             return qs
 
         return qs.filter(Q(number__icontains=param) | Q(applicant__name__icontains=param))
+
+    @classmethod
+    def lc_not_attached_filter(cls, qs, param):
+        if not param:
+            return qs
+
+        param = True if param == 'true' else False
+
+        return qs.filter(lc__isnull=param)
 
 
 class LCIssueConcrete(models.Model):

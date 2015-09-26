@@ -82,11 +82,12 @@ class FormMFilter(django_filters.FilterSet):
     number = django_filters.CharFilter(lookup_type='icontains')
     applicant = django_filters.CharFilter(name='applicant__name', lookup_type='icontains')
     currency = django_filters.CharFilter(name='currency__code', lookup_type='iexact')
+    lc_not_attached = django_filters.CharFilter(action=FormM.lc_not_attached_filter)
     filter = django_filters.CharFilter(action=FormM.search_filter)
 
     class Meta:
         model = FormM
-        fields = ('number', 'applicant', 'currency', 'filter')
+        fields = ('number', 'applicant', 'currency', 'filter', 'lc_not_attached')
 
 
 class FormMListCreateAPIView(generics.ListCreateAPIView):

@@ -52,27 +52,24 @@ class UnmatchedClirecListCreateAPIView(generics.ListCreateAPIView):
                     dr_cr=data['dr_cr']
                 )
                 if clirecs.exists():
-                    #This clirec was uploaded previously, so do not add it to the list of fresh records.
+                    # This clirec was uploaded previously, so do not add it to the list of fresh records.
                     continue
             fresh_record_list.append(data)
 
-        # this part is needed to automatically match off records.
-        # This is the algorithm: If a record is not in this upload, then it must
-        # have been matched-off. so I make a query excluding all records in this
-        # upload that are not new (uploaded previously) and fetch all records
-        # that are still been displayed
-        # for this nostro and set those to show=False.
+        # this part is needed to automatically match off records. This is the algorithm: If a record
+        # is not in this upload, then it must have been matched-off. so I make a query excluding all records
+        # in this upload that are not new (uploaded previously) and fetch all records that are still been
+        # displayed for this nostro and set those to show=False.
 
         if len(exclusion_query_fields['post_date__in']):
-            for_match_offs = UnmatchedClarec.objects.exclude(
-                **exclusion_query_fields).filter(
-                nostro=nostro, show=True)
+            for_match_offs = UnmatchedClarec.objects.exclude(**exclusion_query_fields).filter(nostro=nostro, show=True)
+
             if for_match_offs.exists():
                 messages = ''
                 pos = 1
 
                 for detail in for_match_offs.values_list('details', flat=True):
-                    messages = messages + '%d: %s\n' % (pos, detail)
+                    messages += '%d: %s\n' % (pos, detail)
                     pos += 1
 
                 logger.info('clirec records matched off:\n%s\n\n', messages)
@@ -83,21 +80,18 @@ class UnmatchedClirecListCreateAPIView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         messages = ''
         pos = 1
-        for datum in request.DATA:
-            messages = messages + '%d: %s\n\n' % (pos, datum)
+        for datum in request.data:
+            messages += '%d: %s\n\n' % (pos, datum)
             pos += 1
 
-        logger.info(
-            'Raw clirec data uploaded from client:\n%s\n\n', messages)
+        logger.info('Raw clirec data uploaded from client:\n%s\n\n', messages)
 
-        if isinstance(request.DATA, list):
-            data_list = self.remove_non_unique(request.DATA)
-            serializer = self.get_serializer(
-                data=data_list, files=request.FILES, many=True)
+        if isinstance(request.data, list):
+            data_list = self.remove_non_unique(request.data)
+            serializer = self.get_serializer(data=data_list, files=request.FILES, many=True)
 
         else:
-            serializer = self.get_serializer(
-                data=request.DATA, files=request.FILES)
+            serializer = self.get_serializer(data=request.data, files=request.FILES)
 
         if serializer.is_valid():
             self.pre_save(serializer.object)
@@ -110,11 +104,10 @@ class UnmatchedClirecListCreateAPIView(generics.ListCreateAPIView):
                 seq = 1
 
                 for datum in serializer.data:
-                    message = message + '%d: %s\n\n' % (seq, datum)
+                    message += '%d: %s\n\n' % (seq, datum)
                     seq += 1
 
-                logger.info(
-                    'Newly created clirec records:\n%s', message)
+                logger.info('Newly created clirec records:\n%s', message)
 
             return Response(
                 serializer.data,
@@ -129,11 +122,11 @@ class UnmatchedClirecUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ClirecSerializer
 
     def destroy(self, request, *args, **kwargs):
-        multiple_delete_ids = request.DATA.get('multiple_delete_ids', None)
+        multiple_delete_ids = request.data.get('multiple_delete_ids', None)
 
         if multiple_delete_ids is None:
-            return super(UnmatchedClirecUpdateAPIView, self).destroy(
-                request, *args, **kwargs)
+            return super(UnmatchedClirecUpdateAPIView, self).destroy(request, *args, **kwargs)
+
         else:  # do not delete, but mark has not shown.
             deleted_ids = []
             for obj in self.queryset.filter(pk__in=multiple_delete_ids):

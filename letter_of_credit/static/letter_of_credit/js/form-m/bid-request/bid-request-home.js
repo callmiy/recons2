@@ -87,7 +87,7 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
    * The table caption for the 'model-table' directive
    * @type {string}
    */
-  vm.tableCaption = 'Bid Requests'
+  vm.tableCaption = 'Pending Bids'
 
   vm.getBidsOnNavigation = getBidsOnNavigation
   function getBidsOnNavigation(linkUrl) {
@@ -119,7 +119,7 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
     /**
      * if we are initializing this state with a new bid (because we are coming to this state from 'the create new bid
      * state'), then we first find out if the new bid is among those downloaded from the server. if it is one, we
-     * delete it from the collection (because angular will complain if there are duplicate collection element) and
+     * delete it from the collection (because angular will complain if there are duplicate collection elements) and
      * we mark it as pre-selected so that background of the row displaying the new bid can be highlighted
      */
     if (stateParams.newBid) {
