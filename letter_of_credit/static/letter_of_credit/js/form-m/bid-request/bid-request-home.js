@@ -67,7 +67,7 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
    */
   vm.bidRequests = []
   vm.paginationHooks = {}
-  LcBidRequest.getPaginated().$promise.then(function(data) {
+  LcBidRequest.pending().$promise.then(function(data) {
     updateBids(data)
   })
 

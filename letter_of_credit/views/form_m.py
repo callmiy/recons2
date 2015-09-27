@@ -19,10 +19,19 @@ class LcBidRequestPagination(pagination.PageNumberPagination):
     page_size = 20
 
 
+class LcBidRequestFilter(django_filters.FilterSet):
+    pending = django_filters.CharFilter(action=LcBidRequest.search_pending)
+
+    class Meta:
+        model = LcBidRequest
+        fields = ('pending',)
+
+
 class LcBidRequestListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = LcBidRequestSerializer
     queryset = LcBidRequest.objects.all()
     pagination_class = LcBidRequestPagination
+    filter_class = LcBidRequestFilter
 
     def create(self, request, *args, **kwargs):
         logger.info('Creating new letter of credit bid request with incoming data = \n%r', request.data)

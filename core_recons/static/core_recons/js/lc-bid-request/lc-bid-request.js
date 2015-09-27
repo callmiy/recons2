@@ -15,6 +15,13 @@ function LcBidRequest($resource, urls) {
 
       getPaginated: {
         method: 'GET'
+      },
+
+      pending: {
+        method: 'GET',
+        params: {
+          pending: true
+        }
       }
     }
   )

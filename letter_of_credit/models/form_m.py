@@ -95,3 +95,11 @@ class LcBidRequest(models.Model):
 
     def __unicode__(self):
         return '%s: %s%s' % (self.mf.number, self.mf.currency.code, '{:,.2f}'.format(self.amount))
+
+    @classmethod
+    def search_pending(cls, qs, param):
+        if not param:
+            return qs
+
+        param = True if param == 'true' else False
+        return qs.filter(requested_at__isnull=param)
