@@ -19,10 +19,12 @@
       </tr>
     </thead>
 
-    <tbody toggle-bg-color row-selector="tr" selected-class-indicator="display-pending-bid-selected">
+    <tbody selected-class-indicator="display-pending-bid-selected">
       <tr ng-repeat="model in bidTable.bids" style="cursor: pointer;"
           ng-dblclick="bidTable.onDblClick({rowModel: model})"
-          ng-class="['display-pending-bid-table-row', {'display-pending-bid-selected': model.highlighted}]">
+          ng-class="['display-pending-bid-table-row', {'display-pending-bid-selected': model.highlighted, 'display-pending-bid-checked': model.checked}]"
+        ng-click="bidTable.modelRowClicked(model)"
+        >
 
         <td>{$$index + 1 + bidTable.rowIndexOffset$}</td>
 
@@ -44,5 +46,3 @@
              current-pager-link="bidTable.currentLink" next-page-link="bidTable.nextPageLink"
              target-clicked-callback="bidTable.onUpdateCollection(linkUrl)"/>
 </div>
-
-{$bidTable.selectedBids$}

@@ -9,29 +9,29 @@ function addFormMDirective(ModalService) {
   function link(scope, elm, attributes, self) {
     elm
       .css({cursor: 'pointer'})
-      .bind('click', function() {
-              ModalService.showModal({
-                template: require('./add-form-m.html'),
+      .bind('click', function () {
+        ModalService.showModal({
+          template: require('./add-form-m.html'),
 
-                controller: 'AddFormMModalCtrl as addFormMModal'
+          controller: 'AddFormMModalCtrl as addFormMModal'
 
-              }).then(function(modal) {
-                modal.element.dialog({
-                  dialogClass: 'no-close',
-                  modal: true,
-                  minWidth: 600,
-                  minHeight: 450,
-                  maxHeight: 600,
-                  title: 'Add Form M'
-                })
+        }).then(function (modal) {
+          modal.element.dialog({
+            dialogClass: 'no-close',
+            modal: true,
+            minWidth: 600,
+            minHeight: 450,
+            maxHeight: 600,
+            title: 'Add Form M'
+          })
 
-                modal.close.then(function(submittedData) {
-                  if (submittedData && submittedData.submittedFormM) {
-                    self.saveFormM(submittedData)
-                  }
-                })
-              })
-            })
+          modal.close.then(function (submittedData) {
+            if (submittedData && submittedData.submittedFormM) {
+              self.saveFormM(submittedData)
+            }
+          })
+        })
+      })
   }
 
   return {
@@ -56,7 +56,7 @@ AddFormMDirectiveCtrl.$inject = [
   'formMAttributesVerboseNames'
 ]
 function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUnderscore, LCIssueConcrete, LcBidRequest,
-  formMAttributesVerboseNames) {
+                               formMAttributesVerboseNames) {
   var vm = this
 
   vm.saveFormM = saveFormM
@@ -84,15 +84,15 @@ function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUndersc
     }
 
     function formMSavedError(xhr) {
-      xhrErrorDisplay(xhr, formAttributesVerboseNames)
+      xhrErrorDisplay(xhr, formMAttributesVerboseNames)
     }
   }
 
   function saveLcIssues(formMUrl) {
-    kanmiiUnderscore.each(vm.selectedLcIssues, function(val, key) {
+    kanmiiUnderscore.each(vm.selectedLcIssues, function (val, key) {
       if (val) {
         new LCIssueConcrete({issue: key, mf: formMUrl})
-          .$save(function(data) { console.log(data); }, function(xhr) {console.log(xhr);})
+          .$save(function (data) { console.log(data); }, function (xhr) {console.log(xhr);})
       }
     })
   }
@@ -101,8 +101,8 @@ function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUndersc
     submittedBidRequest.mf = formMUrl
     var bid = new LcBidRequest(submittedBidRequest)
     bid.$save(
-      function(data) {console.log('bid saved successfully with data = ', data);},
-      function(xhr) {xhrErrorDisplay(xhr)}
+      function (data) {console.log('bid saved successfully with data = ', data);},
+      function (xhr) {xhrErrorDisplay(xhr)}
     )
   }
 }

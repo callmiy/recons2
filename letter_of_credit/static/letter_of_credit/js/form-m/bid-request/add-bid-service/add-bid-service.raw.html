@@ -1,87 +1,77 @@
 <div class="make-bid-request-root-container">
   <div class="row" style="margin-bottom: 45px;">
-    <div class="bid-request-form col-md-7 col-lg-7 col-sm-7 well">
-      <form novalidate class="form-horizontal" ng-submit="makeBidRequest.submitBid(makeBidRequest.bid)"
+    <div class="bid-request-form col-sm-5 well">
+      <form novalidate ng-submit="makeBidRequest.submitBid(makeBidRequest.bid)" role="form"
             name="makeBidRequestForm">
 
         <div class="form-group form-m-group">
-          <label class="control-label col-md-2 col-lg-2 col-sm-3" for="form-m">Form M</label>
+          <label for="form-m">Form M</label>
 
-          <div class="col-md-10 col-lg-10 col-sm-9">
-            <div class="input-group">
+          <div class="input-group">
                 <span class="input-group-addon" data-toggle="tooltip" title="Search for Form M"
                       ng-dblclick="makeBidRequest.getFormM()" style="cursor: pointer;">
                   <i class="glyphicon glyphicon-search"></i>
                 </span>
 
-              <input type="text" class="form-control" min="4" id="form-m" readonly required
-                     placeholder="Double click to search"
-                     ng-model="makeBidRequest.mfGetterSetter"
-                     ng-dblclick="makeBidRequest.getFormM()"
-                     ng-pattern="/^MF\d{11}\: .+/"
-                     ng-model-options="{getterSetter: true}"/>
+            <input type="text" class="form-control" min="4" id="form-m" readonly required
+                   placeholder="Double click to search"
+                   ng-model="makeBidRequest.mfGetterSetter"
+                   ng-dblclick="makeBidRequest.getFormM()"
+                   ng-pattern="/^MF\d{11}\: .+/"
+                   ng-model-options="{getterSetter: true}"/>
 
               <span class="input-group-addon" data-toggle="tooltip" ng-show="makeBidRequest.bid.mf.number"
                     ng-click="makeBidRequest.toggleShowFormMDetail()"
                     title="View Form M" style="cursor:pointer;">
                   <i class="glyphicon glyphicon-eye-open"></i>
               </span>
-            </div>
           </div>
         </div>
 
         <div class="form-group amount-group">
-          <label class="control-label col-md-2 col-lg-2 col-sm-3" for="amount">Bid Amount</label>
+          <label for="amount">Bid Amount</label>
 
-          <div class="col-md-6 col-lg-6 col-sm-9">
-            <div class="input-group">
+          <div class="input-group">
 
-              <span class="input-group-addon">{$makeBidRequest.bid.mf.currency_data.code || '@'$}</span>
+            <span class="input-group-addon">{$makeBidRequest.bid.mf.currency_data.code || '@'$}</span>
 
-              <input type="text" class="form-control" id="amount" required ng-model="makeBidRequest.amountGetterSetter"
-                     ng-model-options="{getterSetter: true, updateOn: 'blur'}"
-                  />
-            </div>
+            <input type="text" class="form-control" id="amount" required ng-model="makeBidRequest.amountGetterSetter"
+                   ng-model-options="{getterSetter: true, updateOn: 'blur'}"
+              />
           </div>
         </div>
 
         <div class="form-group goods-description-group">
-          <label class="control-label col-md-2 col-lg-2 col-sm-3" for="goods-description">Goods description</label>
+          <label for="goods-description">Goods description</label>
 
-          <div class="col-md-10 col-lg-10 col-sm-9">
-
-            <div class="input-group">
-              <input type="text" class="form-control" id="goods-description" required ng-minlength="5" to-upper
-                     ng-model="makeBidRequest.bid.mf.goods_description"
-                     ng-readonly="!makeBidRequest.goodsInputIsEditable"/>
+          <div class="input-group">
+            <input type="text" class="form-control" id="goods-description" required ng-minlength="5" to-upper
+                   ng-model="makeBidRequest.bid.mf.goods_description"
+                   ng-readonly="!makeBidRequest.goodsInputIsEditable"/>
 
               <span class="input-group-addon" style="cursor:pointer;"
                     ng-click="makeBidRequest.toggleEditGoods()">
                 <span class="glyphicon glyphicon-pencil"></span>
               </span>
-            </div>
-
           </div>
         </div>
 
-        <div class="row add-bid-form-control">
-          <div class="col-md-10 col-lg-10 col-sm-9 col-md-offset-2 col-lg-offset-2 col-sm-offset-3">
-            <button type="submit" class="btn btn-info" ng-disabled="makeBidRequestForm.$invalid"
-                    style="margin-right: 5%;">
-              Make Request
-            </button>
+        <div class="form-group add-bid-form-control">
+          <button type="submit" class="btn btn-info" ng-disabled="makeBidRequestForm.$invalid"
+                  style="margin-right: 5%;">
+            Make Request
+          </button>
 
-            <button type="button" class="btn btn-default" ng-click="makeBidRequest.reset(makeBidRequestForm)">
-              Reset
-            </button>
-          </div>
+          <button type="button" class="btn btn-default" ng-click="makeBidRequest.reset(makeBidRequestForm)">
+            Reset
+          </button>
         </div>
       </form>
     </div>
 
-    <div class="form-m-detail-container col-md-4 col-lg-4 col-sm-4" ng-show="makeBidRequest.formMDetailShown">
+    <div class="form-m-detail-container col-sm-offset-2 col-sm-4" ng-show="makeBidRequest.formMDetailShown">
       <span class="form-m-detail-container-dismiss"
-            ng-click="makeBidRequest.togform-m-detail-containergleShowFormMDetail()">
+            ng-click="makeBidRequest.toggleShowFormMDetail()">
         &times;
       </span>
 
@@ -135,5 +125,5 @@
                update-collection="makeBidRequest.getBidsOnNavigation(linkUrl)"
                pager-object="makeBidRequest.paginationHooks"
                on-row-dbl-click-callback="makeBidRequest.onSelectFormM(rowModel)"
-      />
+    />
 </div>

@@ -32,9 +32,13 @@ function displayPendingBidDirective() {
 }
 
 app.controller('displayPendingBidDirectiveCtrl', displayPendingBidDirectiveCtrl)
-displayPendingBidDirectiveCtrl.$inject = ['pagerNavSetUpLinks', '$scope', 'kanmiiUnderscore']
+displayPendingBidDirectiveCtrl.$inject = [
+  'pagerNavSetUpLinks',
+  '$scope',
+  'kanmiiUnderscore'
+]
 function displayPendingBidDirectiveCtrl(pagerNavSetUpLinks, scope, kanmiiUnderscore) {
-  var vm = this
+  var vm = this //jshint -W040
 
   vm.selectedBids = {}
 
@@ -70,4 +74,29 @@ function displayPendingBidDirectiveCtrl(pagerNavSetUpLinks, scope, kanmiiUndersc
       setUpLinks(pager.next, pager.previous, pager.count)
     }
   })
+
+  vm.modelRowClicked = modelRowClicked
+  function modelRowClicked(model) {
+    vm.bids.forEach(function (bid) {
+      bid.highlighted = false
+    })
+    model.highlighted = true
+  }
+
+  vm.selectedBids = {}
+  scope.$watch(function getSelectedBids() {return vm.selectedBids}, function updatedSelectedBids(selectedBids) {
+    if (selectedBids && !kanmiiUnderscore.isEmpty(selectedBids)) {
+      kanmiiUnderscore.each(selectedBids, function (checked, id) {
+
+        for (var bidIndex = 0; bidIndex < vm.bids.length; bidIndex++) {
+          var bid = vm.bids[bidIndex]
+          if (bid.id === +id) {
+            bid.checked = checked
+            bid.highlighted = false
+          }
+        }
+
+      })
+    }
+  }, true)
 }
