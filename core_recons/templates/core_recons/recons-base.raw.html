@@ -18,7 +18,7 @@
 
   {% block page_js_up %}
     <script>
-      angular.module('rootApp').value('urls', JSON.parse('{{ urls | escapejs }}'));
+      angular.module('rootApp').value('urls', JSON.parse('{{ urls | escapejs }}' || '{}'));
     </script>
   {% endblock page_js_up %}
 </head>

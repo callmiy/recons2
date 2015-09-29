@@ -11,7 +11,10 @@ var app = angular.module('form-m-bid', [
   'add-bid-service',
   'add-bid',
   'form-m-search-service',
-  'lc-bid-request'
+  'lc-bid-request',
+  'rootApp',
+  'kanmii-URI',
+  'kanmii-underscore'
 ])
 
 app.config(rootCommons.interpolateProviderConfig)
@@ -41,14 +44,19 @@ BidRequestController.$inject = [
   'SearchFormMService',
   'lcBidRequestModelManager',
   '$http',
-  '$stateParams'
+  '$stateParams',
+  'kanmiiUri',
+  'urls',
+  'kanmiiUnderscore',
+  '$http'
 ]
-function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequestModelManager, $http, stateParams) {
+function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequestModelManager, $http,
+                              stateParams, kanmiiUri, urls, kanmiiUnderscore, http) {
   var vm = this;
 
   vm.searchFormMs = searchFormMs
   function searchFormMs() {
-    SearchFormMService.searchWithModal().then(function(data) {
+    SearchFormMService.searchWithModal().then(function (data) {
       console.log(data);
     })
   }
@@ -68,7 +76,7 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
    */
   vm.bidRequests = []
   vm.paginationHooks = {}
-  LcBidRequest.pending().$promise.then(function(data) {
+  LcBidRequest.pending().$promise.then(function (data) {
     updateBids(data)
   })
 
@@ -92,7 +100,7 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
 
   vm.getBidsOnNavigation = getBidsOnNavigation
   function getBidsOnNavigation(linkUrl) {
-    $http.get(linkUrl).then(function(response) {
+    $http.get(linkUrl).then(function (response) {
       updateBids(response.data)
     })
   }
@@ -141,5 +149,26 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
     vm.bidRequests = results
 
     vm.paginationHooks = {next: data.next, previous: data.previous, count: data.count}
+  }
+
+  vm.selectedBids = {}
+  var downloadUrl = kanmiiUri(urls.lcBidRequestDownloadUrl)
+  vm.downloadPendingBids = function downloadPendingBids() {
+
+    $http({
+      method: 'POST',
+      xsrfCookieName: 'csrftoken',
+      xsrfHeaderName: 'X-CSRFToken',
+      url: downloadUrl,
+      data: vm.selectedBids
+    })
+  }
+
+  vm.downloadBtnDisabled = function downloadBtnDisabled() {
+    if (kanmiiUnderscore.isEmpty(vm.selectedBids)) return true
+
+    return !kanmiiUnderscore.any(vm.selectedBids, function (selectionVal) {
+      return selectionVal === true
+    })
   }
 }

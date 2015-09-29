@@ -15,6 +15,7 @@ class CoreAppsView(View):
             'branchAPIUrl': reverse('branch-list'),
             'currencyAPIUrl': reverse('currency-list'),
             'lcBidRequestAPIUrl': reverse('lcbidrequest-list'),
+            'lcBidRequestDownloadUrl': reverse('lcbidrequest-download'),
             'lcIssueAPIUrl': reverse('lcissue-list'),
             'lcIssueConcreteAPIUrl': reverse('lcissueconcrete-list'),
             'formMAPIUrl': reverse('formm-list'),

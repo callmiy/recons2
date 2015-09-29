@@ -14,7 +14,8 @@
         <th>Date Created</th>
         <th>
           <label for="display-pending-bid-check-all"></label>
-          <input type="checkbox" id="display-pending-bid-check-all"/>
+          <input type="checkbox" id="display-pending-bid-check-all" ng-model="bidTable.toggleAll"
+            ng-click="bidTable.toggleAllClicked()"/>
         </th>
       </tr>
     </thead>

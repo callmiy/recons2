@@ -8,13 +8,15 @@
       Search Bid Requests
     </button>
 
-    <a href="/letter-of-credit/lc-bid-request/download/" class="btn btn-success"
-       ng-click="bidHome.downloadPendingBids()">
+    <button class="btn btn-success" ng-click="bidHome.downloadPendingBids()"
+            ng-disabled="bidHome.downloadBtnDisabled()">
       Download
-    </a>
+    </button>
   </div>
 
-  <display-pending-bid pending-bids="bidHome.bidRequests" pager-object="bidHome.paginationHooks"
-                       update-collection="bidHome.getBidsOnNavigation(linkUrl)" pagination-size="20"
-      />
+  <div display-pending-bid pending-bids="bidHome.bidRequests" pager-object="bidHome.paginationHooks"
+       update-collection="bidHome.getBidsOnNavigation(linkUrl)" pagination-size="20"
+       selected-bids="bidHome.selectedBids">
+
+  </div>
 </div>

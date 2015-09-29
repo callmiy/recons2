@@ -7,7 +7,7 @@ var app = angular.module('display-pending-bid', ['kanmii-underscore'])
 app.directive('displayPendingBid', displayPendingBidDirective)
 function displayPendingBidDirective() {
   return {
-    restrict: 'E',
+    restrict: 'EA',
 
     templateUrl: formMCommons.buildUrl('bid-request/display-pending-bid/display-pending-bid.html'),
 
@@ -24,7 +24,9 @@ function displayPendingBidDirective() {
 
       newModel: '=',
 
-      paginationSize: '='
+      paginationSize: '=',
+
+      selectedBids: '='
     },
 
     controller: 'displayPendingBidDirectiveCtrl as bidTable'
@@ -75,28 +77,52 @@ function displayPendingBidDirectiveCtrl(pagerNavSetUpLinks, scope, kanmiiUndersc
     }
   })
 
-  vm.modelRowClicked = modelRowClicked
-  function modelRowClicked(model) {
+  function deselectAllBids() {
     vm.bids.forEach(function (bid) {
       bid.highlighted = false
     })
-    model.highlighted = true
   }
 
-  vm.selectedBids = {}
+  vm.modelRowClicked = modelRowClicked
+  function modelRowClicked(model) {
+    deselectAllBids()
+    //only highlight a row if no row is checked
+    model.highlighted = !kanmiiUnderscore.any(vm.bids, function (bid) {
+      return bid.checked
+    })
+  }
+
   scope.$watch(function getSelectedBids() {return vm.selectedBids}, function updatedSelectedBids(selectedBids) {
     if (selectedBids && !kanmiiUnderscore.isEmpty(selectedBids)) {
+
       kanmiiUnderscore.each(selectedBids, function (checked, id) {
 
         for (var bidIndex = 0; bidIndex < vm.bids.length; bidIndex++) {
           var bid = vm.bids[bidIndex]
           if (bid.id === +id) {
             bid.checked = checked
-            bid.highlighted = false
+
+            if (!checked) {
+              vm.toggleAll = false
+            }
           }
         }
 
       })
+
+      var checked = kanmiiUnderscore.all(vm.bids, function (bid) {
+        return bid.checked === true
+      })
+
+      if (checked) vm.toggleAll = true
     }
   }, true)
+
+  vm.toggleAll = null
+
+  vm.toggleAllClicked = function toggleAllClicked() {
+    vm.bids.forEach(function (bid) {
+      vm.selectedBids[bid.id] = vm.toggleAll
+    })
+  }
 }

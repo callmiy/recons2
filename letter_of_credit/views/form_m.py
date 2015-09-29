@@ -124,3 +124,7 @@ class FormMHomeView(CoreAppsView):
         template_context = {'urls': self.get_core_app_urls()}
 
         return render(request, 'letter_of_credit/form_m/index.html', template_context)
+
+    def post(self, request):
+        post_data = request.POST
+        print 'post data = ', post_data
