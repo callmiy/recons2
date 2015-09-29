@@ -152,16 +152,17 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
   }
 
   vm.selectedBids = {}
-  var downloadUrl = kanmiiUri(urls.lcBidRequestDownloadUrl)
-  vm.downloadPendingBids = function downloadPendingBids() {
+  var url = kanmiiUri(urls.lcBidRequestDownloadUrl)
+  vm.downloadUrl = function downloadUrl() {
+    if (!kanmiiUnderscore.isEmpty(vm.selectedBids)) {
+      var search = []
 
-    $http({
-      method: 'POST',
-      xsrfCookieName: 'csrftoken',
-      xsrfHeaderName: 'X-CSRFToken',
-      url: downloadUrl,
-      data: vm.selectedBids
-    })
+      kanmiiUnderscore.each(vm.selectedBids, function (selection, bidId) {
+        if (selection === true) search.push(bidId)
+      })
+
+      return url.search({bid_ids: search}).toString()
+    }
   }
 
   vm.downloadBtnDisabled = function downloadBtnDisabled() {

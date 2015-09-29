@@ -86,9 +86,9 @@ function displayPendingBidDirectiveCtrl(pagerNavSetUpLinks, scope, kanmiiUndersc
   vm.modelRowClicked = modelRowClicked
   function modelRowClicked(model) {
     deselectAllBids()
-    //only highlight a row if no row is checked
+    //only highlight a row if no row is checked and the row model is not downloaded previously
     model.highlighted = !kanmiiUnderscore.any(vm.bids, function (bid) {
-      return bid.checked
+      return !bid.downloaded && bid.checked
     })
   }
 

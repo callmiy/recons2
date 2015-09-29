@@ -8,10 +8,9 @@
       Search Bid Requests
     </button>
 
-    <button class="btn btn-success" ng-click="bidHome.downloadPendingBids()"
-            ng-disabled="bidHome.downloadBtnDisabled()">
+    <a class="btn btn-success" ng-href="{$bidHome.downloadUrl()$}" ng-disabled="bidHome.downloadBtnDisabled()">
       Download
-    </button>
+    </a>
   </div>
 
   <div display-pending-bid pending-bids="bidHome.bidRequests" pager-object="bidHome.paginationHooks"

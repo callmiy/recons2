@@ -1,2 +1,2 @@
-.display-pending-bid-root-container>table>tbody>tr.display-pending-bid-selected{background-color:#B7EEFF}.display-pending-bid-root-container>table>tbody>tr.display-pending-bid-checked{background-color:#FFE3E3}
+.display-pending-bid-root-container>table>tbody>tr{cursor:pointer}.display-pending-bid-root-container>table>tbody>tr.downloaded-previously{background-color:#45E245}.display-pending-bid-root-container>table>tbody>tr.display-pending-bid-selected{background-color:#B7EEFF}.display-pending-bid-root-container>table>tbody>tr.display-pending-bid-checked{background-color:#FFE3E3}
 /*# sourceMappingURL=../../../../../../../letter_of_credit/static/letter_of_credit/js/form-m/bid-request/display-pending-bid/display-pending-bid.min.css.map */

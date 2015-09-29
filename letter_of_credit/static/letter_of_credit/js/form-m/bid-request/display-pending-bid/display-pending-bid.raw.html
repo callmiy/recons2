@@ -15,16 +15,15 @@
         <th>
           <label for="display-pending-bid-check-all"></label>
           <input type="checkbox" id="display-pending-bid-check-all" ng-model="bidTable.toggleAll"
-            ng-click="bidTable.toggleAllClicked()"/>
+                 ng-click="bidTable.toggleAllClicked()"/>
         </th>
       </tr>
     </thead>
 
     <tbody selected-class-indicator="display-pending-bid-selected">
-      <tr ng-repeat="model in bidTable.bids" style="cursor: pointer;"
+      <tr ng-repeat="model in bidTable.bids" ng-click="bidTable.modelRowClicked(model)"
           ng-dblclick="bidTable.onDblClick({rowModel: model})"
-          ng-class="['display-pending-bid-table-row', {'display-pending-bid-selected': model.highlighted, 'display-pending-bid-checked': model.checked}]"
-        ng-click="bidTable.modelRowClicked(model)"
+          ng-class="['display-pending-bid-table-row', {'display-pending-bid-selected': model.highlighted, 'display-pending-bid-checked': model.checked, 'downloaded-previously': model.downloaded}]"
         >
 
         <td>{$$index + 1 + bidTable.rowIndexOffset$}</td>

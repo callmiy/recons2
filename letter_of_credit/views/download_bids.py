@@ -14,29 +14,36 @@ class DownloadBidsView(View):
         row = 1
         row_index = 1
 
-        for bid in LcBidRequest.objects.filter(requested_at__isnull=True):
-            mf = bid.mf
-            applicant = mf.applicant
+        bid_ids = request.GET.getlist('bid_ids')
 
-            sheet.cell(row=row, column=1, value=row_index)
-            sheet.cell(row=row, column=2, value=applicant.name)
-            sheet.cell(row=row, column=3, value=mf.currency.code)
-            sheet.cell(row=row, column=4, value=bid.amount)
-            sheet.cell(row=row, column=5, value=mf.goods_description)
+        if bid_ids:
+            for bid in LcBidRequest.objects.filter(pk__in=bid_ids):
+                mf = bid.mf
+                applicant = mf.applicant
 
-            acct = ''
-            acct_numbers_qs = applicant.acct_numbers
+                sheet.cell(row=row, column=1, value=row_index)
+                sheet.cell(row=row, column=2, value=applicant.name)
+                sheet.cell(row=row, column=3, value=mf.currency.code)
+                sheet.cell(row=row, column=4, value=bid.amount)
+                sheet.cell(row=row, column=5, value=mf.goods_description)
 
-            if acct_numbers_qs:
-                acct = acct_numbers_qs[0].nuban
-            sheet.cell(row=row, column=6, value=acct)
+                acct = ''
+                acct_numbers_qs = applicant.acct_numbers
 
-            sheet.cell(row=row, column=7, value=mf.number)
-            sheet.cell(row=row, column=8, value='NEW LC')
-            sheet.cell(row=row, column=9, value='CASH BACKED')
+                if acct_numbers_qs:
+                    acct = acct_numbers_qs[0].nuban
+                sheet.cell(row=row, column=6, value=acct)
 
-            row += 1
-            row_index += 1
+                sheet.cell(row=row, column=7, value=mf.number)
+                sheet.cell(row=row, column=8, value='NEW LC')
+                sheet.cell(row=row, column=9, value='CASH BACKED')
+
+                row += 1
+                row_index += 1
+
+                if not bid.downloaded:
+                    bid.downloaded = True
+                    bid.save()
 
         resp = HttpResponse(save_virtual_workbook(wb), content_type='application/vnd.ms-excel')
         resp['Content-Disposition'] = 'attachment; filename="%s"' % file_name
