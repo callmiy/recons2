@@ -78,24 +78,26 @@ function displayPendingBidDirectiveCtrl(pagerNavSetUpLinks, scope, kanmiiUndersc
   })
 
   function deselectAllBids() {
-    vm.bids.forEach(function (bid) {
+    vm.bids.forEach(function(bid) {
       bid.highlighted = false
     })
   }
 
   vm.modelRowClicked = modelRowClicked
   function modelRowClicked(model) {
-    deselectAllBids()
-    //only highlight a row if no row is checked and the row model is not downloaded previously
-    model.highlighted = !kanmiiUnderscore.any(vm.bids, function (bid) {
-      return !bid.downloaded && bid.checked
-    })
+    if (!model.downloaded) {
+      deselectAllBids()
+      //only highlight a row if no row is checked and the row model is not downloaded previously
+      model.highlighted = !kanmiiUnderscore.any(vm.bids, function(bid) {
+        return bid.checked
+      })
+    }
   }
 
   scope.$watch(function getSelectedBids() {return vm.selectedBids}, function updatedSelectedBids(selectedBids) {
     if (selectedBids && !kanmiiUnderscore.isEmpty(selectedBids)) {
 
-      kanmiiUnderscore.each(selectedBids, function (checked, id) {
+      kanmiiUnderscore.each(selectedBids, function(checked, id) {
 
         for (var bidIndex = 0; bidIndex < vm.bids.length; bidIndex++) {
           var bid = vm.bids[bidIndex]
@@ -110,7 +112,7 @@ function displayPendingBidDirectiveCtrl(pagerNavSetUpLinks, scope, kanmiiUndersc
 
       })
 
-      var checked = kanmiiUnderscore.all(vm.bids, function (bid) {
+      var checked = kanmiiUnderscore.all(vm.bids, function(bid) {
         return bid.checked === true
       })
 
@@ -121,7 +123,7 @@ function displayPendingBidDirectiveCtrl(pagerNavSetUpLinks, scope, kanmiiUndersc
   vm.toggleAll = null
 
   vm.toggleAllClicked = function toggleAllClicked() {
-    vm.bids.forEach(function (bid) {
+    vm.bids.forEach(function(bid) {
       vm.selectedBids[bid.id] = vm.toggleAll
     })
   }

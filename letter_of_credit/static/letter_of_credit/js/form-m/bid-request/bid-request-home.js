@@ -51,12 +51,12 @@ BidRequestController.$inject = [
   '$http'
 ]
 function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequestModelManager, $http,
-                              stateParams, kanmiiUri, urls, kanmiiUnderscore, http) {
+  stateParams, kanmiiUri, urls, kanmiiUnderscore, http) {
   var vm = this;
 
   vm.searchFormMs = searchFormMs
   function searchFormMs() {
-    SearchFormMService.searchWithModal().then(function (data) {
+    SearchFormMService.searchWithModal().then(function(data) {
       console.log(data);
     })
   }
@@ -76,7 +76,7 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
    */
   vm.bidRequests = []
   vm.paginationHooks = {}
-  LcBidRequest.pending().$promise.then(function (data) {
+  LcBidRequest.pending().$promise.then(function(data) {
     updateBids(data)
   })
 
@@ -100,7 +100,7 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
 
   vm.getBidsOnNavigation = getBidsOnNavigation
   function getBidsOnNavigation(linkUrl) {
-    $http.get(linkUrl).then(function (response) {
+    $http.get(linkUrl).then(function(response) {
       updateBids(response.data)
     })
   }
@@ -157,7 +157,7 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
     if (!kanmiiUnderscore.isEmpty(vm.selectedBids)) {
       var search = []
 
-      kanmiiUnderscore.each(vm.selectedBids, function (selection, bidId) {
+      kanmiiUnderscore.each(vm.selectedBids, function(selection, bidId) {
         if (selection === true) search.push(bidId)
       })
 
@@ -168,8 +168,22 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
   vm.downloadBtnDisabled = function downloadBtnDisabled() {
     if (kanmiiUnderscore.isEmpty(vm.selectedBids)) return true
 
-    return !kanmiiUnderscore.any(vm.selectedBids, function (selectionVal) {
+    return !kanmiiUnderscore.any(vm.selectedBids, function(selectionVal) {
       return selectionVal === true
     })
+  }
+
+  vm.selectedDownloadedBids = {}//watch vm.selectedBids and put downloaded bids into vm.selectedDownloaded bids
+  //but only put cases where check is true
+  vm.markRequestedBtnDisabled = function markRequestedBtnDisabled() {
+    if (kanmiiUnderscore.isEmpty(vm.selectedBids)) return true
+
+    return !kanmiiUnderscore.any(vm.selectedBids, function(selectionVal, bidId) {
+      return selectionVal === true
+    })
+  }
+
+  vm.markRequested = function markRequested() {
+
   }
 }
