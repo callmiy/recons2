@@ -27,6 +27,13 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         # Or path to database file if using sqlite3.
         'NAME': DB_PATH,
+    },
+
+    'test': {
+        # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.db.backends.sqlite3',
+        # Or path to database file if using sqlite3.
+        'NAME': os.path.join(DB_DIR, 'test-db.db'),
     }
 }
 # Hosts/domain names that are valid for this site; required if DEBUG is False
@@ -161,6 +168,7 @@ INSTALLED_APPS = (
     'contingent_report',
     'payment',
     'core_recons',
+    'bdd',
 )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
