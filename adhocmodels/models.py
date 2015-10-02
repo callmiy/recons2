@@ -106,8 +106,7 @@ class RelationshipManager(models.Model):
 
 class AccountNumber(models.Model):
     nuban = models.CharField("Nuban", max_length=10, unique=True)
-    old_numb = models.CharField(
-        'Old Acct. Number', max_length=13, null=True, blank=True)
+    old_numb = models.CharField('Old Acct. Number', max_length=13, null=True, blank=True)
     owner = models.ForeignKey('Customer', related_name='acct_numbs', verbose_name='Customer Name')
     branch = models.ForeignKey(Branch, related_name='accts')
     acct_id = models.CharField(
@@ -155,13 +154,10 @@ class AccountNumber(models.Model):
 class Customer(models.Model):
     name = models.CharField('Name', max_length=200)
     rel_manager = models.ForeignKey(
-        RelationshipManager, related_name='clients', null=True, blank=True,
-        db_column='rel_manager')
-    branch_for_itf = models.ForeignKey(
-        Branch, null=True, blank=True, db_column='brn_itf')
+        RelationshipManager, related_name='clients', null=True, blank=True, db_column='rel_manager')
+    branch_for_itf = models.ForeignKey(Branch, null=True, blank=True, db_column='brn_itf')
     parent = models.ForeignKey(
-        "self", null=True, blank=True, related_name='subsidiaries',
-        db_column='parent')
+        "self", null=True, blank=True, related_name='subsidiaries', db_column='parent')
 
     class Meta:
         db_table = 'customer'
