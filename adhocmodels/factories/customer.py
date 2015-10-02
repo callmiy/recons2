@@ -1,41 +1,34 @@
 import factory
 from adhocmodels.models import Branch, AccountNumber, Customer
 
-CUSTOMER_DATA = (
-    #       0           1                   2           3           4
-    # customer name, 'customer ID', account number, branch code, branch name
-    ('JOF NIG LTD', '000208482', '0000801815', '682', 'STALLION PLAZA HEAD OFFICE',),
-    ('CUTIX PLC', '000181365', '0026226180', '556', 'NNEWI',),
-    ('MIDDLE POINT NIG LTD', '000502177', '0010626815', '096', 'TRADE FAIR MAIN',),
-    ('PRIMA CORPORATION LIMITED', '005633394', '0040795361', '461', 'AJOSE ADEOGUN',),
-    ('MDV INDUSTRIES LIMITED', '005643512', '0040884487', '461', 'AJOSE ADEOGUN',),
-    # customer name, 'customer ID', account number, branch code, branch name
-)
+customer_names = ['JOF NIG LTD', 'CUTIX PLC', 'MIDDLE POINT NIG LTD', 'PRIMA CORPORATION LIMITED',
+                  'MDV INDUSTRIES LIMITED']
+customer_id = ['000208482', '000181365', '000502177', '005633394', '005643512']
+branch_codes = ['682', '556', '096', '461', ]
+branch_names = ['STALLION PLAZA HEAD OFFICE', 'NNEWI', 'TRADE FAIR MAIN', 'AJOSE ADEOGUN', 'AJOSE ADEOGUN']
+account_numbers = ['0000801815', '0026226180', '0010626815', '0040795361', '0040884487']
 
 
 class BranchFactory(factory.DjangoModelFactory):
-    code = factory.Iterator([data[3] for data in CUSTOMER_DATA])
-    name = factory.Iterator([data[4] for data in CUSTOMER_DATA])
+    code = factory.Iterator(branch_codes)
+    name = factory.Iterator(branch_names)
 
     class Meta:
-        database = 'test'
         model = Branch
 
 
 class CustomerFactory(factory.DjangoModelFactory):
     parent = factory.SubFactory('adhocmodels.factories.CustomerFactory')
-    name = factory.Iterator([data[0] for data in CUSTOMER_DATA])
+    name = factory.Iterator(customer_names)
 
     class Meta:
-        database = 'test'
         model = Customer
 
 
 class AccountFactory(factory.DjangoModelFactory):
     branch = factory.Iterator(Branch.objects.all())
     owner = factory.Iterator(Customer.objects.all())
-    nuban = factory.Iterator([data[2] for data in CUSTOMER_DATA])
+    nuban = factory.Iterator(account_numbers)
 
     class Meta:
-        database = 'test'
         model = AccountNumber
