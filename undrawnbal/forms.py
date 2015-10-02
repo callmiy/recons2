@@ -7,6 +7,7 @@ class UndrawnBalForm(forms.ModelForm):
 
     class Meta:
         model = UndrawnBal
+        fields = ('estb_amt_ccy',)
 
     estb_amt_ccy = forms.CharField(required=False)
     claim_amt_ccy = forms.CharField(required=False)

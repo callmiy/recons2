@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import pre_save
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.urlresolvers import reverse
 from adhocmodels.models import NostroAccount, Customer, LedgerAccount
 from postentry.models import EntryGeneratingTransaction
@@ -83,7 +83,7 @@ class UnmatchedRecons(models.Model):
 class UnmatchedClarec(models.Model):
     content_type = models.ForeignKey(ContentType, null=True, editable=False)
     object_id = models.PositiveIntegerField(null=True, editable=False)
-    clirec_obj = generic.GenericForeignKey('content_type', 'object_id')
+    clirec_obj = GenericForeignKey('content_type', 'object_id')
     post_date = models.DateField("Post Date")
     valdate = models.DateField("Value Date")
     details = models.CharField("Details", max_length=1000)

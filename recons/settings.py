@@ -22,14 +22,12 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 60 * 60 * 12  # 12 hours
 
 DATABASES = {
-    # <editor-fold description=''>
     'default': {
         # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'ENGINE': 'django.db.backends.sqlite3',
         # Or path to database file if using sqlite3.
         'NAME': DB_PATH,
     }
-    # </editor-fold>
 }
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -129,17 +127,14 @@ ROOT_URLCONF = 'recons.urls'
 WSGI_APPLICATION = 'recons.wsgi.application'
 
 TEMPLATE_DIRS = (
-    # <editor-fold description=''>
     # Put strings here, like "/home/html/django_templates" or
     # "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(SETTINGS_DIR, 'templates')
-    # </editor-fold>
+    os.path.join(SETTINGS_DIR, 'templates'),
 )
 
 INSTALLED_APPS = (
-    # <editor-fold description=''>
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -153,8 +148,6 @@ INSTALLED_APPS = (
     'ajax_select',
     'django_extensions',
     'rest_framework',
-    'south',
-    'django_nose',
     "adhocmodels",
     "postentry",
     "ibdint",
@@ -168,16 +161,9 @@ INSTALLED_APPS = (
     'contingent_report',
     'payment',
     'core_recons',
-    # </editor-fold>
 )
 
-SOUTH_TESTS_MIGRATE = False
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-NOSE_ARGS = [
-    '--with-coverage',
-    '--cover-package=unmatched',
-    '--cover-inclusive',
-]
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -186,7 +172,6 @@ NOSE_ARGS = [
 # more details on how to customize your logging configuration.
 
 LOGGING = {
-    # <editor-fold description=''>
     'version': 1,
     'disable_existing_loggers': False,
     'filters': {
@@ -223,7 +208,6 @@ LOGGING = {
             'level': 'INFO'
         }
     }
-    # </editor-fold>
 }
 
 AJAX_LOOKUP_CHANNELS = {

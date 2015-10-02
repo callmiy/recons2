@@ -19,10 +19,7 @@ class SourceFx(models.Model):
 
 class UndrawnBal(models.Model):
     lc_number = models.CharField('LC Number', max_length=16)
-    estb_amt_ccy = models.ForeignKey(
-        Currency,
-        related_name='estb_amt_ccy',
-        verbose_name='Estb. Amount Currency')
+    estb_amt_ccy = models.ForeignKey(Currency, related_name='estb_amt_ccy', verbose_name='Estb. Amount Currency')
     estb_amt = models.DecimalField(
         'Estab. Amount', max_digits=20, decimal_places=2)
     claim_amt_ccy = models.ForeignKey(

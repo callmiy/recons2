@@ -380,8 +380,7 @@ def get_default_memos():
 
 
 class ValidTransactionRef(models.Model):
-    valid_ref_start = models.CharField(
-        'First four digits of reference', max_length=16)
+    valid_ref_start = models.CharField('First four digits of reference', max_length=16)
 
     def save(self, *args, **kwargs):
         self.valid_ref_start = self.valid_ref_start[:4].upper()
@@ -389,8 +388,7 @@ class ValidTransactionRef(models.Model):
 
     @classmethod
     def is_valid_trxn_ref(cls, inref):
-        return any(
-            [inref[:4].upper() == ref.valid_ref_start for ref in cls.objects.all()])
+        return any([inref[:4].upper() == ref.valid_ref_start for ref in cls.objects.all()])
 
     class Meta:
         db_table = 'valid_refs'
