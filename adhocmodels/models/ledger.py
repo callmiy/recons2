@@ -3,7 +3,7 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 import re
-from . import Currency, NostroAccount
+from .general import Currency, NostroAccount
 
 
 class LedgerAccountType(models.Model):

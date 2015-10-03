@@ -1,8 +1,7 @@
 from django.db import models
 from django.db.models import Q
 from django.core.exceptions import ValidationError
-
-prepend_zeros = lambda reqd, available: ''.join('0' for c in range(reqd - available))
+from core_recons.utilities import prepend_zeros
 
 
 class Branch(models.Model):
@@ -10,6 +9,7 @@ class Branch(models.Model):
     name = models.CharField("Branch Name", max_length=50)
 
     def save(self, *args, **kwargs):
+        self.code = str(self.code)
         if not self.code.isdigit():
             raise ValidationError("Only numbers allowed for branch code")
         self.name = self.name.upper()
@@ -66,21 +66,22 @@ class AccountNumber(models.Model):
     old_numb = models.CharField('Old Acct. Number', max_length=13, null=True, blank=True)
     owner = models.ForeignKey('Customer', related_name='acct_numbs', verbose_name='Customer Name')
     branch = models.ForeignKey(Branch, related_name='accts')
-    acct_id = models.CharField(
-        'Customer ID For Acct.', max_length=10, unique=True, )
+    acct_id = models.CharField('Customer ID For Acct.', max_length=10, unique=True, )
 
     def save(self, *args, **kwargs):
+        self.nuban = str(self.nuban)
+
         if not self.nuban.isdigit:
             raise ValidationError("Account Numbers can only contain numbers")
 
-        REQD_DIGITS_NUBAN = 10
-        REQD_DIGITS_OLD_NUMB = 13
+        reqd_digits_nuban = 10
+        reqd_digits_old_numb = 13
 
         len_nuban = len(self.nuban)
 
-        if len_nuban < REQD_DIGITS_NUBAN:
+        if len_nuban < reqd_digits_nuban:
             self.nuban = '%s%s' % (
-                prepend_zeros(REQD_DIGITS_NUBAN, len_nuban), self.nuban)
+                prepend_zeros(reqd_digits_nuban, len_nuban), self.nuban)
 
         if self.old_numb:
             if not self.old_numb.isdigit():
@@ -89,9 +90,9 @@ class AccountNumber(models.Model):
 
             len_old_numb = len(self.old_numb)
 
-            if len_old_numb < REQD_DIGITS_OLD_NUMB:
+            if len_old_numb < reqd_digits_old_numb:
                 self.old_numb = '%s%s' % (
-                    prepend_zeros(REQD_DIGITS_OLD_NUMB, len_old_numb),
+                    prepend_zeros(reqd_digits_old_numb, len_old_numb),
                     self.old_numb,
                 )
 
@@ -113,8 +114,7 @@ class Customer(models.Model):
     rel_manager = models.ForeignKey(
         RelationshipManager, related_name='clients', null=True, blank=True, db_column='rel_manager')
     branch_for_itf = models.ForeignKey(Branch, null=True, blank=True, db_column='brn_itf')
-    parent = models.ForeignKey(
-        "self", null=True, blank=True, related_name='subsidiaries', db_column='parent')
+    parent = models.ForeignKey("self", null=True, blank=True, related_name='subsidiaries', db_column='parent')
 
     class Meta:
         db_table = 'customer'

@@ -4,11 +4,7 @@ Feature: List Form Ms
   So I can pick anyone to see its details
 
   Background: There are form Ms in the system
-    Given there are applicants in the system
-    |name|_id|account_number|branch_code|
-
-    And a number of form Ms
-    |form_m_number|applicant|currency|amount|
+    Given there are form Ms in the system
 
   Scenario: # Enter scenario name here
     # Enter steps here

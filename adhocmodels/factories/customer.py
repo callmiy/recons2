@@ -1,25 +1,19 @@
 import factory
+from factory import fuzzy
 from adhocmodels.models import Branch, AccountNumber, Customer
-
-customer_names = ['JOF NIG LTD', 'CUTIX PLC', 'MIDDLE POINT NIG LTD', 'PRIMA CORPORATION LIMITED',
-                  'MDV INDUSTRIES LIMITED']
-customer_id = ['000208482', '000181365', '000502177', '005633394', '005643512']
-branch_codes = ['682', '556', '096', '461', ]
-branch_names = ['STALLION PLAZA HEAD OFFICE', 'NNEWI', 'TRADE FAIR MAIN', 'AJOSE ADEOGUN', 'AJOSE ADEOGUN']
-account_numbers = ['0000801815', '0026226180', '0010626815', '0040795361', '0040884487']
+from core_recons.utilities import digits_char
 
 
 class BranchFactory(factory.DjangoModelFactory):
-    code = factory.Iterator(branch_codes)
-    name = factory.Iterator(branch_names)
+    code = fuzzy.FuzzyText(length=9, chars=digits_char)
+    name = factory.Sequence(lambda n: 'branch-{seq}'.format(seq=n))
 
     class Meta:
         model = Branch
 
 
 class CustomerFactory(factory.DjangoModelFactory):
-    parent = factory.SubFactory('adhocmodels.factories.CustomerFactory')
-    name = factory.Iterator(customer_names)
+    name = factory.Sequence(lambda n: 'customer-{seq}'.format(seq=n))
 
     class Meta:
         model = Customer
@@ -28,7 +22,8 @@ class CustomerFactory(factory.DjangoModelFactory):
 class AccountFactory(factory.DjangoModelFactory):
     branch = factory.Iterator(Branch.objects.all())
     owner = factory.Iterator(Customer.objects.all())
-    nuban = factory.Iterator(account_numbers)
+    nuban = fuzzy.FuzzyText(length=10, chars=digits_char)
+    acct_id = fuzzy.FuzzyText(length=9, chars=digits_char)
 
     class Meta:
         model = AccountNumber
