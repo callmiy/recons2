@@ -1,7 +1,8 @@
 from behave import *
 from adhocmodels.factories import CustomerFactory, CurrencyFactory
 import nose.tools as nt
-from letter_of_credit.models import LcBidRequest
+from letter_of_credit.factories import LCIssueFactory
+from letter_of_credit.models import LcBidRequest, LCIssue
 import time
 
 
@@ -132,9 +133,49 @@ def step_impl(context):
     """
     form_m_number = context.form_m_data['number']
 
-    if context.browser.driver_name in ('Chrome', 'Firefox',):
-        time.sleep(1)
+    time.sleep(1)
 
     bid_qs = LcBidRequest.objects.filter(mf__number=form_m_number)
 
     nt.assert_true(bid_qs.exists(), 'Bid with form M number %s must exist in the system' % form_m_number)
+
+
+@given("there are LC issues in the system")
+def step_impl(context):
+    """
+    :type context behave.runner.Context
+    """
+    lc_issues_id = []
+    [lc_issues_id.append(LCIssueFactory().id) for x in range(2)]
+    context.lc_issues_id = lc_issues_id
+
+
+@step("Select the issues with the form M/LC")
+def step_impl(context):
+    """
+    :type context behave.runner.Context
+    """
+    browser = context.browser
+
+    lc_issues_container = browser.find_by_css('.form-m-add-lc-issue').first
+
+    nt.assert_false(
+        lc_issues_container.visible,
+        'The LC issues form container must be invisible by default'
+    )
+
+    browser.find_by_css('.form-m-lc-issue-toggle-show').first.click()
+
+    if browser.is_element_present_by_css('.lc-issue-item-checkbox', wait_time=2):
+        lc_issues_id = context.lc_issues_id
+        [browser.check('lc-issue-item-checkbox-%d' % issue_id) for issue_id in lc_issues_id]
+
+
+@step("confirm there are issues in the system")
+def step_impl(context):
+    """
+    :type context behave.runner.Context
+    """
+    count_issues_id = len(context.lc_issues_id)
+    nt.assert_equal(LCIssue.objects.all().count(), count_issues_id,
+                    'There should be "%d" LC issue IDs in the system' % count_issues_id)

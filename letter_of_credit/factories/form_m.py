@@ -8,7 +8,7 @@ from letter_of_credit.models import FormM, LCIssue, LCIssueConcrete, LcBidReques
 
 
 class LCIssueFactory(factory.DjangoModelFactory):
-    text = fuzzy.FuzzyText(length=10, prefix='lc-issue-')
+    text = factory.Sequence(lambda n: 'lc-issue-%d' % n)
 
     class Meta:
         model = LCIssue

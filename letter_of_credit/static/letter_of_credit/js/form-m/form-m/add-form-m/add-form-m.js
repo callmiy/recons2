@@ -101,7 +101,7 @@ function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUndersc
     submittedBidRequest.mf = formMUrl
     var bid = new LcBidRequest(submittedBidRequest)
     bid.$save(
-      function (data) {},
+      function (data) {console.log('bid saved successfully with data = ', data);},
       function (xhr) {xhrErrorDisplay(xhr)}
     )
   }
