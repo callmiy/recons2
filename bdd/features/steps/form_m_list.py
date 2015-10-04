@@ -5,15 +5,6 @@ from adhocmodels.factories import CurrencyFactory
 import nose.tools as nt
 
 
-@given("there are currencies in the system")
-def step_impl(context):
-    """
-    :type context behave.runner.Context
-    """
-    for code in ('EUR',):
-        CurrencyFactory(code=code)
-
-
 @given("I am logged in")
 def step_impl(context):
     """
