@@ -1,19 +1,17 @@
 # coding:utf-8
 import os
 from datetime import date
+from .settings_dev import my_project_config
 
 SETTINGS_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.split(SETTINGS_DIR)[0]
 
-DB_DIR = os.path.join(PROJECT_DIR, '..', 'database')
-not os.path.exists(DB_DIR) and os.mkdir(DB_DIR)
+project_config = my_project_config(PROJECT_DIR, SETTINGS_DIR)
 
-DB_PATH = os.path.join(DB_DIR, 'reconciliation.db')
-
-DEBUG = True
+DEBUG = project_config['DEBUG']
 TEMPLATE_DEBUG = DEBUG
 
-ADMINS = (('maneptha', 'maneptha@gmail.com'),)
+ADMINS = project_config['ADMINS']
 
 MANAGERS = ADMINS
 LOGIN_URL = '/accounts/login/'
@@ -21,17 +19,11 @@ LOGIN_REDIRECT_URL = '/'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 60 * 60 * 12  # 12 hours
 
-DATABASES = {
-    'default': {
-        # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'ENGINE': 'django.db.backends.sqlite3',
-        # Or path to database file if using sqlite3.
-        'NAME': DB_PATH,
-    }
-}
+DATABASES = project_config['DATABASES']
+
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['foreignops-hp', 'localhost', ]
+ALLOWED_HOSTS = project_config['ALLOWED_HOSTS']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -61,18 +53,19 @@ USE_TZ = False
 media_path = os.path.join(PROJECT_DIR, '..', 'media')
 not os.path.exists(media_path) and os.mkdir(media_path)
 
-MEDIA_ROOT = media_path
+MEDIA_ROOT = project_config['MEDIA_ROOT']
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://example.com/media/", "http://media.example.com/"
-MEDIA_URL = '/media/'
+MEDIA_URL = project_config['MEDIA_URL']
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = os.path.join(PROJECT_DIR, '..', 'static-files')
+if 'STATIC_ROOT' in project_config:
+    STATIC_ROOT = project_config['STATIC_ROOT']
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -98,7 +91,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '+vbk$x)t5!ga*+$2#*6h8_#&#kc+$_1vt0z0u2%hn3-=p@c2c$'
+SECRET_KEY = project_config['SECRET_KEY']
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -119,7 +112,7 @@ MIDDLEWARE_CLASSES = (
     # </editor-fold>
 )
 
-SESSION_COOKIE_NAME = 'recons_main_sessionid'
+SESSION_COOKIE_NAME = project_config['SESSION_COOKIE_NAME']
 
 ROOT_URLCONF = 'recons.urls'
 
