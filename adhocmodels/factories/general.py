@@ -1,6 +1,15 @@
 import factory
 from factory import fuzzy
 from adhocmodels.models import Currency
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
+
+
+class UserFactory(factory.DjangoModelFactory):
+    password = make_password('password')
+
+    class Meta:
+        model = User
 
 
 class CurrencyFactory(factory.DjangoModelFactory):

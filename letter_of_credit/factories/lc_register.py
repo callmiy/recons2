@@ -2,6 +2,7 @@ from factory import fuzzy
 import factory
 import datetime
 from adhocmodels.factories import CustomerFactory, CurrencyFactory, BranchFactory
+from adhocmodels.models import Currency
 from core_recons.utilities import digits_char
 from letter_of_credit.models import LCRegister
 
@@ -25,7 +26,7 @@ class LCRegisterFactory(factory.DjangoModelFactory):
     expiry_date = fuzzy.FuzzyDate(start_date=datetime.date(2015, 1, 1))
     confirmation = factory.Iterator(('CONFIRM', 'WITHOUT', 'MAY ADD',))
     applicant = factory.Sequence(lambda n: 'customer-{seq}'.format(seq=n))
-    ccy_obj = factory.SubFactory(CurrencyFactory)
+    ccy_obj = factory.Iterator(Currency.objects.all())
     lc_amt_org_ccy = fuzzy.FuzzyDecimal(low=5000, high=1000000.99, precision=2)
     sector = factory.Iterator(('CBG', 'COMMERCIAL',))
 
