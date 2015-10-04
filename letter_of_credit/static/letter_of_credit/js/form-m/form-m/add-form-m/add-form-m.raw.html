@@ -9,7 +9,8 @@
         <label class="control-label col-md-4 col-lg-4 col-sm-4" for="form-m-number">Form M Number</label>
 
         <div class="col-md-8 col-lg-8 col-sm-8">
-          <input class="form-control" maxlength="13" id="form-m-number" required to-upper ng-pattern="/mf\d{11}/i"
+          <input class="form-control" maxlength="13" id="form-m-number" required name="form-m-number"
+                 to-upper ng-pattern="/mf\d{11}/i"
                  ng-model="addFormMModal.formM.number"/>
         </div>
       </div>
@@ -19,7 +20,7 @@
 
         <div class="col-md-8 col-lg-8 col-sm-8">
           <div class="input-group">
-            <input class="form-control" type="text" min="3" id="applicant"
+            <input class="form-control" type="text" min="3" id="applicant" name="applicant"
                    ng-model="addFormMModal.formM.applicant"
                    ng-pattern="/.{4,}/"
                    typeahead-min-length="3"
@@ -37,7 +38,7 @@
         <label class="control-label col-md-4 col-lg-4 col-sm-4" for="currency">Currency</label>
 
         <div class="col-md-8 col-lg-8 col-sm-8">
-          <input class="form-control" id="currency" required maxlength="3"
+          <input class="form-control" id="currency" required maxlength="3" name="currency"
                  ng-model="addFormMModal.formM.currency"
                  typeahead="currency as currency.code for currency in addFormMModal.getCurrency($viewValue)"
                  typeahead-min-length="2"
@@ -49,7 +50,8 @@
         <label class="control-label col-md-4 col-lg-4 col-sm-4" for="amount">Amount</label>
 
         <div class="col-md-8 col-lg-8 col-sm-8">
-          <input class="form-control" id="amount" required ng-model="addFormMModal.formM.amount" number-format/>
+          <input class="form-control" id="amount" name="amount" required ng-model="addFormMModal.formM.amount"
+                 number-format/>
         </div>
       </div>
 
@@ -90,7 +92,7 @@
           <label class="control-label col-md-4 col-lg-4 col-sm-4" for="goods-description">Goods Description</label>
 
           <div class="col-md-8 col-lg-8 col-sm-8">
-            <input class="form-control" id="goods-description" required min="5"
+            <input class="form-control" id="goods-description" name="goods-description" required min="5"
                    ng-model="addFormMModal.bidRequest.goods_description" to-upper/>
           </div>
         </div>
@@ -99,7 +101,8 @@
           <label class="control-label col-md-4 col-lg-4 col-sm-4" for="bid-amount">Amount</label>
 
           <div class="col-md-8 col-lg-8 col-sm-8">
-            <input class="form-control" id="bid-amount" required ng-model="addFormMModal.bidRequest.amount"
+            <input class="form-control" id="bid-amount" name="bid-amount" required
+                   ng-model="addFormMModal.bidRequest.amount"
                    number-format/>
           </div>
         </div>
@@ -133,7 +136,7 @@
       </div>
 
       <div class="col-md-4 col-lg-4 col-sm-4" style="text-align: center">
-        <button type="submit" class="btn btn-info"
+        <button type="submit" class="btn btn-info" name="add-form-m-submit"
                 ng-disabled="addFormMModal.disableSubmitBtn(newFormMModalForm.$invalid, bidRequestForm.$invalid)">
           Add Form M
         </button>

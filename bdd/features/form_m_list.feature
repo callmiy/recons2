@@ -4,7 +4,8 @@ Feature: List Form Ms Interface
   So I can pick anyone to see its details
 
   Background: User must be logged and currency in system
-    Given I am logged in
+    Given There is currency in the system
+    And I am logged in
 
   Scenario Outline: Visit form M list page
   """

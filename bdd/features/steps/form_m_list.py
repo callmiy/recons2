@@ -5,6 +5,14 @@ from adhocmodels.factories import CurrencyFactory
 import nose.tools as nt
 
 
+@given("There is currency in the system")
+def step_impl(context):
+    """
+    :type context behave.runner.Context
+    """
+    context.currency = CurrencyFactory(code='XUL')
+
+
 @given("I am logged in")
 def step_impl(context):
     """
@@ -25,7 +33,7 @@ def step_impl(context, num_form_m):
     :type context behave.runner.Context
     :type num_form_m str
     """
-    [FormMFactory() for x in range(int(num_form_m))]
+    [FormMFactory(currency=context.currency) for x in range(int(num_form_m))]
 
 
 @when("I visit form M list page")
@@ -42,10 +50,11 @@ def step_impl(context, num_rows):
     :type context behave.runner.Context
     :type num_rows str
     """
-    table_rows = context.browser.find_by_css('tbody>tr')
-    num_rows = int(num_rows)
-    actual_rows = len(table_rows)
-    nt.assert_equal(actual_rows, num_rows, 'There should be %d rows, but got %s' % (num_rows, actual_rows,))
+    if context.browser.is_element_present_by_css('tbody>tr', wait_time=5):
+        table_rows = context.browser.find_by_css('tbody>tr')
+        num_rows = int(num_rows)
+        actual_rows = len(table_rows)
+        nt.assert_equal(actual_rows, num_rows, 'There should be %d rows, but got %s' % (num_rows, actual_rows,))
 
 
 @step('"{num_links}" pager links for retrieving the next sets of form Ms')
