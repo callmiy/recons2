@@ -103,10 +103,6 @@ function displayPendingBidDirectiveCtrl(pagerNavSetUpLinks, scope, kanmiiUndersc
           var bid = vm.bids[bidIndex]
           if (bid.id === +id) {
             bid.checked = checked
-
-            if (!checked) {
-              vm.toggleAll = false
-            }
           }
         }
 

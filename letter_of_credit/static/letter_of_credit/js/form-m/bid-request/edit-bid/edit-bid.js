@@ -41,7 +41,7 @@ function EditBid(ModalService) {
         modal.close.then(function(bidForEdit) {
           if (bidForEdit) {
             console.log('bidForEdit = ', bidForEdit);
-            config.closeCb ? config.closeCb() : angular.noop
+            config.closeCb ? config.closeCb() : angular.noop //jshint -W030
           }
         })
       })

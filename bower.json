@@ -37,7 +37,8 @@
     "jstree": "https://github.com/vakata/jstree.git#~3.2.1",
     "papa-parse": "4.1.0",
     "underscore": "1.8.3",
-    "urijs": "https://github.com/medialize/URI.js.git#1.16.1"
+    "urijs": "https://github.com/medialize/URI.js.git#1.16.1",
+    "moment": "momentjs#~2.10.6"
   },
   "resolutions": {
     "angular": "1.4.4",
