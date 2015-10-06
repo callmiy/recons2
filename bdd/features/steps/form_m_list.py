@@ -3,6 +3,7 @@ from adhocmodels.factories import UserFactory
 from letter_of_credit.factories import FormMFactory
 from adhocmodels.factories import CurrencyFactory
 import nose.tools as nt
+from bdd_utilities import dom_prop
 
 
 @given("There is currency in the system")

@@ -1,3 +1,4 @@
+@form_m_add
 Feature: Add a form M
   As a user
   I want to store information about form M in the database

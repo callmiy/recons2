@@ -35,7 +35,7 @@
         <td style="text-align: right">{$model.created_at|date:'dd-MMM-yyyy'$}</td>
 
         <td>
-          <input type="checkbox" ng-model="bidTable.selectedBids[model.id]"/>
+          <input type="checkbox" ng-model="bidTable.selectedBids[model.id]" ng-attr-name="bid-item-{$model.id$}"/>
         </td>
       </tr>
     </tbody>
