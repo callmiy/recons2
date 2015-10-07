@@ -1,4 +1,5 @@
 from behave import *
+from selenium.common.exceptions import StaleElementReferenceException
 from letter_of_credit.factories import FormMFactory, LcBidRequestFactory
 import nose.tools as nt
 import time
@@ -78,7 +79,8 @@ def step_impl(context):
     """
     :type context behave.runner.Context
     """
-    raise NotImplementedError('implement this step')
+    with nt.assert_raises(StaleElementReferenceException):
+        context.selected_row.is_displayed()  # "The bid marked as requested should be removed from the interface"
 
 
 @step("the unselected bids will not be marked as 'requested' in the system")
@@ -86,7 +88,9 @@ def step_impl(context):
     """
     :type context behave.runner.Context
     """
-    pass
+    nt.assert_is_none(LcBidRequest.objects.get(pk=context.bid_ids[1]).requested_at,
+                      "When a bid is not checked when 'mark as requested button clicked, the bid 'requested_at' "
+                      "attribute should remain as 'None'")
 
 
 @step("will still be be visible in the bid listing interface")
@@ -94,4 +98,5 @@ def step_impl(context):
     """
     :type context behave.runner.Context
     """
-    pass
+    nt.assert_true(context.unselected_row.is_displayed(),
+                   "Un-selected bids should still be be visible in the bid listing interface")

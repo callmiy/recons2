@@ -206,11 +206,17 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
       if (!checked) return
 
       var bid = getBidFromId(bidId)
-      bid.requested_at = formatDate(new Date())
-      LcBidRequest.put(bid).$promise.then(bidEditSuccess, bidEditFailure)
+      if (bid) {
+        bid.requested_at = formatDate(new Date())
+        LcBidRequest.put(bid).$promise.then(bidEditSuccess, bidEditFailure)
+      }
     })
 
-    function bidEditSuccess(editedBid) {console.log('\n\n\n = editedBid', editedBid);}
+    function bidEditSuccess(editedBid) {
+      vm.bidRequests = vm.bidRequests.filter(function (bid) {
+        return bid.id !== editedBid.id
+      })
+    }
 
     function bidEditFailure(xhr) {xhrErrorDisplay(xhr)}
   }
