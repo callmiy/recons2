@@ -19,3 +19,4 @@ Feature: The bid listing interface - Mark downloaded bid as 'requested'
     And will no longer be visible in the bid listing interface
     And the unselected bids will not be marked as 'requested' in the system
     And will still be be visible in the bid listing interface
+    And the 'Mark as requested' button is now disabled

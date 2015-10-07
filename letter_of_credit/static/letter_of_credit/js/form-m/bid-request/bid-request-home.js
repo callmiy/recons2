@@ -52,12 +52,12 @@ BidRequestController.$inject = [
   'xhrErrorDisplay'
 ]
 function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequestModelManager, $http,
-                              stateParams, kanmiiUri, urls, kanmiiUnderscore, formatDate, xhrErrorDisplay) {
+  stateParams, kanmiiUri, urls, kanmiiUnderscore, formatDate, xhrErrorDisplay) {
   var vm = this;
 
   vm.searchFormMs = searchFormMs
   function searchFormMs() {
-    SearchFormMService.searchWithModal().then(function (data) {
+    SearchFormMService.searchWithModal().then(function(data) {
       console.log(data);
     })
   }
@@ -77,7 +77,7 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
    */
   vm.bidRequests = []
   vm.paginationHooks = {}
-  LcBidRequest.pending().$promise.then(function (data) {
+  LcBidRequest.pending().$promise.then(function(data) {
     updateBids(data)
   })
 
@@ -101,7 +101,7 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
 
   vm.getBidsOnNavigation = getBidsOnNavigation
   function getBidsOnNavigation(linkUrl) {
-    $http.get(linkUrl).then(function (response) {
+    $http.get(linkUrl).then(function(response) {
       updateBids(response.data)
     })
   }
@@ -112,11 +112,12 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
    */
   vm.searchedBidResult = null
 
-  scope.$watch(function searchedBidResult() {return vm.searchedBidResult}, function searchedBidResultChanged(searchedBidResult) {
-    if (searchedBidResult) {
-      updateBids(searchedBidResult)
-    }
-  })
+  scope.$watch(function searchedBidResult() {return vm.searchedBidResult},
+               function searchedBidResultChanged(searchedBidResult) {
+                 if (searchedBidResult) {
+                   updateBids(searchedBidResult)
+                 }
+               })
 
   /**
    * Update the bid collection and pagination hooks
@@ -158,7 +159,7 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
     if (!kanmiiUnderscore.isEmpty(vm.selectedBids)) {
       var search = []
 
-      kanmiiUnderscore.each(vm.selectedBids, function (selection, bidId) {
+      kanmiiUnderscore.each(vm.selectedBids, function(selection, bidId) {
         if (selection === true) search.push(bidId)
       })
 
@@ -169,7 +170,7 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
   vm.downloadBtnDisabled = function downloadBtnDisabled() {
     if (kanmiiUnderscore.isEmpty(vm.selectedBids)) return true
 
-    return !kanmiiUnderscore.any(vm.selectedBids, function (selectionVal) {
+    return !kanmiiUnderscore.any(vm.selectedBids, function(selectionVal) {
       return selectionVal === true
     })
   }
@@ -178,7 +179,7 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
 
   scope.$watch(function selectedBids() {return vm.selectedBids}, function selectedBidsChanged(newVal) {
     if (newVal && !kanmiiUnderscore.isEmpty(newVal)) {
-      kanmiiUnderscore.each(newVal, function (checked, bidId) {
+      kanmiiUnderscore.each(newVal, function(checked, bidId) {
         var bid = getBidFromId(bidId)
 
         if (bid && bid.downloaded) vm.selectedDownloadedBids[bidId] = checked
@@ -191,18 +192,18 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
 
     //return true if un-downloaded bid is checked
     //return false if there is at least one downloaded bid checked
-    var anyNoneDownloadedChecked = kanmiiUnderscore.any(vm.selectedBids, function (checked, bidId) {
+    var anyNoneDownloadedChecked = kanmiiUnderscore.any(vm.selectedBids, function(checked, bidId) {
       return !kanmiiUnderscore.has(vm.selectedDownloadedBids, bidId) && checked === true
     })
 
     if (anyNoneDownloadedChecked) return true
-    else return !kanmiiUnderscore.any(vm.selectedDownloadedBids, function (checked) {
+    else return !kanmiiUnderscore.any(vm.selectedDownloadedBids, function(checked) {
       return checked === true
     })
   }
 
   vm.markRequested = function markRequested() {
-    kanmiiUnderscore.each(vm.selectedDownloadedBids, function (checked, bidId) {
+    kanmiiUnderscore.each(vm.selectedDownloadedBids, function(checked, bidId) {
       if (!checked) return
 
       var bid = getBidFromId(bidId)
@@ -212,8 +213,11 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
       }
     })
 
+    vm.selectedDownloadedBids = {}
+    vm.selectedBids = {}
+
     function bidEditSuccess(editedBid) {
-      vm.bidRequests = vm.bidRequests.filter(function (bid) {
+      vm.bidRequests = vm.bidRequests.filter(function(bid) {
         return bid.id !== editedBid.id
       })
     }

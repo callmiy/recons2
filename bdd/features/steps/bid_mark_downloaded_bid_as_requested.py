@@ -100,3 +100,12 @@ def step_impl(context):
     """
     nt.assert_true(context.unselected_row.is_displayed(),
                    "Un-selected bids should still be be visible in the bid listing interface")
+
+
+@step("the 'Mark as requested' button is now disabled")
+def step_impl(context):
+    """
+    :type context behave.runner.Context
+    """
+    nt.assert_true(context.mark_requested_btn_web_element.get_attribute('disabled'),
+                   "'bid-home-mark-as-requested-btn' button must be disabled after bids have been marked as 'requested")
