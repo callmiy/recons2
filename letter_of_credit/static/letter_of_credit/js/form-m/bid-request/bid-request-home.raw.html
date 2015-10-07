@@ -8,11 +8,13 @@
       Search Bid Requests
     </button>
 
-    <a class="btn btn-success" ng-href="{$bidHome.downloadUrl()$}" ng-disabled="bidHome.downloadBtnDisabled()">
+    <a class="btn btn-success" ng-href="{$bidHome.downloadUrl()$}" ng-disabled="bidHome.downloadBtnDisabled()"
+       ng-click="bidHome.refreshPage()">
       Download
     </a>
 
-    <button type="button" name="bid-home-mark-as-requested-btn" class="btn btn-success" ng-click="bidHome.markRequested()"
+    <button type="button" name="bid-home-mark-as-requested-btn" class="btn btn-success"
+            ng-click="bidHome.markRequested()"
             ng-disabled="bidHome.markRequestedBtnDisabled()">
       Mark as requested
     </button>
@@ -20,7 +22,7 @@
 
   <div display-pending-bid pending-bids="bidHome.bidRequests" pager-object="bidHome.paginationHooks"
        update-collection="bidHome.getBidsOnNavigation(linkUrl)" pagination-size="20"
-       selected-bids="bidHome.selectedBids">
+       selected-bids="bidHome.selectedBids" on-selected-bids-changed="bidHome.onSelectedBidsChanged(newSelections)">
 
   </div>
 </div>

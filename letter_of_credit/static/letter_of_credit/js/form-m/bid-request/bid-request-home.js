@@ -49,11 +49,28 @@ BidRequestController.$inject = [
   'urls',
   'kanmiiUnderscore',
   'formatDate',
-  'xhrErrorDisplay'
+  'xhrErrorDisplay',
+  '$state',
+  '$timeout'
 ]
 function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequestModelManager, $http,
-  stateParams, kanmiiUri, urls, kanmiiUnderscore, formatDate, xhrErrorDisplay) {
+  stateParams, kanmiiUri, urls, kanmiiUnderscore, formatDate, xhrErrorDisplay, $state, $timeout) {
   var vm = this;
+
+  initialize()
+  function initialize() {
+    vm.newBid = null
+
+    /**
+     * When the search-form-m directive returns, the result is propagated into this model
+     * @type {null|object}
+     */
+    vm.searchedBidResult = null
+
+    vm.selectedBids = {}
+
+    vm.selectedDownloadedBids = {}
+  }
 
   vm.searchFormMs = searchFormMs
   function searchFormMs() {
@@ -86,7 +103,6 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
    * propagated from the creation directive into this model
    * @type {null|object}
    */
-  vm.newBid = null
 
   vm.receiveNewBid = receiveNewBid
   function receiveNewBid(newBid) {
@@ -105,12 +121,6 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
       updateBids(response.data)
     })
   }
-
-  /**
-   * When the search-form-m directive returns, the result is propagated into this model
-   * @type {null|object}
-   */
-  vm.searchedBidResult = null
 
   scope.$watch(function searchedBidResult() {return vm.searchedBidResult},
                function searchedBidResultChanged(searchedBidResult) {
@@ -153,7 +163,6 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
     vm.paginationHooks = {next: data.next, previous: data.previous, count: data.count}
   }
 
-  vm.selectedBids = {}
   var url = kanmiiUri(urls.lcBidRequestDownloadUrl)
   vm.downloadUrl = function downloadUrl() {
     if (!kanmiiUnderscore.isEmpty(vm.selectedBids)) {
@@ -175,17 +184,16 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
     })
   }
 
-  vm.selectedDownloadedBids = {}
-
-  scope.$watch(function selectedBids() {return vm.selectedBids}, function selectedBidsChanged(newVal) {
-    if (newVal && !kanmiiUnderscore.isEmpty(newVal)) {
-      kanmiiUnderscore.each(newVal, function(checked, bidId) {
+  vm.onSelectedBidsChanged = onSelectedBidsChanged
+  function onSelectedBidsChanged(newSelections) {
+    if (newSelections && !kanmiiUnderscore.isEmpty(newSelections)) {
+      kanmiiUnderscore.each(newSelections, function(checked, bidId) {
         var bid = getBidFromId(bidId)
 
         if (bid && bid.downloaded) vm.selectedDownloadedBids[bidId] = checked
       })
     }
-  }, true)
+  }
 
   vm.markRequestedBtnDisabled = function markRequestedBtnDisabled() {
     if (kanmiiUnderscore.isEmpty(vm.selectedDownloadedBids)) return true
@@ -213,8 +221,7 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
       }
     })
 
-    vm.selectedDownloadedBids = {}
-    vm.selectedBids = {}
+    initialize()
 
     function bidEditSuccess(editedBid) {
       vm.bidRequests = vm.bidRequests.filter(function(bid) {
@@ -223,6 +230,10 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
     }
 
     function bidEditFailure(xhr) {xhrErrorDisplay(xhr)}
+  }
+
+  vm.refreshPage = function refreshPage() {
+    $timeout(function() {$state.reload()}, 3000)
   }
 
   function getBidFromId(bidId) {

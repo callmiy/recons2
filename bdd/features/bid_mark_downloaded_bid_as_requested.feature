@@ -1,4 +1,4 @@
-@wip
+@bid_as_requested
 Feature: The bid listing interface - Mark downloaded bid as 'requested'
   As a user with the appropriate permissions
   If I have downloaded a bid because I wanted to send it to treasury (the request)
