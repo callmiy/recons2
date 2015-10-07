@@ -7,10 +7,7 @@ import time
 
 
 def add_form_m_btn_is_disabled(context):
-    submit_btn_disabled_script = '$("[name={submit_btn_name}]").prop("disabled")'.format(
-        submit_btn_name=context.submit_btn_name)
-
-    return context.browser.evaluate_script(submit_btn_disabled_script)
+    return context.browser.driver.find_element_by_name(context.submit_btn_name).get_attribute('disabled')
 
 
 @given("There is new form M with form M data")
@@ -133,6 +130,10 @@ def step_impl(context):
     """
     form_m_number = context.form_m_data['number']
 
+    # I found this is the least time I had to wait before bid appears in the system. Apparently this is caused by the
+    # fact that I have two http requests - one to save the form M and another to save the bid. May be I can make this
+    # more efficient by posting to a URL which can save both form M and bid simultaneously.
+    # :TODO implement such a feature where I can both create form M and bid via a single http request
     time.sleep(1)
 
     bid_qs = LcBidRequest.objects.filter(mf__number=form_m_number)

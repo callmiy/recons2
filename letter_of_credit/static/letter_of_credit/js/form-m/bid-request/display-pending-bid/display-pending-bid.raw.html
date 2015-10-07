@@ -21,7 +21,7 @@
     </thead>
 
     <tbody selected-class-indicator="display-pending-bid-selected">
-      <tr ng-repeat="model in bidTable.bids" ng-click="bidTable.modelRowClicked(model)"
+      <tr ng-repeat="model in bidTable.bids" ng-click="bidTable.modelRowClicked(model)" ng-attr-id="bid-table-row-{$model.id$}"
           ng-dblclick="bidTable.onDblClick({rowModel: model})"
           ng-class="['display-pending-bid-table-row', {'display-pending-bid-selected': model.highlighted, 'display-pending-bid-checked': model.checked, 'downloaded-previously': model.downloaded, 'downloaded-checked': (model.downloaded && model.checked)}]"
         >

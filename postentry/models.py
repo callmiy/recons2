@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 from adhocmodels.models import LedgerAccount
 import re
 
@@ -80,7 +80,7 @@ class EntryContra(models.Model):
     content_type = models.ForeignKey(ContentType, null=True, editable=False)
     object_id = models.PositiveIntegerField(
         'Object ID', null=True, editable=False)
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
     entry = models.ForeignKey(Entry, related_name='contras', db_column='entry')
     amount = models.DecimalField("Amount", max_digits=14, decimal_places=2)
     account = models.ForeignKey(LedgerAccount, db_column='account')
