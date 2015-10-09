@@ -1,6 +1,7 @@
 from behave import *
 from splinter.browser import Browser
 from django.core import management
+import time
 
 
 def before_all(context):
@@ -30,6 +31,7 @@ def after_all(context):
     """
     :type context behave.runner.Context
     """
-    # context.browser.refresh()
+    # required to prevent 'connection was forcibly closed' exception being thrown
+    context.browser.driver.refresh()
     context.browser.quit()
     context.browser = None

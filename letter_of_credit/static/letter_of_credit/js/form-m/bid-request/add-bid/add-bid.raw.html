@@ -19,7 +19,7 @@
                   <i class="glyphicon glyphicon-search"></i>
                 </span>
 
-            <input type="text" class="form-control" min="4" id="form-m" readonly required
+            <input type="text" class="form-control" min="4" id="form-m" readonly required name="mf"
                    placeholder="Double click to search"
                    ng-model="makeBidRequest.mfGetterSetter"
                    ng-dblclick="makeBidRequest.getFormM()"
@@ -43,7 +43,7 @@
 
             <input type="text" class="form-control" id="amount" required ng-model="makeBidRequest.amountGetterSetter"
                    ng-model-options="{getterSetter: true, updateOn: 'blur'}"
-              />
+                />
           </div>
         </div>
 
@@ -52,6 +52,7 @@
 
           <div class="input-group">
             <input type="text" class="form-control" id="goods-description" required ng-minlength="5" to-upper
+                   name="goods-description"
                    ng-model="makeBidRequest.bid.mf.goods_description"
                    ng-readonly="!makeBidRequest.goodsInputIsEditable"/>
 
@@ -64,6 +65,7 @@
 
         <div class="form-group add-bid-form-control">
           <button type="submit" class="btn btn-info" ng-disabled="makeBidRequestForm.$invalid"
+                  name="add-bid-form-control-submit"
                   style="margin-right: 5%;">
             Make Request
           </button>
@@ -131,5 +133,5 @@
                update-collection="makeBidRequest.getBidsOnNavigation(linkUrl)"
                pager-object="makeBidRequest.paginationHooks"
                on-row-dbl-click-callback="makeBidRequest.onSelectFormM(rowModel)"
-    />
+      />
 </div>
