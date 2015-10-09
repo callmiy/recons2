@@ -15,17 +15,21 @@
 
 {% block page_content %}
   <div ng-app="form-m-root-app">
-    <div class="home-icon" ng-show="$state.current.name !== 'home'">
-      <span class="glyphicon glyphicon-home" ng-click="$state.go('home')" data-toggle="tooltip"
-            title="Home - Navigation">
-      </span>
 
-      <span style="font-size: 20px;margin-left: 5px;">
+    <ol class="breadcrumb" ng-show="$state.current.name !== 'home'">
+      <li>
+        <span class="glyphicon glyphicon-home" ng-click="$state.go('home')" data-toggle="tooltip"
+              title="Home - Navigation">
+      </span>
+      </li>
+
+      <li>
+        <span style="font-size: 20px;margin-left: 5px;">
         {$$state.current.kanmiiTitle$}
       </span>
+      </li>
 
-      <hr/>
-    </div>
+    </ol>
 
     <div class="slide" ui-view>
     </div>

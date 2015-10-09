@@ -1,7 +1,6 @@
 <div class="display-pending-bid-root-container">
 
-  <table class="table table-striped table-condensed table-bordered model-table-table-display"
-         style="margin-bottom: 13px;">
+  <table class="table table-striped table-condensed table-bordered">
     <caption>Pending Bids</caption>
 
     <thead>
@@ -21,7 +20,8 @@
     </thead>
 
     <tbody selected-class-indicator="display-pending-bid-selected">
-      <tr ng-repeat="model in bidTable.bids" ng-click="bidTable.modelRowClicked(model)" ng-attr-id="bid-table-row-{$model.id$}"
+      <tr ng-repeat="model in bidTable.bids" ng-click="bidTable.modelRowClicked(model)"
+          ng-attr-id="bid-table-row-{$model.id$}"
           ng-dblclick="bidTable.onDblClick({rowModel: model})"
           ng-class="['display-pending-bid-table-row', {'display-pending-bid-selected': model.highlighted, 'display-pending-bid-checked': model.checked, 'downloaded-previously': model.downloaded, 'downloaded-checked': (model.downloaded && model.checked)}]"
         >
