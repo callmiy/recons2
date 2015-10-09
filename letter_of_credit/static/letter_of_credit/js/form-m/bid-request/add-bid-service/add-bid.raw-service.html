@@ -1,0 +1,53 @@
+<div id="add-bid-root-container" class="add-bid-root-container">
+  <form novalidate class="form-horizontal"
+        ng-submit="addBidModal.submitBid(addBidModal.bid)"
+        name="addBidModalForm">
+    <fieldset class="add-new-form-m-container" ng-form name="newBidModalForm"
+              style="position: relative;padding: 7px;">
+
+      <div class="form-group form-m-group">
+        <label class="control-label col-sm-3" for="form-m">Form M</label>
+
+        <div class="col-sm-9">
+          <div class="input-group">
+            <span class="input-group-addon" data-toggle="tooltip" title="Search for Form M">
+              <i class="glyphicon glyphicon-search"></i>
+            </span>
+
+            <input class="form-control" type="text" min="4" id="form-m" readonly placeholder="Click to search"
+                   ng-model="addBidModal.mfGetterSetter" ng-click="addBidModal.getFormM()" ng-pattern="/^MF\d{11}\: .+/"
+                   ng-model-options="{ getterSetter: true }"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group amount-group">
+        <label class="control-label col-sm-3" for="amount">Amount</label>
+
+        <div class="col-sm-9">
+          <input class="form-control" id="amount" required ng-model="addBidModal.bid.amount" number-format/>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="row add-bid-form-control">
+      <div class="col-sm-4" style="text-align: left">
+        <span class="btn btn-default"
+              ng-click="addBidModal.reset(addBidModalForm)">
+          Reset
+        </span>
+      </div>
+
+      <div class="col-sm-4" style="text-align: center">
+        <button type="submit" class="btn btn-info"
+                ng-disabled="newBidModalForm.$invalid">
+          Add Bid
+        </button>
+      </div>
+
+      <div class="col-sm-4" style="text-align: right">
+        <span class="btn btn-default" ng-click="addBidModal.close()">Close</span>
+      </div>
+    </div>
+  </form>
+</div>

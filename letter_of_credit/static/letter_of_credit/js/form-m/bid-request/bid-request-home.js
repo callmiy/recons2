@@ -8,7 +8,6 @@ var app = angular.module('form-m-bid', [
   'ui.router',
   'model-table',
   'display-pending-bid',
-  'add-bid-service',
   'add-bid',
   'form-m-search-service',
   'lc-bid-request',
