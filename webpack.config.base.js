@@ -7,7 +7,7 @@ var webpackExternals = {
 var webpackAliases = {
   commons: __dirname + '/core_recons/static/core_recons/js/commons',
   lcCommons: __dirname + '/letter_of_credit/static/letter_of_credit/js/commons',
-  formMCommons: __dirname + '/letter_of_credit/static/letter_of_credit/js/form-m/commons'
+  lcAppCommons: __dirname + '/letter_of_credit/static/letter_of_credit/js/app/commons'
 }
 
 var webpackTestConfig = {

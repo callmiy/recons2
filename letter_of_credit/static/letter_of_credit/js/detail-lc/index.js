@@ -1,1 +1,0 @@
-require('./detail-lc.js');

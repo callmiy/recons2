@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.conf.urls import url, patterns
 from .views import (
-    Home,
     LetterOfCreditListCreateAPIView,
     LetterOfCreditUpdateAPIView,
     LCStatusListCreateAPIView,
@@ -10,7 +9,7 @@ from .views import (
     LetterOfCreditRegisterUpdateAPIView,
     FormMListCreateAPIView,
     FormMUpdateAPIView,
-    FormMHomeView,
+    AppHomeView,
     LCRegisterUploadView,
     ReleaseTelexView,
     LCIssueUpdateAPIView,
@@ -24,8 +23,6 @@ from .views import (
 urlpatterns = patterns(
     # <editor-fold description='home view and upload'>
     '',
-
-    url(r'^home/?$', login_required(Home.as_view()), name='letter-of-credit'),
 
     url(r'release-telex-mt-700/$', ReleaseTelexView.as_view(), name='release-telex-mt-700'),
 
@@ -83,7 +80,7 @@ urlpatterns += patterns(
 
     url(r'^form-m/(?P<pk>\d+)/?$', FormMUpdateAPIView.as_view(), name='formm-detail'),
 
-    url(r'^form-m/home/?$', login_required(FormMHomeView.as_view()), name='form-m')
+    url(r'^app/home/?$', login_required(AppHomeView.as_view()), name='lc-app-home')
     # </editor-fold>
 )
 

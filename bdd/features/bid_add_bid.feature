@@ -1,4 +1,4 @@
-@wip
+@add_bid
 Feature: Add bid interface
   As a user with the required capabilities
   I should be able to create new bids

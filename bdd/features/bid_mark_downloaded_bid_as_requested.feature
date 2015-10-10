@@ -9,7 +9,7 @@ Feature: The bid listing interface - Mark downloaded bid as 'requested'
   Scenario: Mark bid as 'requested'
     Given I am logged in
     And there are bids in the system which had been downloaded previously
-    When I visit the bid listing page
+    And I am at bid list page
     And select some bids to mark as requested while leaving some unselected as control
     Then the background colour of selected bid rows will change to color rgb'242, 243, 210' - indicating selection
     And the background colour of unselected bid rows will not change to color rgb'242, 243, 210'

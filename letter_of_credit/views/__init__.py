@@ -13,10 +13,9 @@ from letter_of_credit.views.lc_register import (
     LCRegisterUploadView,
     ReleaseTelexView)
 
-from letter_of_credit.views.form_m import (
+from letter_of_credit.views.app import (
     FormMListCreateAPIView,
     FormMUpdateAPIView,
-    FormMHomeView,
     LCIssueListCreateAPIView,
     LCIssueUpdateAPIView,
     LCIssueConcreteListCreateAPIView,
@@ -27,8 +26,12 @@ from letter_of_credit.views.form_m import (
 from  letter_of_credit.views.download_bids import DownloadBidsView
 
 
-class Home(CoreAppsView):
+class AppHomeView(CoreAppsView):
     def get(self, request):
         template_context = {'urls': self.get_core_app_urls()}
 
-        return render(request, 'letter_of_credit/index.html', template_context)
+        return render(request, 'letter_of_credit/app/index.html', template_context)
+
+    def post(self, request):
+        post_data = request.POST
+        print 'post data = ', post_data

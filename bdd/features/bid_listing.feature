@@ -11,7 +11,7 @@ Feature: The bid listing interface - listing and navigation
     Num links = ceil(num_bids / 20) + 2 if num_bids > 20 else 2
     """
     Given there are "<num_bids>" bids in the system
-    When I visit the bid listing page
+    And I am at bid list page
     Then I see "<num_rows>" rows of bids, each displaying few details about each bid
     And "<num_links>" pager links for retrieving the next sets of bids
 

@@ -13,7 +13,7 @@ Feature: List Form Ms Interface
     Num links = ceil(num_form_m / 20) + 2 if num_form_m > 20 else 2
     """
     Given there are "<num_form_m>" form Ms in the system
-    When I visit form M list page
+    And I am at form M list page
     Then I see "<num_rows>" rows of form Ms, each displaying few details about each form M
     And "<num_links>" pager links for retrieving the next sets of form Ms
 

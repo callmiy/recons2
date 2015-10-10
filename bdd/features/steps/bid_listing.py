@@ -12,12 +12,12 @@ def step_impl(context, num_bids):
     pass
 
 
-@when("I visit the bid listing page")
+@step("I am at bid list page")
 def step_impl(context):
     """
     :type context behave.runner.Context
     """
-    context.browser.visit(context.config.server_url + '/letter-of-credit/form-m/home#/bid')
+    context.browser.visit(context.config.server_url + '/letter-of-credit/app/home#/bid')
 
 
 @then('I see "(?P<num_rows>.+)" rows of bids, each displaying few details about each bid')

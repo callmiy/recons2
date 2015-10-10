@@ -10,7 +10,7 @@ def step_impl(context):
     """
     :type context behave.runner.Context
     """
-    context.browser.visit(context.config.server_url + '/letter-of-credit/form-m/home#/bid/add-bid')
+    context.browser.visit(context.config.server_url + '/letter-of-credit/app/home#/bid/add-bid')
 
 
 @then("I see that the form M field is not editable")

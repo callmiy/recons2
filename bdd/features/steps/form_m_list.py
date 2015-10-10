@@ -36,12 +36,12 @@ def step_impl(context, num_form_m):
     [FormMFactory(currency=context.currency) for x in range(int(num_form_m))]
 
 
-@when("I visit form M list page")
+@step("I am at form M list page")
 def step_impl(context):
     """
     :type context behave.runner.Context
     """
-    context.browser.visit(context.config.server_url + '/letter-of-credit/form-m/home#/form-m')
+    context.browser.visit(context.config.server_url + '/letter-of-credit/app/home#/form-m')
 
 
 @then('I see "{num_rows}" rows of form Ms, each displaying few details about each form M')

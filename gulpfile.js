@@ -131,16 +131,6 @@ gulp.task('webpack-letter-of-credit', function() {
     .pipe(gulp.dest(letterOfCredit.destDir))
 })
 
-gulp.task('webpack-letter-of-credit-mf', function() {
-  return gulp.src(letterOfCredit.subApps.mf.entry)
-    .pipe(plugins.webpack(letterOfCredit.subApps.mf.webpackConfig, webpack))
-    .pipe(plugins.sourcemaps.init())
-    .pipe(plugins.uglify())
-    .pipe(plugins.rename({suffix: '.min'}))
-    .pipe(plugins.sourcemaps.write('.'))
-    .pipe(gulp.dest(letterOfCredit.subApps.mf.destDir))
-})
-
 gulp.task('webpack-payment', function() {
   return gulp.src(payment.entry)
     .pipe(plugins.webpack(payment.webpackConfig, webpack))
@@ -171,7 +161,6 @@ gulp.task('initial', ['initial-js', 'initial-css'])
 
 gulp.task('webpack', [
   'webpack-letter-of-credit',
-  'webpack-letter-of-credit-mf',
   'webpack-payment',
   'webpack-root-app'
 ])

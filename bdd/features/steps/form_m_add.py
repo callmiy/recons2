@@ -28,14 +28,6 @@ def step_impl(context):
     context.form_m_data = form_m_data
 
 
-@step("I am at form M list page")
-def step_impl(context):
-    """
-    :type context behave.runner.Context
-    """
-    context.browser.visit(context.config.server_url + '/letter-of-credit/form-m/home#/form-m')
-
-
 @when("I complete the 'add form M' form with basic information")
 def step_impl(context):
     """
