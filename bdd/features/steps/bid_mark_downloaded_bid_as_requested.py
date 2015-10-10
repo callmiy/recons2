@@ -1,5 +1,6 @@
 from behave import *
 from selenium.common.exceptions import StaleElementReferenceException
+from splinter.exceptions import ElementDoesNotExist
 from letter_of_credit.factories import FormMFactory, LcBidRequestFactory
 import nose.tools as nt
 import time
@@ -30,15 +31,11 @@ def step_impl(context):
     row_1 = context.browser.driver.find_element_by_id('bid-table-row-%d' % context.bid_ids[0])
     nt.assert_in('(242, 243, 210', row_1.value_of_css_property('background-color'))
 
-    context.selected_row = row_1
-
 
 @then("the background colour of unselected bid rows will not change to color rgb'242, 243, 210'")
 def step_impl(context):
     row_2 = context.browser.driver.find_element_by_id('bid-table-row-%d' % context.bid_ids[1])
     nt.assert_not_in('(242, 243, 210', row_2.value_of_css_property('background-color'))
-
-    context.unselected_row = row_2
 
 
 @step("the 'Mark as requested' button that was disabled is now enabled")
@@ -79,8 +76,9 @@ def step_impl(context):
     """
     :type context behave.runner.Context
     """
-    with nt.assert_raises(StaleElementReferenceException):
-        context.selected_row.is_displayed()  # "The bid marked as requested should be removed from the interface"
+    row = context.browser.find_by_id('bid-table-row-%d' % context.bid_ids[0])
+    with nt.assert_raises(ElementDoesNotExist):
+        row = row[0]  # "The bid marked as requested should be removed from the interface"
 
 
 @step("the unselected bids will not be marked as 'requested' in the system")
@@ -98,8 +96,8 @@ def step_impl(context):
     """
     :type context behave.runner.Context
     """
-    nt.assert_true(context.unselected_row.is_displayed(),
-                   "Un-selected bids should still be be visible in the bid listing interface")
+    row = context.browser.find_by_id('bid-table-row-%d' % context.bid_ids[1])
+    nt.assert_true(row.first.visible, "Un-selected bids should still be be visible in the bid listing interface")
 
 
 @step("the 'Mark as requested' button is now disabled")

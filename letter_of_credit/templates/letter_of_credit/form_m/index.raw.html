@@ -16,7 +16,7 @@
 {% block page_content %}
   <div ng-app="form-m-root-app">
 
-    <ol class="breadcrumb" ng-show="$state.current.name !== 'home'">
+    <ol class="home-breadcrumb breadcrumb" ng-show="$state.current.name !== 'home'">
       <li>
         <span class="glyphicon glyphicon-home" ng-click="$state.go('home')" data-toggle="tooltip"
               title="Home - Navigation">
@@ -24,7 +24,7 @@
       </li>
 
       <li>
-        <span style="font-size: 20px;margin-left: 5px;">
+        <span style="margin-left: 5px;">
         {$$state.current.kanmiiTitle$}
       </span>
       </li>

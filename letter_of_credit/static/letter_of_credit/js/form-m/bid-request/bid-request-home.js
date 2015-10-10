@@ -41,7 +41,6 @@ BidRequestController.$inject = [
   'LcBidRequest',
   '$scope',
   'SearchFormMService',
-  'lcBidRequestModelManager',
   '$http',
   '$stateParams',
   'kanmiiUri',
@@ -49,11 +48,11 @@ BidRequestController.$inject = [
   'kanmiiUnderscore',
   'formatDate',
   'xhrErrorDisplay',
-  '$state',
-  '$timeout'
+  '$timeout',
+  '$q'
 ]
-function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequestModelManager, $http,
-  stateParams, kanmiiUri, urls, kanmiiUnderscore, formatDate, xhrErrorDisplay, $state, $timeout) {
+function BidRequestController(LcBidRequest, scope, SearchFormMService, $http,
+  stateParams, kanmiiUri, urls, kanmiiUnderscore, formatDate, xhrErrorDisplay, $timeout, $q) {
   var vm = this;
 
   initialize()
@@ -69,6 +68,18 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
     vm.selectedBids = {}
 
     vm.selectedDownloadedBids = {}
+
+    /**
+     * The bids retrieved from backend. Will contain a list of bids and pagination hooks for
+     * retrieving the next and previous sets of bids. This model is used by the display directive
+     * to display the bids in a table
+     * @type {object}
+     */
+    vm.bidRequests = []
+    vm.paginationHooks = {}
+    LcBidRequest.pending().$promise.then(function(data) {
+      updateBids(data)
+    })
   }
 
   vm.searchFormMs = searchFormMs
@@ -77,25 +88,6 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
       console.log(data);
     })
   }
-
-  /**
-   * The model manager will be used by the 'model-table' directive to manage the collection of bid requests retrieved
-   * from the server
-   * @type {[]}
-   */
-  vm.modelManager = lcBidRequestModelManager
-
-  /**
-   * The bids retrieved from backend. Will contain a list of bids and pagination hooks for
-   * retrieving the next and previous sets of bids. This model is used by the display directive
-   * to display the bids in a table
-   * @type {object}
-   */
-  vm.bidRequests = []
-  vm.paginationHooks = {}
-  LcBidRequest.pending().$promise.then(function(data) {
-    updateBids(data)
-  })
 
   /**
    * The 'new bid' model. When we create a new bid via the create/add bid directive, the result is
@@ -210,29 +202,28 @@ function BidRequestController(LcBidRequest, scope, SearchFormMService, lcBidRequ
   }
 
   vm.markRequested = function markRequested() {
+    var editedBids = []
+
     kanmiiUnderscore.each(vm.selectedDownloadedBids, function(checked, bidId) {
       if (!checked) return
 
       var bid = getBidFromId(bidId)
       if (bid) {
         bid.requested_at = formatDate(new Date())
-        LcBidRequest.put(bid).$promise.then(bidEditSuccess, bidEditFailure)
+        //LcBidRequest.put(bid).$promise.then(bidEditSuccess, bidEditFailure)
+        editedBids.push(LcBidRequest.put(bid).$promise)
       }
     })
 
-    initialize()
-
-    function bidEditSuccess(editedBid) {
-      vm.bidRequests = vm.bidRequests.filter(function(bid) {
-        return bid.id !== editedBid.id
+    if (editedBids.length) {
+      $q.all(editedBids).then(function() {
+        initialize()
       })
     }
-
-    function bidEditFailure(xhr) {xhrErrorDisplay(xhr)}
   }
 
   vm.refreshPage = function refreshPage() {
-    $timeout(function() {$state.reload()}, 3000)
+    $timeout(function() {initialize()}, 3000)
   }
 
   function getBidFromId(bidId) {
