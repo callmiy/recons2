@@ -9,29 +9,29 @@ function addFormMDirective(ModalService) {
   function link(scope, elm, attributes, self) {
     elm
       .css({cursor: 'pointer'})
-      .bind('click', function () {
-        ModalService.showModal({
-          template: require('./add-form-m.html'),
+      .bind('click', function() {
+              ModalService.showModal({
+                template: require('./add-form-m.html'),
 
-          controller: 'AddFormMModalCtrl as addFormMModal'
+                controller: 'AddFormMModalCtrl as addFormMModal'
 
-        }).then(function (modal) {
-          modal.element.dialog({
-            dialogClass: 'no-close',
-            modal: true,
-            minWidth: 600,
-            minHeight: 450,
-            maxHeight: 600,
-            title: 'Add Form M'
-          })
+              }).then(function(modal) {
+                modal.element.dialog({
+                  dialogClass: 'no-close',
+                  modal: true,
+                  minWidth: 600,
+                  minHeight: 450,
+                  maxHeight: 600,
+                  title: 'Add Form M'
+                })
 
-          modal.close.then(function (submittedData) {
-            if (submittedData && submittedData.submittedFormM) {
-              self.saveFormM(submittedData)
-            }
-          })
-        })
-      })
+                modal.close.then(function(submittedData) {
+                  if (submittedData && submittedData.submittedFormM) {
+                    self.saveFormM(submittedData)
+                  }
+                })
+              })
+            })
   }
 
   return {
@@ -56,7 +56,7 @@ AddFormMDirectiveCtrl.$inject = [
   'formMAttributesVerboseNames'
 ]
 function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUnderscore, LCIssueConcrete, LcBidRequest,
-                               formMAttributesVerboseNames) {
+  formMAttributesVerboseNames) {
   var vm = this
 
   vm.saveFormM = saveFormM
@@ -76,7 +76,7 @@ function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUndersc
     formM.$save(formMSavedSuccess, formMSavedError)
 
     function formMSavedSuccess(data) {
-      saveLcIssues(data.url)
+      saveLcIssues(data.url, submittedData.selectedLcIssues)
 
       if (formMToSave.goods_description) makeBidRequest(data.url, submittedBidRequest)
 
@@ -88,11 +88,12 @@ function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUndersc
     }
   }
 
-  function saveLcIssues(formMUrl) {
-    kanmiiUnderscore.each(vm.selectedLcIssues, function (val, key) {
+  function saveLcIssues(formMUrl, selectedLcIssues) {
+
+    kanmiiUnderscore.each(selectedLcIssues, function(val, key) {
       if (val) {
         new LCIssueConcrete({issue: key, mf: formMUrl})
-          .$save(function (data) { console.log(data); }, function (xhr) {console.log(xhr);})
+          .$save(function(data) { console.log(data); }, function(xhr) {console.log(xhr);})
       }
     })
   }
@@ -101,8 +102,8 @@ function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUndersc
     submittedBidRequest.mf = formMUrl
     var bid = new LcBidRequest(submittedBidRequest)
     bid.$save(
-      function (data) {console.log('bid saved successfully with data = ', data);},
-      function (xhr) {xhrErrorDisplay(xhr)}
+      function(data) {console.log('bid saved successfully with data = ', data);},
+      function(xhr) {xhrErrorDisplay(xhr)}
     )
   }
 }
@@ -136,6 +137,10 @@ function AddFormMModalCtrl(resetForm, element, close, getTypeAheadCustomer, getT
     vm.bidRequest = {
       amount: null
     }
+  }
+
+  vm.onLcIssueSelected = function onLcIssueSelected(issues) {
+    vm.selectedLcIssues = issues
   }
 
   vm.toggleShowBidContainer = toggleShowBidContainer
@@ -175,9 +180,11 @@ function AddFormMModalCtrl(resetForm, element, close, getTypeAheadCustomer, getT
 
   vm.submitFormM = submitFormM
   function submitFormM(newFormM, bidRequest) {
+    console.log('vm.selectedLcIssues = ', vm.selectedLcIssues);
     close({
       submittedFormM: newFormM,
-      submittedBidRequest: bidRequest
+      submittedBidRequest: bidRequest,
+      selectedLcIssues: vm.selectedLcIssues
     })
   }
 

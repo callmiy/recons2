@@ -1,5 +1,5 @@
 import django_filters
-from rest_framework import generics
+from rest_framework import generics, pagination
 from letter_of_credit.models import LCRegister, FormM
 from letter_of_credit.serializers import LetterOfCreditRegisterSerializer
 import json
@@ -13,8 +13,12 @@ logger = logging.getLogger('recons_logger')
 admin_url = lambda cls: '/admin/%s/' % str(getattr(cls, '_meta')).replace('.', '/')
 
 
+class LetterOfCreditRegisterPagination(pagination.PageNumberPagination):
+    page_size = 20
+
+
 class LetterOfCreditRegisterFilter(django_filters.FilterSet):
-    lc_number = django_filters.CharFilter(lookup_type='istartswith')
+    lc_number = django_filters.CharFilter(lookup_type='icontains')
     applicant = django_filters.CharFilter(name='applicant', lookup_type='icontains')
     mf = django_filters.CharFilter(lookup_type='istartswith')
 
@@ -27,6 +31,7 @@ class LetterOfCreditRegisterListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = LetterOfCreditRegisterSerializer
     queryset = LCRegister.objects.all()
     filter_class = LetterOfCreditRegisterFilter
+    pagination_class = LetterOfCreditRegisterPagination
 
     def create(self, request, *args, **kwargs):
         logger.info('Creating new letter of credit with incoming data = \n%r', request.data)

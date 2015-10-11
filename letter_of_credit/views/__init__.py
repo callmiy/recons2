@@ -13,13 +13,16 @@ from letter_of_credit.views.lc_register import (
     LCRegisterUploadView,
     ReleaseTelexView)
 
-from letter_of_credit.views.app import (
-    FormMListCreateAPIView,
-    FormMUpdateAPIView,
+from letter_of_credit.views.lc_issue import (
     LCIssueListCreateAPIView,
     LCIssueUpdateAPIView,
     LCIssueConcreteListCreateAPIView,
     LCIssueConcreteUpdateAPIView,
+)
+
+from letter_of_credit.views.form_m import (
+    FormMListCreateAPIView,
+    FormMUpdateAPIView,
     LcBidRequestListCreateAPIView,
     LcBidRequestUpdateAPIView)
 

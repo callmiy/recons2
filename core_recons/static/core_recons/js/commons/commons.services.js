@@ -66,42 +66,6 @@ function formatDate() {
   }
 }
 
-services.factory('LetterOfCredit', LetterOfCredit)
-LetterOfCredit.$inject = ['$resource', 'urls']
-function LetterOfCredit($resource, urls) {
-  var url = appendToUrl(urls.letterOfCredit1APIUrl, ':id');
-  return $resource(url, {id: '@id'}, {
-      'put': {
-        method: 'PUT'
-      }
-    }
-  )
-}
-
-services.factory('LCIssue', LCIssue)
-LCIssue.$inject = ['$resource', 'urls']
-function LCIssue($resource, urls) {
-  var url = appendToUrl(urls.lcIssueAPIUrl, ':id');
-  return $resource(url, {id: '@id'}, {
-      'put': {
-        method: 'PUT'
-      }
-    }
-  )
-}
-
-services.factory('LCIssueConcrete', LCIssueConcrete)
-LCIssueConcrete.$inject = ['$resource', 'urls']
-function LCIssueConcrete($resource, urls) {
-  var url = appendToUrl(urls.lcIssueConcreteAPIUrl, ':id');
-  return $resource(url, {id: '@id'}, {
-      'put': {
-        method: 'PUT'
-      }
-    }
-  )
-}
-
 services.controller('XhrErrorDisplayCtrl', XhrErrorDisplayCtrl)
 XhrErrorDisplayCtrl.$inject = ['error', 'errorKeyMap']
 function XhrErrorDisplayCtrl(error, errorKeyMap) {

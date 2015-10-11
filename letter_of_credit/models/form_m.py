@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
 from adhocmodels.models import Customer, Currency
@@ -15,6 +16,10 @@ class LCIssue(models.Model):
 
     def __unicode__(self):
         return self.text
+
+    def save(self, *args, **kwargs):
+        self.text = '%s:ISSUE' % self.text.strip().upper()
+        super(LCIssue, self).save(*args, **kwargs)
 
 
 class FormM(models.Model):
@@ -42,11 +47,20 @@ class FormM(models.Model):
             self.goods_description and self.goods_description[:10] or ''
         )
 
+    def save(self, *args, **kwargs):
+        if self.lc and self.lc.applicant != self.applicant:
+            self.lc.applicant = self.applicant
+            self.lc.save()
+        super(FormM, self).save(*args, **kwargs)
+
     def applicant_data(self):
         return self.applicant
 
     def currency_data(self):
         return self.currency
+
+    def get_url(self):
+        return reverse('formm-detail', kwargs={'pk': self.pk})
 
     @classmethod
     def search_filter(cls, qs, param):
@@ -79,6 +93,9 @@ class LCIssueConcrete(models.Model):
 
     def __unicode__(self):
         return '%s: %s' % (self.mf.number, self.issue.text)
+
+    def save(self, *args, **kwargs):
+        super(LCIssueConcrete, self).save(*args, **kwargs)
 
 
 class LcBidRequest(models.Model):

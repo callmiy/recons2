@@ -11,6 +11,8 @@ require('./form-m/search-form-m')
 require('./form-m/lc-issue/lc-issue.js')
 require('./form-m/form-m-home.js')
 require('./lc/lc.js')
+require('./lc/lc-detail/lc-detail.js')
+require('./lc/search-lc/search-lc.js')
 
 var rootCommons = require('commons')
 
@@ -18,7 +20,8 @@ var app = angular.module('lc-root-app',
   ['rootApp',
    'ui.router',
    'form-m',
-   'form-m-bid'
+   'form-m-bid',
+   'lc'
   ])
 
 app.config(rootCommons.interpolateProviderConfig)

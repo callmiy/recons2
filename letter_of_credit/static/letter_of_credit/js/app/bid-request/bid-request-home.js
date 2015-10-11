@@ -6,7 +6,6 @@ var rootCommons = require('commons')
 
 var app = angular.module('form-m-bid', [
   'ui.router',
-  'model-table',
   'display-pending-bid',
   'add-bid',
   'form-m-search-service',

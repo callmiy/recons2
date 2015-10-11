@@ -1,0 +1,159 @@
+<div class="lc-detail-root-container">
+  <div class="state-navigate-back">
+    <a ui-sref="lc">
+      <span class="glyphicon glyphicon-circle-arrow-left"></span> Letter of credit
+    </a>
+  </div>
+
+  <hr/>
+
+  <div class="row">
+    <div class="col-sm-6 lc-detail-display">
+      <h1 style="text-align: center">LC Details</h1>
+
+      <form role="form" name="lcEditForm" class="form-horizontal">
+        <div class="form-group lc-edit-lc-number">
+          <label class="control-label col-sm-4" for="lc-edit-lc-number">Lc Number</label>
+
+          <div class="col-sm-8">
+            <input class="form-control" ng-model="lcDetail.lc.lc_number" id="lc-edit-form-m-number"
+                   disabled/>
+          </div>
+        </div>
+
+        <div class="form-group lc-edit-form-m-number">
+          <label class="control-label col-sm-4" for="lc-edit-form-m-number">Form M Number</label>
+
+          <div class="col-sm-8">
+            <input class="form-control" ng-model="lcDetail.lc.mf" id="lc-edit-form-m-number"
+                   disabled/>
+          </div>
+        </div>
+
+        <div class="form-group customer-name-group">
+          <label class="control-label col-sm-4" for="lc-edit-customer-name">Customer Name</label>
+
+          <div class="col-sm-8">
+            <input class="form-control" type="text" id="lc-edit-customer-name" ng-model="lcDetail.lc.applicant"
+                   disabled/>
+          </div>
+        </div>
+
+        <div class="form-group amount-group">
+          <label class="control-label col-sm-4" for="lc-edit-lc-amount">Lc Value</label>
+
+          <div class="col-sm-8">
+            <div class="input-group">
+              <span class="input-group-addon">{$lcDetail.lc.ccy_data.code$}</span>
+
+              <input class="form-control" id="lc-edit-lc-amount"
+                     ng-model="lcDetail.lc.lc_amt_org_ccy" disabled number-format/>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group beneficiary-group">
+          <label class="control-label col-sm-4" for="beneficiary">
+            Beneficiary
+          </label>
+
+          <div class="col-sm-8">
+            <input class="form-control" type="text" id="beneficiary" name="beneficiary" disabled
+                   ng-model="lcDetail.lc.bene"/>
+          </div>
+        </div>
+
+        <div class="form-group issue-date-group">
+          <label class="control-label col-sm-4" for="issue-date">
+            Issue Date
+          </label>
+
+          <div class="col-sm-8">
+            <input class="form-control" type="text" id="issue-date" name="beneficiary" disabled
+                   ng-model="lcDetail.issueDateGetterSetter" ng-model-options="{getterSetter: true}"/>
+          </div>
+        </div>
+
+        <div class="form-group expiry-date-group">
+          <label class="control-label col-sm-4" for="expiry-date">
+            Expiry Date
+          </label>
+
+          <div class="col-sm-8">
+            <input class="form-control" type="text" id="expiry-date" name="beneficiary" disabled
+                   ng-model="lcDetail.expiryDateGetterSetter" ng-model-options="{getterSetter: true}"/>
+          </div>
+        </div>
+
+        <div class="edit-bid-form-control" ng-show="editBidModal.formIsEditable.controls">
+          <button type="submit" class="btn btn-info" ng-disabled="lcEditForm.$invalid">
+            Edit
+          </button>
+
+          <button type="button" class="btn btn-default" ng-click="editBidModal.resetForm(lcEditForm)">
+            Reset
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="col-sm-6 lc-issue">
+      <h1 style="text-align: center">Issues</h1>
+
+      <div class="well">
+        <form class="new-issue-form" role="form" ng-submit="lcDetail.saveIssue(lcDetail.issue, lcDetailNewIssueForm)"
+              name="lcDetailNewIssueForm">
+          <div class="form-group">
+            <label for="issue" class="control-label">Add LC issue</label>
+
+            <input type="text" class="form-control" id="issue" name="issue" ng-model="lcDetail.issue.issue" required
+                   typeahead-min-length="3" min="5"
+                   typeahead="issue as issue.text for issue in lcDetail.getIssue($viewValue)"/>
+          </div>
+
+          <div class="form-group applicant-group" ng-show="!lcDetail.lc.applicant_data">
+            <label class="control-label" for="applicant">Applicant</label>
+
+            <div class="input-group">
+              <input class="form-control" type="text" min="3" id="applicant" name="applicant"
+                     ng-required="!lcDetail.lc.applicant_data"
+                     ng-disabled="lcDetail.lc.applicant_data"
+                     ng-model="lcDetail.issue.applicant"
+                     typeahead-min-length="3"
+                     typeahead="applicant as applicant.name for applicant in lcDetail.getApplicant($viewValue)"
+                  />
+              <span class="input-group-addon">
+                <img ng-src="{$$root.addIconSrc$}" alt="" add-customer
+                     added-new-customer="addFormMModal.formM.applicant"/>
+              </span>
+            </div>
+          </div>
+
+          <button class="btn btn-info" name="save-lc-issue-submit" ng-disabled="lcDetailNewIssueForm.$invalid">
+            Save Issue
+          </button>
+        </form>
+
+        <div class="existing-issues">
+          <h5 style="text-align: center">Issues not closed</h5>
+
+          <div ng-repeat="issue in lcDetail.lcIssues">
+            <div class="input-group">
+              <label for="issue-text-display" class="sr-only"></label>
+
+              <span class="input-group-addon">{$$index + 1$}</span>
+
+              <input type="text" class="form-control" id="issue-text-display" name="issue-text-display" disabled
+                     ng-value="issue.issue_text"
+                     style="padding-left: 10px;"/>
+
+              <span class="input-group-addon" style="cursor: pointer" ng-click="lcDetail.closeIssue(issue)">
+                <span class="glyphicon glyphicon-trash"></span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

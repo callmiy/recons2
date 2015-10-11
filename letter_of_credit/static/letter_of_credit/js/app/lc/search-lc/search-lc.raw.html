@@ -1,0 +1,81 @@
+<div id="search-lc-root-container" class="search-lc-root-container">
+  <form novalidate class="form-horizontal"
+        ng-submit="searchLcModal.submitSearchParams(searchLcModal.searchParams)"
+        name="searchLcModalForm">
+    <fieldset class="search-lc-form-container" style="position: relative; padding: 7px;">
+
+      <div class="form-group lc-number-group">
+        <label class="control-label col-md-4 col-lg-4 col-sm-4" for="lc-number">Lc Number</label>
+
+        <div class="col-md-8 col-lg-8 col-sm-8">
+          <input class="form-control" maxlength="18" id="lc-number" min="0"
+                 ng-pattern="/[a-z]*\d{6,11}/i"
+                 ng-model="searchLcModal.searchParams.lc_number"/>
+        </div>
+      </div>
+
+      <div class="form-group lc-number-group">
+        <label class="control-label col-md-4 col-lg-4 col-sm-4" for="mf">Form M Number</label>
+
+        <div class="col-md-8 col-lg-8 col-sm-8">
+          <input class="form-control" maxlength="13" id="mf" min="0" name="mf"
+                 ng-pattern="/(?:mf)?\d{4,11}/i"
+                 ng-model="searchLcModal.searchParams.mf"/>
+        </div>
+      </div>
+
+      <div class="form-group applicant-group">
+        <label class="control-label col-md-4 col-lg-4 col-sm-4" for="applicant">Applicant</label>
+
+        <div class="col-md-8 col-lg-8 col-sm-8">
+          <input class="form-control" type="text" min="3" id="applicant" disabled
+                 ng-model="searchLcModal.searchParams.applicant"
+                 typeahead-min-length="3"
+                 typeahead="applicant as applicant.name for applicant in searchLcModal.getApplicant($viewValue)"
+              />
+        </div>
+      </div>
+
+      <div class="form-group currency-group">
+        <label class="control-label col-md-4 col-lg-4 col-sm-4" for="currency">Currency</label>
+
+        <div class="col-md-8 col-lg-8 col-sm-8">
+          <input class="form-control" id="currency" maxlength="3" disabled
+                 ng-model="searchLcModal.searchParams.currency"
+                 typeahead="currency as currency.code for currency in searchLcModal.getCurrency($viewValue)"
+                 typeahead-min-length="2"
+              />
+        </div>
+      </div>
+
+      <div class="form-group amount-group">
+        <label class="control-label col-md-4 col-lg-4 col-sm-4" for="amount">Amount</label>
+
+        <div class="col-md-8 col-lg-8 col-sm-8">
+          <input class="form-control" id="amount" min="0" disabled
+                 ng-model="searchLcModal.searchParams.amount" number-format
+                 ng-pattern="/^\d[\d,]*(?:\.\d*)?$/"/>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="row search-lc-form-control">
+      <div class="col-md-4 col-lg-4 col-sm-4" style="text-align: left">
+        <span class="btn btn-default"
+              ng-click="searchLcModal.reset(searchLcModalForm)">
+          Reset
+        </span>
+      </div>
+
+      <div class="col-md-4 col-lg-4 col-sm-4" style="text-align: center">
+        <button type="submit" class="btn btn-info" ng-disabled="searchLcModalForm.$invalid">
+          Search Lc
+        </button>
+      </div>
+
+      <div class="col-md-4 col-lg-4 col-sm-4" style="text-align: right">
+        <span class="btn btn-default" ng-click="searchLcModal.close()">Close</span>
+      </div>
+    </div>
+  </form>
+</div>

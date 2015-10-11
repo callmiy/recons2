@@ -16,7 +16,6 @@ class LCRegister(models.Model):
     bene = models.CharField('Beneficiary Name', max_length=200, null=True, blank=True)
     bene_country = models.CharField('Beneficiary Address', max_length=200, null=True, blank=True)
     advising_bank = models.CharField('Advising Bank', max_length=200, null=True, blank=True)
-    ccy = models.CharField(max_length=3, null=True, blank=True, editable=False)
     ccy_obj = models.ForeignKey(Currency, related_name='lc_reg_ccy', verbose_name='Currency', )
     lc_amt_org_ccy = models.DecimalField('FX Amount', max_digits=100, decimal_places=2, )
     lc_amt_usd = models.DecimalField('LC Amount In USD', max_digits=100, decimal_places=2, null=True, blank=True)
@@ -61,13 +60,8 @@ class LCRegister(models.Model):
                     return True
         return False
 
-    @classmethod
-    def get_statistics(cls, qs):
-        """Given a queryset, get the volume and value of all lcees."""
-        vol_usd = 0
-        usd_ngn_rate = Currency.objects.get(code='USD').rate_ngn
-        for lc in qs:
-            ccy = lc.ccy_obj
-            vol_usd += float(lc.lc_amt_org_ccy) * ccy.rate_usd_by_ccy()
-        return [qs.count(), vol_usd,
-                vol_usd * float(usd_ngn_rate), usd_ngn_rate]
+    def issues(self):
+        form_m = self.form_m.all()
+        if form_m.exists():
+            return form_m[0].form_m_issues.filter(closed_at__isnull=True)
+        return None

@@ -1,8 +1,6 @@
 "use strict";
 
-
-
-var app = angular.module('form-m-lc-issue', [])
+var app = angular.module('form-m-lc-issue', ['lc-issue-service'])
 
 app.directive('lcIssue', lcIssueDirective)
 lcIssueDirective.$inject = ['LCIssue']
@@ -42,7 +40,7 @@ function lcIssueDirective(LCIssue) {
 
     bindToController: {
       show: '=lcIssueShow',
-      selectedIssues: '=lcIssuesSelected'
+      onSelect: '&onLcIssueSelected'
     },
 
     controller: 'LcIssueDirectiveCtrl as lcIssue'
@@ -50,8 +48,15 @@ function lcIssueDirective(LCIssue) {
 }
 
 app.controller('LcIssueDirectiveCtrl', LcIssueDirectiveCtrl)
-function LcIssueDirectiveCtrl() {
+
+LcIssueDirectiveCtrl.$inject = ['$scope']
+
+function LcIssueDirectiveCtrl($scope) {
   var vm = this
   vm.lcIssues = []
   vm.selectedIssues = {}
+
+  $scope.$watch(function getSelectedIssues(){return vm.selectedIssues}, function selectedIssuesChanged(val) {
+    vm.onSelect({selectedIssues: val})
+  }, true)
 }
