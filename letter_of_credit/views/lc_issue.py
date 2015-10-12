@@ -1,3 +1,4 @@
+import datetime
 from rest_framework import generics
 from letter_of_credit.models import LCIssue, LCIssueConcrete, FormM
 from letter_of_credit.serializers import LCIssueSerializer, LCIssueConcreteSerializer, FormMSerializer
@@ -14,6 +15,7 @@ class LCIssueConcreteListCreateAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         logger_prefix = 'Creating new letter of credit issue:'
+        self.logger_prefix = logger_prefix
         logger.info('%s with incoming data = \n%r', logger_prefix, request.data)
 
         form_m_data = request.data.get('form_m_data')
@@ -33,7 +35,14 @@ class LCIssueConcreteListCreateAPIView(generics.ListCreateAPIView):
         return super(LCIssueConcreteListCreateAPIView, self).create(request, *args, **kwargs)
 
     def create_form_m(self, form_m_data):
-        mf = FormMSerializer(data=form_m_data).save()
+        if 'date_received' not in form_m_data:
+            form_m_data['date_received'] = datetime.date.today().strftime('%Y-%m-%d')
+
+        logger.info('%s form M will be created with data: %r', self.logger_prefix, form_m_data)
+        mf_created = FormMSerializer(data=form_m_data)
+        mf_created.is_valid()
+        logger.info('mf_created.errors = %r', mf_created.errors)
+        mf = mf_created.save()
         return mf.get_url()
 
 

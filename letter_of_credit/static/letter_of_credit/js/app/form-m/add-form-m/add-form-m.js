@@ -46,6 +46,7 @@ function addFormMDirective(ModalService) {
 }
 
 app.controller('AddFormMDirectiveCtrl', AddFormMDirectiveCtrl)
+
 AddFormMDirectiveCtrl.$inject = [
   'formatDate',
   'FormM',
@@ -55,6 +56,7 @@ AddFormMDirectiveCtrl.$inject = [
   'LcBidRequest',
   'formMAttributesVerboseNames'
 ]
+
 function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUnderscore, LCIssueConcrete, LcBidRequest,
   formMAttributesVerboseNames) {
   var vm = this

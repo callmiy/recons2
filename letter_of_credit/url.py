@@ -45,7 +45,7 @@ urlpatterns += patterns(
 )
 
 urlpatterns += patterns(
-    # <editor-fold description='letter of credit api'>
+    # <editor-fold description='letter of credit register api'>
     '',
 
     url(r'^letter-of-credits1/?$',

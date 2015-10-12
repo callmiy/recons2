@@ -48,8 +48,8 @@ class FormM(models.Model):
         )
 
     def save(self, *args, **kwargs):
-        if self.lc and self.lc.applicant != self.applicant:
-            self.lc.applicant = self.applicant
+        if self.lc and self.lc.applicant_obj != self.applicant:
+            self.lc.applicant_obj = self.applicant
             self.lc.save()
         super(FormM, self).save(*args, **kwargs)
 

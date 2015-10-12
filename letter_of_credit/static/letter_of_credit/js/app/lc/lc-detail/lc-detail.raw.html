@@ -1,8 +1,24 @@
 <div class="lc-detail-root-container">
-  <div class="state-navigate-back">
-    <a ui-sref="lc">
-      <span class="glyphicon glyphicon-circle-arrow-left"></span> Letter of credit
-    </a>
+  <div class="clearfix">
+    <div class="state-navigate-back pull-left">
+      <a ui-sref="lc">
+        <span class="glyphicon glyphicon-circle-arrow-left"></span> Letter of credit
+      </a>
+    </div>
+
+    <div class="get-new-lc-container pull-right">
+      <form class="form-inline" name="replaceLcForm" ng-submit="lcDetail.replaceLc(lcDetail.lcForReplacement)">
+        <label class="sr-only" for="replace-lc">Replace LC &nbsp; </label>
+
+        <input type="text" class="form-control" id="replace-lc" name="replace-lc" min="7" required maxlength="16"
+               ng-model="lcDetail.lcForReplacement"/>
+
+        <button type="submit" class="btn btn-success"
+                ng-disabled="lcDetail.replaceLcFormInvalid(replaceLcForm.$invalid, lcDetail.lcForReplacement)">
+          Get another LC
+        </button>
+      </form>
+    </div>
   </div>
 
   <hr/>
@@ -124,7 +140,7 @@
                   />
               <span class="input-group-addon">
                 <img ng-src="{$$root.addIconSrc$}" alt="" add-customer
-                     added-new-customer="addFormMModal.formM.applicant"/>
+                     on-customer-added="lcDetail.customerAdded(customer)"/>
               </span>
             </div>
           </div>
@@ -135,7 +151,7 @@
         </form>
 
         <div class="existing-issues">
-          <h5 style="text-align: center">Issues not closed</h5>
+          <h5 style="text-align: center">Issues not closed ({$lcDetail.lcIssues.length$})</h5>
 
           <div ng-repeat="issue in lcDetail.lcIssues">
             <div class="input-group">

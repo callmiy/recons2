@@ -57,7 +57,7 @@ function LetterOfCreditDetailController($stateParams, LetterOfCredit, $state, ge
   function initialize() {
     if ($stateParams.lc) {
       vm.lc = $stateParams.lc
-      vm.lcIssues = vm.lc.issues
+      vm.lcIssues = vm.lc.issues || []
     }
 
     else {
@@ -71,9 +71,7 @@ function LetterOfCreditDetailController($stateParams, LetterOfCredit, $state, ge
       })
     }
 
-    vm.lcForm = {
-      applicant_obj: {}
-    }
+    vm.lcForm = {}
 
     vm.issue = {}
   }
@@ -115,6 +113,8 @@ function LetterOfCreditDetailController($stateParams, LetterOfCredit, $state, ge
       })
 
       vm.issue = {}
+
+      if (!vm.lc.applicant_data) { vm.lc.applicant_data = applicant}
       form.$setPristine()
       form.$setUntouched()
     }
@@ -136,6 +136,24 @@ function LetterOfCreditDetailController($stateParams, LetterOfCredit, $state, ge
     }, function(xhr) {
       xhrErrorDisplay(xhr)
     })
+  }
+
+  vm.replaceLc = function replaceLc(newLcNumber) {
+    LetterOfCredit.getPaginated({lc_number: newLcNumber}).$promise.then(function(data) {
+      if (data.count) {
+        var lc = data.results[0]
+
+        $state.go('.', {lc_number: lc.lc_number, lc: lc})
+      }
+    })
+  }
+
+  vm.replaceLcFormInvalid = function replaceLcFormInvalid(formInvalid, newLcNumber) {
+    return formInvalid || vm.lc.lc_number.toLowerCase().indexOf(newLcNumber.toLowerCase()) !== -1
+  }
+
+  vm.customerAdded = function customerAdded(customer) {
+    vm.issue.applicant = customer
   }
 
   vm.getApplicant = getTypeAheadCustomer

@@ -1,4 +1,4 @@
-from letter_of_credit.models import FormM, LCIssue, LCIssueConcrete, LcBidRequest
+from letter_of_credit.models import FormM, LCIssue, LCIssueConcrete, LcBidRequest, LCRegister
 from rest_framework import serializers
 from adhocmodels.serializers import CustomerSerializer, CurrencySerializer
 
@@ -47,6 +47,8 @@ class FormMSerializer(serializers.HyperlinkedModelSerializer):
     applicant_data = CustomerSerializer(required=False, read_only=True)
     currency_data = CurrencySerializer(required=False, read_only=True)
     form_m_issues = LCIssueConcreteSerializerFormM(many=True, read_only=True)
+    lc = serializers.HyperlinkedRelatedField(view_name='lcregister-detail', queryset=LCRegister.objects.all(),
+                                             required=False)
 
     class Meta:
         model = FormM
@@ -62,7 +64,11 @@ class FormMSerializer(serializers.HyperlinkedModelSerializer):
             'url',
             'form_m_issues',
             'goods_description',
+            'lc'
         )
+
+    def create(self, validated_data):
+        return super(FormMSerializer, self).create(validated_data)
 
 
 class LcBidRequestSerializer(serializers.HyperlinkedModelSerializer):

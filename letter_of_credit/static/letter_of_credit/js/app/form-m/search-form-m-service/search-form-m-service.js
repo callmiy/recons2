@@ -59,11 +59,11 @@ function SearchFormMService(FormM, xhrErrorDisplay, ModalService, kanmiiUndersco
           title: 'Search Form M',
 
           open: function() {
-            config.dim && ToggleDimElement.dim(config.parent, config.dimCb)
+            config.dim && ToggleDimElement.dim(config.parent, config.dimCb) //jshint -W030
           },
 
           close: function() {
-            config.dim && ToggleDimElement.unDim(config.parent, config.unDimCb)
+            config.dim && ToggleDimElement.unDim(config.parent, config.unDimCb) //jshint -W030
           }
         })
 
@@ -72,7 +72,7 @@ function SearchFormMService(FormM, xhrErrorDisplay, ModalService, kanmiiUndersco
             deferred.resolve(searchFormM(submittedSearchParams))
           }
 
-          config.dim && ToggleDimElement.unDim(config.parent, config.unDimCb)
+          config.dim && ToggleDimElement.unDim(config.parent, config.unDimCb) //jshint -W030
         })
       })
 

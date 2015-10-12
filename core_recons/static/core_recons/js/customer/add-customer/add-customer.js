@@ -76,7 +76,9 @@ function CustomerModalCtrl(resetForm, element, close, Branch, xhrErrorDisplay) {
 }
 
 app.directive('addCustomer', addCustomerDirective)
+
 addCustomerDirective.$inject = ['ModalService', '$parse', 'ToggleDimElement']
+
 function addCustomerDirective(ModalService, $parse, ToggleDimElement) {
   return {
     restrict: 'A',
@@ -135,7 +137,8 @@ function addCustomerDirective(ModalService, $parse, ToggleDimElement) {
     scope: {},
 
     bindToController: {
-      newCustomer: '=addedNewCustomer'
+      newCustomer: '=addedNewCustomer',
+      customerAdded: '&onCustomerAdded'
     }
   }
 }
@@ -153,6 +156,7 @@ function AddCustomerDirectiveCtrl(Customer, xhrErrorDisplay) {
 
     function newCustomerSaveSuccess(data) {
       vm.newCustomer = data
+      vm.customerAdded({customer: data})
     }
 
     function newCustomerSaveError(xhr) {
