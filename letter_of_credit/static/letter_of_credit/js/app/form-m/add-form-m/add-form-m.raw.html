@@ -24,7 +24,7 @@
                    ng-model="addFormMModal.formM.applicant"
                    ng-pattern="/.{4,}/"
                    typeahead-min-length="3"
-                   typeahead="applicant as applicant.name for applicant in addFormMModal.getApplicant($viewValue)"
+                   uib-typeahead="applicant as applicant.name for applicant in addFormMModal.getApplicant($viewValue)"
                 />
             <span class="input-group-addon">
               <img ng-src="{$$root.addIconSrc$}" alt="" add-customer dim-parent="addFormMModal.element"
@@ -40,7 +40,7 @@
         <div class="col-md-8 col-lg-8 col-sm-8">
           <input class="form-control" id="currency" required maxlength="3" name="currency"
                  ng-model="addFormMModal.formM.currency"
-                 typeahead="currency as currency.code for currency in addFormMModal.getCurrency($viewValue)"
+                 uib-typeahead="currency as currency.code for currency in addFormMModal.getCurrency($viewValue)"
                  typeahead-min-length="2"
               />
         </div>
@@ -62,7 +62,7 @@
           <div class="input-group">
             <input class="form-control" id="received-date" required
                    ng-model="addFormMModal.formM.date_received"
-                   datepicker-popup="{$addFormMModal.datePickerFormat$}" is-open="addFormMModal.datePickerIsOpen"
+                   uib-datepicker-popup="{$addFormMModal.datePickerFormat$}" is-open="addFormMModal.datePickerIsOpen"
                 />
 
             <span class="input-group-addon" ng-click="addFormMModal.openDatePicker($event)">

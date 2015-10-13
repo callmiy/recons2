@@ -1,20 +1,31 @@
 <div class="form-m-home-view">
-  <div class="action-buttons" style="float: right;">
-    <button class="btn btn-info" name="add-form-m-form-show-trigger" id="add-form-m-form-show-trigger" add-form-m
-            on-new-mf="formMHome.receiveNewFormM(newFormM)">
-      Add Form M
-    </button>
+  <div uib-tabset>
+    <div uib-tab heading="Upload Form M">
+        <div class="upload-form-m-tab-content">
 
-    <button class="btn btn-info" search-form-m search-form-m-result="formMHome.searchedFormMResult">
-      Search Form M
-    </button>
+        </div>
+    </div>
+
+    <div uib-tab heading="Manage Form M" active="true">
+      <div class="manage-form-m-tab-content">
+        <div class="action-buttons pull-right">
+          <button class="btn btn-info" name="add-form-m-form-show-trigger" id="add-form-m-form-show-trigger" add-form-m
+                  on-new-mf="formMHome.receiveNewFormM(newFormM)">
+            Add Form M
+          </button>
+
+          <button class="btn btn-info" search-form-m search-form-m-result="formMHome.searchedFormMResult">
+            Search Form M
+          </button>
+        </div>
+
+        <div model-table model-collection="formMHome.formMs"
+             table-model-manager="::formMHome.modelManager"
+             table-caption="::formMHome.tableCaption"
+             pagination-size="20"
+             update-collection="formMHome.getFormMCollectionOnNavigation(linkUrl)"
+             pager-object="formMHome.paginationHooks"></div>
+      </div>
+    </div>
   </div>
-
-  <model-table model-collection="formMHome.formMs"
-               table-model-manager="::formMHome.modelManager"
-               table-caption="::formMHome.tableCaption"
-               pagination-size="20"
-               update-collection="formMHome.getFormMCollectionOnNavigation(linkUrl)"
-               pager-object="formMHome.paginationHooks"
-      />
 </div>

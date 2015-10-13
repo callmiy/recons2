@@ -8,7 +8,7 @@ app.directive('modelTable', modelTableDirective)
 function modelTableDirective() {
 
   return {
-    restrict: 'E',
+    restrict: 'AE',
     scope: {},
     bindToController: {
       /**

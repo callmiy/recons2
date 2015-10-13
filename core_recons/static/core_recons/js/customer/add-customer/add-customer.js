@@ -41,8 +41,7 @@ function CustomerModalCtrl(resetForm, element, close, Branch, xhrErrorDisplay) {
   function createNewBranch(newBranch) {
     if (!newBranch) return
 
-    var branch = new Branch(newBranch)
-    branch.$save(newBranchedSavedSuccess, newBranchedSavedError)
+    Branch.save(newBranch).$promise.then(newBranchedSavedSuccess, newBranchedSavedError)
 
     function newBranchedSavedSuccess(data) {
       vm.customer.branch = data

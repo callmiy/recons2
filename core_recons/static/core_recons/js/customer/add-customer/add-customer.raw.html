@@ -38,7 +38,7 @@
           <div class="input-group">
             <input class="form-control" id="branch" required ng-model="customerModal.customer.branch"
                    typeahead-min-length="2"
-                   typeahead="branch as branch.view_value for branch in customerModal.getBranch($viewValue)"/>
+                   uib-typeahead="branch as branch.view_value for branch in customerModal.getBranch($viewValue)"/>
 
             <span class="input-group-addon add-new-branch-reveal" ng-click="customerModal.revealNewBranchForm()"
                   style="cursor: pointer;">
