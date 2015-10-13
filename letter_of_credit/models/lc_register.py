@@ -63,5 +63,5 @@ class LCRegister(models.Model):
     def issues(self):
         form_m = self.form_m.all()
         if form_m.exists():
-            return form_m[0].form_m_issues.filter(closed_at__isnull=True)
+            return form_m[0].form_m_issues.filter()
         return None

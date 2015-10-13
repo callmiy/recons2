@@ -13,24 +13,28 @@ class LCIssueConcreteListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = LCIssueConcreteSerializer
     queryset = LCIssueConcrete.objects.all()
 
+    def __init__(self, **kwargs):
+        self.logger_prefix = 'Creating new letter of credit issue:'
+        super(LCIssueConcreteListCreateAPIView, self).__init__(**kwargs)
+
     def create(self, request, *args, **kwargs):
-        logger_prefix = 'Creating new letter of credit issue:'
-        self.logger_prefix = logger_prefix
-        logger.info('%s with incoming data = \n%r', logger_prefix, request.data)
+        logger.info('%s with incoming data = \n%r', self.logger_prefix, request.data)
 
-        form_m_data = request.data.get('form_m_data')
-        if form_m_data:
-            mf_number = form_m_data['number']
-            logger.info('%s issue did not previously have associated form M, creating form M: %s', logger_prefix,
-                        mf_number)
+        form_m = FormM.objects.filter(number=request.data['mf'])
+        if form_m.exists():
+            form_m = form_m[0]
+            form_m.attach_lc(lc_number=request.data['lc_number'])
+            request.data['mf'] = form_m.get_url()
 
-            request.data['mf'] = self.create_form_m(form_m_data)
-
-            logger.info('%s form M "%s" successfully created.\n LC issue will be created with new data: %r',
-                        logger_prefix, mf_number, request.data)
-
-        elif 'get_form_m' in request.data:
-            request.data['mf'] = FormM.objects.get(number=request.data['mf']).get_url()
+        else:
+            form_m_data = request.data.get('form_m_data')
+            if form_m_data:
+                mf_number = form_m_data['number']
+                logger.info('%s issue did not previously have associated form M, creating form M: %s',
+                            self.logger_prefix, mf_number)
+                request.data['mf'] = self.create_form_m(form_m_data)
+                logger.info('%s form M "%s" successfully created.\n LC issue will be created with new data: %r',
+                            self.logger_prefix, mf_number, request.data)
 
         return super(LCIssueConcreteListCreateAPIView, self).create(request, *args, **kwargs)
 
@@ -57,13 +61,13 @@ class LCIssueConcreteUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 class LcIssueFilter(django_filters.FilterSet):
     text = django_filters.CharFilter(lookup_type='icontains')
-    exclude_form_issues = django_filters.MethodFilter()
+    exclude_form_m_issues = django_filters.MethodFilter()
 
     class Meta:
         model = LCIssue
-        fields = ('text', 'exclude_form_issues',)
+        fields = ('text', 'exclude_form_m_issues',)
 
-    def filter_exclude_form_issues(self, qs, value):
+    def filter_exclude_form_m_issues(self, qs, value):
         if value:
             form_m = FormM.objects.filter(number=value)
             if form_m.exists():

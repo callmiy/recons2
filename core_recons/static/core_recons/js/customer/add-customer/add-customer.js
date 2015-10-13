@@ -144,7 +144,9 @@ function addCustomerDirective(ModalService, $parse, ToggleDimElement) {
 }
 
 app.controller('AddCustomerDirectiveCtrl', AddCustomerDirectiveCtrl)
+
 AddCustomerDirectiveCtrl.$inject = ['Customer', 'xhrErrorDisplay']
+
 function AddCustomerDirectiveCtrl(Customer, xhrErrorDisplay) {
   var vm = this
   vm.customer = {}

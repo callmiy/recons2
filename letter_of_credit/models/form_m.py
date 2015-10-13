@@ -78,6 +78,17 @@ class FormM(models.Model):
 
         return qs.filter(lc__isnull=param)
 
+    def attach_lc(self, lc_number=None, lc=None):
+        if self.lc:
+            return
+        if lc is None and lc_number is None:
+            raise ValueError('You must either specify "LCRegister" object or lc number')
+        if lc:
+            self.lc = lc
+        elif lc_number:
+            self.lc = LCRegister.objects.get(lc_number=lc_number)
+        self.save()
+
 
 class LCIssueConcrete(models.Model):
     issue = models.ForeignKey(LCIssue, verbose_name='Issue')

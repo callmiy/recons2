@@ -9,7 +9,8 @@ var app = angular.module('lc-detail', [
   'rootApp',
   'lc-service',
   'lc-issue-service',
-  'kanmii-underscore'
+  'kanmii-underscore',
+  'customer'
 ])
 
 app.config(rootCommons.interpolateProviderConfig)
@@ -45,11 +46,12 @@ LetterOfCreditDetailController.$inject = [
   'LCIssueConcrete',
   'kanmiiUnderscore',
   'xhrErrorDisplay',
-  'formatDate'
+  'formatDate',
+  'Customer'
 ]
 
 function LetterOfCreditDetailController($stateParams, LetterOfCredit, $state, getTypeAheadCustomer, $filter,
-  getTypeAheadLCIssue, LCIssueConcrete, kanmiiUnderscore, xhrErrorDisplay, formatDate) {
+  getTypeAheadLCIssue, LCIssueConcrete, kanmiiUnderscore, xhrErrorDisplay, formatDate, Customer) {
   var vm = this
 
   initialize()
@@ -57,14 +59,14 @@ function LetterOfCreditDetailController($stateParams, LetterOfCredit, $state, ge
   function initialize() {
     if ($stateParams.lc) {
       vm.lc = $stateParams.lc
-      vm.lcIssues = vm.lc.issues || []
+      vm.lcIssues = getIssuesNotClosed(vm.lc.issues)
     }
 
     else {
       LetterOfCredit.getPaginated({lc_number: $stateParams.lc_number}).$promise.then(function(data) {
         if (data.count) {
           vm.lc = data.results[0]
-          vm.lcIssues = vm.lc.issues
+          vm.lcIssues = getIssuesNotClosed(vm.lc.issues)
         }
 
         else $state.go('lc')
@@ -72,8 +74,16 @@ function LetterOfCreditDetailController($stateParams, LetterOfCredit, $state, ge
     }
 
     vm.lcForm = {}
-
+    vm.alertIsShown = false
     vm.issue = {}
+
+    function getIssuesNotClosed(issues) {
+      if (!issues) return []
+
+      return issues.filter(function(issue) {
+        return !issue.closed_at
+      })
+    }
   }
 
   vm.issueDateGetterSetter = function issueDateGetterSetter() {
@@ -86,7 +96,7 @@ function LetterOfCreditDetailController($stateParams, LetterOfCredit, $state, ge
 
   vm.saveIssue = function saveIssue(issue, form) {
     if (issue && !kanmiiUnderscore.isEmpty(issue)) {
-      var postData = {issue: issue.issue.url, mf: vm.lc.mf}
+      var postData = {issue: issue.issue.url, mf: vm.lc.mf, lc_number: vm.lc.lc_number}
 
       var applicant = issue.applicant
 
@@ -99,7 +109,7 @@ function LetterOfCreditDetailController($stateParams, LetterOfCredit, $state, ge
           number: vm.lc.mf
         }
 
-      } else postData.get_form_m = true
+      }
 
       LCIssueConcrete.save(postData).$promise.then(saveSuccess, saveError)
     }
@@ -144,7 +154,8 @@ function LetterOfCreditDetailController($stateParams, LetterOfCredit, $state, ge
         var lc = data.results[0]
 
         $state.go('.', {lc_number: lc.lc_number, lc: lc})
-      }
+
+      } else vm.alertIsShown = true
     })
   }
 
@@ -159,6 +170,17 @@ function LetterOfCreditDetailController($stateParams, LetterOfCredit, $state, ge
   vm.getApplicant = getTypeAheadCustomer
 
   vm.getIssue = function getIssue(text) {
-    return getTypeAheadLCIssue({text: text, exclude_form_issues: vm.lc.mf})
+    return getTypeAheadLCIssue({text: text, exclude_form_m_issues: vm.lc.mf})
+  }
+
+  vm.addCustomer = function addCustomer() {
+    Customer.save({name: vm.lc.applicant}).$promise.then(function(data) {
+      vm.issue.applicant = data
+      vm.lc.applicant_data = data
+    })
+  }
+
+  vm.closeAlert = function closeAlert() {
+    vm.alertIsShown = false
   }
 }

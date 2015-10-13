@@ -1,11 +1,25 @@
-.lc-detail-root-container{
-  .existing-issues, .new-issue-form{
+.lc-detail-root-container {
+  position: relative;
+
+  .existing-issues, .new-issue-form {
     border: 1px solid #C6C5C5;
     border-radius: 5px;
   }
 
-  .new-issue-form{
+  .new-issue-form {
     margin-bottom: 20px;
     padding: 10px;
+  }
+
+  .lc-detail-lc-not-found-alert {
+    position: absolute;
+    left: 25%;
+    z-index: 1000;
+    width: 45%;
+
+    & > span {
+      color: black;
+      font-size: 15pt;
+    }
   }
 }

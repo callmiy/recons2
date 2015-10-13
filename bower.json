@@ -23,7 +23,7 @@
   ],
   "dependencies": {
     "angular-animate": "1.4.4",
-    "angular-bootstrap": "~0.13.3",
+    "angular-bootstrap": "0.14.1",
     "angular-cookies": "~1.4.4",
     "angular-css": "~1.0.7",
     "angular-mocks": "1.4.4",
@@ -35,16 +35,16 @@
     "jquery": "1.11.0",
     "jquery-ui": "1.11.0",
     "jstree": "https://github.com/vakata/jstree.git#~3.2.1",
+    "moment": "momentjs#~2.10.6",
     "papa-parse": "4.1.0",
     "underscore": "1.8.3",
-    "urijs": "https://github.com/medialize/URI.js.git#1.16.1",
-    "moment": "momentjs#~2.10.6"
+    "urijs": "https://github.com/medialize/URI.js.git#1.16.1"
   },
   "resolutions": {
     "angular": "1.4.4",
     "angular-route": "1.4.4",
     "angular-resource": "1.4.4",
-    "angular-bootstrap": "0.13.3",
+    "angular-bootstrap": "0.14.1",
     "bootstrap": "3.3.5"
   }
 }
