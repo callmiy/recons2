@@ -68,7 +68,7 @@ class EntryGeneratingTransactionAdmin(admin.ModelAdmin):
             "%d items will no longer be displayed" % queryset.count())
     dont_display.short_description = "Don't Display"
 
-admin.site.register(EntryContra, EntryContraAdmin)
-admin.site.register(Entry, EntryAdmin)
-admin.site.register(EntryCode, EntryCodeAdmin)
-admin.site.register(EntryGeneratingTransaction, EntryGeneratingTransactionAdmin)
+# admin.site.register(EntryContra, EntryContraAdmin)
+# admin.site.register(Entry, EntryAdmin)
+# admin.site.register(EntryCode, EntryCodeAdmin)
+# admin.site.register(EntryGeneratingTransaction, EntryGeneratingTransactionAdmin)

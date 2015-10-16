@@ -83,4 +83,4 @@ class IbdIntAdmin(admin.ModelAdmin):
     write_entries.short_description = 'Prepare for Posting'
 
 
-admin.site.register(IbdInt, IbdIntAdmin)
+# admin.site.register(IbdInt, IbdIntAdmin)

@@ -88,5 +88,5 @@ class LCCoverMovementAdmin(admin.ModelAdmin):
     process_for_posting.short_description = 'Process For Posting'
 
 
-admin.site.register(LcAvailed, LcAdmin)
-admin.site.register(LCCoverMovement, LCCoverMovementAdmin)
+# admin.site.register(LcAvailed, LcAdmin)
+# admin.site.register(LCCoverMovement, LCCoverMovementAdmin)

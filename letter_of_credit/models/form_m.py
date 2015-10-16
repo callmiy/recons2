@@ -89,6 +89,12 @@ class FormM(models.Model):
             self.lc = LCRegister.objects.get(lc_number=lc_number)
         self.save()
 
+    def applicant_name(self):
+        return self.applicant.name
+
+    def lc_number(self):
+        return self.lc and self.lc.lc_number or None
+
 
 class LCIssueConcrete(models.Model):
     issue = models.ForeignKey(LCIssue, verbose_name='Issue')
@@ -107,6 +113,15 @@ class LCIssueConcrete(models.Model):
 
     def save(self, *args, **kwargs):
         super(LCIssueConcrete, self).save(*args, **kwargs)
+
+    def form_m_number(self):
+        return self.mf.number
+
+    def applicant(self):
+        return self.mf.applicant
+
+    def lc_number(self):
+        return self.mf.lc and self.mf.lc.lc_number or None
 
 
 class LcBidRequest(models.Model):
@@ -132,3 +147,15 @@ class LcBidRequest(models.Model):
 
         param = True if param == 'true' else False
         return qs.filter(requested_at__isnull=param)
+
+    def form_m_number(self):
+        return self.mf.number
+
+    def applicant(self):
+        return self.mf.applicant.name
+
+    def goods_description(self):
+        return self.mf.goods_description
+
+    def currency(self):
+        return self.mf.currency
