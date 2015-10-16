@@ -18,7 +18,10 @@ from .views import (
     LCIssueConcreteUpdateAPIView,
     LcBidRequestListCreateAPIView,
     LcBidRequestUpdateAPIView,
-    DownloadBidsView)
+    DownloadBidsView,
+    UploadedFormMListCreateAPIView,
+    UploadedFormMUpdateAPIView
+)
 
 urlpatterns = patterns(
     # <editor-fold description='home view and upload'>
@@ -101,6 +104,14 @@ urlpatterns += patterns(
     url(r'^lc-issue-concrete/?$', LCIssueConcreteListCreateAPIView.as_view(), name='lcissueconcrete-list'),
 
     url(r'^lc-issue-concrete/(?P<pk>\d+)/?$', LCIssueConcreteUpdateAPIView.as_view(), name='lcissueconcrete-detail'),
+)
+
+urlpatterns += patterns(
+    '',
+
+    url(r'^uploaded-form-m/?$', UploadedFormMListCreateAPIView.as_view(), name='uploadedformm-list'),
+
+    url(r'^uploaded-form-m/(?P<pk>\d+)/?$', UploadedFormMUpdateAPIView.as_view(), name='uploadedformm-detail'),
 )
 
 # bid

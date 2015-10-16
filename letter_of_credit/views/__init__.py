@@ -1,32 +1,34 @@
 from django.shortcuts import render
 from core_recons.views import CoreAppsView
-from letter_of_credit.views.lc import (
+from .lc import (
     LCStatusListCreateAPIView,
     LCStatusUpdateAPIView,
     LetterOfCreditListCreateAPIView,
     LetterOfCreditUpdateAPIView
 )
 
-from letter_of_credit.views.lc_register import (
+from .lc_register import (
     LetterOfCreditRegisterListCreateAPIView,
     LetterOfCreditRegisterUpdateAPIView,
     LCRegisterUploadView,
     ReleaseTelexView)
 
-from letter_of_credit.views.lc_issue import (
+from .lc_issue import (
     LCIssueListCreateAPIView,
     LCIssueUpdateAPIView,
     LCIssueConcreteListCreateAPIView,
     LCIssueConcreteUpdateAPIView,
 )
 
-from letter_of_credit.views.form_m import (
+from .form_m import (
     FormMListCreateAPIView,
     FormMUpdateAPIView,
     LcBidRequestListCreateAPIView,
     LcBidRequestUpdateAPIView)
 
-from  letter_of_credit.views.download_bids import DownloadBidsView
+from .download_bids import DownloadBidsView
+
+from .uploaded_form_m import UploadedFormMListCreateAPIView, UploadedFormMUpdateAPIView
 
 
 class AppHomeView(CoreAppsView):

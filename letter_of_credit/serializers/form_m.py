@@ -1,47 +1,7 @@
-from letter_of_credit.models import FormM, LCIssue, LCIssueConcrete, LcBidRequest, LCRegister
+from letter_of_credit.models import FormM, LcBidRequest, LCRegister
 from rest_framework import serializers
 from adhocmodels.serializers import CustomerSerializer, CurrencySerializer
-
-
-class LCIssueSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = LCIssue
-        fields = (
-            'id',
-            'text',
-            'url'
-        )
-
-
-class LCIssueConcreteSerializer(serializers.HyperlinkedModelSerializer):
-    issue_text = serializers.ReadOnlyField(source='issue.text')
-
-    class Meta:
-        model = LCIssueConcrete
-        fields = (
-            'id',
-            'issue',
-            'issue_text',
-            'mf',
-            'created_at',
-            'closed_at',
-            'url'
-        )
-
-
-class LCIssueConcreteSerializerFormM(serializers.HyperlinkedModelSerializer):
-    issue = serializers.ReadOnlyField(source='issue.text')
-
-    class Meta:
-        model = LCIssueConcrete
-        fields = (
-            'id',
-            'issue',
-            'created_at',
-            'closed_at',
-            'url'
-        )
-
+from .lc_issue import LCIssueConcreteSerializerFormM
 
 class FormMSerializer(serializers.HyperlinkedModelSerializer):
     applicant_data = CustomerSerializer(required=False, read_only=True)

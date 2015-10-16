@@ -1,0 +1,19 @@
+<div class="manage-form-m-tab-content">
+  <div class="action-buttons pull-right">
+    <button class="btn btn-info" name="add-form-m-form-show-trigger" id="add-form-m-form-show-trigger" add-form-m
+            on-new-mf="formMList.receiveNewFormM(newFormM)">
+      Add Form M
+    </button>
+
+    <button class="btn btn-info" search-form-m search-form-m-result="formMList.searchedFormMResult">
+      Search Form M
+    </button>
+  </div>
+
+  <div model-table model-collection="formMList.formMs"
+       table-model-manager="::formMList.modelManager"
+       table-caption="::formMList.tableCaption"
+       pagination-size="20"
+       update-collection="formMList.getFormMCollectionOnNavigation(linkUrl)"
+       pager-object="formMList.paginationHooks"></div>
+</div>

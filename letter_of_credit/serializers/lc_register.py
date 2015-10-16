@@ -1,7 +1,7 @@
 from adhocmodels.serializers import CustomerSerializer, CurrencySerializer
 from letter_of_credit.models import LCRegister
 from rest_framework import serializers
-from .form_m import LCIssueConcreteSerializer
+from .lc_issue import LCIssueConcreteSerializer
 
 
 class LetterOfCreditRegisterSerializer(serializers.HyperlinkedModelSerializer):

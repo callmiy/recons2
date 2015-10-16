@@ -1,8 +1,5 @@
 from letter_of_credit.serializers.lc import LCStatusSerializer, LetterOfCreditSerializer
 from letter_of_credit.serializers.lc_register import LetterOfCreditRegisterSerializer
-from letter_of_credit.serializers.form_m import (
-    FormMSerializer,
-    LCIssueSerializer,
-    LCIssueConcreteSerializer,
-    LcBidRequestSerializer
-)
+from letter_of_credit.serializers.form_m import FormMSerializer, LcBidRequestSerializer
+from .lc_issue import LCIssueSerializer, LCIssueConcreteSerializer
+from .uploaded_form_m import UploadedFormMSerializer
