@@ -47,11 +47,13 @@ LetterOfCreditDetailController.$inject = [
   'kanmiiUnderscore',
   'xhrErrorDisplay',
   'formatDate',
-  'Customer'
+  'Customer',
+  'formMAttributesVerboseNames'
 ]
 
 function LetterOfCreditDetailController($stateParams, LetterOfCredit, $state, getTypeAheadCustomer, $filter,
-  getTypeAheadLCIssue, LCIssueConcrete, kanmiiUnderscore, xhrErrorDisplay, formatDate, Customer) {
+  getTypeAheadLCIssue, LCIssueConcrete, kanmiiUnderscore, xhrErrorDisplay, formatDate, Customer,
+  formMAttributesVerboseNames) {
   var vm = this
 
   initialize()
@@ -96,7 +98,12 @@ function LetterOfCreditDetailController($stateParams, LetterOfCredit, $state, ge
 
   vm.saveIssue = function saveIssue(issue, form) {
     if (issue && !kanmiiUnderscore.isEmpty(issue)) {
-      var postData = {issue: issue.issue.url, mf: vm.lc.mf, lc_number: vm.lc.lc_number}
+      var postData = {
+        issue: issue.issue.url,
+        mf: vm.lc.mf,
+        lc_number: vm.lc.lc_number,
+        get_or_create_form_m: true
+      }
 
       var applicant = issue.applicant
 
@@ -130,7 +137,12 @@ function LetterOfCreditDetailController($stateParams, LetterOfCredit, $state, ge
     }
 
     function saveError(xhr) {
-      xhrErrorDisplay(xhr)
+      var transform = null
+      if (xhr.data.form_m_creation_errors) {
+        transform = formMAttributesVerboseNames
+        delete xhr.data.form_m_creation_errors
+      }
+      xhrErrorDisplay(xhr, transform)
     }
 
   }
