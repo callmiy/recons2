@@ -3,8 +3,6 @@ from core_recons.views import CoreAppsView
 from .lc import (
     LCStatusListCreateAPIView,
     LCStatusUpdateAPIView,
-    LetterOfCreditListCreateAPIView,
-    LetterOfCreditUpdateAPIView
 )
 
 from .lc_register import (

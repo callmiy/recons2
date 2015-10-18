@@ -6,7 +6,8 @@ var rootCommons = require('commons')
 
 var app = angular.module('upload-form-m',
   ['rootApp',
-   'ui.router'
+   'ui.router',
+   'upload-form-m-service'
   ])
 
 app.config(rootCommons.interpolateProviderConfig)
@@ -30,12 +31,24 @@ function uploadFormMURLConfig($stateProvider) {
 }
 
 app.controller('UploadFormMController', UploadFormMController)
-UploadFormMController.$inject = []
-function UploadFormMController() {
+
+UploadFormMController.$inject = ['UploadFormM', '$timeout']
+
+function UploadFormMController(UploadFormM, $timeout) {
   var vm = this
 
+  initial()
+  function initial() {
+    vm.formMIsUploading = false
+    vm.uploadIndicationText = 'Uploading Form Ms.........please wait'
+    vm.uploadFormMText = ''
+  }
+
   vm.uploadFormM = function uploadFormM(text) {
-    var formM, row
+    vm.formMIsUploading = true
+
+    var uploaded = [],
+      row
 
     function parseDate(dt) {
       return '20' + dt.slice(6) + '-' + dt.slice(3, 5) + '-' + dt.slice(0, 2)
@@ -47,22 +60,44 @@ function UploadFormMController() {
       step: function(data) {
         row = data.data[0]
 
-        formM = {
+        uploaded.push({
           ba: row[0],
           mf: row[1],
           ccy: row[2],
           applicant: row[3],
-          fob: row[5].replace(',', ''),
+          fob: row[5].replace(/,/g, ''),
           submitted_at: parseDate(row[6]),
           validated_at: parseDate(row[7])
-        }
-
-        console.log(formM);
+        })
       }
     })
 
-    function formMCreatedSuccess(data) {
+    UploadFormM.save({
+      uploaded: uploaded,
+      likely_duplicates: true
+    })
+      .$promise
+      .then(formMCreatedSuccess, formMCreatedError)
 
+    function formMCreatedSuccess(data) {
+      var creationResult = data.created_data,
+        numCreatedNow = creationResult.length,
+        numCreatedPreviously = uploaded.length - numCreatedNow
+
+      vm.uploadIndicationText = 'Done Upload form Ms\n' +
+                                '==========================================\n' +
+                                'Total new form Ms created: ' + numCreatedNow + '\n'
+      if (numCreatedPreviously) {
+        vm.uploadIndicationText += ('Total not created (because uploaded previously): ' + numCreatedPreviously)
+      }
+
+      $timeout(function() {
+        initial()
+      }, 4500)
+    }
+
+    function formMCreatedError(xhr) {
+      console.log(xhr);
     }
   }
 }

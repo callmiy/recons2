@@ -1,8 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.conf.urls import url, patterns
 from .views import (
-    LetterOfCreditListCreateAPIView,
-    LetterOfCreditUpdateAPIView,
     LCStatusListCreateAPIView,
     LCStatusUpdateAPIView,
     LetterOfCreditRegisterListCreateAPIView,
@@ -34,28 +32,14 @@ urlpatterns = patterns(
 )
 
 urlpatterns += patterns(
-    # <editor-fold description='letter of credit api'>
-    '',
-
-    url(r'^letter-of-credits/?$',
-        LetterOfCreditListCreateAPIView.as_view(),
-        name='letterofcredit-list'),
-
-    url(r'^letter-of-credits/(?P<pk>\d+)/?$',
-        LetterOfCreditUpdateAPIView.as_view(),
-        name='letterofcredit-detail')
-    # </editor-fold>
-)
-
-urlpatterns += patterns(
     # <editor-fold description='letter of credit register api'>
     '',
 
-    url(r'^letter-of-credits1/?$',
+    url(r'^letter-of-credits/?$',
         LetterOfCreditRegisterListCreateAPIView.as_view(),
         name='lcregister-list'),
 
-    url(r'^letter-of-credits1/(?P<pk>\d+)/?$',
+    url(r'^letter-of-credits/(?P<pk>\d+)/?$',
         LetterOfCreditRegisterUpdateAPIView.as_view(),
         name='lcregister-detail')
     # </editor-fold>
@@ -97,7 +81,7 @@ urlpatterns += patterns(
     # </editor-fold>
 )
 
-# lc issue
+# lc issue concrete
 urlpatterns += patterns(
     '',
 
@@ -106,6 +90,7 @@ urlpatterns += patterns(
     url(r'^lc-issue-concrete/(?P<pk>\d+)/?$', LCIssueConcreteUpdateAPIView.as_view(), name='lcissueconcrete-detail'),
 )
 
+# uploaded form m
 urlpatterns += patterns(
     '',
 

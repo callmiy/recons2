@@ -1,5 +1,6 @@
 import django_filters
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.response import Response
 from letter_of_credit.models import UploadedFormM
 from letter_of_credit.serializers import UploadedFormMSerializer
 import logging
@@ -30,24 +31,53 @@ class UploadedFormMListCreateAPIView(generics.ListCreateAPIView):
         self.log_prefix = 'Creating form M uploaded from single window:'
         super(UploadedFormMListCreateAPIView, self).__init__(**kwargs)
 
+    def create_with_likely_duplicates(self, request, *args, **kwargs):
+        logger.info(
+            '%s data likely contains form Ms that had been uploaded previously - will be deleted from incoming '
+            'data',
+            self.log_prefix
+        )
+
+        duplicate_count = 0
+        fresh_data_list = []
+
+        for index, datum in enumerate(request.data['uploaded']):
+            if UploadedFormM.objects.filter(mf=datum['mf']).exists():
+                duplicate_count += 1
+                logger.info(
+                    '%s form M uploaded previously, will be deleted from incoming data:\n%r',
+                    self.log_prefix,
+                    datum
+                )
+            else:
+                fresh_data_list.append(datum)
+
+        logger.info(
+            '%s number of previously uploaded form Ms deleted from incoming data - %d', self.log_prefix,
+            duplicate_count)
+
+        logger.info(
+            '%s incoming data has been cleaned - actual creation will be done with data: \n%r', self.log_prefix,
+            fresh_data_list)
+
+        serializer = self.get_serializer(data=fresh_data_list, many=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response({'created_data': serializer.data}, status=status.HTTP_201_CREATED, headers=headers)
+
     def create(self, request, *args, **kwargs):
-        data = request.data
-        logger.info('%s with incoming data = \n%r', self.log_prefix, data)
+        logger.info('%s with incoming data = \n%r', self.log_prefix, request.data)
 
-        if 'likely_duplicates' in data:
-            logger.info('%s data likely contains duplicates - will be weeded out', self.log_prefix)
-
-            fresh_data_list = []
-            duplicate_count = 0
-
-            for datum in data:
-                if UploadedFormM.objects.filter(mf=datum['mf']).exists():
-                    duplicate_count += 1
-                    logger.info('%s duplicate found - %r', datum)
-                else:
-                    fresh_data_list.append(datum)
-            logger.info('%s number of duplicates - %d', duplicate_count)
-            request.data = fresh_data_list
+        # if we are doing a bulk create and at the same time incoming data is likely to contain form Ms we had
+        # created previously, then request.data will look like:
+        # {
+        #     'likely_duplicates': true,
+        #     'uploaded': [{uploaded form M to be created data},
+        #                   {uploaded form M to be created data},]
+        # }
+        if 'likely_duplicates' in request.data:
+            return self.create_with_likely_duplicates(request, *args, **kwargs)
 
         return super(UploadedFormMListCreateAPIView, self).create(request, *args, **kwargs)
 

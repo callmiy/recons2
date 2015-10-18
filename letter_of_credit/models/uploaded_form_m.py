@@ -20,5 +20,5 @@ class UploadedFormM(models.Model):
             self.mf,
             self.ccy,
             '{:,.2f}'.format(self.fob),
-            self.name
+            self.applicant
         )

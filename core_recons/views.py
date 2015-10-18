@@ -19,8 +19,8 @@ class CoreAppsView(View):
             'lcIssueAPIUrl': reverse('lcissue-list'),
             'lcIssueConcreteAPIUrl': reverse('lcissueconcrete-list'),
             'formMAPIUrl': reverse('formm-list'),
-            'letterOfCreditAPIUrl': reverse('letterofcredit-list'),
-            'letterOfCredit1APIUrl': reverse('lcregister-list'),
+            'uploadedFormMAPIUrl': reverse('uploadedformm-list'),
+            'letterOfCreditAPIUrl': reverse('lcregister-list'),
             'letterOfCreditStatusesAPIUrl': reverse('lcstatus-list'),
         })
 
