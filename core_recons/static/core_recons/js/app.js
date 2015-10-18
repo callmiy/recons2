@@ -44,7 +44,7 @@ function resetForm() {
     form.$setPristine()
     form.$setUntouched()
 
-    cb ? cb() : angular.noop()
+    cb ? cb() : angular.noop() //jshint -W030
   }
 
   return reset

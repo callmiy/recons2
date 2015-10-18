@@ -9,17 +9,22 @@ logger = logging.getLogger('recons_logger')
 
 
 class UploadedFormMFilter(django_filters.FilterSet):
+    mf = django_filters.CharFilter(lookup_type='iexact')
+    ba = django_filters.CharFilter(lookup_type='iexact')
+
     class Meta:
         model = UploadedFormM
-        fields = {
-            'ba': ('icontains',),
-            'mf': ('icontains',),
-            'ccy': ('iexact',),
-            'applicant': ('icontains',),
-            'submitted_at': ('lte', 'gte'),
-            'validated_at': ('lte', 'gte'),
-            'uploaded_at': ('lte', 'gte'),
-        }
+        fields = ('mf', 'ba')
+
+        # x = {
+        #     'ba': ('icontains',),
+        #     'mf': ('icontains',),
+        #     'ccy': ('iexact',),
+        #     'applicant': ('icontains',),
+        #     'submitted_at': ('lte', 'gte'),
+        #     'validated_at': ('lte', 'gte'),
+        #     'uploaded_at': ('lte', 'gte'),
+        # }
 
 
 class UploadedFormMListCreateAPIView(generics.ListCreateAPIView):

@@ -1,0 +1,40 @@
+from rest_framework import generics, pagination
+import django_filters
+from letter_of_credit.models import LcBidRequest
+from letter_of_credit.serializers import LcBidRequestSerializer
+
+import logging
+
+logger = logging.getLogger('recons_logger')
+
+
+class LcBidRequestPagination(pagination.PageNumberPagination):
+    page_size = 20
+
+
+class LcBidRequestFilter(django_filters.FilterSet):
+    pending = django_filters.CharFilter(action=LcBidRequest.search_pending)
+
+    class Meta:
+        model = LcBidRequest
+        fields = ('pending',)
+
+
+class LcBidRequestListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = LcBidRequestSerializer
+    queryset = LcBidRequest.objects.all()
+    pagination_class = LcBidRequestPagination
+    filter_class = LcBidRequestFilter
+
+    def create(self, request, *args, **kwargs):
+        logger.info('Creating new letter of credit bid request with incoming data = \n%r', request.data)
+        return super(LcBidRequestListCreateAPIView, self).create(request, *args, **kwargs)
+
+
+class LcBidRequestUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = LcBidRequest.objects.all()
+    serializer_class = LcBidRequestSerializer
+
+    def update(self, request, *args, **kwargs):
+        logger.info('Updating letter of credit bid request with incoming data = \n%r', request.data)
+        return super(LcBidRequestUpdateAPIView, self).update(request, *args, **kwargs)

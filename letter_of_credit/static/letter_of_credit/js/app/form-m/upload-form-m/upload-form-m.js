@@ -85,7 +85,7 @@ function UploadFormMController(UploadFormM, $timeout) {
         numCreatedPreviously = uploaded.length - numCreatedNow
 
       vm.uploadIndicationText = 'Done Upload form Ms\n' +
-                                '==========================================\n' +
+                                '=========================\n' +
                                 'Total new form Ms created: ' + numCreatedNow + '\n'
       if (numCreatedPreviously) {
         vm.uploadIndicationText += ('Total not created (because uploaded previously): ' + numCreatedPreviously)
