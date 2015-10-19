@@ -28,7 +28,7 @@
             </div>
           </div>
 
-          <div class="form-group form-m-owner-group">
+          <div class="form-group form-m-owner-group" ng-show="addFormMState.searchFormM.applicant">
             <label class="control-label col-sm-3" for="form-m-owner">Owner</label>
 
             <div class="col-sm-9">
@@ -237,7 +237,7 @@
             </div>
           </div>
 
-          <div style="    margin-top: 50px;" class="existing-issues"
+          <div style="    margin-top: 30px;" class="existing-issues"
                ng-show="addFormMState.detailedFormM.form_m_issues.length">
             <h5 style="text-align: center">Existing Issues not closed
               ({$addFormMState.detailedFormM.form_m_issues.length$})</h5>
@@ -255,6 +255,29 @@
                 <span class="input-group-addon" style="cursor: pointer"
                       ng-click="addFormMState.closeIssue(issue, $index)">
                   <span class="glyphicon glyphicon-trash"></span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div style="    margin-top: 30px;" class="existing-issues"
+               ng-show="addFormMState.closedIssues.length">
+            <h5 style="text-align: center">Issues that have been closed
+              ({$addFormMState.closedIssues.length$})
+            </h5>
+
+            <div ng-repeat="issue in addFormMState.closedIssues">
+              <div class="input-group">
+                <label for="issue-text-display" class="sr-only"></label>
+
+                <span class="input-group-addon">{$$index + 1$}</span>
+
+                <input type="text" class="form-control" id="issue-text-display" name="issue-text-display" disabled
+                       ng-value="issue.issue.text || issue.issue_text"
+                       style="padding-left: 10px;"/>
+
+                <span class="input-group-addon">
+                  <span>{$issue.closed_at |date:'dd-MMM-yyyy'$}</span>
                 </span>
               </div>
             </div>

@@ -70,8 +70,13 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   function initialize(form) {
     if (vm.detailedFormM) {
       existingIssues = vm.detailedFormM.form_m_issues
+      vm.closedIssues = []
       vm.detailedFormM.form_m_issues = vm.detailedFormM.form_m_issues.filter(function(issue) {
-        return !issue.closed_at
+        if (!issue.closed_at) return true
+        else {
+          vm.closedIssues.push(issue)
+          return false
+        }
       })
 
       vm.formM = {
@@ -102,6 +107,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
         date_received: false,
         amount: false
       }
+
+      vm.closedIssues = []
     }
 
     vm.searchFormM = {}
@@ -152,13 +159,13 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       mf: vm.detailedFormM.url,
       issue: issue.issue.url,
       closed_at: formatDate(new Date())
-    }).$promise.then(function() {
+    }).$promise.then(issueClosedSuccess, issueClosedError)
 
-                       vm.detailedFormM.form_m_issues.splice($index, 1)
-
-                     }, function(xhr) {
-                       xhrErrorDisplay(xhr)
-                     })
+    function issueClosedSuccess(issue){
+      vm.detailedFormM.form_m_issues.splice($index, 1)
+      vm.closedIssues.push(issue)
+    }
+    function issueClosedError(xhr){ xhrErrorDisplay(xhr)}
   }
 
   vm.toggleShowBidContainer = toggleShowBidContainer
