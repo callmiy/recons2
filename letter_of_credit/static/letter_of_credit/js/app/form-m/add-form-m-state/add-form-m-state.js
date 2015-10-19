@@ -290,7 +290,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
         vm.savingFormMIndicator += issuesText
       }
 
-      if (existingIssues) {
+      if (existingIssues && existingIssues.length) {
         var existingIssuesText = '\n\n    Existing Issues Not Closed\n' + sep
 
         kanmiiUnderscore.each(existingIssues, function(issue, index) {
