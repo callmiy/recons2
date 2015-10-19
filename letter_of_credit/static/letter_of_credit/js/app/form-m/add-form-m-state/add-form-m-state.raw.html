@@ -1,7 +1,14 @@
 <div id="add-form-m-root-container" class="add-form-m-root-container" style="margin-top: 5px;">
   <form class="form-horizontal" name="addFormMForm"
-        ng-submit="addFormMState.submit(addFormMState.formM, addFormMState.bidRequest)">
-    <div class="row">
+        ng-submit="addFormMState.submit(addFormMState.formM, addFormMState.bidRequest, addFormMForm)">
+    <div class="row add-form-m-form-row">
+      <div class="add-form-m-saving-indicator" ng-show="addFormMState.formMIsSaving">
+        <span class="glyphicon glyphicon-remove-sign add-form-m-saving-indicator-dismiss"
+              ng-click="addFormMState.reset(addFormMForm)"></span>
+
+        <pre>{$addFormMState.savingFormMIndicator$}</pre>
+      </div>
+
       <div class="col-sm-6">
         <fieldset class="add-new-form-m-container" ng-form name="newFormMForm">
 
@@ -10,11 +17,12 @@
 
             <div class="col-sm-9" ng-dblclick="addFormMState.getUploadedFormM()">
               <div class="input-group">
-                <span class="input-group-addon" data-toggle="tooltip" title="Search for Form M">
+                <span class="input-group-addon" data-toggle="tooltip" title="Search form M in single window">
                   <i class="glyphicon glyphicon-search"></i>
                 </span>
 
-                <input class="form-control" type="text" min="4" id="form-m" disabled placeholder="Click to search"
+                <input class="form-control" type="text" min="4" id="form-m" disabled
+                       placeholder="Click to search form M in single window"
                        ng-model="addFormMState.searchFormM.mf"/>
               </div>
             </div>
@@ -33,9 +41,16 @@
             <label class="control-label col-sm-3" for="form-m-number">Form M Number</label>
 
             <div class="col-sm-9">
-              <input class="form-control" maxlength="13" id="form-m-number" required name="form-m-number"
-                     to-upper ng-pattern="/mf\d{11}/i"
-                     ng-model="addFormMState.formM.number"/>
+              <div class="input-group">
+                <span class="input-group-addon" style="cursor:pointer;"
+                      ng-click="addFormMState.enableFieldEdit('number')">
+                  <i ng-class="['glyphicon', {'glyphicon-pencil': addFormMState.fieldsEdit.number, 'glyphicon-eye-open': !addFormMState.fieldsEdit.number}]"></i>
+                </span>
+
+                <input class="form-control" maxlength="13" id="form-m-number" required name="form-m-number"
+                       to-upper ng-pattern="/mf\d{11}/i" ng-readonly="addFormMState.fieldsEdit.number"
+                       ng-model="addFormMState.formM.number"/>
+              </div>
             </div>
           </div>
 
@@ -44,16 +59,21 @@
 
             <div class="col-sm-9">
               <div class="input-group">
+                <span class="input-group-addon" style="cursor:pointer;"
+                      ng-click="addFormMState.enableFieldEdit('applicant')">
+                  <i ng-class="['glyphicon', {'glyphicon-pencil': addFormMState.fieldsEdit.applicant, 'glyphicon-eye-open': !addFormMState.fieldsEdit.applicant}]"></i>
+                </span>
+
                 <input class="form-control" type="text" min="3" id="applicant" name="applicant"
-                       ng-model="addFormMState.formM.applicant"
-                       ng-pattern="/.{4,}/"
-                       typeahead-min-length="3"
+                       ng-model="addFormMState.formM.applicant" ng-pattern="/.{4,}/"
+                       ng-readonly="addFormMState.fieldsEdit.applicant" typeahead-min-length="3"
                        uib-typeahead="applicant as applicant.name for applicant in addFormMState.getApplicant($viewValue)"
                     />
-            <span class="input-group-addon">
-              <img ng-src="{$$root.addIconSrc$}" alt="" add-customer dim-parent="addFormMState.element"
-                   added-new-customer="addFormMState.formM.applicant"/>
-            </span>
+
+                <span class="input-group-addon" ng-show="!addFormMState.fieldsEdit.applicant">
+                  <img ng-src="{$$root.addIconSrc$}" alt="" add-customer dim-parent="addFormMState.element"
+                       added-new-customer="addFormMState.formM.applicant"/>
+                </span>
               </div>
             </div>
           </div>
@@ -62,11 +82,18 @@
             <label class="control-label col-sm-3" for="currency">Currency</label>
 
             <div class="col-sm-9">
-              <input class="form-control" id="currency" required maxlength="3" name="currency"
-                     ng-model="addFormMState.formM.currency"
-                     uib-typeahead="currency as currency.code for currency in addFormMState.getCurrency($viewValue)"
-                     typeahead-min-length="2"
-                  />
+              <div class="input-group">
+                <span class="input-group-addon" style="cursor:pointer;"
+                      ng-click="addFormMState.enableFieldEdit('currency')">
+                  <i ng-class="['glyphicon', {'glyphicon-pencil': addFormMState.fieldsEdit.currency, 'glyphicon-eye-open': !addFormMState.fieldsEdit.currency}]"></i>
+                </span>
+
+                <input class="form-control" id="currency" required maxlength="3" name="currency"
+                       ng-model="addFormMState.formM.currency" ng-readonly="addFormMState.fieldsEdit.currency"
+                       uib-typeahead="currency as currency.code for currency in addFormMState.getCurrency($viewValue)"
+                       typeahead-min-length="2"
+                    />
+              </div>
             </div>
           </div>
 
@@ -74,7 +101,15 @@
             <label class="control-label col-sm-3" for="amount">Amount</label>
 
             <div class="col-sm-9">
-              <input class="form-control" id="amount" required ng-model="addFormMState.formM.amount" number-format/>
+              <div class="input-group">
+                <span class="input-group-addon" style="cursor:pointer;"
+                      ng-click="addFormMState.enableFieldEdit('amount')">
+                  <i ng-class="['glyphicon', {'glyphicon-pencil': addFormMState.fieldsEdit.amount, 'glyphicon-eye-open': !addFormMState.fieldsEdit.amount}]"></i>
+                </span>
+
+                <input class="form-control" id="amount" required ng-model="addFormMState.formM.amount" number-format
+                       ng-readonly="addFormMState.fieldsEdit.amount"/>
+              </div>
             </div>
           </div>
 
@@ -83,15 +118,20 @@
 
             <div class="col-sm-9">
               <div class="input-group">
-                <input class="form-control" id="received-date" required
-                       ng-model="addFormMState.formM.date_received"
-                       uib-datepicker-popup="{$addFormMState.datePickerFormat$}"
-                       is-open="addFormMState.datePickerIsOpen"
-                    />
+                <span class="input-group-addon" style="cursor:pointer;"
+                      ng-click="addFormMState.enableFieldEdit('date_received')">
+                  <i ng-class="['glyphicon', {'glyphicon-pencil': addFormMState.fieldsEdit.date_received, 'glyphicon-eye-open': !addFormMState.fieldsEdit.date_received}]"></i>
+                </span>
 
-            <span class="input-group-addon" ng-click="addFormMState.openDatePicker($event)">
-              <i class=" glyphicon glyphicon-calendar"></i>
-            </span>
+                <input class="form-control" id="received-date" required ng-model="addFormMState.formM.date_received"
+                       ng-readonly="addFormMState.fieldsEdit.date_received"
+                       uib-datepicker-popup="{$addFormMState.datePickerFormat$}"
+                       is-open="addFormMState.datePickerIsOpen"/>
+
+                <span class="input-group-addon" ng-click="addFormMState.openDatePicker($event)"
+                      ng-show="!addFormMState.fieldsEdit.date_received">
+                  <i class=" glyphicon glyphicon-calendar"></i>
+                </span>
               </div>
             </div>
           </div>
@@ -166,9 +206,58 @@
             </div>
           </div>
 
-          <div class="form-m-add-lc-issue" ng-show="addFormMState.showLcIssueContainer">
-            <lc-issue lc-issue-show="addFormMState.showLcIssueContainer"
-                      on-lc-issue-selected="addFormMState.onLcIssueSelected(selectedIssues)"/>
+          <div class="form-m-add-lc-issue" ng-show="addFormMState.showLcIssueContainer" style="margin-top: 10px;">
+            <div class="form-group lc-issue-select-group">
+              <label for="issue" class="control-label col-sm-12" style="text-align: center">
+                Type LC issue
+              </label>
+
+              <div class="col-sm-12">
+                <input type="text" class="form-control" id="issue" name="issue"
+                       ng-model="addFormMState.issue"
+                       typeahead-min-length="3" typeahead-on-select="addFormMState.issueSelected($item, $model, $label)"
+                       uib-typeahead="issue as issue.text for issue in addFormMState.getIssue($viewValue)"/>
+              </div>
+            </div>
+
+            <div ng-repeat="issue in addFormMState.issues">
+              <div class="input-group">
+                <label for="issue-text-display" class="sr-only"></label>
+
+                <span class="input-group-addon">{$$index + 1$}</span>
+
+                <input type="text" class="form-control" id="issue-text-display" name="issue-text-display" disabled
+                       ng-value="issue.text"
+                       style="padding-left: 10px;"/>
+
+                <span class="input-group-addon" style="cursor: pointer" ng-click="addFormMState.deleteIssue($index)">
+                  <span class="glyphicon glyphicon-trash"></span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div style="    margin-top: 50px;" class="existing-issues"
+               ng-show="addFormMState.detailedFormM.form_m_issues.length">
+            <h5 style="text-align: center">Existing Issues not closed
+              ({$addFormMState.detailedFormM.form_m_issues.length$})</h5>
+
+            <div ng-repeat="issue in addFormMState.detailedFormM.form_m_issues">
+              <div class="input-group">
+                <label for="issue-text-display" class="sr-only"></label>
+
+                <span class="input-group-addon">{$$index + 1$}</span>
+
+                <input type="text" class="form-control" id="issue-text-display" name="issue-text-display" disabled
+                       ng-value="issue.issue.text"
+                       style="padding-left: 10px;"/>
+
+                <span class="input-group-addon" style="cursor: pointer"
+                      ng-click="addFormMState.closeIssue(issue, $index)">
+                  <span class="glyphicon glyphicon-trash"></span>
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

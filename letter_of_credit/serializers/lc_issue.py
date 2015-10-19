@@ -29,7 +29,7 @@ class LCIssueConcreteSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class LCIssueConcreteSerializerFormM(serializers.HyperlinkedModelSerializer):
-    issue = serializers.ReadOnlyField(source='issue.text')
+    issue = LCIssueSerializer(read_only=True)
 
     class Meta:
         model = LCIssueConcrete

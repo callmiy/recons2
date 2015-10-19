@@ -2,7 +2,7 @@ from rest_framework import generics, pagination, status
 import django_filters
 from rest_framework.response import Response
 from letter_of_credit.models import FormM, LcBidRequest
-from letter_of_credit.serializers import FormMSerializer, LcBidRequestSerializer
+from letter_of_credit.serializers import FormMSerializer, LcBidRequestSerializer, LCIssueConcreteSerializer
 
 import logging
 
@@ -25,6 +25,33 @@ class FormMFilter(django_filters.FilterSet):
         fields = ('number', 'applicant', 'currency', 'filter', 'lc_not_attached')
 
 
+class FormIssueBidUtil:
+    def __init__(self, request, form_m_url, log_prefix=None):
+        self.request = request
+        self.form_m_url = form_m_url
+        self.log_prefix = log_prefix
+
+    def create_bid(self, amount):
+        logger.info('{} creating bid for amount "{:,.2f}"'.format(self.log_prefix, amount))
+
+        serializer = LcBidRequestSerializer(data={'amount': amount, 'mf': self.form_m_url},
+                                            context={'request': self.request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return serializer.data
+
+    def create_issues(self, issues):
+        logger.info('{} creating form M issues: {:}'.format(self.log_prefix, issues))
+        data = []
+        for issue in issues:
+            data.append({'issue': issue['url'], 'mf': self.form_m_url})
+
+        serializer = LCIssueConcreteSerializer(data=data, context={'request': self.request}, many=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return serializer.data
+
+
 class FormMListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = FormMSerializer
     queryset = FormM.objects.all()
@@ -35,14 +62,6 @@ class FormMListCreateAPIView(generics.ListCreateAPIView):
         self.log_prefix = 'Creating new form M:'
         super(FormMListCreateAPIView, self).__init__(**kwargs)
 
-    def create_bid(self, request, amount, form_m_url):
-        logger.info('{} creating bid for amount "{:,.2f}"'.format(self.log_prefix, amount))
-
-        serializer = LcBidRequestSerializer(data={'amount': amount, 'mf': form_m_url}, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return serializer.data
-
     def create(self, request, *args, **kwargs):
         incoming_data = request.data
         logger.info('%s with incoming data = \n%r', self.log_prefix, incoming_data)
@@ -52,8 +71,12 @@ class FormMListCreateAPIView(generics.ListCreateAPIView):
         self.perform_create(serializer)
         form_m_data = serializer.data
 
+        util = FormIssueBidUtil(request, form_m_data['url'], self.log_prefix)
         if 'bid' in incoming_data:
-            form_m_data['bid'] = self.create_bid(request, incoming_data['bid']['amount'], form_m_data['url'])
+            form_m_data['bid'] = util.create_bid(incoming_data['bid']['amount'])
+
+        if 'issues' in incoming_data:
+            form_m_data['issues'] = util.create_issues(incoming_data['issues'])
 
         headers = self.get_success_headers(form_m_data)
         return Response(form_m_data, status=status.HTTP_201_CREATED, headers=headers)
@@ -63,6 +86,26 @@ class FormMUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = FormM.objects.all()
     serializer_class = FormMSerializer
 
+    def __init__(self, **kwargs):
+        self.log_prefix = 'Updating form M:'
+        super(FormMUpdateAPIView, self).__init__(**kwargs)
+
     def update(self, request, *args, **kwargs):
-        logger.info('Updating form M with incoming data = \n%r', request.data)
-        return super(FormMUpdateAPIView, self).update(request, *args, **kwargs)
+        incoming_data = request.data
+        logger.info('%s with incoming data: \n%r', self.log_prefix, incoming_data)
+
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=incoming_data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        form_m_data = serializer.data
+
+        util = FormIssueBidUtil(request, form_m_data['url'], self.log_prefix)
+        if 'bid' in incoming_data:
+            form_m_data['bid'] = util.create_bid(incoming_data['bid']['amount'])
+
+        if 'issues' in incoming_data:
+            form_m_data['issues'] = util.create_issues(incoming_data['issues'])
+
+        return Response(form_m_data)

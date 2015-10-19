@@ -34,8 +34,8 @@ function formMListURLConfig($stateProvider) {
 }
 
 app.controller('FormMListController', FormMListController)
-FormMListController.$inject = ['FormM', '$scope', 'formMModelManager', '$http']
-function FormMListController(FormM, scope, formMModelManager, $http) {
+FormMListController.$inject = ['FormM', '$scope', 'formMModelManager', '$http', '$state']
+function FormMListController(FormM, scope, formMModelManager, $http, $state) {
   var vm = this
 
   /**
@@ -44,6 +44,11 @@ function FormMListController(FormM, scope, formMModelManager, $http) {
    * @type {[]}
    */
   vm.modelManager = formMModelManager
+
+  vm.modelRowDblClick = function modelRowDblClick(formM) {
+    $state.go('form_m.add', {detailedFormM: formM})
+    scope.tabs.addFormM.active = true
+  }
 
   /**
    * Update the form Ms collection and pagination hooks
@@ -71,21 +76,6 @@ function FormMListController(FormM, scope, formMModelManager, $http) {
   FormM.getNoLcAttached().$promise.then(function(data) {
     updateFormMs(data)
   })
-
-  /**
-   * The 'new form M' model. When we create a new form M via the create/add form M directive, the result is
-   * propagated from the creation directive into this model
-   * @type {null|object}
-   */
-  vm.newFormM = null
-
-  vm.receiveNewFormM = receiveNewFormM
-  function receiveNewFormM(newFormM) {
-    if (newFormM) {
-      newFormM.highlighted = true
-      vm.formMs.unshift(newFormM)
-    }
-  }
 
   /**
    * The table caption for the 'model-table' directive

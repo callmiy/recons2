@@ -72,6 +72,7 @@ class LCIssueConcreteUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
 class LcIssueFilter(django_filters.FilterSet):
     text = django_filters.CharFilter(lookup_type='icontains')
     exclude_form_m_issues = django_filters.MethodFilter()
+    exclude_issue_ids = django_filters.MethodFilter()
 
     class Meta:
         model = LCIssue
@@ -87,6 +88,11 @@ class LcIssueFilter(django_filters.FilterSet):
 
                 if len(_ids):
                     return qs.exclude(pk__in=_ids)
+        return qs
+
+    def filter_exclude_issue_ids(self, qs, value):
+        if value:
+            return qs.exclude(pk__in=value)
         return qs
 
 
