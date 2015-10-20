@@ -34,6 +34,7 @@ class LCRegister(models.Model):
         null=True,
         blank=True
     )
+    mt_730_received_at = models.DateField('MT 730 Received', null=True, blank=True)
 
     class Meta:
         app_label = 'letter_of_credit'
