@@ -64,7 +64,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   vm.detailedFormM = angular.copy($stateParams.detailedFormM)
   $stateParams.detailedFormM = null
-  var existingIssues
+  var existingIssues = []
 
   initialize()
   function initialize(form) {
@@ -136,6 +136,11 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     vm.issues = []
     issueIds = []
     vm.issue = null
+
+    if (issuesForm) {
+      issuesForm.$setPristine()
+      issuesForm.$setUntouched()
+    }
   }
 
   function initBidForm(bidForm) {
@@ -161,11 +166,12 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       closed_at: formatDate(new Date())
     }).$promise.then(issueClosedSuccess, issueClosedError)
 
-    function issueClosedSuccess(issue){
+    function issueClosedSuccess(issue) {
       vm.detailedFormM.form_m_issues.splice($index, 1)
       vm.closedIssues.push(issue)
     }
-    function issueClosedError(xhr){ xhrErrorDisplay(xhr)}
+
+    function issueClosedError(xhr) { xhrErrorDisplay(xhr)}
   }
 
   vm.toggleShowBidContainer = toggleShowBidContainer
@@ -264,40 +270,34 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
 
     function formMSavedSuccess(data) {
-      var sep = '===================================\n'
-      vm.savingFormMIndicator = 'Form M successfully saved, result is:\n\n' +
-                                '           Form M\n' +
-                                sep +
+      vm.savingFormMIndicator = 'Form M successfully saved!\n\n' +
                                 'Form M Number : ' + data.number + '\n' +
                                 'Value         : ' + data.currency_data.code + ' ' +
                                 $filter('number')(data.amount, 2) + '\n' +
                                 'Applicant     : ' + data.applicant_data.name
 
-      if (data.bid) {
-        vm.savingFormMIndicator += '\n\n           Bid\n' +
-                                   sep +
-                                   'Bid Amount     : ' + data.currency_data.code + ' ' +
-                                   $filter('number')(data.bid.amount, 2)
-      }
+      if (data.issues || existingIssues.length) {
+        var issuesText = '\n\n\nPlease note the following issues which must be \n' +
+                         'regularized before the LC ' +
+                         'request can be treated:\n'
+        var index = 1
 
-      if (data.issues) {
-        var issuesText = '\n\n           New Issues\n' + sep
-
-        kanmiiUnderscore.each(data.issues, function(issue, index) {
-          issuesText += ('(' + (index + 1) + ') ' + issue.issue_text.replace(/:ISSUE$/i, '') + '\n')
+        kanmiiUnderscore.each(data.issues, function(issue) {
+          issuesText += ('(' + index++ + ') ' + issue.issue_text.replace(/:ISSUE$/i, '') + '\n')
         })
+
+        if (existingIssues.length) {
+          kanmiiUnderscore.each(existingIssues, function(issue) {
+            issuesText += ('(' + index++ + ') ' + issue.issue.text.replace(/:ISSUE$/i, '') + '\n')
+          })
+        }
 
         vm.savingFormMIndicator += issuesText
       }
 
-      if (existingIssues && existingIssues.length) {
-        var existingIssuesText = '\n\n    Existing Issues Not Closed\n' + sep
-
-        kanmiiUnderscore.each(existingIssues, function(issue, index) {
-          existingIssuesText += ('(' + (index + 1) + ') ' + issue.issue.text.replace(/:ISSUE$/i, '') + '\n')
-        })
-
-        vm.savingFormMIndicator += existingIssuesText
+      if (data.bid) {
+        vm.savingFormMIndicator += '\n\nBid Amount     : ' + data.currency_data.code + ' ' +
+                                   $filter('number')(data.bid.amount, 2)
       }
 
       $timeout(function() {
