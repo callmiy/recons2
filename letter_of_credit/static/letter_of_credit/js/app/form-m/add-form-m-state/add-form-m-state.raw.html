@@ -1,7 +1,9 @@
 <div id="add-form-m-root-container" class="add-form-m-root-container" style="margin-top: 5px;">
   <form class="form-horizontal" name="addFormMForm"
         ng-submit="addFormMState.submit(addFormMState.formM, addFormMState.bidRequest, addFormMForm)">
+
     <div class="row add-form-m-form-row">
+
       <div class="add-form-m-saving-indicator" ng-show="addFormMState.formMIsSaving">
         <span class="glyphicon glyphicon-remove-sign add-form-m-saving-indicator-dismiss"
               ng-click="addFormMState.reset(addFormMForm)"></span>
@@ -65,7 +67,7 @@
                 </span>
 
                 <input class="form-control" type="text" min="3" id="applicant" name="applicant"
-                       ng-model="addFormMState.formM.applicant" ng-pattern="/.{4,}/"
+                       ng-model="addFormMState.formM.applicant" ng-pattern="addFormMState.applicantIsvalid"
                        ng-readonly="addFormMState.fieldsEdit.applicant" typeahead-min-length="3"
                        uib-typeahead="applicant as applicant.name for applicant in addFormMState.getApplicant($viewValue)"
                     />

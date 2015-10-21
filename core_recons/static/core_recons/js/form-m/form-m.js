@@ -72,5 +72,6 @@ function formMModelManager($filter) {
 app.value('formMAttributesVerboseNames', {
   date_received: 'date received',
   number: 'form m number',
-  currency: 'currency'
+  currency: 'currency',
+  applicant: 'applicant'
 })

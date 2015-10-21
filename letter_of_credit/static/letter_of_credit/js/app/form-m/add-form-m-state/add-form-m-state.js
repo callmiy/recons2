@@ -10,7 +10,7 @@ var app = angular.module('add-form-m-state', [
   'kanmii-underscore',
   'customer',
   'lc-issue-service',
-  'search-uploaded-form-m',
+  'search-detailed-or-uploaded-form-m',
   'form-m-service'
 ])
 
@@ -44,7 +44,7 @@ app.controller('AddFormMStateController', AddFormMStateController)
 AddFormMStateController.$inject = [
   'getTypeAheadCustomer',
   'getTypeAheadCurrency',
-  'SearchUploadedFormMService',
+  'SearchDetailedOrUploadedFormMService',
   'kanmiiUnderscore',
   'formatDate',
   'xhrErrorDisplay',
@@ -57,7 +57,7 @@ AddFormMStateController.$inject = [
   'LCIssueConcrete'
 ]
 
-function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchUploadedFormMService,
+function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
   kanmiiUnderscore, formatDate, xhrErrorDisplay, formMAttributesVerboseNames, FormM, getTypeAheadLCIssue,
   $timeout, $filter, $stateParams, LCIssueConcrete) {
   var vm = this
@@ -68,34 +68,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   initialize()
   function initialize(form) {
-    if (vm.detailedFormM) {
-      existingIssues = vm.detailedFormM.form_m_issues
-      vm.closedIssues = []
-      vm.detailedFormM.form_m_issues = vm.detailedFormM.form_m_issues.filter(function(issue) {
-        if (!issue.closed_at) return true
-        else {
-          vm.closedIssues.push(issue)
-          return false
-        }
-      })
-
-      vm.formM = {
-        date_received: new Date(vm.detailedFormM.date_received),
-        number: vm.detailedFormM.number,
-        applicant: vm.detailedFormM.applicant_data,
-        currency: vm.detailedFormM.currency_data,
-        amount: vm.detailedFormM.amount
-      }
-
-      vm.fieldsEdit = {
-        number: true,
-        currency: true,
-        applicant: true,
-        date_received: true,
-        amount: true
-      }
-
-    } else {
+    if (vm.detailedFormM) initDetailedFormM()
+    else {
       vm.formM = {
         date_received: new Date()
       }
@@ -121,6 +95,35 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       form.$setPristine()
       form.$setUntouched()
     }
+  }
+
+  function initDetailedFormM() {
+    existingIssues = vm.detailedFormM.form_m_issues
+    vm.closedIssues = []
+    vm.detailedFormM.form_m_issues = vm.detailedFormM.form_m_issues.filter(function(issue) {
+      if (!issue.closed_at) return true
+      else {
+        vm.closedIssues.push(issue)
+        return false
+      }
+    })
+
+    vm.formM = {
+      date_received: new Date(vm.detailedFormM.date_received),
+      number: vm.detailedFormM.number,
+      applicant: vm.detailedFormM.applicant_data,
+      currency: vm.detailedFormM.currency_data,
+      amount: vm.detailedFormM.amount
+    }
+
+    vm.fieldsEdit = {
+      number: true,
+      currency: true,
+      applicant: true,
+      date_received: true,
+      amount: true
+    }
+
   }
 
   function initFormMSavingIndicator() {
@@ -196,6 +199,12 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     } else vm.addLcIssuesTitle = 'Dismiss'
   }
 
+  vm.applicantIsvalid = {
+    test: function() {
+      return kanmiiUnderscore.isObject(vm.formM.applicant)
+    }
+  }
+
   vm.disableSubmitBtn = disableSubmitBtn
   function disableSubmitBtn(newFormMFormInvalid, bidRequestFormInvalid) {
 
@@ -206,12 +215,16 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   }
 
   vm.reset = reset
-  function reset(form) {
+  function reset(addFormMForm) {
     vm.detailedFormM = null
     initialize()
-    if (form) {
-      form.$setPristine()
-      form.$setUntouched()
+
+    if (addFormMForm) {
+      addFormMForm.newFormMForm.applicant.$viewValue = null
+      addFormMForm.newFormMForm.applicant.$commitViewValue()
+
+      addFormMForm.$setPristine()
+      addFormMForm.$setUntouched()
     }
   }
 
@@ -226,11 +239,16 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   }
 
   vm.getUploadedFormM = function getUploadedFormM() {
-    vm.searchFormM = {}
+    vm.detailedFormM = null
+    initialize()
 
-    SearchUploadedFormMService.searchWithModal().then(function(data) {
-      if (data.length === 1) {
-        var formM = data[0]
+    SearchDetailedOrUploadedFormMService.searchWithModal().then(function(data) {
+      if (data.detailed) {
+        vm.detailedFormM = data.detailed
+        initDetailedFormM()
+
+      } else {
+        var formM = data.uploaded
         vm.searchFormM = formM
         vm.formM.number = formM.mf
 
