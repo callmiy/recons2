@@ -18,7 +18,9 @@ class LCIssue(models.Model):
         return self.text
 
     def save(self, *args, **kwargs):
-        self.text = '%s:ISSUE' % self.text.strip().upper()
+        self.text = self.text.strip().upper()
+        if not self.text.endswith(':ISSUE'):
+            self.text = '%s:ISSUE' % self.text
         super(LCIssue, self).save(*args, **kwargs)
 
 
