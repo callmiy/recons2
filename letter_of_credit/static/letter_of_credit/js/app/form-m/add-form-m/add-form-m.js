@@ -1,148 +1,180 @@
 "use strict";
+
 /*jshint camelcase:false*/
 
-var app = angular.module('add-form-m', ['rootApp', 'kanmii-underscore'])
+var rootCommons = require('commons')
 
-app.directive('addFormM', addFormMDirective)
-addFormMDirective.$inject = ['ModalService']
-function addFormMDirective(ModalService) {
-  function link(scope, elm, attributes, self) {
-    elm
-      .css({cursor: 'pointer'})
-      .bind('click', function() {
-              ModalService.showModal({
-                template: require('./add-form-m.html'),
+var app = angular.module('add-form-m', [
+  'ui.router',
+  'rootApp',
+  'kanmii-underscore',
+  'customer',
+  'lc-issue-service',
+  'search-detailed-or-uploaded-form-m',
+  'form-m-service'
+])
 
-                controller: 'AddFormMModalCtrl as addFormMModal'
+app.config(rootCommons.interpolateProviderConfig)
 
-              }).then(function(modal) {
-                modal.element.dialog({
-                  dialogClass: 'no-close',
-                  modal: true,
-                  minWidth: 600,
-                  minHeight: 450,
-                  maxHeight: 600,
-                  title: 'Add Form M'
-                })
+app.config(formMStateURLConfig)
 
-                modal.close.then(function(submittedData) {
-                  if (submittedData && submittedData.submittedFormM) {
-                    self.saveFormM(submittedData)
-                  }
-                })
-              })
-            })
-  }
+formMStateURLConfig.$inject = ['$stateProvider']
 
-  return {
-    restrict: 'A',
-    link: link,
-    controller: 'AddFormMDirectiveCtrl as addFormM',
-    scope: {},
-    bindToController: {
-      onNewMf: '&'
-    }
-  }
-}
+function formMStateURLConfig($stateProvider) {
+  $stateProvider
+    .state('form_m.add', {
+      kanmiiTitle: 'Add form M',
 
-app.controller('AddFormMDirectiveCtrl', AddFormMDirectiveCtrl)
+      params: {
+        detailedFormM: null
+      },
 
-AddFormMDirectiveCtrl.$inject = [
-  'formatDate',
-  'FormM',
-  'xhrErrorDisplay',
-  'kanmiiUnderscore',
-  'LCIssueConcrete',
-  'LcBidRequest',
-  'formMAttributesVerboseNames'
-]
+      views: {
+        addFormM: {
+          templateUrl: require('lcAppCommons').buildUrl('form-m/add-form-m/add-form-m.html'),
 
-function AddFormMDirectiveCtrl(formatDate, FormM, xhrErrorDisplay, kanmiiUnderscore, LCIssueConcrete, LcBidRequest,
-  formMAttributesVerboseNames) {
-  var vm = this
-
-  vm.saveFormM = saveFormM
-  function saveFormM(submittedData) {
-    var newFormM = submittedData.submittedFormM
-    var formMToSave = angular.copy(newFormM)
-    formMToSave.applicant = newFormM.applicant.url
-    formMToSave.currency = newFormM.currency.url
-    formMToSave.date_received = formatDate(newFormM.date_received)
-
-    var submittedBidRequest = submittedData.submittedBidRequest
-    if (submittedBidRequest && !kanmiiUnderscore.isEmpty(submittedBidRequest)) {
-      formMToSave.goods_description = submittedData.submittedBidRequest.goods_description
-    }
-
-    var formM = new FormM(formMToSave)
-    formM.$save(formMSavedSuccess, formMSavedError)
-
-    function formMSavedSuccess(data) {
-      saveLcIssues(data.url, submittedData.selectedLcIssues)
-
-      if (formMToSave.goods_description) makeBidRequest(data.url, submittedBidRequest)
-
-      vm.onNewMf({newFormM: data})
-    }
-
-    function formMSavedError(xhr) {
-      xhrErrorDisplay(xhr, formMAttributesVerboseNames)
-    }
-  }
-
-  function saveLcIssues(formMUrl, selectedLcIssues) {
-
-    kanmiiUnderscore.each(selectedLcIssues, function(val, key) {
-      if (val) {
-        new LCIssueConcrete({issue: key, mf: formMUrl})
-          .$save(function(data) { console.log(data); }, function(xhr) {console.log(xhr);})
+          controller: 'AddFormMStateController as addFormMState'
+        }
       }
     })
-  }
-
-  function makeBidRequest(formMUrl, submittedBidRequest) {
-    submittedBidRequest.mf = formMUrl
-    var bid = new LcBidRequest(submittedBidRequest)
-    bid.$save(
-      function(data) {console.log('bid saved successfully with data = ', data);},
-      function(xhr) {xhrErrorDisplay(xhr)}
-    )
-  }
 }
 
-app.controller('AddFormMModalCtrl', AddFormMModalCtrl)
-AddFormMModalCtrl.$inject = [
-  'resetForm',
-  '$element',
-  'close',
-  'getTypeAheadCustomer',
-  'getTypeAheadCurrency'
-]
-function AddFormMModalCtrl(resetForm, element, close, getTypeAheadCustomer, getTypeAheadCurrency) {
+app.controller('AddFormMStateController', AddFormMStateController)
 
+AddFormMStateController.$inject = [
+  'getTypeAheadCustomer',
+  'getTypeAheadCurrency',
+  'SearchDetailedOrUploadedFormMService',
+  'kanmiiUnderscore',
+  'formatDate',
+  'xhrErrorDisplay',
+  'formMAttributesVerboseNames',
+  'FormM',
+  'getTypeAheadLCIssue',
+  '$timeout',
+  '$filter',
+  '$stateParams',
+  'LCIssueConcrete'
+]
+
+function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
+  kanmiiUnderscore, formatDate, xhrErrorDisplay, formMAttributesVerboseNames, FormM, getTypeAheadLCIssue,
+  $timeout, $filter, $stateParams, LCIssueConcrete) {
   var vm = this
 
-  vm.element = element
+  vm.detailedFormM = angular.copy($stateParams.detailedFormM)
+  $stateParams.detailedFormM = null
+  var existingIssues = []
 
-  initForm()
-  function initForm() {
-    vm.formM = {
-      date_received: new Date()
+  initialize()
+  function initialize(form) {
+    if (vm.detailedFormM) initDetailedFormM()
+    else {
+      vm.formM = {
+        date_received: new Date()
+      }
+
+      vm.fieldsEdit = {
+        number: false,
+        currency: false,
+        applicant: false,
+        date_received: false,
+        amount: false
+      }
+
+      vm.closedIssues = []
     }
 
-    vm.showLcIssueContainer = false
-    vm.addLcIssuesTitle = 'Add Letter Of Credit Issues'
-    vm.selectedLcIssues = {}
+    vm.searchFormM = {}
 
-    vm.showBidContainer = false
-    vm.makeBidTitle = 'Make Bid Request'
-    vm.bidRequest = {
-      amount: null
+    initBidForm()
+    initIssuesForm()
+    initFormMSavingIndicator()
+
+    if (form) {
+      form.$setPristine()
+      form.$setUntouched()
     }
   }
 
-  vm.onLcIssueSelected = function onLcIssueSelected(issues) {
-    vm.selectedLcIssues = issues
+  function initDetailedFormM() {
+    existingIssues = vm.detailedFormM.form_m_issues
+    vm.closedIssues = []
+    vm.detailedFormM.form_m_issues = vm.detailedFormM.form_m_issues.filter(function(issue) {
+      if (!issue.closed_at) return true
+      else {
+        vm.closedIssues.push(issue)
+        return false
+      }
+    })
+
+    vm.formM = {
+      date_received: new Date(vm.detailedFormM.date_received),
+      number: vm.detailedFormM.number,
+      applicant: vm.detailedFormM.applicant_data,
+      currency: vm.detailedFormM.currency_data,
+      amount: Number(vm.detailedFormM.amount)
+    }
+
+    vm.fieldsEdit = {
+      number: true,
+      currency: true,
+      applicant: true,
+      date_received: true,
+      amount: true
+    }
+
+  }
+
+  function initFormMSavingIndicator() {
+    vm.savingFormMIndicator = 'Creating New Form M...........please wait'
+    vm.formMIsSaving = false
+  }
+
+  var issueIds
+
+  function initIssuesForm(issuesForm) {
+    vm.showLcIssueContainer = false
+    vm.addLcIssuesTitle = 'Add Letter Of Credit Issues'
+    vm.issues = []
+    issueIds = []
+    vm.issue = null
+
+    if (issuesForm) {
+      issuesForm.$setPristine()
+      issuesForm.$setUntouched()
+    }
+  }
+
+  function initBidForm(bidForm) {
+    vm.showBidContainer = false
+    vm.makeBidTitle = 'Make Bid Request'
+    vm.bidRequest = {}
+
+    if (bidForm) {
+      bidForm.$setPristine()
+      bidForm.$setUntouched()
+    }
+  }
+
+  vm.enableFieldEdit = function enableFieldEdit(field) {
+    vm.fieldsEdit[field] = vm.detailedFormM ? !vm.fieldsEdit[field] : false
+  }
+
+  vm.closeIssue = function closeIssue(issue, $index) {
+    LCIssueConcrete.put({
+      id: issue.id,
+      mf: vm.detailedFormM.url,
+      issue: issue.issue.url,
+      closed_at: formatDate(new Date())
+    }).$promise.then(issueClosedSuccess, issueClosedError)
+
+    function issueClosedSuccess(issue) {
+      vm.detailedFormM.form_m_issues.splice($index, 1)
+      vm.closedIssues.push(issue)
+    }
+
+    function issueClosedError(xhr) { xhrErrorDisplay(xhr)}
   }
 
   vm.toggleShowBidContainer = toggleShowBidContainer
@@ -151,7 +183,7 @@ function AddFormMModalCtrl(resetForm, element, close, getTypeAheadCustomer, getT
 
     vm.makeBidTitle = !vm.showBidContainer ? 'Make Bid Request' : 'Dismiss'
 
-    if (!vm.showBidContainer) resetForm(bidRequestForm, element, '.bid-request-form-container .form-control')
+    if (!vm.showBidContainer) initBidForm(bidRequestForm)
     else {
       vm.bidRequest.amount = vm.formM.amount
     }
@@ -159,44 +191,186 @@ function AddFormMModalCtrl(resetForm, element, close, getTypeAheadCustomer, getT
 
   vm.toggleShowLcIssueContainer = toggleShowLcIssueContainer
   function toggleShowLcIssueContainer() {
-    vm.showLcIssueContainer = !vm.showLcIssueContainer
+    vm.showLcIssueContainer = vm.formM.number && !vm.showLcIssueContainer
 
-    vm.addLcIssuesTitle = !vm.showLcIssueContainer ? 'Add Letter Of Credit Issues' : 'Dismiss'
+    if (!vm.showLcIssueContainer) {
+      vm.addLcIssuesTitle = 'Add Letter Of Credit Issues'
+      initIssuesForm()
+    } else vm.addLcIssuesTitle = 'Dismiss'
+  }
+
+  vm.applicantIsvalid = {
+    test: function() {
+      return kanmiiUnderscore.isObject(vm.formM.applicant)
+    }
   }
 
   vm.disableSubmitBtn = disableSubmitBtn
-  function disableSubmitBtn(newFormMModalFormInvalid, bidRequestFormInvalid) {
+  function disableSubmitBtn(newFormMFormInvalid, bidRequestFormInvalid) {
 
-    if (newFormMModalFormInvalid) return true
+    if (newFormMFormInvalid) return true
+
     else if (vm.showBidContainer && bidRequestFormInvalid) return true
-    return false
-  }
 
-  vm.close = close
+    else if (vm.showLcIssueContainer && !vm.issues.length) return true
+
+    var compared = compareDetailedFormMWithForm()
+
+    if (!compared) return false
+
+    else return kanmiiUnderscore.all(compared) && !vm.issues.length && kanmiiUnderscore.isEmpty(vm.bidRequest)
+
+  }
 
   vm.reset = reset
-  function reset(form) {
-    vm.formM = {}
-    resetForm(form, element, '.form-control', initForm)
-  }
+  function reset(addFormMForm) {
+    vm.detailedFormM = null
+    initialize()
 
-  vm.submitFormM = submitFormM
-  function submitFormM(newFormM, bidRequest) {
-    console.log('vm.selectedLcIssues = ', vm.selectedLcIssues);
-    close({
-      submittedFormM: newFormM,
-      submittedBidRequest: bidRequest,
-      selectedLcIssues: vm.selectedLcIssues
-    })
+    if (addFormMForm) {
+      addFormMForm.newFormMForm.applicant.$viewValue = null
+      addFormMForm.newFormMForm.applicant.$commitViewValue()
+
+      addFormMForm.$setPristine()
+      addFormMForm.$setUntouched()
+    }
   }
 
   vm.getApplicant = getTypeAheadCustomer
   vm.getCurrency = getTypeAheadCurrency
 
-  vm.datePickerFormat = 'dd-MMMM-yyyy'
+  vm.datePickerFormat = 'dd-MMM-yyyy'
   vm.datePickerIsOpen = false
   vm.openDatePicker = openDatePicker
   function openDatePicker() {
     vm.datePickerIsOpen = true
+  }
+
+  vm.getUploadedFormM = function getUploadedFormM() {
+    vm.detailedFormM = null
+    initialize()
+
+    SearchDetailedOrUploadedFormMService.searchWithModal().then(function(data) {
+      if (data.detailed) {
+        vm.detailedFormM = data.detailed
+        initDetailedFormM()
+
+      } else {
+        var formM = data.uploaded
+        vm.searchFormM = formM
+        vm.formM.number = formM.mf
+
+        getTypeAheadCurrency(formM.ccy).then(function(ccy) {
+          vm.formM.currency = ccy[0]
+        })
+      }
+    })
+  }
+
+  vm.submit = function submit(formM, bidRequest, form) {
+    vm.formMIsSaving = true
+    var formMToSave = angular.copy(formM)
+
+    formMToSave.applicant = formMToSave.applicant.url
+    formMToSave.currency = formMToSave.currency.url
+    formMToSave.date_received = formatDate(formMToSave.date_received)
+
+    var submittedBidRequest = angular.copy(bidRequest)
+    if (submittedBidRequest && !kanmiiUnderscore.isEmpty(submittedBidRequest)) {
+      formMToSave.goods_description = submittedBidRequest.goods_description
+
+      formMToSave.bid = {
+        amount: Number(submittedBidRequest.amount)
+      }
+    }
+
+    if (vm.issues.length) {
+      formMToSave.issues = vm.issues
+    }
+
+    if (!vm.detailedFormM) new FormM(formMToSave).$save(formMSavedSuccess, formMSavedError)
+
+    else {
+      formMToSave.id = vm.detailedFormM.id
+      new FormM(formMToSave).$put(formMSavedSuccess, formMSavedError)
+    }
+
+    function formMSavedSuccess(data) {
+      vm.savingFormMIndicator = 'Form M successfully saved!\n\n' +
+                                'Form M Number : ' + data.number + '\n' +
+                                'Value         : ' + data.currency_data.code + ' ' +
+                                $filter('number')(data.amount, 2) + '\n' +
+                                'Applicant     : ' + data.applicant_data.name
+
+      if (data.issues || existingIssues.length) {
+        var issuesText = '\n\n\nPlease note the following issues which must be \n' +
+                         'regularized before the LC ' +
+                         'request can be treated:\n'
+        var index = 1
+
+        kanmiiUnderscore.each(data.issues, function(issue) {
+          issuesText += ('(' + index++ + ') ' + issue.issue_text.replace(/:ISSUE$/i, '') + '\n')
+        })
+
+        if (existingIssues.length) {
+          kanmiiUnderscore.each(existingIssues, function(issue) {
+            issuesText += ('(' + index++ + ') ' + issue.issue.text.replace(/:ISSUE$/i, '') + '\n')
+          })
+        }
+
+        vm.savingFormMIndicator += issuesText
+      }
+
+      if (data.bid) {
+        vm.savingFormMIndicator += '\n\nBid Amount     : ' + data.currency_data.code + ' ' +
+                                   $filter('number')(data.bid.amount, 2)
+      }
+
+      $timeout(function() {
+        reset(form)
+      }, 120000)
+    }
+
+    function formMSavedError(xhr) {
+      initFormMSavingIndicator()
+      xhrErrorDisplay(xhr, formMAttributesVerboseNames)
+    }
+  }
+
+  vm.issueSelected = function issueSelected($item, $model) {
+    vm.issues.push($model)
+    issueIds.push($model.id)
+    vm.issue = null
+  }
+
+  vm.deleteIssue = function deleteIssue(index) {
+    vm.issues.splice(index, 1)
+    issueIds.splice(index, 1)
+  }
+
+  vm.getIssue = function getIssue(text) {
+    var search = {text: text, exclude_issue_ids: issueIds}
+
+    if (vm.detailedFormM) search.exclude_form_m_issues = vm.detailedFormM.number
+
+    return getTypeAheadLCIssue(search)
+  }
+
+  function compareDetailedFormMWithForm() {
+    if (!vm.detailedFormM) return false
+
+    return {
+      number: vm.formM.number && angular.equals(vm.formM.number, vm.detailedFormM.number),
+
+      date_received: angular.equals(vm.formM.date_received, new Date(vm.detailedFormM.date_received)),
+
+      amount: vm.formM.amount && angular.equals(vm.formM.amount, Number(vm.detailedFormM.amount)),
+
+      currency: vm.formM.currency && angular.equals(
+        vm.formM.currency.code, vm.detailedFormM.currency_data.code),
+
+      applicant: vm.formM.applicant && angular.equals(
+        vm.formM.applicant.name, vm.detailedFormM.applicant_data.name)
+    }
   }
 }

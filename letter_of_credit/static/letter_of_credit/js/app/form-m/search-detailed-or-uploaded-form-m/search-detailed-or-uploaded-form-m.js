@@ -52,7 +52,7 @@ function SearchDetailedOrUploadedFormMService(UploadFormM, xhrErrorDisplay, Moda
 
       ModalService.showModal({
         templateUrl: require('lcAppCommons').buildUrl(
-          'form-m/add-form-m-state/search-detailed-or-uploaded-form-m/search-detailed-or-uploaded-form-m-modal.html'),
+          'form-m/search-detailed-or-uploaded-form-m/search-detailed-or-uploaded-form-m-modal.html'),
 
         controller: 'SearchDetailedOrUploadedFormMServiceModalCtrl as searchUploadedFormMModal'
       }).then(function(modal) {

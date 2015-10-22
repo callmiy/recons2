@@ -75,7 +75,7 @@ class LCRegisterUploadView(View):
 
     def update_only_if_lc_changed(self, lc_number, lc_qs, data):
         """
-        Update and LC only if it has been amended
+        Update an LC only if it has been amended
 
         Checks if the attributes of the lc being uploaded (the key in the `data` object) is the same as that of
         the lc retrieved from the database and then do any update only if something has changed
@@ -90,6 +90,8 @@ class LCRegisterUploadView(View):
         attr_val_from_lc_changed = False
 
         for key in data:
+            if key == 'mf':  # don't update form M number
+                continue
             client_attr_val = data[key]
             lc_attr_val = getattr(lc_obj, key, None)
 
@@ -151,12 +153,8 @@ class LCRegisterUploadView(View):
                 form_m_qs = FormM.objects.filter(number=data['mf'])
 
                 if form_m_qs.exists():
-                    form_m_obj = form_m_qs[0]
-
-                    if not form_m_obj.lc:
-                        form_m_obj.lc = lc_obj
-                        form_m_obj.save()
-                        logger.info('LC %s: form M was not previously attached. Form M "%s" attached.' % (
-                            lc_number, data['mf']))
+                    logger.info('LC %s: if form M was not previously attached, form M "%s" will now be attached.' % (
+                    lc_number, data['mf']))
+                    form_m_qs[0].attach_lc(lc=lc_obj)
 
         return redirect(admin_url(LCRegister))

@@ -9,7 +9,7 @@ var app = angular.module('form-m',
    'ui.router',
    'list-form-m',
    'upload-form-m',
-   'add-form-m-state'
+   'add-form-m'
   ])
 
 app.config(rootCommons.interpolateProviderConfig)
