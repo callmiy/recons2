@@ -6,7 +6,7 @@
 
       <div class="add-form-m-saving-indicator" ng-show="addFormMState.formMIsSaving">
         <span class="glyphicon glyphicon-remove-sign add-form-m-saving-indicator-dismiss"
-              ng-click="addFormMState.reset(addFormMForm)"></span>
+              ng-click="addFormMState.hideSavingIndicator()"></span>
 
         <pre>{$addFormMState.savingFormMIndicator$}</pre>
       </div>
@@ -24,7 +24,7 @@
                 </span>
 
                 <input class="form-control" type="text" min="4" id="form-m" disabled
-                       placeholder="Click to search form M in single window"
+                       placeholder="double click to search form M in single window"
                        ng-model="addFormMState.searchFormM.mf"/>
               </div>
             </div>
@@ -66,8 +66,8 @@
                   <i ng-class="['glyphicon', {'glyphicon-pencil': addFormMState.fieldsEdit.applicant, 'glyphicon-eye-open': !addFormMState.fieldsEdit.applicant}]"></i>
                 </span>
 
-                <input class="form-control" type="text" min="3" id="applicant" name="applicant"
-                       ng-model="addFormMState.formM.applicant" ng-pattern="addFormMState.applicantIsvalid"
+                <input class="form-control" type="text" min="3" id="applicant" name="applicant" required
+                       ng-model="addFormMState.formM.applicant" ng-pattern="addFormMState.validators.applicant"
                        ng-readonly="addFormMState.fieldsEdit.applicant" typeahead-min-length="3"
                        uib-typeahead="applicant as applicant.name for applicant in addFormMState.getApplicant($viewValue)"
                     />
@@ -90,7 +90,8 @@
                   <i ng-class="['glyphicon', {'glyphicon-pencil': addFormMState.fieldsEdit.currency, 'glyphicon-eye-open': !addFormMState.fieldsEdit.currency}]"></i>
                 </span>
 
-                <input class="form-control" id="currency" required maxlength="3" name="currency"
+                <input class="form-control" id="currency" maxlength="3" name="currency" required
+                       ng-pattern="addFormMState.validators.currency"
                        ng-model="addFormMState.formM.currency" ng-readonly="addFormMState.fieldsEdit.currency"
                        uib-typeahead="currency as currency.code for currency in addFormMState.getCurrency($viewValue)"
                        typeahead-min-length="2"
@@ -150,10 +151,7 @@
           </div>
 
           <div class="col-sm-4" style="text-align:right ">
-            <span class="btn btn-default"
-                  ng-click="addFormMState.reset(addFormMForm)">
-              Reset
-            </span>
+            <span class="btn btn-default" ng-click="addFormMState.reset(addFormMForm)">Clear</span>
           </div>
         </div>
       </div>
@@ -239,12 +237,10 @@
             </div>
           </div>
 
-          <div style="    margin-top: 30px;" class="existing-issues"
-               ng-show="addFormMState.detailedFormM.form_m_issues.length">
-            <h5 style="text-align: center">Existing Issues not closed
-              ({$addFormMState.detailedFormM.form_m_issues.length$})</h5>
+          <div style="margin-top: 30px;" class="existing-issues" ng-show="addFormMState.nonClosedIssues.length">
+            <h5 style="text-align: center">Issues not closed({$addFormMState.nonClosedIssues.length$})</h5>
 
-            <div ng-repeat="issue in addFormMState.detailedFormM.form_m_issues">
+            <div ng-repeat="issue in addFormMState.nonClosedIssues">
               <div class="input-group">
                 <label for="issue-text-display" class="sr-only"></label>
 
@@ -259,6 +255,12 @@
                   <span class="glyphicon glyphicon-trash"></span>
                 </span>
               </div>
+            </div>
+
+            <div class="download-issue-btn-container" style="text-align: right;margin-top: 20px;">
+              <button type="button" class="btn btn-info" ng-click="addFormMState.downloadIssues()">
+                Download issues
+              </button>
             </div>
           </div>
 
@@ -275,7 +277,7 @@
                 <span class="input-group-addon">{$$index + 1$}</span>
 
                 <input type="text" class="form-control" id="issue-text-display" name="issue-text-display" disabled
-                       ng-value="issue.issue.text || issue.issue_text"
+                       ng-value="issue.issue.text"
                        style="padding-left: 10px;"/>
 
                 <span class="input-group-addon">

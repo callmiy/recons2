@@ -49,7 +49,23 @@ class FormIssueBidUtil:
         serializer = LCIssueConcreteSerializer(data=data, context={'request': self.request}, many=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return serializer.data
+
+        issues = []
+        # we need to do this because the structure of FormMSerializer['form_m_issues'] (the LCIssueConcreteSerializer
+        # data that is nested into FormMSerializer) differs from vanilla LCIssueConcreteSerializer
+        for issue in serializer.data:
+            issues.append({
+                'closed_at': issue['closed_at'],
+                'created_at': issue['created_at'],
+                'id': issue['id'],
+                'url': issue['url'],
+                'issue': {
+                    'text': issue['issue_text'],
+                    'url': issue['issue']
+                }
+            })
+
+        return issues
 
 
 class FormMListCreateAPIView(generics.ListCreateAPIView):
@@ -76,7 +92,7 @@ class FormMListCreateAPIView(generics.ListCreateAPIView):
             form_m_data['bid'] = util.create_bid(incoming_data['bid']['amount'])
 
         if 'issues' in incoming_data:
-            form_m_data['issues'] = util.create_issues(incoming_data['issues'])
+            form_m_data['form_m_issues'] += util.create_issues(incoming_data['issues'])
 
         headers = self.get_success_headers(form_m_data)
         return Response(form_m_data, status=status.HTTP_201_CREATED, headers=headers)
@@ -106,6 +122,6 @@ class FormMUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
             form_m_data['bid'] = util.create_bid(incoming_data['bid']['amount'])
 
         if 'issues' in incoming_data:
-            form_m_data['issues'] = util.create_issues(incoming_data['issues'])
+            form_m_data['form_m_issues'] += util.create_issues(incoming_data['issues'])
 
         return Response(form_m_data)

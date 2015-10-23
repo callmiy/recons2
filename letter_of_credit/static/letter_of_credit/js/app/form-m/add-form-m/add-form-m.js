@@ -64,10 +64,12 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   vm.detailedFormM = angular.copy($stateParams.detailedFormM)
   $stateParams.detailedFormM = null
-  var existingIssues = []
+  var existingIssues
 
   initialize()
   function initialize(form) {
+    existingIssues = []
+
     if (vm.detailedFormM) initDetailedFormM()
     else {
       vm.formM = {
@@ -83,6 +85,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       }
 
       vm.closedIssues = []
+      vm.nonClosedIssues = []
     }
 
     vm.searchFormM = {}
@@ -99,9 +102,15 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   function initDetailedFormM() {
     existingIssues = vm.detailedFormM.form_m_issues
+
     vm.closedIssues = []
-    vm.detailedFormM.form_m_issues = vm.detailedFormM.form_m_issues.filter(function(issue) {
-      if (!issue.closed_at) return true
+    vm.nonClosedIssues = []
+
+    vm.detailedFormM.form_m_issues.forEach(function(issue) {
+      if (!issue.closed_at) {
+        vm.nonClosedIssues.push(issue)
+        return true
+      }
       else {
         vm.closedIssues.push(issue)
         return false
@@ -170,15 +179,14 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }).$promise.then(issueClosedSuccess, issueClosedError)
 
     function issueClosedSuccess(issue) {
-      vm.detailedFormM.form_m_issues.splice($index, 1)
+      vm.nonClosedIssues.splice($index, 1)
       vm.closedIssues.push(issue)
     }
 
     function issueClosedError(xhr) { xhrErrorDisplay(xhr)}
   }
 
-  vm.toggleShowBidContainer = toggleShowBidContainer
-  function toggleShowBidContainer(bidRequestForm) {
+  vm.toggleShowBidContainer = function toggleShowBidContainer(bidRequestForm) {
     vm.showBidContainer = !vm.showBidContainer
 
     vm.makeBidTitle = !vm.showBidContainer ? 'Make Bid Request' : 'Dismiss'
@@ -189,8 +197,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
   }
 
-  vm.toggleShowLcIssueContainer = toggleShowLcIssueContainer
-  function toggleShowLcIssueContainer() {
+  vm.toggleShowLcIssueContainer = function toggleShowLcIssueContainer() {
     vm.showLcIssueContainer = vm.formM.number && !vm.showLcIssueContainer
 
     if (!vm.showLcIssueContainer) {
@@ -199,9 +206,17 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     } else vm.addLcIssuesTitle = 'Dismiss'
   }
 
-  vm.applicantIsvalid = {
-    test: function() {
-      return kanmiiUnderscore.isObject(vm.formM.applicant)
+  vm.validators = {
+    applicant: {
+      test: function() {
+        return kanmiiUnderscore.isObject(vm.formM.applicant)
+      }
+    },
+
+    currency: {
+      test: function() {
+        return kanmiiUnderscore.isObject(vm.formM.currency)
+      }
     }
   }
 
@@ -241,8 +256,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   vm.datePickerFormat = 'dd-MMM-yyyy'
   vm.datePickerIsOpen = false
-  vm.openDatePicker = openDatePicker
-  function openDatePicker() {
+  vm.openDatePicker = function openDatePicker() {
     vm.datePickerIsOpen = true
   }
 
@@ -268,7 +282,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   }
 
   vm.submit = function submit(formM, bidRequest, form) {
-    vm.formMIsSaving = true
     var formMToSave = angular.copy(formM)
 
     formMToSave.applicant = formMToSave.applicant.url
@@ -284,9 +297,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       }
     }
 
-    if (vm.issues.length) {
-      formMToSave.issues = vm.issues
-    }
+    if (vm.issues.length) formMToSave.issues = vm.issues
 
     if (!vm.detailedFormM) new FormM(formMToSave).$save(formMSavedSuccess, formMSavedError)
 
@@ -296,38 +307,25 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
 
     function formMSavedSuccess(data) {
-      vm.savingFormMIndicator = 'Form M successfully saved!\n\n' +
-                                'Form M Number : ' + data.number + '\n' +
-                                'Value         : ' + data.currency_data.code + ' ' +
-                                $filter('number')(data.amount, 2) + '\n' +
-                                'Applicant     : ' + data.applicant_data.name
+      vm.detailedFormM = data
+      initDetailedFormM()
 
-      if (data.issues || existingIssues.length) {
-        var issuesText = '\n\n\nPlease note the following issues which must be \n' +
-                         'regularized before the LC ' +
-                         'request can be treated:\n'
-        var index = 1
+      vm.savingFormMIndicator = showFormMMessage()
 
-        kanmiiUnderscore.each(data.issues, function(issue) {
-          issuesText += ('(' + index++ + ') ' + issue.issue_text.replace(/:ISSUE$/i, '') + '\n')
-        })
-
-        if (existingIssues.length) {
-          kanmiiUnderscore.each(existingIssues, function(issue) {
-            issuesText += ('(' + index++ + ') ' + issue.issue.text.replace(/:ISSUE$/i, '') + '\n')
-          })
-        }
-
-        vm.savingFormMIndicator += issuesText
-      }
+      vm.savingFormMIndicator += showIssuesMessage()
 
       if (data.bid) {
         vm.savingFormMIndicator += '\n\nBid Amount     : ' + data.currency_data.code + ' ' +
                                    $filter('number')(data.bid.amount, 2)
       }
 
+      vm.formMIsSaving = true
+
+      initBidForm()
+      initIssuesForm()
+
       $timeout(function() {
-        reset(form)
+        vm.formMIsSaving = false
       }, 120000)
     }
 
@@ -335,6 +333,10 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       initFormMSavingIndicator()
       xhrErrorDisplay(xhr, formMAttributesVerboseNames)
     }
+  }
+
+  vm.hideSavingIndicator = function hideSavingIndicator() {
+    vm.formMIsSaving = false
   }
 
   vm.issueSelected = function issueSelected($item, $model) {
@@ -354,6 +356,36 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     if (vm.detailedFormM) search.exclude_form_m_issues = vm.detailedFormM.number
 
     return getTypeAheadLCIssue(search)
+  }
+
+  vm.downloadIssues = function downloadIssues() {
+    vm.savingFormMIndicator = showFormMMessage()
+
+    vm.savingFormMIndicator += showIssuesMessage()
+
+    vm.formMIsSaving = true
+  }
+
+  function showFormMMessage() {
+    return 'Form M Number : ' + vm.formM.number + '\n' +
+           'Value         : ' + vm.formM.currency.code + ' ' +
+           $filter('number')(vm.formM.amount, 2) + '\n' +
+           'Applicant     : ' + vm.formM.applicant.name
+  }
+
+  function showIssuesMessage() {
+    if (!vm.nonClosedIssues.length) return ''
+
+    var issuesText = '\n\n\nPlease note the following issues which must be \n' +
+                     'regularized before the LC ' +
+                     'request can be treated:\n'
+    var index = 1
+
+    kanmiiUnderscore.each(vm.nonClosedIssues, function(issue) {
+      issuesText += ('(' + index++ + ') ' + issue.issue.text.replace(/:ISSUE$/i, '') + '\n')
+    })
+
+    return issuesText
   }
 
   function compareDetailedFormMWithForm() {
