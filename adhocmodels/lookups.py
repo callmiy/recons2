@@ -11,7 +11,6 @@ from django.db.models import Q
 
 
 class RelationshipManagerLookup(LookupChannel):
-
     model = RelationshipManager
 
     def get_query(self, q, request):
@@ -23,43 +22,30 @@ class RelationshipManagerLookup(LookupChannel):
 
 
 class BranchLookup(LookupChannel):
-
     model = Branch
 
-    def get_query(self, q, request):
-        return Branch.objects.filter(
-            Q(code__contains=q) | Q(name__icontains=q)
-        )
+    def get_query(self, q, request): return Branch.objects.filter(Q(code__contains=q) | Q(name__icontains=q))
 
 
 class LedgerMemoCashLookup(LookupChannel):
-
     model = LedgerAccount
     min_length = 3
-    plugin_options = {
-        'minLength': 3
-    }
+    plugin_options = {'minLength': 3}
 
     def get_query(self, q, request):
-        return LedgerAccount.objects.filter(
-            acct_type__code__exact='MCSH', number__icontains=q)
+        return LedgerAccount.objects.filter(acct_type__code__exact='MCSH', number__icontains=q)
 
     def can_add(self, user, argmodel):
         return True
 
 
 class NostroAccountLookup(LookupChannel):
-
     model = NostroAccount
     min_length = 4
-    plugin_options = {
-        'minLength': 4
-    }
+    plugin_options = {'minLength': 4}
 
     def get_query(self, q, request):
-        return NostroAccount.objects.exclude(
-            number__contains='UNKNOWN'
-        ).filter(
+        return NostroAccount.objects.exclude(number__contains='UNKNOWN').filter(
             Q(number__icontains=q) |
             Q(bank__swift_bic__icontains=q) |
             Q(name__icontains=q)
@@ -67,7 +53,6 @@ class NostroAccountLookup(LookupChannel):
 
 
 class CustomerLookup(LookupChannel):
-
     model = Customer
     min_length = 3
     plugin_options = {
@@ -79,7 +64,6 @@ class CustomerLookup(LookupChannel):
 
 
 class OverseasBankLookup(LookupChannel):
-
     model = OverseasBank
     min_length = 3
     plugin_options = {
@@ -94,7 +78,6 @@ class OverseasBankLookup(LookupChannel):
 
 
 class CurrencyLookup(LookupChannel):
-
     model = Currency
     min_length = 2
     plugin_options = {
@@ -109,7 +92,6 @@ class CurrencyLookup(LookupChannel):
 
 
 class LedgerAcctLookup(LookupChannel):
-
     model = LedgerAccount
     min_length = 3
     plugin_options = {

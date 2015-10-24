@@ -19,4 +19,8 @@ ajax_lookup_channels = {
 
     'currency': ('adhocmodels.lookups', 'CurrencyLookup'),
 
+    'form_m': ('letter_of_credit.lookups', 'FormMLookup'),
+
+    'lc': ('letter_of_credit.lookups', 'LCRegisterLookup')
+
 }

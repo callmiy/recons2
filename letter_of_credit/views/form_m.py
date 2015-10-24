@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import generics, pagination, status
 import django_filters
 from rest_framework.response import Response
@@ -17,15 +18,33 @@ class FormMFilter(django_filters.FilterSet):
     number = django_filters.CharFilter(lookup_type='icontains')
     applicant = django_filters.CharFilter(name='applicant__name', lookup_type='icontains')
     currency = django_filters.CharFilter(name='currency__code', lookup_type='iexact')
-    lc_not_attached = django_filters.CharFilter(action=FormM.lc_not_attached_filter)
-    filter = django_filters.CharFilter(action=FormM.search_filter)
+    lc_not_attached = django_filters.MethodFilter()
+    filter = django_filters.MethodFilter()
 
     class Meta:
         model = FormM
         fields = ('number', 'applicant', 'currency', 'filter', 'lc_not_attached')
 
+    def filter_lc_not_attached(self, qs, param):
+        if not param:
+            return qs
+
+        param = True if param == 'true' else False
+
+        return qs.filter(lc__isnull=param)
+
+    def filter_filter(self, qs, param):
+        if not param:
+            return qs
+
+        return qs.filter(Q(number__icontains=param) | Q(applicant__name__icontains=param))
+
 
 class FormIssueBidUtil:
+    """
+    Utility class for handling cases where form M will be created/updated simultaneously with bid and or issues
+    """
+
     def __init__(self, request, form_m_url, log_prefix=None):
         self.request = request
         self.form_m_url = form_m_url

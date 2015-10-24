@@ -20,36 +20,24 @@ class OverseasBankAdmin(admin.ModelAdmin):
 
 
 class RelationshipManagerAdmin(AjaxSelectAdmin):
-    form = make_ajax_form(
-        models.RelationshipManager,
-        {'branch': 'branch'}
-    )
+    form = make_ajax_form(models.RelationshipManager, {'branch': 'branch'})
 
     list_display = ('name', 'rmcode', 'branch',)
     search_fields = ('name', 'rmcode', 'branch__code',)
 
 
 class AccountNumberAdmin(AjaxSelectAdmin):
-    form = make_ajax_form(
-        models.AccountNumber,
-        {'owner': 'customer', 'branch': 'branch'}
-    )
+    form = make_ajax_form(models.AccountNumber, {'owner': 'customer', 'branch': 'branch'})
 
     list_display = ('nuban', 'owner', 'branch', 'acct_id', 'old_numb',)
 
-    search_fields = (
-        'nuban', 'owner__name', 'branch__name', 'branch__code', 'old_numb',
-        'acct_id',)
+    search_fields = ('nuban', 'owner__name', 'branch__name', 'branch__code', 'old_numb', 'acct_id',)
 
 
 class CustomerAdmin(AjaxSelectAdmin):
-    form = make_ajax_form(
-        models.Customer,
-        {'branch_for_itf': 'branch', 'parent': 'customer', 'rel_manager': 'rm'}
-    )
+    form = make_ajax_form(models.Customer, {'branch_for_itf': 'branch', 'parent': 'customer', 'rel_manager': 'rm'})
 
-    list_display = (
-        'name', 'rman', 'branch_for_itf', 'subsidiary_status',)
+    list_display = ('name', 'rman', 'branch_for_itf', 'subsidiary_status',)
     search_fields = ('name',)
 
 

@@ -13,11 +13,18 @@ class LcBidRequestPagination(pagination.PageNumberPagination):
 
 
 class LcBidRequestFilter(django_filters.FilterSet):
-    pending = django_filters.CharFilter(action=LcBidRequest.search_pending)
+    pending = django_filters.MethodFilter()
 
     class Meta:
         model = LcBidRequest
         fields = ('pending',)
+
+    def filter_pending(self, qs, param):
+        if not param:
+            return qs
+
+        param = True if param == 'true' else False
+        return qs.filter(requested_at__isnull=param)
 
 
 class LcBidRequestListCreateAPIView(generics.ListCreateAPIView):

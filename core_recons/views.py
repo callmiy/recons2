@@ -83,8 +83,7 @@ class UpdateModelDate(View):
                     "Wrong date: %s" % (input_date or "No Date!!!"))
 
         if self.date_update_method_name != '':
-            getattr(self.model, self.date_update_method_name)(
-                objs, eval(valid_date))
+            getattr(self.model, self.date_update_method_name)(objs, eval(valid_date))
         elif self.model_date_field != '':
             eval('objs.update(%s=%s)' % (self.model_date_field, valid_date))
 
@@ -96,7 +95,8 @@ class UpdateModelDate(View):
 
     def render_and_respond(self, request, objs, ids, error_msg=""):
         context_objs = [
-            [getattr(obj, attr) for attr in self.attributes] for obj in objs]
+            [getattr(obj, attr) for attr in self.attributes] for obj in objs
+            ]
         return render(
             request, "model-date-update.html",
             {

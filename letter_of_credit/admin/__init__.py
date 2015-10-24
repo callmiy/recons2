@@ -1,8 +1,5 @@
-from letter_of_credit.admin.form_m import (
-    FormMAdmin,
-    LCIssueAdmin,
-    LCIssueConcreteAdmin,
-    LcBidRequestAdmin
-)
+from .form_m import FormMAdmin, FormMCoverAdmin
+from .lc_bid import LcBidRequestAdmin
+from .lc_issue import LCIssueAdmin, LCIssueConcreteAdmin
 from .uploaded_form_m import UploadedFormMAdmin
 from .lc_register import LCRegisterAdmin

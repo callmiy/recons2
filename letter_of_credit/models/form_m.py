@@ -1,27 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Q
 from adhocmodels.models import Customer, Currency
 from letter_of_credit.models import LCRegister
-
-
-class LCIssue(models.Model):
-    text = models.CharField('Issue Text', max_length=300)
-
-    class Meta:
-        app_label = 'letter_of_credit'
-        db_table = 'lc_issue'
-        verbose_name = 'LC Issue'
-        verbose_name_plural = 'LC Issue'
-
-    def __unicode__(self):
-        return self.text
-
-    def save(self, *args, **kwargs):
-        self.text = self.text.strip().upper()
-        if not self.text.endswith(':ISSUE'):
-            self.text = '%s:ISSUE' % self.text
-        super(LCIssue, self).save(*args, **kwargs)
 
 
 class FormM(models.Model):
@@ -64,22 +44,6 @@ class FormM(models.Model):
     def get_url(self):
         return reverse('formm-detail', kwargs={'pk': self.pk})
 
-    @classmethod
-    def search_filter(cls, qs, param):
-        if not param:
-            return qs
-
-        return qs.filter(Q(number__icontains=param) | Q(applicant__name__icontains=param))
-
-    @classmethod
-    def lc_not_attached_filter(cls, qs, param):
-        if not param:
-            return qs
-
-        param = True if param == 'true' else False
-
-        return qs.filter(lc__isnull=param)
-
     def attach_lc(self, lc_number=None, lc=None):
         if self.lc:
             return
@@ -98,57 +62,24 @@ class FormM(models.Model):
         return self.lc and self.lc.lc_number or None
 
 
-class LCIssueConcrete(models.Model):
-    issue = models.ForeignKey(LCIssue, verbose_name='Issue')
-    mf = models.ForeignKey(FormM, verbose_name='Related Form M', related_name='form_m_issues')
-    created_at = models.DateField('Date Created', auto_now_add=True)
-    closed_at = models.DateField('Date Closed', null=True, blank=True)
+class FormMCover(models.Model):
+    ITF = 0
+    STF = 1
+    UNCONFIRMED = 2
+
+    COVER_TYPES = (
+        (ITF, 'ITF'),
+        (STF, 'STF'),
+        (UNCONFIRMED, 'UNCONFIRMED'),
+    )
+
+    mf = models.ForeignKey(FormM, verbose_name='Form M')
+    cover_type = models.SmallIntegerField('Cover Type', choices=COVER_TYPES)
+    received_at = models.DateField('Date Received', auto_now_add=True)
 
     class Meta:
-        db_table = 'lc_issue_concrete'
+        db_table = 'form_m_cover'
         app_label = 'letter_of_credit'
-        verbose_name = 'LC Issue Concrete'
-        verbose_name_plural = 'LC Issue Concrete'
-
-    def __unicode__(self):
-        return '%s: %s' % (self.mf.number, self.issue.text)
-
-    def save(self, *args, **kwargs):
-        super(LCIssueConcrete, self).save(*args, **kwargs)
-
-    def form_m_number(self):
-        return self.mf.number
-
-    def applicant(self):
-        return self.mf.applicant
-
-    def lc_number(self):
-        return self.mf.lc and self.mf.lc.lc_number or None
-
-
-class LcBidRequest(models.Model):
-    mf = models.ForeignKey(FormM, verbose_name='Related Form M', related_name='bids')
-    created_at = models.DateField('Date Created', auto_now_add=True)
-    requested_at = models.DateField('Date Request To Treasury', blank=True, null=True)
-    amount = models.DecimalField('Amount', max_digits=20, decimal_places=2)
-    downloaded = models.BooleanField('Downloaded', default=False)
-
-    class Meta:
-        db_table = 'lc_bid_request'
-        app_label = 'letter_of_credit'
-        verbose_name = 'Lc Bid Request'
-        verbose_name_plural = 'Lc Bid Request'
-
-    def __unicode__(self):
-        return '%s: %s%s' % (self.mf.number, self.mf.currency.code, '{:,.2f}'.format(self.amount))
-
-    @classmethod
-    def search_pending(cls, qs, param):
-        if not param:
-            return qs
-
-        param = True if param == 'true' else False
-        return qs.filter(requested_at__isnull=param)
 
     def form_m_number(self):
         return self.mf.number
@@ -156,8 +87,17 @@ class LcBidRequest(models.Model):
     def applicant(self):
         return self.mf.applicant.name
 
-    def goods_description(self):
-        return self.mf.goods_description
-
     def currency(self):
-        return self.mf.currency
+        return self.mf.currency.code
+
+    def amount(self):
+        return self.mf.amount
+
+    def amount_formatted(self):
+        return '{:,.2f}'.format(self.amount())
+
+    amount_formatted.short_description = 'Form M Amount'
+
+    def lc_number(self):
+        lc = self.mf.lc
+        return lc and lc.lc_number or None
