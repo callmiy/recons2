@@ -178,7 +178,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       closed_at: formatDate(new Date())
     }).$promise.then(issueClosedSuccess, issueClosedError)
 
-    function issueClosedSuccess(issue) {
+    function issueClosedSuccess() {
       vm.nonClosedIssues.splice($index, 1)
       vm.closedIssues.push(issue)
     }
@@ -367,9 +367,11 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   }
 
   function showFormMMessage() {
-    return 'Form M Number : ' + vm.formM.number + '\n' +
+    var number = $filter('number')(vm.formM.amount, 2)
+    var header = vm.formM.applicant.name + '/ ' + vm.formM.number + ' /' + vm.formM.currency.code + ' ' + number
+    return header + '\n\nForm M Number : ' + vm.formM.number + '\n' +
            'Value         : ' + vm.formM.currency.code + ' ' +
-           $filter('number')(vm.formM.amount, 2) + '\n' +
+           number + '\n' +
            'Applicant     : ' + vm.formM.applicant.name
   }
 

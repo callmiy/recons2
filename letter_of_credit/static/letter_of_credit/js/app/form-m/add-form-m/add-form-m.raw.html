@@ -237,7 +237,8 @@
             </div>
           </div>
 
-          <div style="margin-top: 30px;" class="existing-issues" ng-show="addFormMState.nonClosedIssues.length">
+          <div style="margin-top: 30px;" class="existing-issues open-issues"
+               ng-show="addFormMState.nonClosedIssues.length">
             <h5 style="text-align: center">Issues not closed({$addFormMState.nonClosedIssues.length$})</h5>
 
             <div ng-repeat="issue in addFormMState.nonClosedIssues">
@@ -264,7 +265,7 @@
             </div>
           </div>
 
-          <div style="    margin-top: 30px;" class="existing-issues"
+          <div style="    margin-top: 30px;" class="existing-issues closed-issues"
                ng-show="addFormMState.closedIssues.length">
             <h5 style="text-align: center">Issues that have been closed
               ({$addFormMState.closedIssues.length$})
