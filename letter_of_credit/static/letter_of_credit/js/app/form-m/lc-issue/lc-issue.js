@@ -19,7 +19,8 @@ function lcIssueDirective() {
     bindToController: {
       formM: '=mfContext',
       issues: '=',
-      onIssuesChanged: '&'
+      onIssuesChanged: '&',
+      onNonClosedIssuesChanged: '&'
     },
     controller: 'LcIssueDirectiveController as lcIssue'
   }
@@ -107,11 +108,9 @@ function LcIssueDirectiveController($scope, LCIssueConcrete, getTypeAheadLCIssue
   }
 
   vm.downloadIssues = function downloadIssues() {
-    vm.savingFormMIndicator = showFormMMessage()
+    $scope.addFormMState.savingFormMIndicator = $scope.showFormMMessage() + $scope.showIssuesMessage()
 
-    vm.savingFormMIndicator += showIssuesMessage()
-
-    vm.formMIsSaving = true
+    $scope.addFormMState.formMIsSaving = true
   }
 
   vm.toggleShow = function toggleShow(form) {
@@ -123,8 +122,9 @@ function LcIssueDirectiveController($scope, LCIssueConcrete, getTypeAheadLCIssue
 
   $scope.$watch(function getFormM() {return vm.formM}, function(newFormM) {
     if (newFormM) {
-      if (newFormM.form_m_issues) {
-        newFormM.form_m_issues.forEach(function(issue) {
+      var formMIssues = newFormM.form_m_issues
+      if (formMIssues && formMIssues.length !== (vm.closedIssues.length + vm.nonClosedIssues.length)) {
+        formMIssues.forEach(function(issue) {
           if (!issue.closed_at) {
             vm.nonClosedIssues.push(issue)
             return true
@@ -146,6 +146,10 @@ function LcIssueDirectiveController($scope, LCIssueConcrete, getTypeAheadLCIssue
   $scope.$watch(function getIssues() {return vm.issues}, function onUpdateIssues(newIssues) {
     $scope.issuesForm.issue.$validate()
     if (newIssues) vm.onIssuesChanged({issues: newIssues, issuesForm: $scope.issuesForm})
+  }, true)
+
+  $scope.$watch(function getNonClosedIssues() {return vm.nonClosedIssues}, function onUpdateNonClosedIssues(newIssues) {
+    if (newIssues) vm.onNonClosedIssuesChanged({issues: newIssues})
   }, true)
 
   $scope.$watch(function getShowContainer() {return vm.showContainer}, function onUpdateShowContainer() {

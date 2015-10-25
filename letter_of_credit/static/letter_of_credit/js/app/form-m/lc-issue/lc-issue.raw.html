@@ -49,20 +49,19 @@
        ng-show="lcIssue.nonClosedIssues.length">
     <h5 style="text-align: center">Issues not closed({$lcIssue.nonClosedIssues.length$})</h5>
 
-    <div ng-repeat="issue in lcIssue.nonClosedIssues">
+    <div ng-repeat="notClosed in lcIssue.nonClosedIssues">
       <div class="input-group">
         <label for="issue-text-display" class="sr-only"></label>
 
         <span class="input-group-addon">{$$index + 1$}</span>
 
         <input type="text" class="form-control" id="issue-text-display" name="issue-text-display" disabled
-               ng-value="issue.issue.text"
+               ng-value="notClosed.issue.text"
                style="padding-left: 10px;"/>
 
-                <span class="input-group-addon" style="cursor: pointer"
-                      ng-click="lcIssue.closeIssue(issue, $index)">
-                  <span class="glyphicon glyphicon-trash"></span>
-                </span>
+        <span class="input-group-addon" style="cursor: pointer" ng-click="lcIssue.closeIssue(notClosed, $index)">
+          <span class="glyphicon glyphicon-trash"></span>
+        </span>
       </div>
     </div>
 
@@ -73,24 +72,24 @@
     </div>
   </div>
 
-  <div style="    margin-top: 30px;" class="existing-issues closed-issues"
+  <div style="margin-top: 30px;" class="existing-issues closed-issues"
        ng-show="lcIssue.closedIssues.length">
     <h5 style="text-align: center">Issues that have been closed
       ({$lcIssue.closedIssues.length$})
     </h5>
 
-    <div ng-repeat="issue in lcIssue.closedIssues">
+    <div ng-repeat="closedIssue in lcIssue.closedIssues">
       <div class="input-group">
         <label for="issue-text-display" class="sr-only"></label>
 
         <span class="input-group-addon">{$$index + 1$}</span>
 
         <input type="text" class="form-control" id="issue-text-display" name="issue-text-display" disabled
-               ng-value="issue.issue.text"
+               ng-value="closedIssue.issue.text"
                style="padding-left: 10px;"/>
 
                 <span class="input-group-addon">
-                  <span>{$issue.closed_at |date:'dd-MMM-yyyy'$}</span>
+                  <span>{$closedIssue.closed_at |date:'dd-MMM-yyyy'$}</span>
                 </span>
       </div>
     </div>

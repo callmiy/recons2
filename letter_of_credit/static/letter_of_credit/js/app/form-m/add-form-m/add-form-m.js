@@ -54,12 +54,13 @@ AddFormMStateController.$inject = [
   '$filter',
   '$stateParams',
   'resetForm2',
-  '$state'
+  '$state',
+  '$scope'
 ]
 
 function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
   kanmiiUnderscore, formatDate, xhrErrorDisplay, formMAttributesVerboseNames, FormM, $timeout, $filter, $stateParams,
-  resetForm2, $state) {
+  resetForm2, $state, $scope) {
   var vm = this
 
   vm.detailedFormM = angular.copy($stateParams.detailedFormM)
@@ -122,6 +123,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
      *@param {angular.form.model} the form M issues model
      */
     vm.issues = []
+
+    vm.nonClosedIssues = []
   }
 
   function initDetailedFormM() {
@@ -178,6 +181,10 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   vm.onIssuesChanged = function onIssuesChanged(issues, form) {
     vm.issues = issues
     issuesForm = form
+  }
+
+  vm.onNonClosedIssuesChanged = function onNonClosedIssuesChanged(issues) {
+    vm.nonClosedIssues = issues
   }
 
   vm.enableFieldEdit = function enableFieldEdit(field) {
@@ -263,7 +270,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     })
   }
 
-  vm.submit = function submit(formM, form) {
+  vm.submit = function submit(formM) {
     var formMToSave = angular.copy(formM)
 
     formMToSave.applicant = formMToSave.applicant.url
@@ -306,6 +313,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
   }
 
+  $scope.showFormMMessage = showFormMMessage
   function showFormMMessage() {
     var number = $filter('number')(vm.formM.amount, 2)
     var header = vm.formM.applicant.name + ' - ' + vm.formM.number + ' - ' + vm.formM.currency.code + ' ' + number
@@ -315,7 +323,9 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
            'Applicant     : ' + vm.formM.applicant.name
   }
 
+  $scope.showIssuesMessage = showIssuesMessage
   function showIssuesMessage() {
+    console.log('vm.nonClosedIssues = ', vm.nonClosedIssues);
     if (!vm.nonClosedIssues.length) return ''
 
     var issuesText = '\n\n\nPlease note the following issues which must be \n' +
