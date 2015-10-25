@@ -26,9 +26,9 @@ function lcBidDirective() {
 
 app.controller('LcBidDirectiveController', LcBidDirectiveController)
 
-LcBidDirectiveController.$inject = ['$scope', '$filter']
+LcBidDirectiveController.$inject = ['$scope', '$filter', 'formFieldIsValid']
 
-function LcBidDirectiveController($scope, $filter) {
+function LcBidDirectiveController($scope, $filter, formFieldIsValid) {
   var vm = this
   var title = 'Make Bid Request'
   init()
@@ -44,15 +44,8 @@ function LcBidDirectiveController($scope, $filter) {
     }
   }
 
-  vm.isValid = isValid
-  /**
-   * A function whose return value is used to evaluate whether a form control element has error or success
-   * @param {string} name the name of a form control
-   * @param {string|null} validity the type of validity to check for, 'ok' means valid while undefined means invalid
-   * @returns {boolean}
-   */
-  function isValid(name, validity) {
-    return $scope.coverForm[name].$dirty && $scope.coverForm[name][validity === 'ok' ? '$valid' : '$invalid']
+  vm.isValid = function(name, validity) {
+    return formFieldIsValid($scope, 'bidForm', name, validity)
   }
 
   vm.amountGetterSetter = function(val) {

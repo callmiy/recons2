@@ -92,7 +92,7 @@ class LcIssueFilter(django_filters.FilterSet):
 
     def filter_exclude_issue_ids(self, qs, value):
         if value:
-            return qs.exclude(pk__in=value)
+            return qs.exclude(pk__in=value.split(','))
         return qs
 
 

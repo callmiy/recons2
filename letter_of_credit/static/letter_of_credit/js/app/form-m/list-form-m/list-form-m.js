@@ -7,7 +7,6 @@ var app = angular.module('list-form-m',
    'ui.router',
    'form-m-service',
    'form-m-search',
-   'form-m-lc-issue',
    'model-table',
    'customer',
    'add-form-m'

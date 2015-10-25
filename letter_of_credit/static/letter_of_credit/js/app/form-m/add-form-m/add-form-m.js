@@ -9,10 +9,10 @@ var app = angular.module('add-form-m', [
   'rootApp',
   'kanmii-underscore',
   'customer',
-  'lc-issue-service',
   'search-detailed-or-uploaded-form-m',
   'form-m-service',
   'lc-cover',
+  'lc-issue',
   'lc-bid'
 ])
 
@@ -50,18 +50,16 @@ AddFormMStateController.$inject = [
   'xhrErrorDisplay',
   'formMAttributesVerboseNames',
   'FormM',
-  'getTypeAheadLCIssue',
   '$timeout',
   '$filter',
   '$stateParams',
-  'LCIssueConcrete',
   'resetForm2',
   '$state'
 ]
 
 function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
-  kanmiiUnderscore, formatDate, xhrErrorDisplay, formMAttributesVerboseNames, FormM, getTypeAheadLCIssue,
-  $timeout, $filter, $stateParams, LCIssueConcrete, resetForm2, $state) {
+  kanmiiUnderscore, formatDate, xhrErrorDisplay, formMAttributesVerboseNames, FormM, $timeout, $filter, $stateParams,
+  resetForm2, $state) {
   var vm = this
 
   vm.detailedFormM = angular.copy($stateParams.detailedFormM)
@@ -76,6 +74,11 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
    *@param {angular.form} the HTML fieldSet element for form M bid
    */
   var bidForm
+
+  /*
+   *@param {angular.form} the HTML fieldSet element for form M issues
+   */
+  var issuesForm
 
   initialize()
   function initialize(form) {
@@ -98,7 +101,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
 
     vm.searchFormM = {}
-    initIssuesForm()
     initFormMSavingIndicator()
 
     if (form) {
@@ -115,30 +117,23 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
      *@param {angular.form.model} the form M bid model
      */
     vm.bid = null
+
+    /*
+     *@param {angular.form.model} the form M issues model
+     */
+    vm.issues = []
   }
 
   function initDetailedFormM() {
-    vm.closedIssues = []
-    vm.nonClosedIssues = []
-
-    vm.detailedFormM.form_m_issues.forEach(function(issue) {
-      if (!issue.closed_at) {
-        vm.nonClosedIssues.push(issue)
-        return true
-      }
-      else {
-        vm.closedIssues.push(issue)
-        return false
-      }
-    })
-
     vm.formM = {
       date_received: new Date(vm.detailedFormM.date_received),
       number: vm.detailedFormM.number,
       applicant: vm.detailedFormM.applicant_data,
       currency: vm.detailedFormM.currency_data,
       amount: Number(vm.detailedFormM.amount),
-      goods_description: vm.detailedFormM.goods_description
+      goods_description: vm.detailedFormM.goods_description,
+      form_m_issues: vm.detailedFormM.form_m_issues,
+      url: vm.detailedFormM.url
     }
 
     vm.fieldsEdit = {
@@ -170,21 +165,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
   }
 
-  var issueIds
-
-  function initIssuesForm(issuesForm) {
-    vm.showLcIssueContainer = false
-    vm.addLcIssuesTitle = 'Add Letter Of Credit Issues'
-    vm.issues = []
-    issueIds = []
-    vm.issue = null
-
-    if (issuesForm) {
-      issuesForm.$setPristine()
-      issuesForm.$setUntouched()
-    }
-  }
-
   vm.onCoverChanged = function onCoverChanged(cover, form) {
     vm.cover = cover
     coverForm = form
@@ -195,32 +175,13 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     bidForm = form
   }
 
+  vm.onIssuesChanged = function onIssuesChanged(issues, form) {
+    vm.issues = issues
+    issuesForm = form
+  }
+
   vm.enableFieldEdit = function enableFieldEdit(field) {
     vm.fieldsEdit[field] = vm.detailedFormM ? !vm.fieldsEdit[field] : false
-  }
-
-  vm.closeIssue = function closeIssue(issue, $index) {
-    LCIssueConcrete.put({
-      id: issue.id,
-      mf: vm.detailedFormM.url,
-      issue: issue.issue.url,
-      closed_at: formatDate(new Date())
-    }).$promise.then(issueClosedSuccess, issueClosedError)
-
-    function issueClosedSuccess() {
-      vm.nonClosedIssues.splice($index, 1)
-      vm.closedIssues.push(issue)
-    }
-
-    function issueClosedError(xhr) { xhrErrorDisplay(xhr)}
-  }
-
-  vm.toggleShowLcIssueContainer = function toggleShowLcIssueContainer() {
-    vm.showLcIssueContainer = vm.formM.number && vm.formM.amount && !vm.showLcIssueContainer
-
-    if (!vm.showLcIssueContainer) {
-      initIssuesForm()
-    } else vm.addLcIssuesTitle = 'Dismiss'
   }
 
   vm.validators = {
@@ -241,11 +202,11 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   function disableSubmitBtn(newFormMFormInvalid) {
     if (newFormMFormInvalid) return true
 
-    if (vm.showLcIssueContainer && !vm.issues.length) return true
-
     if (coverForm && coverForm.$invalid) return true
 
     if (bidForm && bidForm.$invalid) return true
+
+    if (issuesForm && issuesForm.$invalid) return true
 
     var compared = compareDetailedFormMWithForm()
     if (!compared) return false
@@ -343,45 +304,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       initFormMSavingIndicator()
       xhrErrorDisplay(xhr, formMAttributesVerboseNames)
     }
-  }
-
-  //vm.hideSavingIndicator = function hideSavingIndicator() {
-  //  vm.formMIsSaving = false
-  //}
-
-  vm.getTypeAheadSelected = function getTypeAheadSelected($item, $model) {
-    $timeout(function() {
-      if ($model.code) {
-        vm.formM.currency = $model
-      }
-    })
-  }
-
-  vm.issueSelected = function issueSelected($item, $model) {
-    vm.issues.push($model)
-    issueIds.push($model.id)
-    vm.issue = null
-  }
-
-  vm.deleteIssue = function deleteIssue(index) {
-    vm.issues.splice(index, 1)
-    issueIds.splice(index, 1)
-  }
-
-  vm.getIssue = function getIssue(text) {
-    var search = {text: text, exclude_issue_ids: issueIds}
-
-    if (vm.detailedFormM) search.exclude_form_m_issues = vm.detailedFormM.number
-
-    return getTypeAheadLCIssue(search)
-  }
-
-  vm.downloadIssues = function downloadIssues() {
-    vm.savingFormMIndicator = showFormMMessage()
-
-    vm.savingFormMIndicator += showIssuesMessage()
-
-    vm.formMIsSaving = true
   }
 
   function showFormMMessage() {

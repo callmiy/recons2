@@ -1,62 +1,167 @@
 "use strict";
 
-var app = angular.module('form-m-lc-issue', ['lc-issue-service'])
+var rootCommons = require('commons')
+
+var app = angular.module('lc-issue', [
+  'rootApp',
+  'lc-issue-service'
+])
 
 app.directive('lcIssue', lcIssueDirective)
-lcIssueDirective.$inject = ['LCIssue']
-function lcIssueDirective(LCIssue) {
+
+lcIssueDirective.$inject = []
+
+function lcIssueDirective() {
   return {
-    restrict: 'E',
-
+    restrict: 'A',
     templateUrl: require('lcAppCommons').buildUrl('form-m/lc-issue/lc-issue.html'),
-
-    link: function(scope, element, attributes, self) {
-
-      scope.$watch(function getShow() {return self.show}, function doShow(showVal) {
-        self.show = showVal
-
-        if (showVal && !self.lcIssues.length) {
-          self.lcIssues = LCIssue.query()
-        }
-        else {
-          element.find('.lc-issue-item-checkbox').each(function() {
-            $(this).prop('checked', false).closest('.lc-issue-item').removeClass('selected')
-          })
-
-          self.selectedIssues = {}
-        }
-      })
-
-      element.on({
-        'change': function() {
-          var $el = $(this)
-
-          $el.closest('.lc-issue-item').toggleClass('selected', $el.prop('checked'))
-        }
-      }, '.lc-issue-item-checkbox')
-    },
-
-    scope: {},
-
+    scope: true,
     bindToController: {
-      show: '=lcIssueShow',
-      onSelect: '&onLcIssueSelected'
+      formM: '=mfContext',
+      issues: '=',
+      onIssuesChanged: '&'
     },
-
-    controller: 'LcIssueDirectiveCtrl as lcIssue'
+    controller: 'LcIssueDirectiveController as lcIssue'
   }
 }
 
-app.controller('LcIssueDirectiveCtrl', LcIssueDirectiveCtrl)
+app.controller('LcIssueDirectiveController', LcIssueDirectiveController)
 
-LcIssueDirectiveCtrl.$inject = ['$scope']
+LcIssueDirectiveController.$inject = [
+  '$scope',
+  'LCIssueConcrete',
+  'getTypeAheadLCIssue',
+  'formatDate',
+  'xhrErrorDisplay',
+  'resetForm2',
+  'clearFormField'
+]
 
-function LcIssueDirectiveCtrl($scope) {
+function LcIssueDirectiveController($scope, LCIssueConcrete, getTypeAheadLCIssue, formatDate, xhrErrorDisplay,
+  resetForm2, clearFormField) {
   var vm = this
-  vm.lcIssues = []
-  vm.selectedIssues = {}
+  var title = 'Add Letter Of Credit Issues'
 
-  $scope.$watch(function getSelectedIssues(){return vm.selectedIssues}, function selectedIssuesChanged(val) {
-    vm.onSelect({selectedIssues: val})
+  initExistingIssues()
+  function initExistingIssues() {
+    vm.closedIssues = []
+    vm.nonClosedIssues = []
+  }
+
+  initContainerVars()
+  function initContainerVars(form) {
+    vm.title = title
+    vm.showContainer = false
+
+    vm.issues = []
+    vm.issue = null
+
+    if (form) resetForm2(form, [
+      {form: form, elements: ['issue']}
+    ])
+  }
+
+  vm.closeIssue = function closeIssue(issue, $index) {
+    var closedAt = formatDate(new Date())
+
+    LCIssueConcrete.put({
+      id: issue.id,
+      mf: vm.formM.url,
+      issue: issue.issue.url,
+      closed_at: closedAt
+    }).$promise.then(issueClosedSuccess, issueClosedError)
+
+    function issueClosedSuccess() {
+      vm.nonClosedIssues.splice($index, 1)
+      issue.closed_at = closedAt
+      vm.closedIssues.push(issue)
+    }
+
+    function issueClosedError(xhr) {xhrErrorDisplay(xhr)}
+  }
+
+  vm.issueSelected = function issueSelected($item, $model) {
+    vm.issues.push($model)
+    vm.issue = null
+    clearFormField($scope.issuesForm, 'issue')
+  }
+
+  vm.deleteIssue = function deleteIssue(index) {
+    vm.issues.splice(index, 1)
+  }
+
+  vm.getIssue = function getIssue(text) {
+    var _ids = []
+
+    vm.issues.forEach(function(issue) {
+      _ids.push(issue.id)
+    })
+
+    var closedIssues = angular.copy(vm.closedIssues)
+
+    closedIssues.concat(vm.nonClosedIssues).forEach(function(issue) {
+      _ids.push(issue.issue.id)
+    })
+
+    return getTypeAheadLCIssue({text: text, exclude_issue_ids: _ids.join(',')})
+  }
+
+  vm.downloadIssues = function downloadIssues() {
+    vm.savingFormMIndicator = showFormMMessage()
+
+    vm.savingFormMIndicator += showIssuesMessage()
+
+    vm.formMIsSaving = true
+  }
+
+  vm.toggleShow = function toggleShow(form) {
+    vm.showContainer = vm.formM.amount && vm.formM.number && !vm.showContainer
+
+    if (!vm.showContainer) initContainerVars(form)
+    else vm.title = 'Dismiss'
+  }
+
+  $scope.$watch(function getFormM() {return vm.formM}, function(newFormM) {
+    if (newFormM) {
+      if (newFormM.form_m_issues) {
+        newFormM.form_m_issues.forEach(function(issue) {
+          if (!issue.closed_at) {
+            vm.nonClosedIssues.push(issue)
+            return true
+          }
+          else {
+            vm.closedIssues.push(issue)
+            return false
+          }
+        })
+      }
+
+      if (!newFormM.number || !newFormM.amount) {
+        initExistingIssues()
+        initContainerVars()
+      }
+    }
   }, true)
+
+  $scope.$watch(function getIssues() {return vm.issues}, function onUpdateIssues(newIssues) {
+    $scope.issuesForm.issue.$validate()
+    if (newIssues) vm.onIssuesChanged({issues: newIssues, issuesForm: $scope.issuesForm})
+  }, true)
+
+  $scope.$watch(function getShowContainer() {return vm.showContainer}, function onUpdateShowContainer() {
+    $scope.issuesForm.issue.$validate()
+  })
 }
+
+app.directive('validateIssues', function validateIssues() {
+  return {
+    restrict: 'A',
+    require: 'ngModel',
+    link: function($scope, elm, atts, ctrl) {
+      var vm = $scope.lcIssue
+      ctrl.$validators.issues = function() {
+        return !vm.showContainer || Boolean(vm.issues.length)
+      }
+    }
+  }
+})

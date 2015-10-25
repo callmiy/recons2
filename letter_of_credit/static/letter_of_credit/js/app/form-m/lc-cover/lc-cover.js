@@ -26,9 +26,14 @@ function lcIssueDirective() {
 
 app.controller('LcCoverDirectiveController', LcCoverDirectiveController)
 
-LcCoverDirectiveController.$inject = ['$scope', 'formMCoverTypes', '$filter']
+LcCoverDirectiveController.$inject = [
+  '$scope',
+  'formMCoverTypes',
+  '$filter',
+  'formFieldIsValid'
+]
 
-function LcCoverDirectiveController($scope, formMCoverTypes, $filter) {
+function LcCoverDirectiveController($scope, formMCoverTypes, $filter, formFieldIsValid) {
   var vm = this
   var title = 'Register Cover'
   init()
@@ -45,15 +50,8 @@ function LcCoverDirectiveController($scope, formMCoverTypes, $filter) {
     }
   }
 
-  vm.isValid = isValid
-  /**
-   * A function whose return value is used to evaluate whether a form control element has error or success
-   * @param {string} name the name of a form control
-   * @param {string|null} validity the type of validity to check for, 'ok' means valid while undefined means invalid
-   * @returns {boolean}
-   */
-  function isValid(name, validity) {
-    return $scope.coverForm[name].$dirty && $scope.coverForm[name][validity === 'ok' ? '$valid' : '$invalid']
+  vm.isValid = function isValid(name, validity) {
+    return formFieldIsValid($scope, 'coverForm', name, validity)
   }
 
   vm.amountGetterSetter = function(val) {
@@ -78,10 +76,7 @@ function LcCoverDirectiveController($scope, formMCoverTypes, $filter) {
 
   $scope.$watch(function getFormM() {return vm.formM}, function(newFormM) {
     if (newFormM) {
-      var number = newFormM.number
-      var amount = newFormM.amount
-
-      if (!number || !amount) init()
+      if (! newFormM.number || !newFormM.amount) init()
     }
   }, true)
 

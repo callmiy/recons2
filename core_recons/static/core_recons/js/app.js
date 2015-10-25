@@ -43,8 +43,20 @@ function resetForm() {
   return reset
 }
 
+app.factory('clearFormField', clearFormField)
+function clearFormField() {
+  /**
+   * this is a hack required to clear form controls where ng-model is a complex object and the control did not validate.
+   */
+  return function(form, field) {
+    form[field].$$lastCommittedViewValue = ''
+    form[field].$rollbackViewValue()
+  }
+}
+
 app.factory('resetForm2', resetForm2)
-function resetForm2() {
+resetForm2.$inject = ['clearFormField']
+function resetForm2(clearFormField) {
 
   /**
    *
@@ -59,18 +71,30 @@ function resetForm2() {
     if (clearForm) {
       clearForm.forEach(function(obj) {
         var theForm = obj.form
-
-        //this is a hack required to clear form controls where ng-model is a complex object and the control did not
-        // validate.
         obj.elements.forEach(function(element) {
-          theForm[element].$$lastCommittedViewValue = ''
-          theForm[element].$rollbackViewValue()
+          clearFormField(theForm, element)
         })
       })
     }
   }
 
   return reset
+}
+
+app.factory('formFieldIsValid', formFieldIsValid)
+function formFieldIsValid() {
+  /**
+   * A function whose return value is used to evaluate whether a form control element has error or success
+   * @param {string} form the name of the form
+   * @param {string} name the name of a form control
+   * @param {string|null} validity the type of validity to check for, 'ok' means valid while undefined means invalid
+   * @returns {boolean}
+   */
+
+  return function($scope, form, name, validity) {
+    var field = $scope[form][name]
+    return field.$dirty && field[validity === 'ok' ? '$valid' : '$invalid']
+  }
 }
 
 require('./commons/toggle-dim-element')
