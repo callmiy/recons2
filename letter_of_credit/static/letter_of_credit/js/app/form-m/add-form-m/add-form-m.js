@@ -12,7 +12,8 @@ var app = angular.module('add-form-m', [
   'lc-issue-service',
   'search-detailed-or-uploaded-form-m',
   'form-m-service',
-  'lc-cover'
+  'lc-cover',
+  'lc-bid'
 ])
 
 app.config(rootCommons.interpolateProviderConfig)
@@ -26,9 +27,7 @@ function formMStateURLConfig($stateProvider) {
     .state('form_m.add', {
       kanmiiTitle: 'Add form M',
 
-      params: {
-        detailedFormM: null
-      },
+      params: {detailedFormM: null, showSummary: null},
 
       views: {
         addFormM: {
@@ -56,18 +55,27 @@ AddFormMStateController.$inject = [
   '$filter',
   '$stateParams',
   'LCIssueConcrete',
-  'resetForm2'
+  'resetForm2',
+  '$state'
 ]
 
 function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
   kanmiiUnderscore, formatDate, xhrErrorDisplay, formMAttributesVerboseNames, FormM, getTypeAheadLCIssue,
-  $timeout, $filter, $stateParams, LCIssueConcrete, resetForm2) {
+  $timeout, $filter, $stateParams, LCIssueConcrete, resetForm2, $state) {
   var vm = this
 
   vm.detailedFormM = angular.copy($stateParams.detailedFormM)
   $stateParams.detailedFormM = null
 
+  /*
+   *@param {angular.form} the HTML fieldSet element for form M cover
+   */
   var coverForm
+
+  /*
+   *@param {angular.form} the HTML fieldSet element for form M bid
+   */
+  var bidForm
 
   initialize()
   function initialize(form) {
@@ -89,11 +97,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       vm.nonClosedIssues = []
     }
 
-    vm.cover = null
-
     vm.searchFormM = {}
-
-    initBidForm()
     initIssuesForm()
     initFormMSavingIndicator()
 
@@ -101,6 +105,16 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       form.$setPristine()
       form.$setUntouched()
     }
+
+    /*
+     *@param {angular.form.model} the form M cover model
+     */
+    vm.cover = null
+
+    /*
+     *@param {angular.form.model} the form M bid model
+     */
+    vm.bid = null
   }
 
   function initDetailedFormM() {
@@ -123,7 +137,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       number: vm.detailedFormM.number,
       applicant: vm.detailedFormM.applicant_data,
       currency: vm.detailedFormM.currency_data,
-      amount: Number(vm.detailedFormM.amount)
+      amount: Number(vm.detailedFormM.amount),
+      goods_description: vm.detailedFormM.goods_description
     }
 
     vm.fieldsEdit = {
@@ -137,8 +152,22 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   }
 
   function initFormMSavingIndicator() {
-    vm.savingFormMIndicator = 'Creating New Form M...........please wait'
-    vm.formMIsSaving = false
+    var summary = $stateParams.showSummary
+    $stateParams.showSummary = null
+
+    if (summary) {
+      vm.savingFormMIndicator = summary
+      vm.formMIsSaving = true
+
+      $timeout(function() {
+        vm.formMIsSaving = false
+      }, 120000)
+    }
+
+    else {
+      vm.savingFormMIndicator = 'Creating New Form M...........please wait'
+      vm.formMIsSaving = false
+    }
   }
 
   var issueIds
@@ -156,20 +185,14 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
   }
 
-  function initBidForm(bidForm) {
-    vm.showBidContainer = false
-    vm.makeBidTitle = 'Make Bid Request'
-    vm.bidRequest = {}
-
-    if (bidForm) {
-      bidForm.$setPristine()
-      bidForm.$setUntouched()
-    }
-  }
-
   vm.onCoverChanged = function onCoverChanged(cover, form) {
     vm.cover = cover
     coverForm = form
+  }
+
+  vm.onBidChanged = function onBidChanged(bid, form) {
+    vm.bid = bid
+    bidForm = form
   }
 
   vm.enableFieldEdit = function enableFieldEdit(field) {
@@ -190,18 +213,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
 
     function issueClosedError(xhr) { xhrErrorDisplay(xhr)}
-  }
-
-  vm.toggleShowBidContainer = function toggleShowBidContainer(bidRequestForm) {
-    vm.showBidContainer = vm.formM.number && vm.formM.amount && !vm.showBidContainer
-
-    if (!vm.showBidContainer) {
-      initBidForm(bidRequestForm)
-    }
-    else {
-      vm.makeBidTitle = 'Dismiss'
-      vm.bidRequest.amount = vm.formM.amount
-    }
   }
 
   vm.toggleShowLcIssueContainer = function toggleShowLcIssueContainer() {
@@ -227,22 +238,25 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   }
 
   vm.disableSubmitBtn = disableSubmitBtn
-  function disableSubmitBtn(newFormMFormInvalid, bidRequestFormInvalid) {
-
+  function disableSubmitBtn(newFormMFormInvalid) {
     if (newFormMFormInvalid) return true
 
-    else if (vm.showBidContainer && bidRequestFormInvalid) return true
+    if (vm.showLcIssueContainer && !vm.issues.length) return true
 
-    else if (vm.showLcIssueContainer && !vm.issues.length) return true
+    if (coverForm && coverForm.$invalid) return true
 
-    else if (coverForm && coverForm.$invalid) return true
+    if (bidForm && bidForm.$invalid) return true
 
     var compared = compareDetailedFormMWithForm()
-
     if (!compared) return false
 
-    else return kanmiiUnderscore.all(compared) && !vm.issues.length && kanmiiUnderscore.isEmpty(vm.bidRequest)
+    if (kanmiiUnderscore.all(compared)) {
+      if (vm.bid && !kanmiiUnderscore.isEmpty(vm.bid)) return false
+      if (vm.cover && !kanmiiUnderscore.isEmpty(vm.cover)) return false
+      return !vm.issues.length
+    }
 
+    return false
   }
 
   vm.reset = reset
@@ -288,20 +302,16 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     })
   }
 
-  vm.submit = function submit(formM, bidRequest) {
+  vm.submit = function submit(formM, form) {
     var formMToSave = angular.copy(formM)
 
     formMToSave.applicant = formMToSave.applicant.url
     formMToSave.currency = formMToSave.currency.url
     formMToSave.date_received = formatDate(formMToSave.date_received)
 
-    var submittedBidRequest = angular.copy(bidRequest)
-    if (submittedBidRequest && !kanmiiUnderscore.isEmpty(submittedBidRequest)) {
-      formMToSave.goods_description = submittedBidRequest.goods_description
-
-      formMToSave.bid = {
-        amount: Number(submittedBidRequest.amount)
-      }
+    if (vm.bid && !kanmiiUnderscore.isEmpty(vm.bid)) {
+      formMToSave.goods_description = vm.bid.goods_description
+      formMToSave.bid = {amount: vm.bid.amount}
     }
 
     if (vm.issues.length) formMToSave.issues = vm.issues
@@ -320,26 +330,13 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
 
     function formMSavedSuccess(data) {
-      vm.detailedFormM = data
-      initDetailedFormM()
-
-      vm.savingFormMIndicator = showFormMMessage()
-
-      vm.savingFormMIndicator += showIssuesMessage()
+      var summary = showFormMMessage() + showIssuesMessage()
 
       if (data.bid) {
-        vm.savingFormMIndicator += '\n\nBid Amount     : ' + data.currency_data.code + ' ' +
-                                   $filter('number')(data.bid.amount, 2)
+        summary += '\n\nBid Amount     : ' + data.currency_data.code + ' ' + $filter('number')(data.bid.amount, 2)
       }
 
-      vm.formMIsSaving = true
-
-      initBidForm()
-      initIssuesForm()
-
-      $timeout(function() {
-        vm.formMIsSaving = false
-      }, 120000)
+      $state.go('form_m.add', {detailedFormM: data, showSummary: summary})
     }
 
     function formMSavedError(xhr) {
@@ -348,9 +345,9 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
   }
 
-  vm.hideSavingIndicator = function hideSavingIndicator() {
-    vm.formMIsSaving = false
-  }
+  //vm.hideSavingIndicator = function hideSavingIndicator() {
+  //  vm.formMIsSaving = false
+  //}
 
   vm.getTypeAheadSelected = function getTypeAheadSelected($item, $model) {
     $timeout(function() {
@@ -421,11 +418,9 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
       amount: vm.formM.amount && angular.equals(vm.formM.amount, Number(vm.detailedFormM.amount)),
 
-      currency: vm.formM.currency && angular.equals(
-        vm.formM.currency.code, vm.detailedFormM.currency_data.code),
+      currency: vm.formM.currency && (vm.formM.currency.code === vm.detailedFormM.currency_data.code),
 
-      applicant: vm.formM.applicant && angular.equals(
-        vm.formM.applicant.name, vm.detailedFormM.applicant_data.name)
+      applicant: vm.formM.applicant && (vm.formM.applicant.name === vm.detailedFormM.applicant_data.name)
     }
   }
 }

@@ -1,12 +1,12 @@
 <div id="add-form-m-root-container" class="add-form-m-root-container" style="margin-top: 5px;">
   <form class="form-horizontal" name="addFormMForm" novalidate
-        ng-submit="addFormMState.submit(addFormMState.formM, addFormMState.bidRequest, addFormMForm)">
+        ng-submit="addFormMState.submit(addFormMState.formM, addFormMForm)">
 
     <div class="row add-form-m-form-row">
 
       <div class="add-form-m-saving-indicator" ng-show="addFormMState.formMIsSaving">
         <span class="glyphicon glyphicon-remove-sign add-form-m-saving-indicator-dismiss"
-              ng-click="addFormMState.hideSavingIndicator()"></span>
+              ng-click="addFormMState.formMIsSaving = false"></span>
 
         <pre>{$addFormMState.savingFormMIndicator$}</pre>
       </div>
@@ -146,7 +146,7 @@
 
           <div class="col-sm-5" style="text-align: left ">
             <button type="submit" class="btn btn-info"
-                    ng-disabled="addFormMState.disableSubmitBtn(newFormMForm.$invalid, bidRequestForm.$invalid)">
+                    ng-disabled="addFormMState.disableSubmitBtn(newFormMForm.$invalid)">
               Create Form M
             </button>
           </div>
@@ -162,43 +162,7 @@
       </div>
 
       <div class="col-sm-6">
-        <div class="bid-request-form-container form-m-add-on-container">
-
-          <div ng-click="addFormMState.toggleShowBidContainer(bidRequestForm)"
-               class="form-m-add-on-toggle form-m-bid-toggle-show clearfix">
-            <span class="form-m-add-on-show-helper" ng-show="addFormMState.showBidContainer">Make Bid Request</span>
-
-            <div class="form-m-add-on-show-icon">
-              <span
-                  ng-class="['glyphicon', {'glyphicon-chevron-down': !addFormMState.showBidContainer, 'glyphicon-chevron-up': addFormMState.showBidContainer}]">
-              </span>
-
-              {$addFormMState.makeBidTitle$}
-            </div>
-          </div>
-
-          <fieldset ng-form name="bidRequestForm" ng-show="addFormMState.showBidContainer">
-            <div class="form-group bid-request-goods_description">
-              <label class="control-label col-sm-3" for="goods-description">Goods Description</label>
-
-              <div class="col-sm-9">
-                <input class="form-control" id="goods-description" name="goods-description" required min="5"
-                       ng-disabled="!addFormMState.showBidContainer"
-                       ng-model="addFormMState.bidRequest.goods_description" to-upper/>
-              </div>
-            </div>
-
-            <div class="form-group bid-request-amount-group">
-              <label class="control-label col-sm-3" for="bid-amount">Amount</label>
-
-              <div class="col-sm-9">
-                <input class="form-control" id="bid-amount" name="bid-amount" required
-                       ng-model="addFormMState.bidRequest.amount" ng-disabled="!addFormMState.showBidContainer"
-                       number-format/>
-              </div>
-            </div>
-          </fieldset>
-        </div>
+        <div lc-bid mf-context="addFormMState.formM" on-bid-changed="addFormMState.onBidChanged(bid, bidForm)"></div>
 
         <div class="form-m-lc-issue-container form-m-add-on-container">
           <div ng-click="addFormMState.toggleShowLcIssueContainer()"
