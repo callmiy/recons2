@@ -22,12 +22,29 @@ class FormMCoverSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
+class FormMCoverBasicSerializer(serializers.HyperlinkedModelSerializer):
+    cover_label = serializers.ReadOnlyField(source='get_cover_type_display')
+
+    class Meta:
+        model = FormMCover
+        fields = (
+            'amount',
+            'cover_type',
+            'cover_label',
+            'received_at',
+        )
+
+
 class FormMSerializer(serializers.HyperlinkedModelSerializer):
     applicant_data = CustomerSerializer(required=False, read_only=True)
     currency_data = CurrencySerializer(required=False, read_only=True)
     form_m_issues = LCIssueConcreteSerializerFormM(many=True, read_only=True)
-    lc = serializers.HyperlinkedRelatedField(view_name='lcregister-detail', queryset=LCRegister.objects.all(),
-                                             required=False)
+    lc = serializers.HyperlinkedRelatedField(
+        view_name='lcregister-detail',
+        queryset=LCRegister.objects.all(),
+        required=False
+    )
+    covers = FormMCoverBasicSerializer(read_only=True, many=True)
 
     class Meta:
         model = FormM
@@ -43,7 +60,8 @@ class FormMSerializer(serializers.HyperlinkedModelSerializer):
             'url',
             'form_m_issues',
             'goods_description',
-            'lc'
+            'lc',
+            'covers',
         )
 
     def create(self, validated_data):

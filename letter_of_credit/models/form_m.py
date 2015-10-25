@@ -73,7 +73,7 @@ class FormMCover(models.Model):
         (UNCONFIRMED, 'UNCONFIRMED'),
     )
 
-    mf = models.ForeignKey(FormM, verbose_name='Form M')
+    mf = models.ForeignKey(FormM, verbose_name='Form M', related_name='covers')
     amount = models.DecimalField('Cover Amount', max_digits=20, decimal_places=2)
     cover_type = models.SmallIntegerField('Cover Type', choices=COVER_TYPES)
     received_at = models.DateField('Date Received', auto_now_add=True)

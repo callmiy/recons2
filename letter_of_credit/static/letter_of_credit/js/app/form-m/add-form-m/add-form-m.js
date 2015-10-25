@@ -136,7 +136,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       amount: Number(vm.detailedFormM.amount),
       goods_description: vm.detailedFormM.goods_description,
       form_m_issues: vm.detailedFormM.form_m_issues,
-      url: vm.detailedFormM.url
+      url: vm.detailedFormM.url,
+      covers: vm.detailedFormM.covers
     }
 
     vm.fieldsEdit = {
@@ -294,7 +295,11 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     if (!vm.detailedFormM) new FormM(formMToSave).$save(formMSavedSuccess, formMSavedError)
 
     else {
-      if(kanmiiUnderscore.all(compareDetailedFormMWithForm())) formMToSave.do_not_update = 'do_not_update'
+      if (kanmiiUnderscore.all(compareDetailedFormMWithForm())) {
+        formMToSave.do_not_update = 'do_not_update'
+        formMToSave.applicant_data = vm.formM.applicant
+        formMToSave.currency_data = vm.formM.currency
+      }
       formMToSave.id = vm.detailedFormM.id
       new FormM(formMToSave).$put(formMSavedSuccess, formMSavedError)
     }
@@ -305,6 +310,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       if (data.bid) {
         summary += '\n\nBid Amount     : ' + data.currency_data.code + ' ' + $filter('number')(data.bid.amount, 2)
       }
+
+      if(data.cover) data.covers.push(data.cover)
 
       $state.go('form_m.add', {detailedFormM: data, showSummary: summary})
     }
@@ -335,10 +342,14 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     var index = 1
 
     kanmiiUnderscore.each(vm.nonClosedIssues, function(issue) {
-      issuesText += ('(' + index++ + ') ' + issue.issue.text.replace(/:ISSUE$/i, '') + '\n')
+      issuesText += ('(' + index++ + ') ' + vm.formatIssueText(issue.issue.text) + '\n')
     })
 
     return issuesText
+  }
+
+  vm.formatIssueText = function(text) {
+    return text.replace(/:ISSUE$/i, '')
   }
 
   function compareDetailedFormMWithForm() {

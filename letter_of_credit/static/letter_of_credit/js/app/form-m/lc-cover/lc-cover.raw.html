@@ -67,4 +67,33 @@
       </div>
     </div>
   </fieldset>
+
+  <div class="existing-covers" ng-if="addFormMState.formM.covers.length">
+    <hr/>
+    <table class="table table-responsive table-striped">
+      <caption style="border-bottom: 1px solid #D2D2D2;font-size: 18px; padding: 0;">
+        Covers
+      </caption>
+
+      <thead>
+        <tr>
+          <td>S/N</td>
+          <td>Cover Type</td>
+          <td>Currency</td>
+          <td>Amount</td>
+          <td>Date Received</td>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr ng-repeat="cover in addFormMState.formM.covers">
+          <td>{$::$index + 1 $}</td>
+          <td>{$::cover.cover_label$}</td>
+          <td>{$::addFormMState.formM.currency.code$}</td>
+          <td>{$::cover.amount|number:2$}</td>
+          <td>{$::cover.received_at|date:'dd-MMM-yyyy'$}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

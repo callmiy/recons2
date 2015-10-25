@@ -98,9 +98,9 @@ function LcIssueDirectiveController($scope, LCIssueConcrete, getTypeAheadLCIssue
       _ids.push(issue.id)
     })
 
-    var closedIssues = angular.copy(vm.closedIssues)
+      var x = []
 
-    closedIssues.concat(vm.nonClosedIssues).forEach(function(issue) {
+    x.concat(vm.nonClosedIssues).concat(vm.closedIssues).forEach(function(issue) {
       _ids.push(issue.issue.id)
     })
 

@@ -4,12 +4,17 @@ from rest_framework import generics, pagination, status
 import django_filters
 from rest_framework.response import Response
 from letter_of_credit.models import FormM, FormMCover
-from letter_of_credit.serializers import FormMSerializer, LcBidRequestSerializer, LCIssueConcreteSerializer, \
+from letter_of_credit.serializers import (
+    FormMSerializer,
+    LcBidRequestSerializer,
+    LCIssueConcreteSerializer,
     FormMCoverSerializer
-
+)
 import logging
+import re
 
 logger = logging.getLogger('recons_logger')
+URL_RE = re.compile(r'.+/(\d+)$')
 
 
 class FormMCoverListCreateAPIView(generics.ListCreateAPIView):
@@ -102,7 +107,8 @@ class FormIssueBidCoverUtil:
                 'url': issue['url'],
                 'issue': {
                     'text': issue['issue_text'],
-                    'url': issue['issue']
+                    'url': issue['issue'],
+                    'id': int(URL_RE.search(issue['issue']).group(1))
                 }
             })
         logger.info('{} form M issues successfully created:\n{}'.format(self.log_prefix, json.dumps(issues, indent=4)))
@@ -116,7 +122,14 @@ class FormIssueBidCoverUtil:
         serializer.save()
         data = serializer.data
         logger.info('{} form m cover successfully created:\n{}'.format(self.log_prefix, json.dumps(data, indent=4)))
-        return data
+        # we do this because form M displays only a subset of data from form M cover serializer (much of the data
+        # is already part of form m serializer)
+        return {
+            'amount': data['amount'],
+            'cover_type': data['cover_type'],
+            'cover_label': data['cover_label'],
+            'received_at': data['received_at']
+        }
 
 
 class FormMListCreateAPIView(generics.ListCreateAPIView):

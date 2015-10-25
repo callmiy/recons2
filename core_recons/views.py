@@ -22,6 +22,7 @@ class CoreAppsView(View):
             'uploadedFormMAPIUrl': reverse('uploadedformm-list'),
             'letterOfCreditAPIUrl': reverse('lcregister-list'),
             'letterOfCreditStatusesAPIUrl': reverse('lcstatus-list'),
+            'formMCoverAPIUrl': reverse('formmcover-list'),
         })
 
     @staticmethod

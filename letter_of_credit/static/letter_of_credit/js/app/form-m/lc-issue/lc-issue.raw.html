@@ -49,21 +49,27 @@
        ng-show="lcIssue.nonClosedIssues.length">
     <h5 style="text-align: center">Issues not closed({$lcIssue.nonClosedIssues.length$})</h5>
 
-    <div ng-repeat="notClosed in lcIssue.nonClosedIssues">
-      <div class="input-group">
-        <label for="issue-text-display" class="sr-only"></label>
+    <table class="table table-responsive table-striped">
+      <thead>
+        <tr>
+          <td>S/N</td>
+          <td style="text-align:left;padding-left: 20%;">Issue</td>
+          <td></td>
+        </tr>
+      </thead>
 
-        <span class="input-group-addon">{$$index + 1$}</span>
-
-        <input type="text" class="form-control" id="issue-text-display" name="issue-text-display" disabled
-               ng-value="notClosed.issue.text"
-               style="padding-left: 10px;"/>
-
-        <span class="input-group-addon" style="cursor: pointer" ng-click="lcIssue.closeIssue(notClosed, $index)">
-          <span class="glyphicon glyphicon-trash"></span>
-        </span>
-      </div>
-    </div>
+      <tbody>
+        <tr ng-repeat="issue in lcIssue.nonClosedIssues">
+          <td>{$$index + 1$}</td>
+          <td style="text-align: left;">{$::addFormMState.formatIssueText(issue.issue.text)$}</td>
+          <td>
+            <span class="glyphicon glyphicon-trash" style="cursor: pointer"
+                  ng-click="lcIssue.closeIssue(issue, $index)">
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
     <div class="download-issue-btn-container" style="text-align: right;margin-top: 20px;">
       <button type="button" class="btn btn-info" ng-click="lcIssue.downloadIssues()">
@@ -78,20 +84,22 @@
       ({$lcIssue.closedIssues.length$})
     </h5>
 
-    <div ng-repeat="closedIssue in lcIssue.closedIssues">
-      <div class="input-group">
-        <label for="issue-text-display" class="sr-only"></label>
+    <table class="table table-responsive table-striped">
+      <thead>
+        <tr>
+          <td>S/N</td>
+          <td style="text-align:left;padding-left: 20%;">Issue</td>
+          <td>Date Created</td>
+        </tr>
+      </thead>
 
-        <span class="input-group-addon">{$$index + 1$}</span>
-
-        <input type="text" class="form-control" id="issue-text-display" name="issue-text-display" disabled
-               ng-value="closedIssue.issue.text"
-               style="padding-left: 10px;"/>
-
-                <span class="input-group-addon">
-                  <span>{$closedIssue.closed_at |date:'dd-MMM-yyyy'$}</span>
-                </span>
-      </div>
-    </div>
+      <tbody>
+        <tr ng-repeat="closedIssue in lcIssue.closedIssues">
+          <td>{$::$index + 1$}</td>
+          <td style="text-align: left;">{$::addFormMState.formatIssueText(closedIssue.issue.text)$}</td>
+          <td>{$::closedIssue.closed_at |date:'dd-MMM-yyyy'$}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
