@@ -15,6 +15,7 @@ require('./form-m/list-form-m/list-form-m.js')
 require('./form-m/lc-issue/lc-issue.js')
 require('./form-m/form-m-home.js')
 require('./lc/lc.js')
+require('./form-m/lc-cover/lc-cover.js')
 require('./lc/lc-detail/lc-detail.js')
 require('./lc/search-lc/search-lc.js')
 

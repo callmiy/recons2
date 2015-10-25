@@ -1,6 +1,7 @@
 {% load static %}<!doctype html><html lang="en"><head><meta charset="UTF-8"><title>{% block title %}Home{% endblock title %} - Trade App</title><link rel="stylesheet" href="{% static 'core_recons/css/compiled.min.css' %}">{% block page_css %}{% endblock page_css %}<script src="{% static 'core_recons/js/initial/compiled.min.js' %}"></script><script src="{% static 'core_recons/js/app.min.js' %}"></script><script>
     var staticPrefix = '{% static "" %}';
     angular.module('rootApp').constant('staticPrefix', staticPrefix);
+    angular.module('rootApp').value('formMCoverTypes', JSON.parse('{{ form_m_cover_types | escapejs }}' || '[]'));
   </script>{% block page_js_up %}<script>
       angular.module('rootApp').value('urls', JSON.parse('{{ urls | escapejs }}' || '{}'));
     </script>{% endblock page_js_up %}</head><body>{% block main_nav_top %} {% include 'core_recons/top-nav.html' %} {% endblock main_nav_top %}<div class="container-fluid">{% block recons_app_login %}{% endblock recons_app_login %} {% if not user.is_anonymous %} {% block page_content %} {% include 'core_recons/main-menu-tree.html' %} {% endblock page_content %} {% endif %}</div>{% block page_js %}<script>

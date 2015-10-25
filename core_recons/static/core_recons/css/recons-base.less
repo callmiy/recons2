@@ -51,36 +51,31 @@ body {
 
 .container-fluid {
   margin: 10px 15px;
+}
 
-  input, textarea {
-    margin: 2px 0;
-    padding: 2px 3px;
-    border: 1px solid #ccc;
-
-    &.form-control{
-      margin: 0;
-    }
-  }
-
-  h1 {
-    font-size: 18px;
-    color: #666;
-    padding: 0 6px 0 0;
-    margin: 0 0 .2em 0;
-  }
-  h1, h2, h3, h4, h5, h6 {
-    font-weight: bold;
-  }
+.hide{
+  display: none;
 }
 
 .form-group > label.control-label {
   text-align: left;
 }
 
-input.ng-invalid.ng-dirty {
-  color: red;
-  border: 1px solid red;
-  box-shadow: 0 0 2px red;
+.form-horizontal {
+
+  .has-feedback {
+    .form-control-feedback {
+      right: 15px;
+    }
+  }
+}
+
+.form-control {
+  &.ng-invalid.ng-dirty {
+    color: #a94442;
+    border: 1px solid #a94442;
+    box-shadow: 0 0 2px #a94442;
+  }
 }
 
 form.align-vertical {

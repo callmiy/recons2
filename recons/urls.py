@@ -11,9 +11,10 @@ from core_recons.views import CoreAppsView
 
 
 class HomePageView(CoreAppsView):
-
     def get(self, request):
-        return render(request, "core_recons/recons-base.html", {'urls': self.get_core_app_urls()})
+        context = {'urls': self.get_core_app_urls()}
+        context.update(self.get_form_m_cover_types())
+        return render(request, "core_recons/recons-base.html", context)
 
 
 urlpatterns = patterns(

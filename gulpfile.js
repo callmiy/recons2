@@ -75,6 +75,7 @@ gulp.task('initial-js', function() {
     .pipe(plugins.addSrc.append(bower + '/angular-ui-router/release/angular-ui-router.js'))
     .pipe(plugins.addSrc.append(bower + '/angular-resource/angular-resource.js'))
     .pipe(plugins.addSrc.append(bower + '/angular-cookies/angular-cookies.js'))
+    .pipe(plugins.addSrc.append(bower + '/angular-messages/angular-messages.js'))
     .pipe(plugins.addSrc.append(bower + '/angular-bootstrap/ui-bootstrap-tpls.js'))
     .pipe(plugins.addSrc.append(bower + '/angular-modal-service/dst/angular-modal-service.js'))
     .pipe(plugins.addSrc.append(bower + '/bootstrap/dist/js/bootstrap.js'))

@@ -1,8 +1,10 @@
-{% extends 'recons-base.html' %}
+{% extends 'core_recons/recons-base.html' %}
+
+{% load static %}
 {% block title %}{{ title }}{% endblock title %}
 
 {% block page_css %}
-<link rel="stylesheet" href="/static/css/model-date-update.css">
+<link rel="stylesheet" href="{% static 'core_recons/css/model-date-update.css' %}">
 {% endblock page_css %}
 
 {% block page_content %}

@@ -1,3 +1,4 @@
+import json
 from django.db.models import Q
 from rest_framework import generics, pagination, status
 import django_filters
@@ -99,7 +100,7 @@ class FormMListCreateAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         incoming_data = request.data
-        logger.info('%s with incoming data = \n%r', self.log_prefix, incoming_data)
+        logger.info('%s with incoming data = \n%r', self.log_prefix, json.dumps(incoming_data, indent=4))
 
         serializer = self.get_serializer(data=incoming_data)
         serializer.is_valid(raise_exception=True)

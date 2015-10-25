@@ -17,4 +17,4 @@ class NostroChgsFormAAdmin(admin.ModelAdmin):
         'approved_by'
     )
 
-admin.site.register(NostroChgsFormA, NostroChgsFormAAdmin)
+# admin.site.register(NostroChgsFormA, NostroChgsFormAAdmin)

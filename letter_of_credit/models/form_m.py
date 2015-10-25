@@ -74,6 +74,7 @@ class FormMCover(models.Model):
     )
 
     mf = models.ForeignKey(FormM, verbose_name='Form M')
+    amount = models.DecimalField('Cover Amount', max_digits=20, decimal_places=2)
     cover_type = models.SmallIntegerField('Cover Type', choices=COVER_TYPES)
     received_at = models.DateField('Date Received', auto_now_add=True)
 
@@ -90,13 +91,13 @@ class FormMCover(models.Model):
     def currency(self):
         return self.mf.currency.code
 
-    def amount(self):
+    def form_m_amount(self):
         return self.mf.amount
 
-    def amount_formatted(self):
-        return '{:,.2f}'.format(self.amount())
+    def form_m_amount_formatted(self):
+        return '{:,.2f}'.format(self.form_m_amount())
 
-    amount_formatted.short_description = 'Form M Amount'
+    form_m_amount_formatted.short_description = 'Form M Amount'
 
     def lc_number(self):
         lc = self.mf.lc

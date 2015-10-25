@@ -29,10 +29,6 @@ from .uploaded_form_m import UploadedFormMListCreateAPIView, UploadedFormMUpdate
 
 class AppHomeView(CoreAppsView):
     def get(self, request):
-        template_context = {'urls': self.get_core_app_urls()}
-
-        return render(request, 'letter_of_credit/app/index.html', template_context)
-
-    def post(self, request):
-        post_data = request.POST
-        print 'post data = ', post_data
+        context = {'urls': self.get_core_app_urls()}
+        context.update(self.get_form_m_cover_types())
+        return render(request, 'letter_of_credit/app/index.html', context)

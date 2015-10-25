@@ -2,9 +2,9 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.views.generic import View
 from django.core.urlresolvers import reverse
-from datetime import date
 import json
 import re
+from letter_of_credit.models import FormMCover
 
 
 class CoreAppsView(View):
@@ -23,6 +23,10 @@ class CoreAppsView(View):
             'letterOfCreditAPIUrl': reverse('lcregister-list'),
             'letterOfCreditStatusesAPIUrl': reverse('lcstatus-list'),
         })
+
+    @staticmethod
+    def get_form_m_cover_types():
+        return {'form_m_cover_types': json.dumps(FormMCover.COVER_TYPES)}
 
 
 date_re = re.compile("^(?P<day>\d{1,2})[-/:](?P<mon>\d{1,2})[-/:](?P<yr>\d{4})$")
@@ -77,6 +81,9 @@ class UpdateModelDate(View):
                     int(date_matched.group('yr')),
                     int(date_matched.group('mon')),
                     int(date_matched.group('day')))"""
+
+                valid_date = "'%s-%s-%s'" % (
+                    date_matched.group('yr'), date_matched.group('mon'), date_matched.group('day'))
             else:
                 return self.render_and_respond(
                     request, objs, _ids,
@@ -98,7 +105,7 @@ class UpdateModelDate(View):
             [getattr(obj, attr) for attr in self.attributes] for obj in objs
             ]
         return render(
-            request, "model-date-update.html",
+            request, "core_recons/model-date-update.html",
             {
                 "form_action_url": reverse(self.form_action_url_name),
                 "id_vals": ids,

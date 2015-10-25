@@ -19,6 +19,7 @@ class FormMCoverAdmin(AjaxSelectAdmin):
     form = make_ajax_form(FormMCover, {'mf': 'form_m'})
 
     list_display = (
-    'form_m_number', 'lc_number', 'applicant', 'currency', 'amount_formatted', 'cover_type', 'received_at',)
+        'form_m_number', 'lc_number', 'applicant', 'currency', 'form_m_amount_formatted', 'amount', 'cover_type',
+        'received_at',)
 
-    search_fields = ('mf__number', 'cover_type', 'mf__applicant__name', 'mf__lc__lc_number')
+    search_fields = ('mf__number', 'cover_type', 'mf__applicant__name', 'mf__lc__lc_number', 'amount', 'mf__amount',)

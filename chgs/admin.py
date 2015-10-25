@@ -100,4 +100,4 @@ class ChargeAdmin(admin.ModelAdmin):
                 'printchgs', kwargs={'reqtype': 'dealers'}), ','.join(ids)))
     print_dealers.short_description = "Print Tickets - DEALERS"
 
-admin.site.register(Charge, ChargeAdmin)
+# admin.site.register(Charge, ChargeAdmin)

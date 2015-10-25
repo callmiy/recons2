@@ -26,6 +26,7 @@
     "angular-bootstrap": "0.14.1",
     "angular-cookies": "~1.4.4",
     "angular-css": "~1.0.7",
+    "angular-messages": "1.4.4",
     "angular-mocks": "1.4.4",
     "angular-modal-service": "~0.6.7",
     "angular-resource": "~1.4.4",

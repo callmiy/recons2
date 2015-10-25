@@ -36,5 +36,5 @@ class SourceFxAdmin(admin.ModelAdmin):
     list_display = ('code', 'description',)
     search_fileds = ('code', 'description',)
 
-admin.site.register(UndrawnBal, UndrawnBalAdmin)
-admin.site.register(SourceFx, SourceFxAdmin)
+# admin.site.register(UndrawnBal, UndrawnBalAdmin)
+# admin.site.register(SourceFx, SourceFxAdmin)

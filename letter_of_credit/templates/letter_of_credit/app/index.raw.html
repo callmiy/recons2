@@ -16,6 +16,11 @@
 {% block page_content %}
   <div ng-app="lc-root-app">
 
+    <script type="text/ng-template" id="form-error-messages">
+      <div class="required help-block" ng-message="required">This field is required</div>
+      <div class="min-length help-block" ng-message="minlength">This field is too short</div>
+    </script>
+
     <ol class="home-breadcrumb breadcrumb" ng-show="$state.current.name !== 'home'">
       <li>
         <span class="glyphicon glyphicon-home" ng-click="$state.go('home')" data-toggle="tooltip"
