@@ -6,7 +6,7 @@ from .views import (
     LetterOfCreditRegisterListCreateAPIView,
     LetterOfCreditRegisterUpdateAPIView,
     FormMListCreateAPIView,
-    FormMUpdateAPIView,
+    FormMRetrieveUpdateDestroyAPIView,
     AppHomeView,
     LCRegisterUploadView,
     ReleaseTelexView,
@@ -18,8 +18,8 @@ from .views import (
     LcBidRequestUpdateAPIView,
     DownloadBidsView,
     UploadedFormMListCreateAPIView,
-    UploadedFormMUpdateAPIView
-)
+    UploadedFormMUpdateAPIView,
+    FormMCoverListCreateAPIView, FormMCoverRetrieveUpdateDestroyAPIView)
 
 urlpatterns = patterns(
     # <editor-fold description='home view and upload'>
@@ -65,9 +65,19 @@ urlpatterns += patterns(
 
     url(r'^form-m/?$', FormMListCreateAPIView.as_view(), name='formm-list'),
 
-    url(r'^form-m/(?P<pk>\d+)/?$', FormMUpdateAPIView.as_view(), name='formm-detail'),
+    url(r'^form-m/(?P<pk>\d+)/?$', FormMRetrieveUpdateDestroyAPIView.as_view(), name='formm-detail'),
 
     url(r'^app/home/?$', login_required(AppHomeView.as_view()), name='lc-app-home')
+    # </editor-fold>
+)
+
+urlpatterns += patterns(
+    # <editor-fold description='form M Cover'>
+    '',
+
+    url(r'^form-m-cover/?$', FormMCoverListCreateAPIView.as_view(), name='formmcover-list'),
+
+    url(r'^form-m-cover/(?P<pk>\d+)/?$', FormMCoverRetrieveUpdateDestroyAPIView.as_view(), name='formmcover-detail'),
     # </editor-fold>
 )
 

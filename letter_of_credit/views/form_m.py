@@ -3,12 +3,31 @@ from django.db.models import Q
 from rest_framework import generics, pagination, status
 import django_filters
 from rest_framework.response import Response
-from letter_of_credit.models import FormM, LcBidRequest
-from letter_of_credit.serializers import FormMSerializer, LcBidRequestSerializer, LCIssueConcreteSerializer
+from letter_of_credit.models import FormM, FormMCover
+from letter_of_credit.serializers import FormMSerializer, LcBidRequestSerializer, LCIssueConcreteSerializer, \
+    FormMCoverSerializer
 
 import logging
 
 logger = logging.getLogger('recons_logger')
+
+
+class FormMCoverListCreateAPIView(generics.ListCreateAPIView):
+    queryset = FormMCover.objects.all()
+    serializer_class = FormMCoverSerializer
+
+    def create(self, request, *args, **kwargs):
+        logger.info('Creating form m cover with incoming data: %s', json.dumps(request.data, indent=4))
+        return super(FormMCoverListCreateAPIView, self).create(request, *args, **kwargs)
+
+
+class FormMCoverRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = FormMCover.objects.all()
+    serializer_class = FormMCoverSerializer
+
+    def update(self, request, *args, **kwargs):
+        logger.info('Updating form m cover with incoming data: %s', json.dumps(request.data, indent=4))
+        return super(FormMCoverRetrieveUpdateDestroyAPIView, self).update(request, *args, **kwargs)
 
 
 class FormMListPagination(pagination.PageNumberPagination):
@@ -41,7 +60,7 @@ class FormMFilter(django_filters.FilterSet):
         return qs.filter(Q(number__icontains=param) | Q(applicant__name__icontains=param))
 
 
-class FormIssueBidUtil:
+class FormIssueBidCoverUtil:
     """
     Utility class for handling cases where form M will be created/updated simultaneously with bid and or issues
     """
@@ -58,7 +77,9 @@ class FormIssueBidUtil:
                                             context={'request': self.request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return serializer.data
+        data = serializer.data
+        logger.info('{} bid successfully created:\n{}'.format(self.log_prefix, json.dumps(data, indent=4)))
+        return data
 
     def create_issues(self, issues):
         logger.info('{} creating form M issues: {:}'.format(self.log_prefix, issues))
@@ -84,8 +105,18 @@ class FormIssueBidUtil:
                     'url': issue['issue']
                 }
             })
-
+        logger.info('{} form M issues successfully created:\n{}'.format(self.log_prefix, json.dumps(issues, indent=4)))
         return issues
+
+    def create_cover(self, cover):
+        logger.info('{} creating form M cover with data\n{}'.format(self.log_prefix, cover))
+        cover['mf'] = self.form_m_url
+        serializer = FormMCoverSerializer(data=cover, context={'request': self.request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        data = serializer.data
+        logger.info('{} form m cover successfully created:\n{}'.format(self.log_prefix, json.dumps(data, indent=4)))
+        return data
 
 
 class FormMListCreateAPIView(generics.ListCreateAPIView):
@@ -107,9 +138,12 @@ class FormMListCreateAPIView(generics.ListCreateAPIView):
         self.perform_create(serializer)
         form_m_data = serializer.data
 
-        util = FormIssueBidUtil(request, form_m_data['url'], self.log_prefix)
+        util = FormIssueBidCoverUtil(request, form_m_data['url'], self.log_prefix)
         if 'bid' in incoming_data:
             form_m_data['bid'] = util.create_bid(incoming_data['bid']['amount'])
+
+        if 'cover' in incoming_data:
+            form_m_data['cover'] = util.create_cover(incoming_data['cover'])
 
         if 'issues' in incoming_data:
             form_m_data['form_m_issues'] += util.create_issues(incoming_data['issues'])
@@ -118,26 +152,35 @@ class FormMListCreateAPIView(generics.ListCreateAPIView):
         return Response(form_m_data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class FormMUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
+class FormMRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = FormM.objects.all()
     serializer_class = FormMSerializer
 
     def __init__(self, **kwargs):
         self.log_prefix = 'Updating form M:'
-        super(FormMUpdateAPIView, self).__init__(**kwargs)
+        super(FormMRetrieveUpdateDestroyAPIView, self).__init__(**kwargs)
 
     def update(self, request, *args, **kwargs):
         incoming_data = request.data
-        logger.info('%s with incoming data: \n%r', self.log_prefix, incoming_data)
+        logger.info('%s with incoming data: \n%s', self.log_prefix, json.dumps(incoming_data, indent=4))
 
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=incoming_data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        form_m_data = serializer.data
+        if incoming_data.get('do_not_update', False):
+            logger.info('%s form M will not be updated because incoming data contains "do_not_update" flag.',
+                        self.log_prefix)
+            form_m_data = incoming_data
+        else:
+            partial = kwargs.pop('partial', False)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=incoming_data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            form_m_data = serializer.data
+            logger.info('%s form m successfully updated: \n%s', self.log_prefix, json.dumps(form_m_data, indent=4))
 
-        util = FormIssueBidUtil(request, form_m_data['url'], self.log_prefix)
+        util = FormIssueBidCoverUtil(request, form_m_data['url'], self.log_prefix)
+        if 'cover' in incoming_data:
+            form_m_data['cover'] = util.create_cover(incoming_data['cover'])
+
         if 'bid' in incoming_data:
             form_m_data['bid'] = util.create_bid(incoming_data['bid']['amount'])
 

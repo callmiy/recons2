@@ -18,7 +18,12 @@ from .lc_issue import (
     LCIssueConcreteUpdateAPIView,
 )
 
-from .form_m import FormMListCreateAPIView, FormMUpdateAPIView
+from .form_m import (
+    FormMListCreateAPIView,
+    FormMRetrieveUpdateDestroyAPIView,
+    FormMCoverListCreateAPIView,
+    FormMCoverRetrieveUpdateDestroyAPIView
+)
 
 from .lc_bid_request import LcBidRequestListCreateAPIView, LcBidRequestUpdateAPIView
 

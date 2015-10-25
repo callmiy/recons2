@@ -1,6 +1,6 @@
 "use strict";
 
-var rootCommons = require('commons')
+/*jshint camelcase:false*/
 
 var app = angular.module('lc-issue', [
   'rootApp',

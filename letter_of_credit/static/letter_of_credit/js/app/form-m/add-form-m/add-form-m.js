@@ -286,13 +286,15 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
     if (vm.cover && !kanmiiUnderscore.isEmpty(vm.cover)) {
       formMToSave.cover = {
-        amount: vm.cover.amount, cover_type: vm.cover.cover_type[0]
+        amount: vm.cover.amount,
+        cover_type: vm.cover.cover_type[0]
       }
     }
 
     if (!vm.detailedFormM) new FormM(formMToSave).$save(formMSavedSuccess, formMSavedError)
 
     else {
+      if(kanmiiUnderscore.all(compareDetailedFormMWithForm())) formMToSave.do_not_update = 'do_not_update'
       formMToSave.id = vm.detailedFormM.id
       new FormM(formMToSave).$put(formMSavedSuccess, formMSavedError)
     }
@@ -325,7 +327,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   $scope.showIssuesMessage = showIssuesMessage
   function showIssuesMessage() {
-    console.log('vm.nonClosedIssues = ', vm.nonClosedIssues);
     if (!vm.nonClosedIssues.length) return ''
 
     var issuesText = '\n\n\nPlease note the following issues which must be \n' +

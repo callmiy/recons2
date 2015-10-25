@@ -1,7 +1,26 @@
-from letter_of_credit.models import FormM, LcBidRequest, LCRegister
+from letter_of_credit.models import FormM, LcBidRequest, LCRegister, FormMCover
 from rest_framework import serializers
 from adhocmodels.serializers import CustomerSerializer, CurrencySerializer
 from .lc_issue import LCIssueConcreteSerializerFormM
+
+
+class FormMCoverSerializer(serializers.HyperlinkedModelSerializer):
+    cover_label = serializers.ReadOnlyField(source='get_cover_type_display')
+
+    class Meta:
+        model = FormMCover
+        fields = (
+            'mf',
+            'amount',
+            'cover_type',
+            'cover_label',
+            'received_at',
+            'form_m_number',
+            'currency',
+            'applicant',
+            'lc_number'
+        )
+
 
 class FormMSerializer(serializers.HyperlinkedModelSerializer):
     applicant_data = CustomerSerializer(required=False, read_only=True)
