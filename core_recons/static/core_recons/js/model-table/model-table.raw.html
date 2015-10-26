@@ -18,7 +18,7 @@
         <td>{$$index + 1 + modelTable.rowIndexOffset$}</td>
 
         <td ng-repeat="modelManager in modelTable.modelManager" ng-style="::modelManager.tdStyle">
-          {$modelManager.modelKey ? aModel[modelManager.modelKey] : modelManager.render(aModel)$}
+          {$::modelManager.modelKey ? aModel[modelManager.modelKey] : modelManager.render(aModel)$}
         </td>
       </tr>
     </tbody>

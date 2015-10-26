@@ -14,6 +14,7 @@ class LcBidRequestPagination(pagination.PageNumberPagination):
 
 class LcBidRequestFilter(django_filters.FilterSet):
     pending = django_filters.MethodFilter()
+    mf = django_filters.CharFilter(lookup_type='icontains', name='mf__number')
 
     class Meta:
         model = LcBidRequest

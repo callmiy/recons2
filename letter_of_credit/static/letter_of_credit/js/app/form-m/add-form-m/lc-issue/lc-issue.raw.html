@@ -45,11 +45,14 @@
     </div>
   </fieldset>
 
-  <div style="margin-top: 30px;" class="existing-issues open-issues"
-       ng-show="lcIssue.nonClosedIssues.length">
-    <h5 style="text-align: center">Issues not closed({$lcIssue.nonClosedIssues.length$})</h5>
+  <div class="existing-issues open-issues items-table-display" ng-if="lcIssue.nonClosedIssues.length">
+
+    <hr/>
 
     <table class="table table-responsive table-striped">
+
+      <caption>Issues not closed({$lcIssue.nonClosedIssues.length$})</caption>
+
       <thead>
         <tr>
           <td>S/N</td>
@@ -78,18 +81,18 @@
     </div>
   </div>
 
-  <div style="margin-top: 30px;" class="existing-issues closed-issues"
-       ng-show="lcIssue.closedIssues.length">
-    <h5 style="text-align: center">Issues that have been closed
-      ({$lcIssue.closedIssues.length$})
-    </h5>
+  <div class="existing-issues closed-issues items-table-display" ng-if="lcIssue.closedIssues.length">
+
+    <hr/>
 
     <table class="table table-responsive table-striped">
+      <caption>Issues that have been closed ({$lcIssue.closedIssues.length$})</caption>
       <thead>
         <tr>
           <td>S/N</td>
           <td style="text-align:left;padding-left: 20%;">Issue</td>
           <td>Date Created</td>
+          <td>Date Closed</td>
         </tr>
       </thead>
 
@@ -97,6 +100,7 @@
         <tr ng-repeat="closedIssue in lcIssue.closedIssues">
           <td>{$::$index + 1$}</td>
           <td style="text-align: left;">{$::addFormMState.formatIssueText(closedIssue.issue.text)$}</td>
+          <td>{$::closedIssue.created_at |date:'dd-MMM-yyyy'$}</td>
           <td>{$::closedIssue.closed_at |date:'dd-MMM-yyyy'$}</td>
         </tr>
       </tbody>

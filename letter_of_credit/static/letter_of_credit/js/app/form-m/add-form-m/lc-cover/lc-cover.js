@@ -1,7 +1,5 @@
 "use strict";
 
-var rootCommons = require('commons')
-
 var app = angular.module('lc-cover', [
   'rootApp'
 ])
@@ -13,7 +11,7 @@ lcIssueDirective.$inject = []
 function lcIssueDirective() {
   return {
     restrict: 'A',
-    templateUrl: require('lcAppCommons').buildUrl('form-m/lc-cover/lc-cover.html'),
+    templateUrl: require('lcAppCommons').buildUrl('form-m/add-form-m/lc-cover/lc-cover.html'),
     scope: true,
     bindToController: {
       formM: '=mfContext',

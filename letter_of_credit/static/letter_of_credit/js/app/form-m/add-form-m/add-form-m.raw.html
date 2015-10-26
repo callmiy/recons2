@@ -17,14 +17,15 @@
           <div class="form-group form-m-group">
             <label class="control-label col-sm-3" for="form-m">Search Form M</label>
 
-            <div class="col-sm-9" ng-dblclick="addFormMState.getUploadedFormM()">
+            <div class="col-sm-9">
               <div class="input-group">
-                <span class="input-group-addon" data-toggle="tooltip" title="Search form M in single window">
+                <span class="input-group-addon" data-toggle="tooltip" ng-dblclick="addFormMState.getUploadedFormM()"
+                      title="Search form M in single window">
                   <i class="glyphicon glyphicon-search"></i>
                 </span>
 
                 <input class="form-control" type="text" min="4" id="form-m" disabled
-                       placeholder="double click to search form M in single window"
+                       placeholder="double search icon click to search form M in single window"
                        ng-model="addFormMState.searchFormM.mf"/>
               </div>
             </div>

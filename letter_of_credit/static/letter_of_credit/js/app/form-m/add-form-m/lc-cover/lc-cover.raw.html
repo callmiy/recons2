@@ -1,4 +1,4 @@
-<div class="cover-form-container form-m-add-on-container">
+<div class="cover-form-container form-m-add-on-container" style="margin-top: 40px;">
 
   <div ng-click="lcCover.toggleShow(coverForm)" class="form-m-add-on-toggle form-m-bid-toggle-show clearfix">
     <span class="form-m-add-on-show-helper" ng-show="lcCover.showContainer">
@@ -68,12 +68,10 @@
     </div>
   </fieldset>
 
-  <div class="existing-covers" ng-if="addFormMState.formM.covers.length">
+  <div class="existing-covers items-table-display" ng-if="addFormMState.formM.covers.length">
     <hr/>
     <table class="table table-responsive table-striped">
-      <caption style="border-bottom: 1px solid #D2D2D2;font-size: 18px; padding: 0;">
-        Covers
-      </caption>
+      <caption>Covers</caption>
 
       <thead>
         <tr>

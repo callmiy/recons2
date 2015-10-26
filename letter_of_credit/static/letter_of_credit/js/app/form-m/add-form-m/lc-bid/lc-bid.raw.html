@@ -58,4 +58,30 @@
       </div>
     </div>
   </fieldset>
+
+  <div class="items-table-display" ng-if="addFormMState.existingBids.length">
+
+    <hr/>
+
+    <table class="table table-responsive table-striped">
+      <caption>Existing Bids ({$addFormMState.existingBids.length$})</caption>
+      <thead>
+        <tr>
+          <td>S/N</td>
+          <td>Currency</td>
+          <td style="text-align: right"><span style="margin-right: 15px">Amount</span></td>
+          <td>Date Sent</td>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr ng-repeat="bid in addFormMState.existingBids">
+          <td>{$::$index + 1$}</td>
+          <td>{$::addFormMState.formM.currency.code$}</td>
+          <td style="text-align: right">{$::bid.amount|number:2$}</td>
+          <td>{$::bid.requested_at|date:'dd-MMM-yyyy'$}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

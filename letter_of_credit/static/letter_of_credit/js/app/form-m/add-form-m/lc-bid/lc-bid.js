@@ -1,6 +1,6 @@
 "use strict";
 
-var rootCommons = require('commons')
+/*jshint camelcase:false*/
 
 var app = angular.module('lc-bid', [
   'rootApp'
@@ -13,7 +13,7 @@ lcBidDirective.$inject = []
 function lcBidDirective() {
   return {
     restrict: 'A',
-    templateUrl: require('lcAppCommons').buildUrl('form-m/lc-bid/lc-bid.html'),
+    templateUrl: require('lcAppCommons').buildUrl('form-m/add-form-m/lc-bid/lc-bid.html'),
     scope: true,
     bindToController: {
       formM: '=mfContext',

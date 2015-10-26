@@ -14,7 +14,7 @@ lcIssueDirective.$inject = []
 function lcIssueDirective() {
   return {
     restrict: 'A',
-    templateUrl: require('lcAppCommons').buildUrl('form-m/lc-issue/lc-issue.html'),
+    templateUrl: require('lcAppCommons').buildUrl('form-m/add-form-m/lc-issue/lc-issue.html'),
     scope: true,
     bindToController: {
       formM: '=mfContext',
@@ -35,11 +35,12 @@ LcIssueDirectiveController.$inject = [
   'formatDate',
   'xhrErrorDisplay',
   'resetForm2',
-  'clearFormField'
+  'clearFormField',
+  '$window'
 ]
 
 function LcIssueDirectiveController($scope, LCIssueConcrete, getTypeAheadLCIssue, formatDate, xhrErrorDisplay,
-  resetForm2, clearFormField) {
+  resetForm2, clearFormField, $window) {
   var vm = this
   var title = 'Add Letter Of Credit Issues'
 
@@ -63,14 +64,19 @@ function LcIssueDirectiveController($scope, LCIssueConcrete, getTypeAheadLCIssue
   }
 
   vm.closeIssue = function closeIssue(issue, $index) {
-    var closedAt = formatDate(new Date())
+    if ($window.confirm(
+        'Sure you want to close issue:\n"' +
+        $scope.addFormMState.formatIssueText(issue.issue.text) + '"?')
+    ) {
+      var closedAt = formatDate(new Date())
 
-    LCIssueConcrete.put({
-      id: issue.id,
-      mf: vm.formM.url,
-      issue: issue.issue.url,
-      closed_at: closedAt
-    }).$promise.then(issueClosedSuccess, issueClosedError)
+      LCIssueConcrete.put({
+        id: issue.id,
+        mf: vm.formM.url,
+        issue: issue.issue.url,
+        closed_at: closedAt
+      }).$promise.then(issueClosedSuccess, issueClosedError)
+    }
 
     function issueClosedSuccess() {
       vm.nonClosedIssues.splice($index, 1)
@@ -98,7 +104,7 @@ function LcIssueDirectiveController($scope, LCIssueConcrete, getTypeAheadLCIssue
       _ids.push(issue.id)
     })
 
-      var x = []
+    var x = []
 
     x.concat(vm.nonClosedIssues).concat(vm.closedIssues).forEach(function(issue) {
       _ids.push(issue.issue.id)

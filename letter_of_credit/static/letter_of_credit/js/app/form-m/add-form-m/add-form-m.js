@@ -2,6 +2,10 @@
 
 /*jshint camelcase:false*/
 
+require('./lc-bid/lc-bid.js')
+require('./lc-issue/lc-issue.js')
+require('./lc-cover/lc-cover.js')
+
 var rootCommons = require('commons')
 
 var app = angular.module('add-form-m', [
@@ -13,7 +17,8 @@ var app = angular.module('add-form-m', [
   'form-m-service',
   'lc-cover',
   'lc-issue',
-  'lc-bid'
+  'lc-bid',
+  'lc-bid-request'
 ])
 
 app.config(rootCommons.interpolateProviderConfig)
@@ -55,12 +60,13 @@ AddFormMStateController.$inject = [
   '$stateParams',
   'resetForm2',
   '$state',
-  '$scope'
+  '$scope',
+  'LcBidRequest'
 ]
 
 function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
   kanmiiUnderscore, formatDate, xhrErrorDisplay, formMAttributesVerboseNames, FormM, $timeout, $filter, $stateParams,
-  resetForm2, $state, $scope) {
+  resetForm2, $state, $scope, LcBidRequest) {
   var vm = this
 
   vm.detailedFormM = angular.copy($stateParams.detailedFormM)
@@ -99,6 +105,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
       vm.closedIssues = []
       vm.nonClosedIssues = []
+      vm.existingBids = []
     }
 
     vm.searchFormM = {}
@@ -139,6 +146,14 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       url: vm.detailedFormM.url,
       covers: vm.detailedFormM.covers
     }
+
+    LcBidRequest.getPaginated({mf: vm.formM.number}).$promise.then(function(data) {
+      if (data.count) {
+        var results = data.results
+
+        if (results.length) vm.existingBids = results
+      }
+    })
 
     vm.fieldsEdit = {
       number: true,
@@ -311,7 +326,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
         summary += '\n\nBid Amount     : ' + data.currency_data.code + ' ' + $filter('number')(data.bid.amount, 2)
       }
 
-      if(data.cover) data.covers.push(data.cover)
+      if (data.cover) data.covers.push(data.cover)
 
       $state.go('form_m.add', {detailedFormM: data, showSummary: summary})
     }
