@@ -212,8 +212,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   }
 
   vm.disableSubmitBtn = disableSubmitBtn
-  function disableSubmitBtn(newFormMFormInvalid) {
-    if (newFormMFormInvalid) return true
+  function disableSubmitBtn() {
+    if ($scope.newFormMForm.$invalid) return true
 
     if (coverForm && coverForm.$invalid) return true
 
