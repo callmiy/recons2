@@ -78,11 +78,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   var coverForm
 
   /*
-   *@param {angular.form} the HTML fieldSet element for form M bid
-   */
-  var bidForm
-
-  /*
    *@param {angular.form} the HTML fieldSet element for form M issues
    */
   var issuesForm
@@ -122,9 +117,9 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     vm.cover = null
 
     /*
-     *@param {angular.form.model} the form M bid model
+     *@param {angular.form.model} bid model that we want to create for the form M
      */
-    vm.bid = null
+    vm.bid = {}
 
     /*
      *@param {angular.form.model} the form M issues model
@@ -189,11 +184,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     coverForm = form
   }
 
-  vm.onBidChanged = function onBidChanged(bid, form) {
-    vm.bid = bid
-    bidForm = form
-  }
-
   vm.onIssuesChanged = function onIssuesChanged(issues, form) {
     vm.issues = issues
     issuesForm = form
@@ -227,7 +217,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
     if (coverForm && coverForm.$invalid) return true
 
-    if (bidForm && bidForm.$invalid) return true
+    if ($scope.bidForm.$invalid) return true
 
     if (issuesForm && issuesForm.$invalid) return true
 
@@ -235,7 +225,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     if (!compared) return false
 
     if (kanmiiUnderscore.all(compared)) {
-      if (vm.bid && !kanmiiUnderscore.isEmpty(vm.bid)) return false
+      if (!kanmiiUnderscore.isEmpty(vm.bid)) return false
       if (vm.cover && !kanmiiUnderscore.isEmpty(vm.cover)) return false
       return !vm.issues.length
     }
@@ -293,7 +283,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     formMToSave.currency = formMToSave.currency.url
     formMToSave.date_received = formatDate(formMToSave.date_received)
 
-    if (vm.bid && !kanmiiUnderscore.isEmpty(vm.bid)) {
+    if (!kanmiiUnderscore.isEmpty(vm.bid)) {
       formMToSave.goods_description = vm.bid.goods_description
       formMToSave.bid = {amount: vm.bid.amount}
     }

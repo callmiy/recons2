@@ -2,18 +2,18 @@
 
   <div ng-click="lcBid.toggleShow(bidForm)"
        class="form-m-add-on-toggle form-m-bid-toggle-show clearfix">
-    <span class="form-m-add-on-show-helper" ng-if="lcBid.showBidForm">Make Bid Request</span>
+    <span class="form-m-add-on-show-helper" ng-if="lcBid.show">Make Bid Request</span>
 
     <div class="form-m-add-on-show-icon">
       <span
-          ng-class="['glyphicon', {'glyphicon-chevron-down': !lcBid.showBidForm, 'glyphicon-chevron-up': lcBid.showBidForm}]">
+          ng-class="['glyphicon', {'glyphicon-chevron-down': !lcBid.show, 'glyphicon-chevron-up': lcBid.show}]">
       </span>
 
       {$lcBid.title$}
     </div>
   </div>
 
-  <fieldset ng-form name="bidForm" ng-show="lcBid.showBidForm">
+  <fieldset ng-form name="bidForm" ng-show="lcBid.show">
     <div
         ng-class="['form-group', 'has-feedback', 'bid-goods-description', {'has-error': lcBid.isValid('bidGoodsDescription'), 'has-success': lcBid.isValid('bidGoodsDescription', 'ok')}]">
 
@@ -21,8 +21,8 @@
 
       <div class="col-sm-9">
         <input class="form-control" id="goods-description" name="bidGoodsDescription" required min="5"
-               ng-required="lcBid.showBidForm"
-               ng-model="lcBid.bid.goods_description" to-upper/>
+               ng-required="lcBid.show"
+               ng-model="addFormMState.bid.goods_description" to-upper/>
 
 
         <i ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': lcBid.isValid('bidGoodsDescription'), 'glyphicon-ok': lcBid.isValid('bidGoodsDescription', 'ok')}]"
@@ -43,12 +43,13 @@
       <label class="control-label col-sm-3" for="bid-amount">Amount</label>
 
       <div class="col-sm-9">
-        <input class="form-control" id="bid-amount" name="bidAmount" ng-model="lcBid.bid.amount"
-               ng-required="lcBid.showBidForm" number-format/>
+        <input class="form-control" id="bid-amount" name="bidAmount" ng-model="lcBid.amountGetterSetter"
+               ng-model-options="{getterSetter: true, updateOn: 'blur'}"
+               ng-required="lcBid.show"/>
 
         <i ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': lcBid.isValid('bidAmount'), 'glyphicon-ok': lcBid.isValid('bidAmount', 'ok')}]"
-           ng-if="lcBid.isValid('bidGoodsDescription') || lcBid.isValid('bidGoodsDescription', 'ok')"
-           data-form-control-icon-for="bidGoodsDescription"></i>
+           ng-if="lcBid.isValid('bidAmount') || lcBid.isValid('bidAmount', 'ok')"
+           data-form-control-icon-for="bidAmount"></i>
 
         <div ng-messages="bidForm.bidAmount.$error" role="alert">
           <div ng-if="lcBid.isValid('bidAmount')">

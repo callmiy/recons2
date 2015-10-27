@@ -14,11 +14,9 @@ function lcBidDirective() {
   return {
     restrict: 'A',
     templateUrl: require('lcAppCommons').buildUrl('form-m/add-form-m/lc-bid/lc-bid.html'),
-    scope: true,
+    scope: false,
     bindToController: {
-      formM: '=mfContext',
-      bid: '=',
-      onBidChanged: '&'
+      bid: '='
     },
     controller: 'LcBidDirectiveController as lcBid'
   }
@@ -35,8 +33,8 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid) {
 
   function init(form) {
     vm.title = title
-    vm.showBidForm = false
-    vm.bid = {}
+    vm.show = false
+    $scope.addFormMState.bid = {}
 
     if (form) {
       form.$setPristine()
@@ -50,35 +48,22 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid) {
 
   vm.amountGetterSetter = function(val) {
     if (arguments.length) {
-      if (!/[\d,\.]+/.test(val)) vm.cover.amount = null
-      else vm.cover.amount = Number(val.replace(/,/g, ''))
-    } else return vm.cover.amount ? $filter('number')(vm.cover.amount, 2) : undefined
+      if (!/[\d,\.]+/.test(val)) $scope.addFormMState.bid.amount = null
+      else $scope.addFormMState.bid.amount = Number(val.replace(/,/g, ''))
+
+    } else return $scope.addFormMState.bid.amount ? $filter('number')($scope.addFormMState.bid.amount, 2) : undefined
   }
 
   vm.toggleShow = function toggleShow(form) {
-    vm.showBidForm = vm.formM.amount && vm.formM.number && !vm.showBidForm
+    vm.show = $scope.addFormMState.formM.amount && $scope.addFormMState.formM.number && !vm.show
 
-    if (!vm.showBidForm) {
+    if (!vm.show) {
       init(form)
     }
     else {
       vm.title = 'Dismiss'
-      vm.bid.amount = vm.formM.amount
-      vm.bid.goods_description = vm.formM.goods_description
+      $scope.addFormMState.bid.amount = $scope.addFormMState.formM.amount
+      $scope.addFormMState.bid.goods_description = $scope.addFormMState.formM.goods_description
     }
   }
-
-  $scope.$watch(function getFormM() {return vm.formM}, function(newFormM) {
-    if (newFormM) {
-      var number = newFormM.number
-      var amount = newFormM.amount
-
-      if (!number || !amount) init()
-    }
-  }, true)
-
-  $scope.$watch(function getBid() {return vm.bid}, function(newBid) {
-    if (newBid) vm.onBidChanged({bid: newBid, bidForm: $scope.bidForm})
-
-  }, true)
 }
