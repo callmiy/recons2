@@ -19,6 +19,10 @@ class UploadedFormM(models.Model):
         return '[%s | %s%s | %s]' % (
             self.mf,
             self.ccy,
-            '{:,.2f}'.format(self.fob),
+            self.fob_formatted(),
             self.applicant
         )
+
+    def fob_formatted(self):
+        return '{:,.2f}'.format(self.fob)
+    fob_formatted.short_description = 'FOB'

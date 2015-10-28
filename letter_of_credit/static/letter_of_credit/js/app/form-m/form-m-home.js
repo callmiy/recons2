@@ -33,7 +33,7 @@ function formMURLConfig($stateProvider) {
 app.controller('FormMController', FormMController)
 FormMController.$inject = ['$state', '$scope']
 function FormMController($state, $scope) {
-  var vm = this
+  //var vm = this
 
   var uploadFormMTab = {
     title: 'Upload Form M',
@@ -41,14 +41,16 @@ function FormMController($state, $scope) {
     select: function() { $state.go('form_m.upload')}
   }
 
-  var listFormMTab =  {
+  var listFormMTab = {
     title: 'List Form M',
     viewName: 'listFormM',
     select: function() { $state.go('form_m.list')}
   }
 
+  var addFormMTitle = 'Add Form M'
+
   var addFormMTab = {
-    title: 'Add Form M',
+    title: addFormMTitle,
     active: true,
     viewName: 'addFormM',
     select: function() { $state.go('form_m.add')}
@@ -61,7 +63,14 @@ function FormMController($state, $scope) {
     select: function() { $state.go('form_m.add')}
   }
 
-  vm.tabs = [uploadFormMTab, listFormMTab, addFormMTab, reportsTab]
+  $scope.tabs = {
+    uploadFormM: uploadFormMTab,
+    listFormM: listFormMTab,
+    addFormM: addFormMTab,
+    reportsTab: reportsTab
+  }
 
-  $scope.tabs = { uploadFormM: uploadFormMTab, listFormM: listFormMTab, addFormM: addFormMTab}
+  $scope.updateAddFormMTitle = function(formM) {
+    $scope.tabs.addFormM.title = formM ? 'Details of "' + formM.number + '"' : addFormMTitle
+  }
 }

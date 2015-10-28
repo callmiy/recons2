@@ -86,6 +86,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   function initialize(form) {
     if (vm.detailedFormM) initDetailedFormM()
     else {
+      $scope.updateAddFormMTitle()
       vm.formM = {
         date_received: new Date()
       }
@@ -141,6 +142,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       url: vm.detailedFormM.url,
       covers: vm.detailedFormM.covers
     }
+
+    $scope.updateAddFormMTitle(vm.formM)
 
     LcBidRequest.getPaginated({mf: vm.formM.number}).$promise.then(function(data) {
       if (data.count) {
@@ -239,7 +242,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
     resetForm2(addFormMForm, [
       {
-        form: addFormMForm.newFormMForm, elements: ['applicant', 'currency']
+        form: $scope.newFormMForm, elements: ['applicant', 'currency']
       }
     ])
 
