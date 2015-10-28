@@ -54,7 +54,14 @@ function FormMController($state, $scope) {
     select: function() { $state.go('form_m.add')}
   }
 
-  vm.tabs = [uploadFormMTab, listFormMTab, addFormMTab]
+  var reportsTab = {
+    title: 'Reports',
+    active: false,
+    viewName: 'formMReports',
+    select: function() { $state.go('form_m.add')}
+  }
+
+  vm.tabs = [uploadFormMTab, listFormMTab, addFormMTab, reportsTab]
 
   $scope.tabs = { uploadFormM: uploadFormMTab, listFormM: listFormMTab, addFormM: addFormMTab}
 }
