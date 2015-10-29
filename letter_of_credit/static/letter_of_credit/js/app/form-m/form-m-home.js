@@ -6,10 +6,10 @@ var rootCommons = require('commons')
 
 var app = angular.module('form-m',
   ['rootApp',
-   'ui.router',
-   'list-form-m',
-   'upload-form-m',
-   'add-form-m'
+    'ui.router',
+    'list-form-m',
+    'upload-form-m',
+    'add-form-m'
   ])
 
 app.config(rootCommons.interpolateProviderConfig)
@@ -38,13 +38,19 @@ function FormMController($state, $scope) {
   var uploadFormMTab = {
     title: 'Upload Form M',
     viewName: 'uploadFormM',
-    select: function() { $state.go('form_m.upload')}
+    select: function () {
+      $scope.updateAddFormMTitle()
+      $state.go('form_m.upload')
+    }
   }
 
   var listFormMTab = {
     title: 'List Form M',
     viewName: 'listFormM',
-    select: function() { $state.go('form_m.list')}
+    select: function () {
+      $scope.updateAddFormMTitle()
+      $state.go('form_m.list')
+    }
   }
 
   var addFormMTitle = 'Add Form M'
@@ -53,14 +59,17 @@ function FormMController($state, $scope) {
     title: addFormMTitle,
     active: true,
     viewName: 'addFormM',
-    select: function() { $state.go('form_m.add')}
+    select: function () { $state.go('form_m.add')}
   }
 
   var reportsTab = {
     title: 'Reports',
     active: false,
     viewName: 'formMReports',
-    select: function() { $state.go('form_m.add')}
+    select: function () {
+      $scope.updateAddFormMTitle()
+      $state.go('form_m.add')
+    }
   }
 
   $scope.tabs = {
@@ -70,7 +79,7 @@ function FormMController($state, $scope) {
     reportsTab: reportsTab
   }
 
-  $scope.updateAddFormMTitle = function(formM) {
+  $scope.updateAddFormMTitle = function (formM) {
     $scope.tabs.addFormM.title = formM ? 'Details of "' + formM.number + '"' : addFormMTitle
   }
 }
