@@ -92,7 +92,7 @@ class RelationshipManagerUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class CurrencyFilter(django_filters.FilterSet):
-    code = django_filters.CharFilter(lookup_type='iexact')
+    code = django_filters.CharFilter(lookup_type='icontains')
 
     class Meta:
         model = Currency

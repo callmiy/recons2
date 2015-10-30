@@ -47,7 +47,8 @@
               <div class="input-group">
                 <span class="input-group-addon" style="cursor:pointer;"
                       ng-click="addFormMState.enableFieldEdit('number')">
-                  <i ng-class="['glyphicon', {'glyphicon-pencil': addFormMState.fieldsEdit.number, 'glyphicon-eye-open': !addFormMState.fieldsEdit.number}]"></i>
+                  <i
+                    ng-class="['glyphicon', {'glyphicon-pencil': addFormMState.fieldsEdit.number, 'glyphicon-eye-open': !addFormMState.fieldsEdit.number}]"></i>
                 </span>
 
                 <input class="form-control" maxlength="13" id="form-m-number" required name="form-m-number"
@@ -64,7 +65,8 @@
               <div class="input-group">
                 <span class="input-group-addon" style="cursor:pointer;"
                       ng-click="addFormMState.enableFieldEdit('applicant')">
-                  <i ng-class="['glyphicon', {'glyphicon-pencil': addFormMState.fieldsEdit.applicant, 'glyphicon-eye-open': !addFormMState.fieldsEdit.applicant}]"></i>
+                  <i
+                    ng-class="['glyphicon', {'glyphicon-pencil': addFormMState.fieldsEdit.applicant, 'glyphicon-eye-open': !addFormMState.fieldsEdit.applicant}]"></i>
                 </span>
 
                 <input class="form-control" type="text" min="3" id="applicant" name="applicant" required
@@ -72,7 +74,7 @@
                        ng-readonly="addFormMState.fieldsEdit.applicant" typeahead-min-length="3"
                        uib-typeahead="applicant as applicant.name for applicant in addFormMState.getApplicant($viewValue)"
                        typeahead-select-on-blur="true" typeahead-select-on-exact="true"
-                    />
+                  />
 
                 <span class="input-group-addon" ng-show="!addFormMState.fieldsEdit.applicant">
                   <img ng-src="{$$root.addIconSrc$}" alt="" add-customer
@@ -89,15 +91,16 @@
               <div class="input-group">
                 <span class="input-group-addon" style="cursor:pointer;"
                       ng-click="addFormMState.enableFieldEdit('currency')">
-                  <i ng-class="['glyphicon', {'glyphicon-pencil': addFormMState.fieldsEdit.currency, 'glyphicon-eye-open': !addFormMState.fieldsEdit.currency}]"></i>
+                  <i
+                    ng-class="['glyphicon', {'glyphicon-pencil': addFormMState.fieldsEdit.currency, 'glyphicon-eye-open': !addFormMState.fieldsEdit.currency}]"></i>
                 </span>
 
                 <input class="form-control" id="currency" maxlength="3" name="currency" required
                        ng-pattern="addFormMState.validators.currency"
                        ng-model="addFormMState.formM.currency" ng-readonly="addFormMState.fieldsEdit.currency"
                        uib-typeahead="currency as currency.code for currency in addFormMState.getCurrency($viewValue)"
-                       typeahead-min-length="2" typeahead-select-on-blur="true" typeahead-select-on-exact="true"
-                    />
+                       typeahead-select-on-blur="true" typeahead-select-on-exact="true"
+                  />
               </div>
             </div>
           </div>
@@ -109,7 +112,8 @@
               <div class="input-group">
                 <span class="input-group-addon" style="cursor:pointer;"
                       ng-click="addFormMState.enableFieldEdit('amount')">
-                  <i ng-class="['glyphicon', {'glyphicon-pencil': addFormMState.fieldsEdit.amount, 'glyphicon-eye-open': !addFormMState.fieldsEdit.amount}]"></i>
+                  <i
+                    ng-class="['glyphicon', {'glyphicon-pencil': addFormMState.fieldsEdit.amount, 'glyphicon-eye-open': !addFormMState.fieldsEdit.amount}]"></i>
                 </span>
 
                 <input class="form-control" id="amount" required ng-model="addFormMState.formM.amount" number-format
@@ -125,7 +129,8 @@
               <div class="input-group">
                 <span class="input-group-addon" style="cursor:pointer;"
                       ng-click="addFormMState.enableFieldEdit('date_received')">
-                  <i ng-class="['glyphicon', {'glyphicon-pencil': addFormMState.fieldsEdit.date_received, 'glyphicon-eye-open': !addFormMState.fieldsEdit.date_received}]"></i>
+                  <i
+                    ng-class="['glyphicon', {'glyphicon-pencil': addFormMState.fieldsEdit.date_received, 'glyphicon-eye-open': !addFormMState.fieldsEdit.date_received}]"></i>
                 </span>
 
                 <input class="form-control" id="received-date" required ng-model="addFormMState.formM.date_received"
