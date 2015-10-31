@@ -33,8 +33,8 @@ function formMListURLConfig($stateProvider) {
 }
 
 app.controller('FormMListController', FormMListController)
-FormMListController.$inject = ['FormM', '$scope', 'formMModelManager', '$http', '$state']
-function FormMListController(FormM, scope, formMModelManager, $http, $state) {
+FormMListController.$inject = ['FormM', '$scope', 'formMModelManager', '$http']
+function FormMListController(FormM, scope, formMModelManager, $http) {
   var vm = this
 
   /**
@@ -45,8 +45,7 @@ function FormMListController(FormM, scope, formMModelManager, $http, $state) {
   vm.modelManager = formMModelManager
 
   vm.modelRowDblClick = function modelRowDblClick(formM) {
-    $state.go('form_m.add', {detailedFormM: formM})
-    scope.tabs.addFormM.active = true
+    scope.goToFormM(formM)
   }
 
   /**

@@ -47,3 +47,7 @@ function LetterOfCreditController(SearchLc, $state) {
     })
   }
 }
+
+
+require('./lc-detail/lc-detail.js')
+require('./search-lc/search-lc.js')

@@ -2,6 +2,8 @@
 
 /*jshint camelcase:false*/
 
+require('./search-uploaded-form-m/search-uploaded-form-m.js')
+
 var rootCommons = require('commons')
 
 var app = angular.module('upload-form-m',
