@@ -51,7 +51,9 @@
 
     <table class="table table-responsive table-striped">
 
-      <caption>Issues not closed({$lcIssue.nonClosedIssues.length$})</caption>
+      <caption>
+        Issues not closed <span class="badge">{$lcIssue.nonClosedIssues.length$}</span>
+      </caption>
 
       <thead>
         <tr>
@@ -87,7 +89,9 @@
     <hr/>
 
     <table class="table table-responsive table-striped">
-      <caption>Issues that have been closed ({$lcIssue.closedIssues.length$})</caption>
+      <caption>
+        Issues that have been closed <span class="badge">{$lcIssue.closedIssues.length$}</span>
+      </caption>
       <thead>
         <tr>
           <td>S/N</td>
