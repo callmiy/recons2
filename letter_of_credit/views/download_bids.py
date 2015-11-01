@@ -3,16 +3,29 @@ from django.views.generic import View
 from letter_of_credit.models import LcBidRequest
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
+from openpyxl.styles import Font
 from datetime import datetime
 
 
 class DownloadBidsView(View):
     def get(self, request):
-        file_name = '%s.xlsx' % datetime.now().strftime('%Y-%m-%d-%H-%S-%f')
+        file_name = '%s.xlsx' % datetime.now().strftime('fx-request-%Y-%m-%d-%H-%S-%f')
         wb = Workbook()
         sheet = wb.active
-        row = 1
+        row = 2
         row_index = 1
+
+        font = Font(bold=True)
+
+        sheet.cell(row=1, column=1, value='S/N').font = font
+        sheet.cell(row=1, column=2, value='CUSTOMER').font = font
+        sheet.cell(row=1, column=3, value='CURR').font = font
+        sheet.cell(row=1, column=4, value='AMOUNT').font = font
+        sheet.cell(row=1, column=5, value='PURPOSE').font = font
+        sheet.cell(row=1, column=6, value='A/C NO.').font = font
+        sheet.cell(row=1, column=7, value='MF NO').font = font
+        sheet.cell(row=1, column=8, value='LC REF.').font = font
+        sheet.cell(row=1, column=9, value='MATURITY DATE').font = font
 
         bid_ids = request.GET.getlist('bid_ids')
 
