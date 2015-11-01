@@ -97,10 +97,39 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
     $scope.addFormMState.bid.amount = vm.bidToEdit.amount
   }
 
-  function makeDialogConfig() {
+  vm.trashBid = function trashBid(bid, $index) {
+    var text = '\n\nApplicant: ' + bid.applicant +
+               '\nForm M: ' + bid.form_m_number +
+               '\nBid Amount: ' + bid.currency + ' ' + $filter('number')(bid.amount, 2)
+
+    var mf = '"' + bid.form_m_number + '"'
+
+    confirmationDialog.showDialog({
+      text: 'Sure you want to delete bid:' + text, title: 'Delete bid for ' + mf
+    }).then(function(answer) {
+      if (answer) {
+        LcBidRequest.delete(bid).$promise.then(bidDeleteSuccess, function bidDeleteFailure(xhr) {
+          xhrErrorDisplay(xhr)
+        })
+      }
+    })
+
+    function bidDeleteSuccess() {
+      confirmationDialog.showDialog({
+        text: 'Bid delete successfully:' + text,
+        title: 'Bid for ' + mf + ' deleted successfully',
+        infoOnly: true
+      })
+
+      $scope.addFormMState.existingBids.splice($index, 1)
+    }
+  }
+
+  vm.editBid = function editBid() {
+    var title = 'Edit bid "' + vm.bidToEdit.form_m_number + '"'
+
     var ccy = $scope.addFormMState.formM.currency.code
-    var text = 'Edit Bid' +
-               '\n\nForm M:           ' + vm.bidToEdit.form_m_number +
+    var text = '\n\nForm M:           ' + vm.bidToEdit.form_m_number +
                '\nBid Amount' +
                '\n  before edit:    ' + ccy + $filter('number')(vm.bidToEdit.amount, 2) +
                '\n  after edit:     ' + ccy + $filter('number')($scope.addFormMState.bid.amount, 2) +
@@ -108,16 +137,10 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
                '\n  before edit:    ' + vm.bidToEdit.goods_description +
                '\n\n  after edit:     ' + $scope.addFormMState.bid.goods_description
 
-    var title = 'Edit bid "' + vm.bidToEdit.form_m_number + '"'
-
-    return {
-      title: title, text: text
-    }
-  }
-
-  vm.editBid = function editBid() {
-
-    confirmationDialog.showDialog(makeDialogConfig()).then(function(answer) {
+    confirmationDialog.showDialog({
+      title: title,
+      text: 'Are you sure you want to edit Bid:' + text
+    }).then(function(answer) {
       if (answer) doEdit()
     })
 
@@ -131,6 +154,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
       bid.requested_at = null
 
       LcBidRequest.put(bid).$promise.then(function() {
+        confirmationDialog.showDialog({title: title, text: 'Edit successful: ' + text, infoOnly: true})
         $scope.addFormMState.existingBids.splice(bid.$index, 1, bid)
         init()
       }, function(xhr) {

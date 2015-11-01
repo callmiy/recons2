@@ -102,8 +102,8 @@
             {$::bid.requested_at|date:'dd-MMM-yyyy'$}
           </td>
 
-          <td>
-            <span class="glyphicon glyphicon-trash" style="cursor: pointer;"></span>
+          <td ng-click="lcBid.trashBid(bid, $index)">
+            <span class="glyphicon glyphicon-trash"></span>
           </td>
         </tr>
       </tbody>
