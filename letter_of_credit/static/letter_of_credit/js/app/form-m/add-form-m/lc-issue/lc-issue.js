@@ -36,11 +36,11 @@ LcIssueDirectiveController.$inject = [
   'xhrErrorDisplay',
   'resetForm2',
   'clearFormField',
-  '$window'
+  'confirmationDialog'
 ]
 
 function LcIssueDirectiveController($scope, LCIssueConcrete, getTypeAheadLCIssue, formatDate, xhrErrorDisplay,
-  resetForm2, clearFormField, $window) {
+  resetForm2, clearFormField, confirmationDialog) {
   var vm = this
   var title = 'Add Letter Of Credit Issues'
 
@@ -64,21 +64,25 @@ function LcIssueDirectiveController($scope, LCIssueConcrete, getTypeAheadLCIssue
   }
 
   vm.closeIssue = function closeIssue(issue, $index) {
-    if ($window.confirm(
-        'Sure you want to close issue:\n"' +
-        $scope.addFormMState.formatIssueText(issue.issue.text) + '"?')
-    ) {
-      var closedAt = formatDate(new Date())
+    var closedAt = formatDate(new Date())
 
-      LCIssueConcrete.put({
-        id: issue.id,
-        mf: vm.formM.url,
-        issue: issue.issue.url,
-        closed_at: closedAt
-      }).$promise.then(issueClosedSuccess, issueClosedError)
-    }
+    var text = 'Sure you want to close issue:\n"' +
+               $scope.addFormMState.formatIssueText(issue.issue.text) + '"?'
+
+    confirmationDialog.showDialog({title: 'Close issue', text: text}).then(function(answer) {
+      if (answer) {
+        LCIssueConcrete.put({
+          id: issue.id,
+          mf: vm.formM.url,
+          issue: issue.issue.url,
+          closed_at: closedAt
+        }).$promise.then(issueClosedSuccess, issueClosedError)
+      }
+    })
 
     function issueClosedSuccess() {
+      var text = 'Issue closed successfully:\n' + $scope.addFormMState.formatIssueText(issue.issue.text)
+      confirmationDialog.showDialog({title: 'Close issue', text: text, infoOnly: true})
       vm.nonClosedIssues.splice($index, 1)
       issue.closed_at = closedAt
       vm.closedIssues.push(issue)
@@ -114,9 +118,11 @@ function LcIssueDirectiveController($scope, LCIssueConcrete, getTypeAheadLCIssue
   }
 
   vm.downloadIssues = function downloadIssues() {
-    $scope.addFormMState.savingFormMIndicator = $scope.showFormMMessage() + $scope.showIssuesMessage()
-
-    $scope.addFormMState.formMIsSaving = true
+    confirmationDialog.showDialog({
+      title: $scope.addFormMState.formM.number,
+      text: $scope.showFormMMessage() + $scope.showIssuesMessage(),
+      infoOnly: true
+    })
   }
 
   vm.toggleShow = function toggleShow(form) {

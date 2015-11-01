@@ -60,12 +60,13 @@ AddFormMStateController.$inject = [
   'resetForm2',
   '$state',
   '$scope',
-  'LcBidRequest'
+  'LcBidRequest',
+  'confirmationDialog'
 ]
 
 function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
   kanmiiUnderscore, formatDate, xhrErrorDisplay, formMAttributesVerboseNames, FormM, $timeout, $filter, $stateParams,
-  resetForm2, $state, $scope, LcBidRequest) {
+  resetForm2, $state, $scope, LcBidRequest, confirmationDialog) {
   var vm = this
 
   vm.detailedFormM = angular.copy($stateParams.detailedFormM)
@@ -169,17 +170,11 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     $stateParams.showSummary = null
 
     if (summary) {
-      vm.savingFormMIndicator = summary
-      vm.formMIsSaving = true
-
-      $timeout(function() {
-        vm.formMIsSaving = false
-      }, 120000)
-    }
-
-    else {
-      vm.savingFormMIndicator = 'Creating New Form M...........please wait'
-      vm.formMIsSaving = false
+      confirmationDialog.showDialog({
+        title: 'Information about "' + vm.formM.number + '"',
+        text: summary,
+        infoOnly: true
+      })
     }
   }
 
@@ -316,6 +311,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
 
     function formMSavedSuccess(data) {
+      vm.nonClosedIssues = vm.nonClosedIssues.concat(data.issues)
+
       var summary = showFormMMessage() + showIssuesMessage()
 
       if (data.bid) {
@@ -328,7 +325,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
 
     function formMSavedError(xhr) {
-      initFormMSavingIndicator()
       xhrErrorDisplay(xhr, formMAttributesVerboseNames)
     }
   }
@@ -347,13 +343,12 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   function showIssuesMessage() {
     if (!vm.nonClosedIssues.length) return ''
 
-    var issuesText = '\n\n\nPlease note the following issues which must be \n' +
-                     'regularized before the LC ' +
+    var issuesText = '\n\n\nPlease note the following issues which must be regularized before the LC ' +
                      'request can be treated:\n'
     var index = 1
 
     kanmiiUnderscore.each(vm.nonClosedIssues, function(issue) {
-      issuesText += ('(' + index++ + ') ' + vm.formatIssueText(issue.issue.text) + '\n')
+      issuesText += ('(' + index++ + ') ' + vm.formatIssueText(issue.text || issue.issue.text) + '\n')
     })
 
     return issuesText

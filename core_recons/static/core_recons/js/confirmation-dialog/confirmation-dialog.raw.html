@@ -1,7 +1,7 @@
 <div class="confirmation-dialog">
   <pre class="content">{$confirm.text$}</pre>
 
-  <div class="row answer">
+  <div class="row answer" ng-if="!confirm.infoOnly">
     <div class="col-sm-6" style="text-align: left;">
       <button class="btn btn-success" ng-click="confirm.close(true)">Yes</button>
     </div>

@@ -28,18 +28,22 @@ function confirmationDialog(ModalService, $q) {
 
           dialogClass: 'no-close',
 
-          width: 500,
+          minWidth: 500,
 
           title: config.title,
 
           close: function() {
-            deferred.resolve(false)
+            modal.close.then(function() {
+              if (!config.infoOnly) deferred.resolve(false)
+            })
           }
         })
 
-        modal.close.then(function(answer) {
-          deferred.resolve(answer)
-        })
+        if (!config.infoOnly) {
+          modal.close.then(function(answer) {
+            deferred.resolve(answer)
+          })
+        }
       }
 
       return deferred.promise
@@ -55,6 +59,6 @@ ConfirmationDialogCtrl.$inject = ['config', 'close']
 
 function ConfirmationDialogCtrl(config, close) {
   this.text = config.text
-
+  this.infoOnly = config.infoOnly
   this.close = close
 }
