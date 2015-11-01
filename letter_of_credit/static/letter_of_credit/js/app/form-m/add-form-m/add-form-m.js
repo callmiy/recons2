@@ -2,7 +2,6 @@
 
 /*jshint camelcase:false*/
 
-require('./lc-bid/lc-bid.js')
 require('./lc-issue/lc-issue.js')
 require('./lc-cover/lc-cover.js')
 
@@ -17,8 +16,8 @@ var app = angular.module('add-form-m', [
   'form-m-service',
   'lc-cover',
   'lc-issue',
-  'lc-bid',
-  'lc-bid-request'
+  'lc-bid-request',
+  'confirmation-dialog'
 ])
 
 app.config(rootCommons.interpolateProviderConfig)
@@ -104,6 +103,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       vm.existingBids = []
     }
 
+    vm.showEditBid = false
+    vm.showBidForm = false
     vm.searchFormM = {}
     initFormMSavingIndicator()
 
@@ -223,6 +224,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     if ($scope.bidForm.$invalid) return true
 
     if (issuesForm && issuesForm.$invalid) return true
+
+    if (vm.showEditBid) return true
 
     var compared = compareDetailedFormMWithForm()
     if (!compared) return false
@@ -376,3 +379,5 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
   }
 }
+
+require('./lc-bid/lc-bid.js')

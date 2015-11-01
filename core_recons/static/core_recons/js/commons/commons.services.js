@@ -88,14 +88,14 @@ function xhrErrorDisplay(ModalService) {
       templateUrl: rootCommons.buildUrl('core_recons', 'commons/./xhr-error-display.service.html'),
       controller: 'XhrErrorDisplayCtrl as xhrErrorDisplay',
       inputs: {error: errorObj, errorKeyMap: errorKeyMap}
-    }).then(modalHandler);
+    }).then(modalHandler)
 
     function modalHandler(modal) {
       modal.element.dialog({
         modal: true,
         dialogClass: 'no-close',
         title: 'Request Not Completed'
-      });
+      })
     }
   }
 }

@@ -62,7 +62,7 @@ function FormMController($state, $scope) {
     }
   }
 
-  var addFormMTitle = 'Add Form M'
+  var addFormMTitle = 'Form M'
 
   var addFormMTab = {
     title: addFormMTitle,

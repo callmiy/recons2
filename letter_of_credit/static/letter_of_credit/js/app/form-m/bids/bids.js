@@ -109,11 +109,11 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, kanm
   }
 
   $scope.$watch(function searchedBidResult() {return vm.searchedBidResult},
-               function searchedBidResultChanged(searchedBidResult) {
-                 if (searchedBidResult) {
-                   updateBids(searchedBidResult)
-                 }
-               })
+                function searchedBidResultChanged(searchedBidResult) {
+                  if (searchedBidResult) {
+                    updateBids(searchedBidResult)
+                  }
+                })
 
   /**
    * Update the bid collection and pagination hooks
