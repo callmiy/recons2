@@ -69,7 +69,7 @@ class LCRegisterUploadView(View):
     def get(self, request):
         return render(
             request,
-            'letter_of_credit/upload-lc-register.html',
+            'letter_of_credit/lc-register/upload-lc-register.html',
             {'mappings': json.dumps(self.REPORT_MODEL_HEADERS_MAPPING)}
         )
 

@@ -1,30 +1,22 @@
+from django.shortcuts import render
 import django_filters
 from rest_framework import generics, status
 from rest_framework.response import Response
 from letter_of_credit.models import UploadedFormM
 from letter_of_credit.serializers import UploadedFormMSerializer
+from django.views.generic import View
 import logging
 
 logger = logging.getLogger('recons_logger')
 
 
 class UploadedFormMFilter(django_filters.FilterSet):
-    mf = django_filters.CharFilter(lookup_type='iexact')
-    ba = django_filters.CharFilter(lookup_type='iexact')
+    mf = django_filters.CharFilter(lookup_type='icontains')
+    ba = django_filters.CharFilter(lookup_type='icontains')
 
     class Meta:
         model = UploadedFormM
         fields = ('mf', 'ba')
-
-        # x = {
-        #     'ba': ('icontains',),
-        #     'mf': ('icontains',),
-        #     'ccy': ('iexact',),
-        #     'applicant': ('icontains',),
-        #     'submitted_at': ('lte', 'gte'),
-        #     'validated_at': ('lte', 'gte'),
-        #     'uploaded_at': ('lte', 'gte'),
-        # }
 
 
 class UploadedFormMListCreateAPIView(generics.ListCreateAPIView):
@@ -94,3 +86,14 @@ class UploadedFormMUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     def update(self, request, *args, **kwargs):
         logger.info('Updating letter of credit with incoming data = \n%r', request.data)
         return super(UploadedFormMUpdateAPIView, self).update(request, *args, **kwargs)
+
+
+class UploadFromSingleWindowView(View):
+    def get(self, request):
+        return render(
+            request,
+            'letter_of_credit/lc-register/upload-lc-register.html',
+        )
+
+    def post(self, request):
+        pass
