@@ -65,8 +65,8 @@ AddFormMStateController.$inject = [
 ]
 
 function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
-  kanmiiUnderscore, formatDate, xhrErrorDisplay, formMAttributesVerboseNames, FormM, $timeout, $filter, $stateParams,
-  resetForm2, $state, $scope, LcBidRequest, confirmationDialog) {
+                                 kanmiiUnderscore, formatDate, xhrErrorDisplay, formMAttributesVerboseNames, FormM, $timeout, $filter, $stateParams,
+                                 resetForm2, $state, $scope, LcBidRequest, confirmationDialog) {
   var vm = this
 
   vm.detailedFormM = angular.copy($stateParams.detailedFormM)
@@ -147,7 +147,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
     $scope.updateAddFormMTitle(vm.formM)
 
-    LcBidRequest.getPaginated({mf: vm.formM.number}).$promise.then(function(data) {
+    LcBidRequest.getPaginated({mf: vm.formM.number}).$promise.then(function (data) {
       if (data.count) {
         var results = data.results
 
@@ -171,7 +171,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
     if (summary) {
       confirmationDialog.showDialog({
-        title: 'Information about "' + vm.formM.number + '"',
+        title: '"' + vm.formM.number + '" successfully saved',
         text: summary,
         infoOnly: true
       })
@@ -198,13 +198,13 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   vm.validators = {
     applicant: {
-      test: function() {
+      test: function () {
         return kanmiiUnderscore.isObject(vm.formM.applicant)
       }
     },
 
     currency: {
-      test: function() {
+      test: function () {
         return kanmiiUnderscore.isObject(vm.formM.currency)
       }
     }
@@ -260,7 +260,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     vm.detailedFormM = null
     initialize()
 
-    SearchDetailedOrUploadedFormMService.searchWithModal().then(function(data) {
+    SearchDetailedOrUploadedFormMService.searchWithModal().then(function (data) {
       if (data.detailed) {
         vm.detailedFormM = data.detailed
         initDetailedFormM()
@@ -270,7 +270,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
         vm.searchFormM = formM
         vm.formM.number = formM.mf
 
-        getTypeAheadCurrency(formM.ccy).then(function(ccy) {
+        getTypeAheadCurrency(formM.ccy).then(function (ccy) {
           vm.formM.currency = ccy[0]
         })
       }
@@ -311,7 +311,11 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
 
     function formMSavedSuccess(data) {
-      vm.nonClosedIssues = vm.nonClosedIssues.concat(data.issues)
+      //even though non-closed issues will be set in the lc-issue directive, we need to read them off data received
+      //from server so we can display them as part of summary to users. :TODO find a better implementation
+      vm.nonClosedIssues = data.form_m_issues.filter(function (issue) {
+        return !issue.closed_at
+      })
 
       var summary = showFormMMessage() + showIssuesMessage()
 
@@ -334,9 +338,9 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     var number = $filter('number')(vm.formM.amount, 2)
     var header = vm.formM.applicant.name + ' - ' + vm.formM.number + ' - ' + vm.formM.currency.code + ' ' + number
     return header + '\n\nForm M Number : ' + vm.formM.number + '\n' +
-           'Value         : ' + vm.formM.currency.code + ' ' +
-           number + '\n' +
-           'Applicant     : ' + vm.formM.applicant.name
+      'Value         : ' + vm.formM.currency.code + ' ' +
+      number + '\n' +
+      'Applicant     : ' + vm.formM.applicant.name
   }
 
   $scope.showIssuesMessage = showIssuesMessage
@@ -344,17 +348,17 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     if (!vm.nonClosedIssues.length) return ''
 
     var issuesText = '\n\n\nPlease note the following issues which must be regularized before the LC ' +
-                     'request can be treated:\n'
-    var index = 1
+      'request can be treated:\n'
 
-    kanmiiUnderscore.each(vm.nonClosedIssues, function(issue) {
-      issuesText += ('(' + index++ + ') ' + vm.formatIssueText(issue.text || issue.issue.text) + '\n')
+    kanmiiUnderscore.each(vm.nonClosedIssues, function (issue, index) {
+      ++index
+      issuesText += ('(' + index + ') ' + vm.formatIssueText(issue.text || issue.issue.text) + '\n')
     })
 
     return issuesText
   }
 
-  vm.formatIssueText = function(text) {
+  vm.formatIssueText = function (text) {
     return text.replace(/:ISSUE$/i, '')
   }
 
