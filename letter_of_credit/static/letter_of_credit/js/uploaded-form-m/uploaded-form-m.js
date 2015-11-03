@@ -3,6 +3,17 @@ $(function() {
 
   "use strict";
 
+  function parseNumber(val) {
+    return Number(val.replace(/,/g, ''))
+  }
+
+  function parseDate(val) {
+    var dateRe = new RegExp("(\\d+)/(\\d+)/(\\d+)"),
+      exec = dateRe.exec(val)
+
+    return exec[3] + '-' + exec[2] + '-' + exec[1]
+  }
+
   var $idUpload = $('#id_upload-lc-register-text'),
     $toUpload = $('#id_upload-lc-register')
 
@@ -23,11 +34,11 @@ $(function() {
               ba: ba,
               mf: data['MF NUM'],
               ccy: data.CURRENCY,
-              fob: data.FOB,
+              fob: parseNumber(data.FOB),
               applicant: data['APPLICANT NAME'],
-              submitted_at: data['DATE SUBMITTED'],
+              submitted_at: parseDate(data['DATE SUBMITTED']),
               goods_description: data.DESCS,
-              cost_freight: data['COST AND FREIGHT'],
+              cost_freight: parseNumber(data['COST AND FREIGHT']),
               validity_type: data['VALIDITY TYPE'],
               status: data.STAX
             }
@@ -47,8 +58,6 @@ $(function() {
         $(this).prop('readonly', true)
       })
       $(this).addClass('ui-widget-overlay ui-front')
-
-      evt.preventDefault()
 
     } else {
       window.alert('Nothing to upload or invalid upload data!')

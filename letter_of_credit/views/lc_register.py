@@ -1,5 +1,7 @@
 import django_filters
 from rest_framework import generics, pagination
+
+from core_recons.utilities import admin_url
 from letter_of_credit.models import LCRegister, FormM
 from letter_of_credit.serializers import LetterOfCreditRegisterSerializer
 import json
@@ -10,7 +12,6 @@ from core_recons.csv_utilities import UploadCSVParserUtility
 import logging
 
 logger = logging.getLogger('recons_logger')
-admin_url = lambda cls: '/admin/%s/' % str(getattr(cls, '_meta')).replace('.', '/')
 
 
 class LetterOfCreditRegisterPagination(pagination.PageNumberPagination):

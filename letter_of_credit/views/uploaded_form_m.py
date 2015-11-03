@@ -1,7 +1,11 @@
-from django.shortcuts import render
+import json
+
+from django.shortcuts import render, redirect
 import django_filters
 from rest_framework import generics, status
 from rest_framework.response import Response
+
+from core_recons.utilities import admin_url
 from letter_of_credit.models import UploadedFormM
 from letter_of_credit.serializers import UploadedFormMSerializer
 from django.views.generic import View
@@ -96,4 +100,10 @@ class UploadFromSingleWindowView(View):
         )
 
     def post(self, request):
-        pass
+        text = request.POST['upload-lc-register'].strip()
+
+        if text:
+            for row in json.loads(text):
+                if not UploadedFormM.objects.filter(mf=row['mf']).exists():
+                    UploadedFormM.objects.create(**row)
+        return redirect(admin_url(UploadedFormM))
