@@ -19,7 +19,9 @@ from .views import (
     DownloadBidsView,
     UploadedFormMListCreateAPIView,
     UploadedFormMUpdateAPIView,
-    FormMCoverListCreateAPIView, FormMCoverRetrieveUpdateDestroyAPIView)
+    FormMCoverListCreateAPIView,
+    FormMCoverRetrieveUpdateDestroyAPIView,
+    UploadFromSingleWindowView)
 
 urlpatterns = patterns(
     # <editor-fold description='home view and upload'>
@@ -107,6 +109,8 @@ urlpatterns += patterns(
     url(r'^uploaded-form-m/?$', UploadedFormMListCreateAPIView.as_view(), name='uploadedformm-list'),
 
     url(r'^uploaded-form-m/(?P<pk>\d+)/?$', UploadedFormMUpdateAPIView.as_view(), name='uploadedformm-detail'),
+
+    url(r'^upload-form-m-single-window/?$', UploadFromSingleWindowView.as_view(), name='sing-win-form-m-upload'),
 )
 
 # bid

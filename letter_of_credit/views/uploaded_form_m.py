@@ -92,7 +92,7 @@ class UploadFromSingleWindowView(View):
     def get(self, request):
         return render(
             request,
-            'letter_of_credit/lc-register/upload-lc-register.html',
+            'letter_of_credit/uploaded-form-m/uploaded-form-m.html',
         )
 
     def post(self, request):

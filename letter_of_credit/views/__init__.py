@@ -29,7 +29,11 @@ from .lc_bid_request import LcBidRequestListCreateAPIView, LcBidRequestUpdateAPI
 
 from .download_bids import DownloadBidsView
 
-from .uploaded_form_m import UploadedFormMListCreateAPIView, UploadedFormMUpdateAPIView
+from .uploaded_form_m import (
+    UploadedFormMListCreateAPIView,
+    UploadedFormMUpdateAPIView,
+    UploadFromSingleWindowView
+)
 
 
 class AppHomeView(CoreAppsView):
