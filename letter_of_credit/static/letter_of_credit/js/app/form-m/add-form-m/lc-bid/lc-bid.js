@@ -72,7 +72,8 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
     }
     else {
       vm.title = 'Dismiss'
-      $scope.addFormMState.bid.goods_description = $scope.addFormMState.formM.goods_description
+      var goods = $scope.addFormMState.formM.goods_description
+      if (goods) $scope.addFormMState.bid.goods_description = goods
 
       $scope.addFormMState.bid.amount = !$scope.addFormMState.existingBids.length ?
                                         $scope.addFormMState.formM.amount : null
@@ -105,8 +106,8 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
     var mf = '"' + bid.form_m_number + '"'
 
     confirmationDialog.showDialog({
-      text: 'Sure you want to delete bid:' + text, title: 'Delete bid for ' + mf
-    }).then(function(answer) {
+                                    text: 'Sure you want to delete bid:' + text, title: 'Delete bid for ' + mf
+                                  }).then(function(answer) {
       if (answer) {
         LcBidRequest.delete(bid).$promise.then(bidDeleteSuccess, function bidDeleteFailure(xhr) {
           xhrErrorDisplay(xhr)
@@ -116,10 +117,10 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
 
     function bidDeleteSuccess() {
       confirmationDialog.showDialog({
-        text: 'Bid delete successfully:' + text,
-        title: 'Bid for ' + mf + ' deleted successfully',
-        infoOnly: true
-      })
+                                      text: 'Bid delete successfully:' + text,
+                                      title: 'Bid for ' + mf + ' deleted successfully',
+                                      infoOnly: true
+                                    })
 
       $scope.addFormMState.existingBids.splice($index, 1)
     }
@@ -138,9 +139,9 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
                '\n\n  after edit:     ' + $scope.addFormMState.bid.goods_description
 
     confirmationDialog.showDialog({
-      title: title,
-      text: 'Are you sure you want to edit Bid:' + text
-    }).then(function(answer) {
+                                    title: title,
+                                    text: 'Are you sure you want to edit Bid:' + text
+                                  }).then(function(answer) {
       if (answer) doEdit()
     })
 

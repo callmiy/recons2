@@ -30,6 +30,9 @@ class FormM(models.Model):
         )
 
     def save(self, *args, **kwargs):
+        if self.goods_description:
+            self.goods_description = self.goods_description.upper()
+
         if self.lc and self.lc.applicant_obj != self.applicant:
             self.lc.applicant_obj = self.applicant
             self.lc.save()

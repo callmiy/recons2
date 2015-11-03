@@ -20,9 +20,9 @@
       <label class="control-label col-sm-3" for="goods-description">Goods Description</label>
 
       <div class="col-sm-9">
-        <input class="form-control" id="goods-description" name="bidGoodsDescription" required min="5"
+        <input class="form-control" id="goods-description" name="bidGoodsDescription" required ng-minlength="5"
                ng-required="addFormMState.showBidForm"
-               ng-model="addFormMState.bid.goods_description" to-upper/>
+               ng-model="addFormMState.bid.goods_description"/>
 
 
         <i ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': lcBid.isValid('bidGoodsDescription'), 'glyphicon-ok': lcBid.isValid('bidGoodsDescription', 'ok')}]"

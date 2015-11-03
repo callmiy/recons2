@@ -65,8 +65,8 @@ AddFormMStateController.$inject = [
 ]
 
 function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
-                                 kanmiiUnderscore, formatDate, xhrErrorDisplay, formMAttributesVerboseNames, FormM, $timeout, $filter, $stateParams,
-                                 resetForm2, $state, $scope, LcBidRequest, confirmationDialog) {
+  kanmiiUnderscore, formatDate, xhrErrorDisplay, formMAttributesVerboseNames, FormM, $timeout, $filter, $stateParams,
+  resetForm2, $state, $scope, LcBidRequest, confirmationDialog) {
   var vm = this
 
   vm.detailedFormM = angular.copy($stateParams.detailedFormM)
@@ -84,6 +84,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   initialize()
   function initialize(form) {
+    vm.existingBids = []
+
     if (vm.detailedFormM) initDetailedFormM()
     else {
       $scope.updateAddFormMTitle()
@@ -101,7 +103,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
       vm.closedIssues = []
       vm.nonClosedIssues = []
-      vm.existingBids = []
     }
 
     vm.showEditBid = false
@@ -147,7 +148,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
     $scope.updateAddFormMTitle(vm.formM)
 
-    LcBidRequest.getPaginated({mf: vm.formM.number}).$promise.then(function (data) {
+    LcBidRequest.getPaginated({mf: vm.formM.number}).$promise.then(function(data) {
       if (data.count) {
         var results = data.results
 
@@ -171,10 +172,10 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
     if (summary) {
       confirmationDialog.showDialog({
-        title: '"' + vm.formM.number + '" successfully saved',
-        text: summary,
-        infoOnly: true
-      })
+                                      title: '"' + vm.formM.number + '" successfully saved',
+                                      text: summary,
+                                      infoOnly: true
+                                    })
     }
   }
 
@@ -198,13 +199,13 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   vm.validators = {
     applicant: {
-      test: function () {
+      test: function() {
         return kanmiiUnderscore.isObject(vm.formM.applicant)
       }
     },
 
     currency: {
-      test: function () {
+      test: function() {
         return kanmiiUnderscore.isObject(vm.formM.currency)
       }
     }
@@ -223,10 +224,11 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     if (vm.showEditBid) return true
 
     var compared = compareDetailedFormMWithForm()
+
     if (!compared) return false
 
     if (kanmiiUnderscore.all(compared)) {
-      if (!kanmiiUnderscore.isEmpty(vm.bid)) return false
+      if (!kanmiiUnderscore.isEmpty(vm.bid) && vm.bid.goods_description && vm.bid.amount) return false
       if (vm.cover && !kanmiiUnderscore.isEmpty(vm.cover)) return false
       return !vm.issues.length
     }
@@ -260,7 +262,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     vm.detailedFormM = null
     initialize()
 
-    SearchDetailedOrUploadedFormMService.searchWithModal().then(function (data) {
+    SearchDetailedOrUploadedFormMService.searchWithModal().then(function(data) {
       if (data.detailed) {
         vm.detailedFormM = data.detailed
         initDetailedFormM()
@@ -270,7 +272,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
         vm.searchFormM = formM
         vm.formM.number = formM.mf
 
-        getTypeAheadCurrency(formM.ccy).then(function (ccy) {
+        getTypeAheadCurrency(formM.ccy).then(function(ccy) {
           vm.formM.currency = ccy[0]
         })
       }
@@ -301,7 +303,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     if (!vm.detailedFormM) new FormM(formMToSave).$save(formMSavedSuccess, formMSavedError)
 
     else {
-      if (kanmiiUnderscore.all(compareDetailedFormMWithForm())) {
+      if (kanmiiUnderscore.all(compareDetailedFormMWithForm1(formMToSave))) {
         formMToSave.do_not_update = 'do_not_update'
         formMToSave.applicant_data = vm.formM.applicant
         formMToSave.currency_data = vm.formM.currency
@@ -313,7 +315,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     function formMSavedSuccess(data) {
       //even though non-closed issues will be set in the lc-issue directive, we need to read them off data received
       //from server so we can display them as part of summary to users. :TODO find a better implementation
-      vm.nonClosedIssues = data.form_m_issues.filter(function (issue) {
+      vm.nonClosedIssues = data.form_m_issues.filter(function(issue) {
         return !issue.closed_at
       })
 
@@ -338,9 +340,9 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     var number = $filter('number')(vm.formM.amount, 2)
     var header = vm.formM.applicant.name + ' - ' + vm.formM.number + ' - ' + vm.formM.currency.code + ' ' + number
     return header + '\n\nForm M Number : ' + vm.formM.number + '\n' +
-      'Value         : ' + vm.formM.currency.code + ' ' +
-      number + '\n' +
-      'Applicant     : ' + vm.formM.applicant.name
+           'Value         : ' + vm.formM.currency.code + ' ' +
+           number + '\n' +
+           'Applicant     : ' + vm.formM.applicant.name
   }
 
   $scope.showIssuesMessage = showIssuesMessage
@@ -348,9 +350,9 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     if (!vm.nonClosedIssues.length) return ''
 
     var issuesText = '\n\n\nPlease note the following issues which must be regularized before the LC ' +
-      'request can be treated:\n'
+                     'request can be treated:\n'
 
-    kanmiiUnderscore.each(vm.nonClosedIssues, function (issue, index) {
+    kanmiiUnderscore.each(vm.nonClosedIssues, function(issue, index) {
       ++index
       issuesText += ('(' + index + ') ' + vm.formatIssueText(issue.text || issue.issue.text) + '\n')
     })
@@ -358,7 +360,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     return issuesText
   }
 
-  vm.formatIssueText = function (text) {
+  vm.formatIssueText = function(text) {
     return text.replace(/:ISSUE$/i, '')
   }
 
@@ -375,6 +377,22 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       currency: vm.formM.currency && (vm.formM.currency.code === vm.detailedFormM.currency_data.code),
 
       applicant: vm.formM.applicant && (vm.formM.applicant.name === vm.detailedFormM.applicant_data.name)
+    }
+  }
+
+  function compareDetailedFormMWithForm1(formM) {
+    if (!vm.detailedFormM) return false
+
+    return {
+      number: formM.number && angular.equals(formM.number, vm.detailedFormM.number),
+
+      date_received: angular.equals(formM.date_received, new Date(vm.detailedFormM.date_received)),
+
+      amount: formM.amount && angular.equals(formM.amount, Number(vm.detailedFormM.amount)),
+
+      currency: formM.currency && (formM.currency.code === vm.detailedFormM.currency_data.code),
+
+      applicant: formM.applicant && (formM.applicant.name === vm.detailedFormM.applicant_data.name)
     }
   }
 }

@@ -75,7 +75,11 @@ class FormIssueBidCoverUtil:
         self.form_m_url = form_m_url
         self.log_prefix = log_prefix
 
-    def create_bid(self, amount):
+    def create_bid(self, bid):
+        if not len(bid):
+            return bid
+
+        amount = bid['amount']
         logger.info('{} creating bid for amount "{:,.2f}"'.format(self.log_prefix, amount))
 
         serializer = LcBidRequestSerializer(data={'amount': amount, 'mf': self.form_m_url},
@@ -153,7 +157,7 @@ class FormMListCreateAPIView(generics.ListCreateAPIView):
 
         util = FormIssueBidCoverUtil(request, form_m_data['url'], self.log_prefix)
         if 'bid' in incoming_data:
-            form_m_data['bid'] = util.create_bid(incoming_data['bid']['amount'])
+            form_m_data['bid'] = util.create_bid(incoming_data['bid'])
 
         if 'cover' in incoming_data:
             form_m_data['cover'] = util.create_cover(incoming_data['cover'])
@@ -195,7 +199,7 @@ class FormMRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
             form_m_data['cover'] = util.create_cover(incoming_data['cover'])
 
         if 'bid' in incoming_data:
-            form_m_data['bid'] = util.create_bid(incoming_data['bid']['amount'])
+            form_m_data['bid'] = util.create_bid(incoming_data['bid'])
 
         if 'issues' in incoming_data:
             form_m_data['form_m_issues'] += util.create_issues(incoming_data['issues'])
