@@ -4,6 +4,11 @@ from adhocmodels.models import Customer, Currency
 from letter_of_credit.models import LCRegister
 
 
+class FormMNotDeletedManager(models.Manager):
+    def get_queryset(self):
+        return super(FormMNotDeletedManager, self).get_queryset().filter(deleted_at__isNull=True)
+
+
 class FormM(models.Model):
     number = models.CharField('Number', max_length=13, unique=True)
     applicant = models.ForeignKey(Customer, verbose_name='Applicant')
@@ -12,6 +17,10 @@ class FormM(models.Model):
     date_received = models.DateField('Date Received')
     lc = models.ForeignKey(LCRegister, null=True, blank=True, verbose_name='LC', related_name='form_m')
     goods_description = models.CharField('Goods Description', max_length=1000, blank=True, null=True)
+    deleted_at = models.DateField('Date deleted', null=True, blank=True)
+
+    objects = models.Manager()
+    not_deleted = FormMNotDeletedManager()
 
     class Meta:
         app_label = 'letter_of_credit'

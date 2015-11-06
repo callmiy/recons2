@@ -138,7 +138,7 @@ class FormIssueBidCoverUtil:
 
 class FormMListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = FormMSerializer
-    queryset = FormM.objects.all()
+    queryset = FormM.not_deleted.all()
     pagination_class = FormMListPagination
     filter_class = FormMFilter
 
@@ -170,7 +170,7 @@ class FormMListCreateAPIView(generics.ListCreateAPIView):
 
 
 class FormMRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = FormM.objects.all()
+    queryset = FormM.not_deleted.all()
     serializer_class = FormMSerializer
 
     def __init__(self, **kwargs):
