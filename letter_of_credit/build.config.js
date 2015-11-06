@@ -6,18 +6,22 @@ var path = require('path')
 var baseConfig = require('../webpack.config.base').webpackBaseConfig
 
 var letterOfCredit = path.join(__dirname, 'static', 'letter_of_credit')
-var entry = path.join(letterOfCredit, 'js', 'app', 'app.js')
+var entry = path.join(letterOfCredit, 'js', 'app', 'letter-of-credit-app.js')
 var destDir = path.join(letterOfCredit, 'js', 'app')
+
 var jsMinify = [
+  path.join(destDir, 'app.js'),
   path.join(letterOfCredit, 'js', 'lc-register-upload.js'),
   path.join(letterOfCredit, 'js', 'uploaded-form-m', 'uploaded-form-m.js')
 ]
+
+console.log('jsMinify = ', jsMinify)
 
 var webpackConfig = {
   entry: entry,
 
   output: {
-    path: destDir,
+    path: path.join(letterOfCredit, 'js', 'app'),
     filename: 'app.js'
   },
 

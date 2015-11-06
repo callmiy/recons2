@@ -271,6 +271,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
         var formM = data.uploaded
         vm.searchFormM = formM
         vm.formM.number = formM.mf
+        vm.formM.amount = formM.cost_freight
+        vm.formM.goods_description = formM.goods_description
 
         getTypeAheadCurrency(formM.ccy).then(function(ccy) {
           vm.formM.currency = ccy[0]

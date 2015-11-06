@@ -35,19 +35,19 @@ var lessNoCssMinFiles = [baseStaticCss + '/recons-base.less']
 gulp.task('minify-html', function() {
   return gulp.src(['./**/*.raw.html'], {base: '.'})
     .pipe(plugins.changed('.', {
-            hasChanged: function(stream, cb, sourceFile, targetPath) {
-              targetPath = targetPath.replace(/\.raw\.html$/, '.html')
-              plugins.changed.compareLastModifiedTime(stream, cb, sourceFile, targetPath)
-            }
-          }))
+      hasChanged: function(stream, cb, sourceFile, targetPath) {
+        targetPath = targetPath.replace(/\.raw\.html$/, '.html')
+        plugins.changed.compareLastModifiedTime(stream, cb, sourceFile, targetPath)
+      }
+    }))
     .pipe(plugins.minifyHtml({
-            empty: true,
-            spare: true,
-            quotes: true,
-          }))
+                               empty: true,
+                               spare: true,
+                               quotes: true
+                             }))
     .pipe(plugins.rename(function(path) {
-            path.basename = path.basename.replace('.raw', '')
-          }))
+      path.basename = path.basename.replace('.raw', '')
+    }))
     .pipe(gulp.dest("."))
 })
 
@@ -112,23 +112,25 @@ gulp.task('less-no-css-min', function() {
     .pipe(gulp.dest(''))
 })
 
+var path = require('path')
+
 gulp.task('less', function() {
   return gulp.src(lessFiles, {base: '.'})
     .pipe(plugins.sourcemaps.init())
     .pipe(plugins.less())
     .pipe(plugins.minifyCss())
     .pipe(plugins.rename({suffix: '.min', extname: '.css'}))
-    .pipe(plugins.sourcemaps.write('.'))
+    .pipe(plugins.sourcemaps.write('.', {
+      sourceMappingURL: function(file) {
+        return path.basename(file.path) +'.map'
+      }
+    }))
     .pipe(gulp.dest(''))
 })
 
 gulp.task('webpack-letter-of-credit', function() {
   return gulp.src(letterOfCredit.entry)
     .pipe(plugins.webpack(letterOfCredit.webpackConfig, webpack))
-    .pipe(plugins.sourcemaps.init())
-    .pipe(plugins.uglify())
-    .pipe(plugins.rename({suffix: '.min'}))
-    .pipe(plugins.sourcemaps.write('.'))
     .pipe(gulp.dest(letterOfCredit.destDir))
 })
 
@@ -144,9 +146,9 @@ gulp.task('webpack-payment', function() {
 
 gulp.task('browser-sync', function() {
   browserSync.init({
-    proxy: 'localhost:8000',
-    files: ['**/*.html', '**/*.css', '**/*.js']
-  })
+                     proxy: 'localhost:8000',
+                     files: ['**/*.html', '**/*.css', '**/*.js']
+                   })
 })
 
 gulp.task('minify-js', function() {
@@ -162,7 +164,7 @@ gulp.task('initial', ['initial-js', 'initial-css'])
 
 gulp.task('webpack', [
   'webpack-letter-of-credit',
-  'webpack-payment',
+  //'webpack-payment',
   'webpack-root-app'
 ])
 

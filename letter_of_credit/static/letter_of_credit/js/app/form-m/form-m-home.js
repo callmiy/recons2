@@ -42,16 +42,6 @@ function formMURLConfig($stateProvider) {
 app.controller('FormMController', FormMController)
 FormMController.$inject = ['$state', '$scope']
 function FormMController($state, $scope) {
-  //var vm = this
-
-  var uploadFormMTab = {
-    title: 'Upload Form M',
-    viewName: 'uploadFormM',
-    select: function() {
-      $scope.updateAddFormMTitle()
-      $state.go('form_m.upload')
-    }
-  }
 
   var listFormMTab = {
     title: 'List Form M',
@@ -92,7 +82,6 @@ function FormMController($state, $scope) {
   }
 
   $scope.tabs = {
-    uploadFormM: uploadFormMTab,
     listFormM: listFormMTab,
     addFormM: addFormMTab,
     bids: bidsTab,
