@@ -117,14 +117,6 @@ function LcIssueDirectiveController($scope, LCIssueConcrete, getTypeAheadLCIssue
     return getTypeAheadLCIssue({text: text, exclude_issue_ids: _ids.join(',')})
   }
 
-  vm.downloadIssues = function downloadIssues() {
-    confirmationDialog.showDialog({
-      title: $scope.addFormMState.formM.number,
-      text: $scope.showFormMMessage() + $scope.showIssuesMessage(),
-      infoOnly: true
-    })
-  }
-
   vm.toggleShow = function toggleShow(form) {
     vm.showContainer = vm.formM.amount && vm.formM.number && !vm.showContainer
 

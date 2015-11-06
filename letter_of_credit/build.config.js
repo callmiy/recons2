@@ -15,8 +15,6 @@ var jsMinify = [
   path.join(letterOfCredit, 'js', 'uploaded-form-m', 'uploaded-form-m.js')
 ]
 
-console.log('jsMinify = ', jsMinify)
-
 var webpackConfig = {
   entry: entry,
 

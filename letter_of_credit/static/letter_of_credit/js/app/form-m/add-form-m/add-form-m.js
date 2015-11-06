@@ -337,6 +337,14 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
   }
 
+  vm.downloadSummary = function downloadSummary() {
+    confirmationDialog.showDialog({
+      title: vm.formM.number,
+      text: $scope.showFormMMessage() + $scope.showIssuesMessage(),
+      infoOnly: true
+    })
+  }
+
   $scope.showFormMMessage = showFormMMessage
   function showFormMMessage() {
     var number = $filter('number')(vm.formM.amount, 2)

@@ -6,7 +6,7 @@ from letter_of_credit.models import LCRegister
 
 class FormMNotDeletedManager(models.Manager):
     def get_queryset(self):
-        return super(FormMNotDeletedManager, self).get_queryset().filter(deleted_at__isNull=True)
+        return super(FormMNotDeletedManager, self).get_queryset().filter(deleted_at__isnull=True)
 
 
 class FormM(models.Model):
