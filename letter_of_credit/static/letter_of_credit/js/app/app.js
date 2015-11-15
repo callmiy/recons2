@@ -47,9 +47,9 @@
 	"use strict";
 
 	__webpack_require__(1)
-	__webpack_require__(22)
+	__webpack_require__(23)
 
-	var rootCommons = __webpack_require__(6)
+	var rootCommons = __webpack_require__(7)
 
 	var app = angular.module('lc-root-app',
 	  ['rootApp',
@@ -77,7 +77,7 @@
 
 	      kanmiiTitle: 'Home',
 
-	      template: __webpack_require__(25)
+	      template: __webpack_require__(26)
 	    })
 	}
 
@@ -91,12 +91,12 @@
 	/*jshint camelcase:false*/
 
 	__webpack_require__(2)
-	__webpack_require__(9)
-	__webpack_require__(12)
-	__webpack_require__(14)
+	__webpack_require__(10)
+	__webpack_require__(13)
 	__webpack_require__(15)
 	__webpack_require__(16)
-	__webpack_require__(18)
+	__webpack_require__(17)
+	__webpack_require__(19)
 
 	var app = angular.module('form-m',
 	  ['rootApp',
@@ -117,7 +117,7 @@
 
 	      kanmiiTitle: 'Form M',
 
-	      template: __webpack_require__(21),
+	      template: __webpack_require__(22),
 
 	      controller: 'FormMController as formMHome'
 	    })
@@ -177,7 +177,7 @@
 	  }
 
 	  $scope.goToFormM = function goToFormM(formM) {
-	    $state.go('form_m.add', {detailedFormM: formM})
+	    $state.transitionTo('form_m.add', {detailedFormM: formM})
 	    $scope.tabs.addFormM.active = true
 	  }
 	}
@@ -192,7 +192,8 @@
 	/*jshint camelcase:false*/
 
 	__webpack_require__(3)
-	__webpack_require__(7)
+	__webpack_require__(4)
+	__webpack_require__(8)
 
 	var app = angular.module('add-form-m', [
 	  'ui.router',
@@ -204,7 +205,8 @@
 	  'lc-cover',
 	  'lc-issue',
 	  'lc-bid-request',
-	  'confirmation-dialog'
+	  'confirmation-dialog',
+	  'add-form-m-form-m-object'
 	])
 
 	app.config(formMStateURLConfig)
@@ -220,7 +222,7 @@
 
 	      views: {
 	        addFormM: {
-	          templateUrl: __webpack_require__(4).buildUrl('form-m/add-form-m/add-form-m.html'),
+	          templateUrl: __webpack_require__(5).buildUrl('form-m/add-form-m/add-form-m.html'),
 
 	          controller: 'AddFormMStateController as addFormMState'
 	        }
@@ -239,19 +241,18 @@
 	  'xhrErrorDisplay',
 	  'formMAttributesVerboseNames',
 	  'FormM',
-	  '$timeout',
 	  '$filter',
 	  '$stateParams',
 	  'resetForm2',
 	  '$state',
 	  '$scope',
-	  'LcBidRequest',
-	  'confirmationDialog'
+	  'confirmationDialog',
+	  'formMObject'
 	]
 
 	function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
-	  kanmiiUnderscore, formatDate, xhrErrorDisplay, formMAttributesVerboseNames, FormM, $timeout, $filter, $stateParams,
-	  resetForm2, $state, $scope, LcBidRequest, confirmationDialog) {
+	  kanmiiUnderscore, formatDate, xhrErrorDisplay, formMAttributesVerboseNames, FormM, $filter, $stateParams, resetForm2,
+	  $state, $scope, confirmationDialog, formMObject) {
 	  var vm = this
 
 	  vm.detailedFormM = angular.copy($stateParams.detailedFormM)
@@ -269,31 +270,33 @@
 
 	  initialize()
 	  function initialize(form) {
-	    vm.existingBids = []
+	    formMObject.init(vm.detailedFormM, function (formM) {
+	      vm.formM = formM
 
-	    if (vm.detailedFormM) initDetailedFormM()
-	    else {
-	      $scope.updateAddFormMTitle()
-	      vm.formM = {
-	        date_received: new Date()
+	      if (vm.formM.number) {
+	        $scope.updateAddFormMTitle(formM)
+	        vm.fieldIsEditable = {
+	          number: false,
+	          currency: false,
+	          applicant: false,
+	          date_received: false,
+	          amount: false
+	        }
+
+	      } else  {
+	        $scope.updateAddFormMTitle()
+	        vm.fieldIsEditable = {
+	          number: true,
+	          currency: true,
+	          applicant: true,
+	          date_received: true,
+	          amount: true
+	        }
 	      }
+	    })
 
-	      vm.fieldsEdit = {
-	        number: false,
-	        currency: false,
-	        applicant: false,
-	        date_received: false,
-	        amount: false
-	      }
-
-	      vm.closedIssues = []
-	      vm.nonClosedIssues = []
-	    }
-
-	    vm.showEditBid = false
-	    vm.showBidForm = false
 	    vm.searchFormM = {}
-	    initFormMSavingIndicator()
+	    formMSavedSuccessMessage()
 
 	    if (form) {
 	      form.$setPristine()
@@ -305,62 +308,26 @@
 	     */
 	    vm.cover = null
 
-	    /*
-	     *@param {angular.form.model} bid model that we want to create for the form M
-	     */
-	    vm.bid = {}
+	    vm.bid = formMObject.bid
 
 	    /*
 	     *@param {angular.form.model} the form M issues model
 	     */
 	    vm.issues = []
-
+	    vm.closedIssues = []
 	    vm.nonClosedIssues = []
 	  }
 
-	  function initDetailedFormM() {
-	    vm.formM = {
-	      date_received: new Date(vm.detailedFormM.date_received),
-	      number: vm.detailedFormM.number,
-	      applicant: vm.detailedFormM.applicant_data,
-	      currency: vm.detailedFormM.currency_data,
-	      amount: Number(vm.detailedFormM.amount),
-	      goods_description: vm.detailedFormM.goods_description,
-	      form_m_issues: vm.detailedFormM.form_m_issues,
-	      url: vm.detailedFormM.url,
-	      covers: vm.detailedFormM.covers
-	    }
-
-	    $scope.updateAddFormMTitle(vm.formM)
-
-	    LcBidRequest.getPaginated({mf: vm.formM.number}).$promise.then(function(data) {
-	      if (data.count) {
-	        var results = data.results
-
-	        if (results.length) vm.existingBids = results
-	      }
-	    })
-
-	    vm.fieldsEdit = {
-	      number: true,
-	      currency: true,
-	      applicant: true,
-	      date_received: true,
-	      amount: true
-	    }
-
-	  }
-
-	  function initFormMSavingIndicator() {
+	  function formMSavedSuccessMessage() {
 	    var summary = $stateParams.showSummary
 	    $stateParams.showSummary = null
 
 	    if (summary) {
 	      confirmationDialog.showDialog({
-	                                      title: '"' + vm.formM.number + '" successfully saved',
-	                                      text: summary,
-	                                      infoOnly: true
-	                                    })
+	        title: '"' + vm.formM.number + '" successfully saved',
+	        text: summary,
+	        infoOnly: true
+	      })
 	    }
 	  }
 
@@ -379,18 +346,18 @@
 	  }
 
 	  vm.enableFieldEdit = function enableFieldEdit(field) {
-	    vm.fieldsEdit[field] = vm.detailedFormM ? !vm.fieldsEdit[field] : false
+	    vm.fieldIsEditable[field] = vm.detailedFormM ? !vm.fieldIsEditable[field] : false
 	  }
 
 	  vm.validators = {
 	    applicant: {
-	      test: function() {
+	      test: function () {
 	        return kanmiiUnderscore.isObject(vm.formM.applicant)
 	      }
 	    },
 
 	    currency: {
-	      test: function() {
+	      test: function () {
 	        return kanmiiUnderscore.isObject(vm.formM.currency)
 	      }
 	    }
@@ -402,7 +369,7 @@
 
 	    if (coverForm && coverForm.$invalid) return true
 
-	    if ($scope.bidForm.$invalid) return true
+	    if (kanmiiUnderscore.has(vm.formM.bidForm, '$invalid') && vm.formM.bidForm.$invalid) return true
 
 	    if (issuesForm && issuesForm.$invalid) return true
 
@@ -447,10 +414,10 @@
 	    vm.detailedFormM = null
 	    initialize()
 
-	    SearchDetailedOrUploadedFormMService.searchWithModal().then(function(data) {
+	    SearchDetailedOrUploadedFormMService.searchWithModal().then(function (data) {
 	      if (data.detailed) {
 	        vm.detailedFormM = data.detailed
-	        initDetailedFormM()
+	        initialize()
 
 	      } else {
 	        var formM = data.uploaded
@@ -459,7 +426,7 @@
 	        vm.formM.amount = formM.cost_freight
 	        vm.formM.goods_description = formM.goods_description
 
-	        getTypeAheadCurrency(formM.ccy).then(function(ccy) {
+	        getTypeAheadCurrency(formM.ccy).then(function (ccy) {
 	          vm.formM.currency = ccy[0]
 	        })
 	      }
@@ -502,7 +469,7 @@
 	    function formMSavedSuccess(data) {
 	      //even though non-closed issues will be set in the lc-issue directive, we need to read them off data received
 	      //from server so we can display them as part of summary to users. :TODO find a better implementation
-	      vm.nonClosedIssues = data.form_m_issues.filter(function(issue) {
+	      vm.nonClosedIssues = data.form_m_issues.filter(function (issue) {
 	        return !issue.closed_at
 	      })
 
@@ -535,9 +502,9 @@
 	    var number = $filter('number')(vm.formM.amount, 2)
 	    var header = vm.formM.applicant.name + ' - ' + vm.formM.number + ' - ' + vm.formM.currency.code + ' ' + number
 	    return header + '\n\nForm M Number : ' + vm.formM.number + '\n' +
-	           'Value         : ' + vm.formM.currency.code + ' ' +
-	           number + '\n' +
-	           'Applicant     : ' + vm.formM.applicant.name
+	      'Value         : ' + vm.formM.currency.code + ' ' +
+	      number + '\n' +
+	      'Applicant     : ' + vm.formM.applicant.name
 	  }
 
 	  $scope.showIssuesMessage = showIssuesMessage
@@ -545,9 +512,9 @@
 	    if (!vm.nonClosedIssues.length) return ''
 
 	    var issuesText = '\n\n\nPlease note the following issues which must be regularized before the LC ' +
-	                     'request can be treated:\n'
+	      'request can be treated:\n'
 
-	    kanmiiUnderscore.each(vm.nonClosedIssues, function(issue, index) {
+	    kanmiiUnderscore.each(vm.nonClosedIssues, function (issue, index) {
 	      ++index
 	      issuesText += ('(' + index + ') ' + vm.formatIssueText(issue.text || issue.issue.text) + '\n')
 	    })
@@ -555,7 +522,7 @@
 	    return issuesText
 	  }
 
-	  vm.formatIssueText = function(text) {
+	  vm.formatIssueText = function (text) {
 	    return text.replace(/:ISSUE$/i, '')
 	  }
 
@@ -592,11 +559,95 @@
 	  }
 	}
 
-	__webpack_require__(8)
+	__webpack_require__(27)
 
 
 /***/ },
 /* 3 */
+/***/ function(module, exports) {
+
+	"use strict"
+
+	/*jshint camelcase:false*/
+
+	var app = angular.module('add-form-m-form-m-object', [])
+
+	app.factory('formMObject', formMObject)
+
+	formMObject.$inject = ['LcBidRequest', '$q']
+
+	function formMObject(LcBidRequest, $q) {
+	  function Factory() {
+	    var self = this
+
+	    self.init = function init(detailedFormM, cb) {
+	      /*
+	       *@param {angular.form.model} bid model that we want to create for the form M
+	       */
+	      self.bid = {}
+
+	      self.existingBids = []
+
+	      self.showEditBid = false
+	      self.showBidForm = false
+
+	      if (detailedFormM) {
+	        self.date_received = new Date(detailedFormM.date_received)
+	        self.number = detailedFormM.number
+	        self.applicant = detailedFormM.applicant_data
+	        self.currency = detailedFormM.currency_data
+	        self.amount = Number(detailedFormM.amount)
+	        self.goods_description = detailedFormM.goods_description
+	        self.form_m_issues = detailedFormM.form_m_issues
+	        self.url = detailedFormM.url
+	        self.covers = detailedFormM.covers
+
+	        LcBidRequest.getPaginated({mf: self.number}).$promise.then(function (data) {
+
+	          if (data.count) {
+	            var results = data.results
+
+	            if (results.length) {
+	              self.existingBids = results
+	            }
+	          }
+
+	        }, function (xhr) {
+	          console.log('xhr = ', xhr)
+	        })
+
+	      } else {
+	        self.date_received = new Date()
+	        self.number = null
+	        self.applicant = null
+	        self.currency = null
+	        self.amount = null
+	        self.goods_description = null
+	        self.form_m_issues = null
+	        self.url = null
+	        self.covers = null
+	      }
+
+	      cb(self)
+	    }
+
+	    self.initBids = function initBids() {
+	      var deferred = $q.defer()
+
+	      if (self.number) {
+
+	      } else deferred.resolve(self)
+
+	      return deferred.promise
+	    }
+	  }
+
+	  return new Factory()
+	}
+
+
+/***/ },
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -615,7 +666,7 @@
 	function lcIssueDirective() {
 	  return {
 	    restrict: 'A',
-	    templateUrl: __webpack_require__(4).buildUrl('form-m/add-form-m/lc-issue/lc-issue.html'),
+	    templateUrl: __webpack_require__(5).buildUrl('form-m/add-form-m/lc-issue/lc-issue.html'),
 	    scope: true,
 	    bindToController: {
 	      formM: '=mfContext',
@@ -777,12 +828,12 @@
 
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var lcCommons = __webpack_require__(5)
+	var lcCommons = __webpack_require__(6)
 
 	/**
 	 * @description
@@ -800,12 +851,12 @@
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var rootCommons = __webpack_require__(6)
+	var rootCommons = __webpack_require__(7)
 
 	var appName = 'letter_of_credit'
 
@@ -820,7 +871,7 @@
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -866,7 +917,7 @@
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -882,7 +933,7 @@
 	function lcIssueDirective() {
 	  return {
 	    restrict: 'A',
-	    templateUrl: __webpack_require__(4).buildUrl('form-m/add-form-m/lc-cover/lc-cover.html'),
+	    templateUrl: __webpack_require__(5).buildUrl('form-m/add-form-m/lc-cover/lc-cover.html'),
 	    scope: true,
 	    bindToController: {
 	      formM: '=mfContext',
@@ -903,6 +954,7 @@
 	]
 
 	function LcCoverDirectiveController($scope, formMCoverTypes, $filter, formFieldIsValid) {
+	  console.log('cover init =', 'init')
 	  var vm = this
 	  var title = 'Register Cover'
 	  init()
@@ -959,193 +1011,15 @@
 
 
 /***/ },
-/* 8 */
+/* 9 */,
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
 	/*jshint camelcase:false*/
 
-	var app = angular.module('add-form-m')
-
-	app.directive('lcBid', lcBidDirective)
-
-	lcBidDirective.$inject = []
-
-	function lcBidDirective() {
-	  return {
-	    restrict: 'A',
-	    templateUrl: __webpack_require__(4).buildUrl('form-m/add-form-m/lc-bid/lc-bid.html'),
-	    scope: false,
-	    bindToController: {
-	      bid: '='
-	    },
-	    controller: 'LcBidDirectiveController as lcBid'
-	  }
-	}
-
-	app.controller('LcBidDirectiveController', LcBidDirectiveController)
-
-	LcBidDirectiveController.$inject = [
-	  '$scope',
-	  '$filter',
-	  'formFieldIsValid',
-	  'kanmiiUnderscore',
-	  'LcBidRequest',
-	  'xhrErrorDisplay',
-	  'confirmationDialog'
-	]
-
-	function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnderscore, LcBidRequest, xhrErrorDisplay,
-	  confirmationDialog) {
-	  var vm = this
-	  var title = 'Make Bid Request'
-	  init()
-
-	  function init(form) {
-	    vm.title = title
-	    $scope.addFormMState.showBidForm = false
-	    $scope.addFormMState.bid = {}
-
-	    $scope.addFormMState.showEditBid = false
-	    vm.bidToEdit = null
-
-	    if (form) {
-	      form.$setPristine()
-	      form.$setUntouched()
-	    }
-	  }
-
-	  vm.isValid = function(name, validity) {
-	    return formFieldIsValid($scope, 'bidForm', name, validity)
-	  }
-
-	  vm.amountGetterSetter = function(val) {
-	    if (arguments.length) {
-	      if (!/[\d,\.]+/.test(val)) $scope.addFormMState.bid.amount = null
-	      else $scope.addFormMState.bid.amount = Number(val.replace(/,/g, ''))
-
-	    } else return $scope.addFormMState.bid.amount ? $filter('number')($scope.addFormMState.bid.amount, 2) : undefined
-	  }
-
-	  vm.toggleShow = function toggleShow(form) {
-	    $scope.addFormMState.showBidForm = $scope.addFormMState.formM.amount && $scope.addFormMState.formM.number && !$scope.addFormMState.showBidForm
-
-	    if (!$scope.addFormMState.showBidForm) {
-	      init(form)
-	    }
-	    else {
-	      vm.title = 'Dismiss'
-	      var goods = $scope.addFormMState.formM.goods_description
-	      if (goods) $scope.addFormMState.bid.goods_description = goods
-
-	      $scope.addFormMState.bid.amount = !$scope.addFormMState.existingBids.length ?
-	                                        $scope.addFormMState.formM.amount : null
-	    }
-	  }
-
-	  vm.editBidInvalid = function editBidInvalid() {
-	    if (kanmiiUnderscore.isEmpty(vm.bidToEdit)) return true
-
-	    if ($scope.bidForm.$invalid) return true
-
-	    return kanmiiUnderscore.all(bidNotModified())
-	  }
-
-	  vm.onBidDblClick = function onBidDblClick(bid, $index) {
-	    $scope.addFormMState.showEditBid = true
-	    $scope.addFormMState.showBidForm = false
-	    vm.toggleShow()
-	    vm.bidToEdit = angular.copy(bid)
-	    vm.bidToEdit.amount = Number(vm.bidToEdit.amount)
-	    vm.bidToEdit.$index = $index
-	    $scope.addFormMState.bid.amount = vm.bidToEdit.amount
-	  }
-
-	  vm.trashBid = function trashBid(bid, $index) {
-	    var text = '\n\nApplicant: ' + bid.applicant +
-	               '\nForm M: ' + bid.form_m_number +
-	               '\nBid Amount: ' + bid.currency + ' ' + $filter('number')(bid.amount, 2)
-
-	    var mf = '"' + bid.form_m_number + '"'
-
-	    confirmationDialog.showDialog({
-	                                    text: 'Sure you want to delete bid:' + text, title: 'Delete bid for ' + mf
-	                                  }).then(function(answer) {
-	      if (answer) {
-	        LcBidRequest.delete(bid).$promise.then(bidDeleteSuccess, function bidDeleteFailure(xhr) {
-	          xhrErrorDisplay(xhr)
-	        })
-	      }
-	    })
-
-	    function bidDeleteSuccess() {
-	      confirmationDialog.showDialog({
-	                                      text: 'Bid delete successfully:' + text,
-	                                      title: 'Bid for ' + mf + ' deleted successfully',
-	                                      infoOnly: true
-	                                    })
-
-	      $scope.addFormMState.existingBids.splice($index, 1)
-	    }
-	  }
-
-	  vm.editBid = function editBid() {
-	    var title = 'Edit bid "' + vm.bidToEdit.form_m_number + '"'
-
-	    var ccy = $scope.addFormMState.formM.currency.code
-	    var text = '\n\nForm M:           ' + vm.bidToEdit.form_m_number +
-	               '\nBid Amount' +
-	               '\n  before edit:    ' + ccy + $filter('number')(vm.bidToEdit.amount, 2) +
-	               '\n  after edit:     ' + ccy + $filter('number')($scope.addFormMState.bid.amount, 2) +
-	               '\nGoods description' +
-	               '\n  before edit:    ' + vm.bidToEdit.goods_description +
-	               '\n\n  after edit:     ' + $scope.addFormMState.bid.goods_description
-
-	    confirmationDialog.showDialog({
-	                                    title: title,
-	                                    text: 'Are you sure you want to edit Bid:' + text
-	                                  }).then(function(answer) {
-	      if (answer) doEdit()
-	    })
-
-	    function doEdit() {
-	      var bid = angular.copy(vm.bidToEdit)
-	      bid.amount = $scope.addFormMState.bid.amount
-	      bid.goods_description = $scope.addFormMState.bid.goods_description
-
-	      //we need to do this so this bid can show up at the bid list interface in case user wishes to download and
-	      //send the bid to treasury
-	      bid.requested_at = null
-
-	      LcBidRequest.put(bid).$promise.then(function() {
-	        confirmationDialog.showDialog({title: title, text: 'Edit successful: ' + text, infoOnly: true})
-	        $scope.addFormMState.existingBids.splice(bid.$index, 1, bid)
-	        init()
-	      }, function(xhr) {
-	        xhrErrorDisplay(xhr)
-	      })
-	    }
-	  }
-
-	  function bidNotModified() {
-	    return {
-	      amount: vm.bidToEdit.amount === $scope.addFormMState.bid.amount,
-	      goods_description: vm.bidToEdit.goods_description === $scope.addFormMState.bid.goods_description
-	    }
-	  }
-	}
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	/*jshint camelcase:false*/
-
-	var rootCommons = __webpack_require__(6)
+	var rootCommons = __webpack_require__(7)
 
 	var app = angular.module('form-m-bids', [
 	  'ui.router',
@@ -1169,7 +1043,7 @@
 
 	      views: {
 	        bids: {
-	          template: __webpack_require__(10),
+	          template: __webpack_require__(11),
 
 	          controller: 'BidRequestController as bidHome'
 	        }
@@ -1350,22 +1224,22 @@
 	  }
 	}
 
-	__webpack_require__(11)
+	__webpack_require__(12)
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-m-home-view\"><div class=\"action-buttons\" style=\"text-align: right;margin-bottom: 30px;\"><button class=\"btn btn-info\" ng-click=\"bidHome.searchBids()\">Search Bid Requests</button> <a class=\"btn btn-success\" ng-href=\"{$bidHome.downloadUrl()$}\" ng-disabled=\"bidHome.downloadBtnDisabled()\" ng-click=\"bidHome.refreshPage()\">Download</a> <button type=\"button\" name=\"bid-home-mark-as-requested-btn\" class=\"btn btn-success\" ng-click=\"bidHome.markRequested()\" ng-disabled=\"bidHome.markRequestedBtnDisabled()\">Mark as requested</button></div><div display-pending-bid=\"\" pending-bids=\"bidHome.bidRequests\" pager-object=\"bidHome.paginationHooks\" update-collection=\"bidHome.getBidsOnNavigation(linkUrl)\" pagination-size=\"20\" selected-bids=\"bidHome.selectedBids\" on-selected-bids-changed=\"bidHome.onSelectedBidsChanged(newSelections)\" on-row-dbl-click=\"bidHome.rowDblClickCb(bid)\"></div></div>";
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var lcAppCommons = __webpack_require__(4)
+	var lcAppCommons = __webpack_require__(5)
 
 	var app = angular.module('form-m-bids')
 
@@ -1499,12 +1373,12 @@
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict"
 
-	var rootCommons = __webpack_require__(6)
+	var rootCommons = __webpack_require__(7)
 
 	var app = angular.module('list-form-m',
 	  ['rootApp',
@@ -1528,7 +1402,7 @@
 
 	      views: {
 	        'listFormM': {
-	          template: __webpack_require__(13),
+	          template: __webpack_require__(14),
 
 	          controller: 'FormMListController as formMList'
 	        }
@@ -1609,13 +1483,13 @@
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"manage-form-m-tab-content\"><div class=\"action-buttons pull-right\"><button class=\"btn btn-info\" search-form-m=\"\" search-form-m-result=\"formMList.searchedFormMResult\">Search Form M</button></div><div model-table=\"\" model-collection=\"formMList.formMs\" table-model-manager=\"::formMList.modelManager\" table-caption=\"::formMList.tableCaption\" pagination-size=\"20\" update-collection=\"formMList.getFormMCollectionOnNavigation(linkUrl)\" pager-object=\"formMList.paginationHooks\" on-row-dbl-click-callback=\"formMList.modelRowDblClick(rowModel)\"></div></div>";
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1671,7 +1545,7 @@
 	      var deferred = $q.defer()
 
 	      ModalService.showModal({
-	        templateUrl: __webpack_require__(4).buildUrl(
+	        templateUrl: __webpack_require__(5).buildUrl(
 	          'form-m/search-detailed-or-uploaded-form-m/search-detailed-or-uploaded-form-m-modal.html'),
 
 	        controller: 'SearchDetailedOrUploadedFormMServiceModalCtrl as searchUploadedFormMModal'
@@ -1728,7 +1602,7 @@
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1777,7 +1651,7 @@
 	      config = config || {}
 
 	      ModalService.showModal({
-	        templateUrl: __webpack_require__(4).buildUrl('form-m/search-form-m-service/search-form-m-modal.html'),
+	        templateUrl: __webpack_require__(5).buildUrl('form-m/search-form-m-service/search-form-m-modal.html'),
 	        controller: 'SearchFormMServiceModalCtrl as searchFormMModal',
 	        inputs: {
 	          uiOptions: config.uiOptions
@@ -1869,7 +1743,7 @@
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1888,7 +1762,7 @@
 	        .css({cursor: 'pointer'})
 	        .bind('click', function() {
 	                ModalService.showModal({
-	                  template: __webpack_require__(17),
+	                  template: __webpack_require__(18),
 
 	                  controller: 'SearchFormMModalCtrl as searchFormMModal'
 
@@ -1984,22 +1858,22 @@
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
 	module.exports = "<div id=\"search-form-m-root-container\" class=\"search-form-m-root-container\"><form novalidate=\"\" class=\"form-horizontal\" ng-submit=\"searchFormMModal.submitSearchParams(searchFormMModal.searchParams)\" name=\"searchFormMModalForm\"><fieldset class=\"search-form-m-container\" style=\"position: relative; padding: 7px;\"><div class=\"form-group form-m-number-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"form-m-number\">Form M Number</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" maxlength=\"13\" id=\"form-m-number\" min=\"0\" ng-pattern=\"/(?:mf)?\\d{4,11}/i\" ng-model=\"searchFormMModal.searchParams.number\"></div></div><div class=\"form-group applicant-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"applicant\">Applicant</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" type=\"text\" min=\"3\" id=\"applicant\" ng-model=\"searchFormMModal.searchParams.applicant\" typeahead-min-length=\"3\" uib-typeahead=\"applicant as applicant.name for applicant in searchFormMModal.getApplicant($viewValue)\"></div></div><div class=\"form-group currency-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"currency\">Currency</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" id=\"currency\" maxlength=\"3\" ng-model=\"searchFormMModal.searchParams.currency\" uib-typeahead=\"currency as currency.code for currency in searchFormMModal.getCurrency($viewValue)\" typeahead-min-length=\"2\"></div></div><div class=\"form-group amount-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"amount\">Amount</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" id=\"amount\" min=\"0\" ng-model=\"searchFormMModal.searchParams.amount\" number-format=\"\" ng-pattern=\"/^\\d[\\d,]*(?:\\.\\d*)?$/\"></div></div></fieldset><div class=\"form-m-lc-issue-container\"><span ng-click=\"searchFormMModal.toggleShowLcIssueContainer()\" class=\"form-m-lc-issue-toggle-show\"><span ng-class=\"['glyphicon', {'glyphicon-chevron-down': !searchFormMModal.showLcIssueContainer, 'glyphicon-chevron-up': searchFormMModal.showLcIssueContainer}]\"></span> {$searchFormMModal.searchLcIssuesTitle$}</span><div class=\"form-m-search-lc-issue\" ng-show=\"searchFormMModal.showLcIssueContainer\"><lc-issue lc-issue-show=\"searchFormMModal.showLcIssueContainer\" lc-issues-selected=\"searchFormMModal.selectedLcIssues\"></lc-issue></div></div><div class=\"row search-form-m-form-control\"><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: left\"><span class=\"btn btn-default\" ng-click=\"searchFormMModal.reset(searchFormMModalForm)\">Reset</span></div><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: center\"><button type=\"submit\" class=\"btn btn-info\" ng-disabled=\"searchFormMModalForm.$invalid\">Search Form M</button></div><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: right\"><span class=\"btn btn-default\" ng-click=\"searchFormMModal.close()\">Close</span></div></div></form></div>";
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict"
 
 	/*jshint camelcase:false*/
 
-	__webpack_require__(19)
+	__webpack_require__(20)
 
-	var rootCommons = __webpack_require__(6)
+	var rootCommons = __webpack_require__(7)
 
 	var app = angular.module('upload-form-m',
 	  ['rootApp',
@@ -2019,7 +1893,7 @@
 
 	      views: {
 	        'uploadFormM': {
-	          template: __webpack_require__(20),
+	          template: __webpack_require__(21),
 
 	          controller: 'UploadFormMController as uploadFormM'
 	        }
@@ -2101,7 +1975,7 @@
 
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2152,7 +2026,7 @@
 	      var deferred = $q.defer()
 
 	      ModalService.showModal({
-	        templateUrl: __webpack_require__(4).buildUrl(
+	        templateUrl: __webpack_require__(5).buildUrl(
 	          'form-m/upload-form-m/search-uploaded-form-m/search-uploaded-form-m-modal.html'),
 
 	        controller: 'SearchUploadedFormMServiceModalCtrl as searchUploadedFormMModal'
@@ -2214,26 +2088,26 @@
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"upload-form-m-tab-content\"><form class=\"upload-form-m-form\" role=\"form\" name=\"uploadFormMForm\" ng-submit=\"uploadFormM.uploadFormM(uploadFormM.uploadFormMText)\"><div class=\"form-group upload-form-m-text-group\"><pre class=\"upload-form-m-indicator\" ng-show=\"uploadFormM.formMIsUploading\">\n        {$uploadFormM.uploadIndicationText$}\n      </pre><label for=\"upload-form-m\" class=\"control-label sr-only\">Copy and paste form M</label> <textarea name=\"upload-form-m\" id=\"upload-form-m\" required=\"\" ng-model=\"uploadFormM.uploadFormMText\" ng-class=\"['form-control', 'upload-form-m', {'form-m-is-uploading':uploadFormM.formMIsUploading}]\" ng-readonly=\"uploadFormM.formMIsUploading\"></textarea></div><div class=\"upload-form-m-submit\" style=\"text-align: center\"><button type=\"submit\" class=\"btn btn-success\" ng-disabled=\"uploadFormMForm.$invalid || uploadFormM.formMIsUploading\">Upload</button></div></form></div>";
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-m-home-view\"><div uib-tabset=\"\"><div uib-tab=\"\" ng-repeat=\"(key, tab) in tabs\" heading=\"{$tab.title$}\" active=\"tab.active\" select=\"tab.select()\"><div class=\"\" ui-view=\"{$tab.viewName$}\"></div></div></div></div>";
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
 	/*jshint camelcase:false*/
 
-	var rootCommons = __webpack_require__(6)
+	var rootCommons = __webpack_require__(7)
 
 	var app = angular.module('lc', [
 	  'ui.router',
@@ -2254,7 +2128,7 @@
 
 	      kanmiiTitle: 'Letter of credit',
 
-	      templateUrl: __webpack_require__(4).buildUrl('lc/lc.html'),
+	      templateUrl: __webpack_require__(5).buildUrl('lc/lc.html'),
 
 	      controller: 'LetterOfCreditController as lcHome'
 	    })
@@ -2280,19 +2154,19 @@
 	}
 
 
-	__webpack_require__(23)
 	__webpack_require__(24)
+	__webpack_require__(25)
 
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
 	/*jshint camelcase:false*/
 
-	var rootCommons = __webpack_require__(6)
+	var rootCommons = __webpack_require__(7)
 
 	var app = angular.module('lc-detail', [
 	  'ui.router',
@@ -2318,7 +2192,7 @@
 
 	      kanmiiTitle: 'Letter of credit',
 
-	      templateUrl: __webpack_require__(4).buildUrl('lc/lc-detail/lc-detail.html'),
+	      templateUrl: __webpack_require__(5).buildUrl('lc/lc-detail/lc-detail.html'),
 
 	      controller: 'LetterOfCreditDetailController as lcDetail'
 	    })
@@ -2489,7 +2363,7 @@
 
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2543,7 +2417,7 @@
 	      config = config || {}
 
 	      ModalService.showModal({
-	        templateUrl: __webpack_require__(4).buildUrl('lc/search-lc/search-lc.html'),
+	        templateUrl: __webpack_require__(5).buildUrl('lc/search-lc/search-lc.html'),
 	        controller: 'SearchLcModalCtrl as searchLcModal',
 	        inputs: {
 	          uiOptions: config.uiOptions
@@ -2618,10 +2492,195 @@
 
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-m-home-view\"><div class=\"form-m-home-action-buttons btn-group-vertical\" role=\"group\"><a class=\"btn btn-info form-m-home-action-button\" ui-sref=\"lc\">Letter of credit</a> <a class=\"btn btn-info form-m-home-action-button\" ui-sref=\"form_m\">Form M</a></div></div>";
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	/*jshint camelcase:false*/
+
+	var app = angular.module('add-form-m')
+
+	app.directive('lcBid', lcBidDirective)
+
+	lcBidDirective.$inject = []
+
+	function lcBidDirective() {
+	  return {
+	    restrict: 'A',
+	    templateUrl: __webpack_require__(5).buildUrl('form-m/add-form-m/lc-bid/lc-bid.html'),
+	    scope: true,
+	    bindToController: {
+	      bid: '='
+	    },
+	    controller: 'LcBidDirectiveController as lcBid'
+	  }
+	}
+
+	app.controller('LcBidDirectiveController', LcBidDirectiveController)
+
+	LcBidDirectiveController.$inject = [
+	  '$scope',
+	  '$filter',
+	  'formFieldIsValid',
+	  'kanmiiUnderscore',
+	  'LcBidRequest',
+	  'xhrErrorDisplay',
+	  'confirmationDialog',
+	  'formMObject',
+	  'resetForm2'
+	]
+
+	function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnderscore, LcBidRequest, xhrErrorDisplay,
+	  confirmationDialog, formMObject, resetForm2) {
+	  var vm = this
+	  var title = 'Make Bid Request'
+	  init()
+
+	  function init(form) {
+	    vm.formM = formMObject
+
+	    vm.title = title
+	    vm.formM.showBidForm = false
+	    vm.formM.showEditBid = false
+	    vm.bidToEdit = null
+	    vm.formM.bid.amount = null
+
+	    if (form) resetForm2(form)
+	  }
+
+	  vm.isValid = function (name, validity) {
+	    return formFieldIsValid($scope, 'bidForm', name, validity)
+	  }
+
+	  vm.amountGetterSetter = function (val) {
+	    if (arguments.length) {
+	      if (!/[\d,\.]+/.test(val)) vm.formM.bid.amount = null
+	      else vm.formM.bid.amount = Number(val.replace(/,/g, ''))
+
+	    } else return vm.formM.bid.amount ? $filter('number')(vm.formM.bid.amount, 2) : undefined
+	  }
+
+	  vm.toggleShow = function toggleShow(form) {
+	    vm.formM.showBidForm = vm.formM.amount && vm.formM.number && !vm.formM.showBidForm
+
+	    if (!vm.formM.showBidForm) {
+	      init(form)
+	    }
+	    else {
+	      vm.title = 'Dismiss'
+	      var goods = formMObject.goods_description
+	      if (goods) vm.formM.bid.goods_description = goods
+
+	      vm.formM.bid.amount = !vm.formM.existingBids.length ? formMObject.amount : null
+	    }
+	  }
+
+	  vm.editBidInvalid = function editBidInvalid(form) {
+	    if (kanmiiUnderscore.isEmpty(vm.bidToEdit)) return true
+
+	    if (form.$invalid) return true
+
+	    return kanmiiUnderscore.all(bidNotModified())
+	  }
+
+	  vm.onBidDblClick = function onBidDblClick(bid, $index) {
+	    vm.formM.showEditBid = true
+	    vm.formM.showBidForm = false
+	    vm.toggleShow()
+	    vm.bidToEdit = angular.copy(bid)
+	    vm.bidToEdit.amount = Number(vm.bidToEdit.amount)
+	    vm.bidToEdit.$index = $index
+	    vm.formM.bid.amount = vm.bidToEdit.amount
+	  }
+
+	  vm.trashBid = function trashBid(bid, $index) {
+	    var text = '\n\nApplicant: ' + bid.applicant +
+	      '\nForm M: ' + bid.form_m_number +
+	      '\nBid Amount: ' + bid.currency + ' ' + $filter('number')(bid.amount, 2)
+
+	    var mf = '"' + bid.form_m_number + '"'
+
+	    confirmationDialog.showDialog({
+	      text: 'Sure you want to delete bid:' + text, title: 'Delete bid for ' + mf
+	    }).then(function (answer) {
+	      if (answer) {
+	        LcBidRequest.delete(bid).$promise.then(bidDeleteSuccess, function bidDeleteFailure(xhr) {
+	          xhrErrorDisplay(xhr)
+	        })
+	      }
+	    })
+
+	    function bidDeleteSuccess() {
+	      confirmationDialog.showDialog({
+	        text: 'Bid delete successfully:' + text,
+	        title: 'Bid for ' + mf + ' deleted successfully',
+	        infoOnly: true
+	      })
+
+	      vm.formM.existingBids.splice($index, 1)
+	    }
+	  }
+
+	  vm.editBid = function editBid() {
+	    var title = 'Edit bid "' + vm.bidToEdit.form_m_number + '"'
+
+	    var ccy = formMObject.currency.code
+	    var text = '\n\nForm M:           ' + vm.bidToEdit.form_m_number +
+	      '\nBid Amount' +
+	      '\n  before edit:    ' + ccy + $filter('number')(vm.bidToEdit.amount, 2) +
+	      '\n  after edit:     ' + ccy + $filter('number')(vm.formM.bid.amount, 2) +
+	      '\nGoods description' +
+	      '\n  before edit:    ' + vm.bidToEdit.goods_description +
+	      '\n\n  after edit:     ' + vm.formM.bid.goods_description
+
+	    confirmationDialog.showDialog({
+	      title: title,
+	      text: 'Are you sure you want to edit Bid:' + text
+	    }).then(function (answer) {
+	      if (answer) doEdit()
+	    })
+
+	    function doEdit() {
+	      var bid = angular.copy(vm.bidToEdit)
+	      bid.amount = vm.formM.bid.amount
+	      bid.goods_description = vm.formM.bid.goods_description
+
+	      //we need to do this so this bid can show up at the bid list interface in case user wishes to download and
+	      //send the bid to treasury
+	      bid.requested_at = null
+
+	      LcBidRequest.put(bid).$promise.then(function () {
+	        confirmationDialog.showDialog({title: title, text: 'Edit successful: ' + text, infoOnly: true})
+	        vm.formM.existingBids.splice(bid.$index, 1, bid)
+	        init()
+	      }, function (xhr) {
+	        xhrErrorDisplay(xhr)
+	      })
+	    }
+	  }
+
+	  function bidNotModified() {
+	    return {
+	      amount: vm.bidToEdit.amount === vm.formM.bid.amount,
+	      goods_description: vm.bidToEdit.goods_description === vm.formM.bid.goods_description
+	    }
+	  }
+
+	  $scope.$watch(function () {return formMObject}, function onFormMObjectChanged(formM) {
+	    if (formM) {
+	      formMObject.bidForm = $scope.bidForm
+	      vm.formM = formM
+	    }
+	  }, true)
+	}
+
 
 /***/ }
 /******/ ]);

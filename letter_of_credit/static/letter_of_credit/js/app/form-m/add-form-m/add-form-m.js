@@ -2,6 +2,7 @@
 
 /*jshint camelcase:false*/
 
+require('./form-m-object.js')
 require('./lc-issue/lc-issue.js')
 require('./lc-cover/lc-cover.js')
 
@@ -15,7 +16,8 @@ var app = angular.module('add-form-m', [
   'lc-cover',
   'lc-issue',
   'lc-bid-request',
-  'confirmation-dialog'
+  'confirmation-dialog',
+  'add-form-m-form-m-object'
 ])
 
 app.config(formMStateURLConfig)
@@ -50,19 +52,18 @@ AddFormMStateController.$inject = [
   'xhrErrorDisplay',
   'formMAttributesVerboseNames',
   'FormM',
-  '$timeout',
   '$filter',
   '$stateParams',
   'resetForm2',
   '$state',
   '$scope',
-  'LcBidRequest',
-  'confirmationDialog'
+  'confirmationDialog',
+  'formMObject'
 ]
 
 function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
-  kanmiiUnderscore, formatDate, xhrErrorDisplay, formMAttributesVerboseNames, FormM, $timeout, $filter, $stateParams,
-  resetForm2, $state, $scope, LcBidRequest, confirmationDialog) {
+  kanmiiUnderscore, formatDate, xhrErrorDisplay, formMAttributesVerboseNames, FormM, $filter, $stateParams, resetForm2,
+  $state, $scope, confirmationDialog, formMObject) {
   var vm = this
 
   vm.detailedFormM = angular.copy($stateParams.detailedFormM)
@@ -80,31 +81,33 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   initialize()
   function initialize(form) {
-    vm.existingBids = []
+    formMObject.init(vm.detailedFormM, function (formM) {
+      vm.formM = formM
 
-    if (vm.detailedFormM) initDetailedFormM()
-    else {
-      $scope.updateAddFormMTitle()
-      vm.formM = {
-        date_received: new Date()
+      if (vm.formM.number) {
+        $scope.updateAddFormMTitle(formM)
+        vm.fieldIsEditable = {
+          number: false,
+          currency: false,
+          applicant: false,
+          date_received: false,
+          amount: false
+        }
+
+      } else  {
+        $scope.updateAddFormMTitle()
+        vm.fieldIsEditable = {
+          number: true,
+          currency: true,
+          applicant: true,
+          date_received: true,
+          amount: true
+        }
       }
+    })
 
-      vm.fieldsEdit = {
-        number: false,
-        currency: false,
-        applicant: false,
-        date_received: false,
-        amount: false
-      }
-
-      vm.closedIssues = []
-      vm.nonClosedIssues = []
-    }
-
-    vm.showEditBid = false
-    vm.showBidForm = false
     vm.searchFormM = {}
-    initFormMSavingIndicator()
+    formMSavedSuccessMessage()
 
     if (form) {
       form.$setPristine()
@@ -116,62 +119,26 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
      */
     vm.cover = null
 
-    /*
-     *@param {angular.form.model} bid model that we want to create for the form M
-     */
-    vm.bid = {}
+    vm.bid = formMObject.bid
 
     /*
      *@param {angular.form.model} the form M issues model
      */
     vm.issues = []
-
+    vm.closedIssues = []
     vm.nonClosedIssues = []
   }
 
-  function initDetailedFormM() {
-    vm.formM = {
-      date_received: new Date(vm.detailedFormM.date_received),
-      number: vm.detailedFormM.number,
-      applicant: vm.detailedFormM.applicant_data,
-      currency: vm.detailedFormM.currency_data,
-      amount: Number(vm.detailedFormM.amount),
-      goods_description: vm.detailedFormM.goods_description,
-      form_m_issues: vm.detailedFormM.form_m_issues,
-      url: vm.detailedFormM.url,
-      covers: vm.detailedFormM.covers
-    }
-
-    $scope.updateAddFormMTitle(vm.formM)
-
-    LcBidRequest.getPaginated({mf: vm.formM.number}).$promise.then(function(data) {
-      if (data.count) {
-        var results = data.results
-
-        if (results.length) vm.existingBids = results
-      }
-    })
-
-    vm.fieldsEdit = {
-      number: true,
-      currency: true,
-      applicant: true,
-      date_received: true,
-      amount: true
-    }
-
-  }
-
-  function initFormMSavingIndicator() {
+  function formMSavedSuccessMessage() {
     var summary = $stateParams.showSummary
     $stateParams.showSummary = null
 
     if (summary) {
       confirmationDialog.showDialog({
-                                      title: '"' + vm.formM.number + '" successfully saved',
-                                      text: summary,
-                                      infoOnly: true
-                                    })
+        title: '"' + vm.formM.number + '" successfully saved',
+        text: summary,
+        infoOnly: true
+      })
     }
   }
 
@@ -190,18 +157,18 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   }
 
   vm.enableFieldEdit = function enableFieldEdit(field) {
-    vm.fieldsEdit[field] = vm.detailedFormM ? !vm.fieldsEdit[field] : false
+    vm.fieldIsEditable[field] = vm.detailedFormM ? !vm.fieldIsEditable[field] : false
   }
 
   vm.validators = {
     applicant: {
-      test: function() {
+      test: function () {
         return kanmiiUnderscore.isObject(vm.formM.applicant)
       }
     },
 
     currency: {
-      test: function() {
+      test: function () {
         return kanmiiUnderscore.isObject(vm.formM.currency)
       }
     }
@@ -213,7 +180,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
     if (coverForm && coverForm.$invalid) return true
 
-    if ($scope.bidForm.$invalid) return true
+    if (kanmiiUnderscore.has(vm.formM.bidForm, '$invalid') && vm.formM.bidForm.$invalid) return true
 
     if (issuesForm && issuesForm.$invalid) return true
 
@@ -258,10 +225,10 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     vm.detailedFormM = null
     initialize()
 
-    SearchDetailedOrUploadedFormMService.searchWithModal().then(function(data) {
+    SearchDetailedOrUploadedFormMService.searchWithModal().then(function (data) {
       if (data.detailed) {
         vm.detailedFormM = data.detailed
-        initDetailedFormM()
+        initialize()
 
       } else {
         var formM = data.uploaded
@@ -270,7 +237,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
         vm.formM.amount = formM.cost_freight
         vm.formM.goods_description = formM.goods_description
 
-        getTypeAheadCurrency(formM.ccy).then(function(ccy) {
+        getTypeAheadCurrency(formM.ccy).then(function (ccy) {
           vm.formM.currency = ccy[0]
         })
       }
@@ -313,7 +280,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     function formMSavedSuccess(data) {
       //even though non-closed issues will be set in the lc-issue directive, we need to read them off data received
       //from server so we can display them as part of summary to users. :TODO find a better implementation
-      vm.nonClosedIssues = data.form_m_issues.filter(function(issue) {
+      vm.nonClosedIssues = data.form_m_issues.filter(function (issue) {
         return !issue.closed_at
       })
 
@@ -346,9 +313,9 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     var number = $filter('number')(vm.formM.amount, 2)
     var header = vm.formM.applicant.name + ' - ' + vm.formM.number + ' - ' + vm.formM.currency.code + ' ' + number
     return header + '\n\nForm M Number : ' + vm.formM.number + '\n' +
-           'Value         : ' + vm.formM.currency.code + ' ' +
-           number + '\n' +
-           'Applicant     : ' + vm.formM.applicant.name
+      'Value         : ' + vm.formM.currency.code + ' ' +
+      number + '\n' +
+      'Applicant     : ' + vm.formM.applicant.name
   }
 
   $scope.showIssuesMessage = showIssuesMessage
@@ -356,9 +323,9 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     if (!vm.nonClosedIssues.length) return ''
 
     var issuesText = '\n\n\nPlease note the following issues which must be regularized before the LC ' +
-                     'request can be treated:\n'
+      'request can be treated:\n'
 
-    kanmiiUnderscore.each(vm.nonClosedIssues, function(issue, index) {
+    kanmiiUnderscore.each(vm.nonClosedIssues, function (issue, index) {
       ++index
       issuesText += ('(' + index + ') ' + vm.formatIssueText(issue.text || issue.issue.text) + '\n')
     })
@@ -366,7 +333,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     return issuesText
   }
 
-  vm.formatIssueText = function(text) {
+  vm.formatIssueText = function (text) {
     return text.replace(/:ISSUE$/i, '')
   }
 

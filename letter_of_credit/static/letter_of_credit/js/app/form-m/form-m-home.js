@@ -89,7 +89,7 @@ function FormMController($state, $scope) {
   }
 
   $scope.goToFormM = function goToFormM(formM) {
-    $state.go('form_m.add', {detailedFormM: formM})
+    $state.transitionTo('form_m.add', {detailedFormM: formM})
     $scope.tabs.addFormM.active = true
   }
 }

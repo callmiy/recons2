@@ -2,18 +2,18 @@
 
   <div ng-click="lcBid.toggleShow(bidForm)"
        class="form-m-add-on-toggle form-m-bid-toggle-show clearfix">
-    <span class="form-m-add-on-show-helper" ng-if="addFormMState.showBidForm">Make Bid Request</span>
+    <span class="form-m-add-on-show-helper" ng-if="lcBid.formM.showBidForm">Make Bid Request</span>
 
     <div class="form-m-add-on-show-icon">
       <span
-          ng-class="['glyphicon', {'glyphicon-chevron-down': !addFormMState.showBidForm, 'glyphicon-chevron-up': addFormMState.showBidForm}]">
+          ng-class="['glyphicon', {'glyphicon-chevron-down': !lcBid.formM.showBidForm, 'glyphicon-chevron-up': lcBid.formM.showBidForm}]">
       </span>
 
       {$lcBid.title$}
     </div>
   </div>
 
-  <fieldset ng-form name="bidForm" ng-show="addFormMState.showBidForm">
+  <fieldset ng-form name="bidForm" ng-show="lcBid.formM.showBidForm">
     <div
         ng-class="['form-group', 'has-feedback', 'bid-goods-description', {'has-error': lcBid.isValid('bidGoodsDescription'), 'has-success': lcBid.isValid('bidGoodsDescription', 'ok')}]">
 
@@ -21,8 +21,8 @@
 
       <div class="col-sm-9">
         <input class="form-control" id="goods-description" name="bidGoodsDescription" required ng-minlength="5"
-               ng-required="addFormMState.showBidForm"
-               ng-model="addFormMState.bid.goods_description"/>
+               ng-required="lcBid.formM.showBidForm"
+               ng-model="lcBid.formM.bid.goods_description"/>
 
 
         <i ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': lcBid.isValid('bidGoodsDescription'), 'glyphicon-ok': lcBid.isValid('bidGoodsDescription', 'ok')}]"
@@ -45,7 +45,7 @@
       <div class="col-sm-9">
         <input class="form-control" id="bid-amount" name="bidAmount" ng-model="lcBid.amountGetterSetter"
                ng-model-options="{getterSetter: true, updateOn: 'blur'}"
-               ng-required="addFormMState.showBidForm"/>
+               ng-required="lcBid.formM.showBidForm"/>
 
         <i ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': lcBid.isValid('bidAmount'), 'glyphicon-ok': lcBid.isValid('bidAmount', 'ok')}]"
            ng-if="lcBid.isValid('bidAmount') || lcBid.isValid('bidAmount', 'ok')"
@@ -60,20 +60,20 @@
       </div>
     </div>
 
-    <div style="text-align: right" ng-show="addFormMState.showEditBid">
-      <button type="button" class="btn btn-info" ng-click="lcBid.editBid()" ng-disabled="lcBid.editBidInvalid()">
+    <div style="text-align: right" ng-show="lcBid.formM.showEditBid">
+      <button type="button" class="btn btn-info" ng-click="lcBid.editBid()" ng-disabled="lcBid.editBidInvalid(bidForm)">
         Edit Bid
       </button>
     </div>
   </fieldset>
 
-  <div class="items-table-display" ng-if="addFormMState.existingBids.length">
+  <div class="items-table-display" ng-if="lcBid.formM.existingBids.length">
 
     <hr/>
 
     <table class="table table-responsive table-striped">
       <caption>
-        Existing Bids <span class="badge">{$addFormMState.existingBids.length$}</span>
+        Existing Bids <span class="badge">{$lcBid.formM.existingBids.length$}</span>
       </caption>
       <thead>
         <tr>
@@ -86,7 +86,7 @@
       </thead>
 
       <tbody>
-        <tr ng-repeat="bid in addFormMState.existingBids" ng-dblclick="lcBid.onBidDblClick(bid, $index)"
+        <tr ng-repeat="bid in lcBid.formM.existingBids" ng-dblclick="lcBid.onBidDblClick(bid, $index)"
             style="cursor:pointer;">
           <td style="width: 66px;">{$$index + 1$}</td>
 

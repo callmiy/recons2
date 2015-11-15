@@ -32,6 +32,7 @@ LcCoverDirectiveController.$inject = [
 ]
 
 function LcCoverDirectiveController($scope, formMCoverTypes, $filter, formFieldIsValid) {
+  console.log('cover init =', 'init')
   var vm = this
   var title = 'Register Cover'
   init()
