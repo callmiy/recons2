@@ -21,7 +21,7 @@ var app = angular.module('form-m',
    'form-m-bids'
   ])
 
-app.config(rootCommons.interpolateProviderConfig)
+//app.config(rootCommons.interpolateProviderConfig)
 
 app.config(formMURLConfig)
 formMURLConfig.$inject = ['$stateProvider']

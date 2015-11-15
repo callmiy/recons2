@@ -109,7 +109,7 @@
 	   'form-m-bids'
 	  ])
 
-	app.config(rootCommons.interpolateProviderConfig)
+	//app.config(rootCommons.interpolateProviderConfig)
 
 	app.config(formMURLConfig)
 	formMURLConfig.$inject = ['$stateProvider']
@@ -2225,7 +2225,7 @@
 /* 20 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"upload-form-m-tab-content\"><form class=\"upload-form-m-form\" role=\"form\" name=\"uploadFormMForm\" ng-submit=\"uploadFormM.uploadFormM(uploadFormM.uploadFormMText)\"><div class=\"form-group upload-form-m-text-group\"><pre class=\"upload-form-m-indicator\" ng-show=\"uploadFormM.formMIsUploading\">\r\n        {$uploadFormM.uploadIndicationText$}\r\n      </pre><label for=\"upload-form-m\" class=\"control-label sr-only\">Copy and paste form M</label> <textarea name=\"upload-form-m\" id=\"upload-form-m\" required=\"\" ng-model=\"uploadFormM.uploadFormMText\" ng-class=\"['form-control', 'upload-form-m', {'form-m-is-uploading':uploadFormM.formMIsUploading}]\" ng-readonly=\"uploadFormM.formMIsUploading\"></textarea></div><div class=\"upload-form-m-submit\" style=\"text-align: center\"><button type=\"submit\" class=\"btn btn-success\" ng-disabled=\"uploadFormMForm.$invalid || uploadFormM.formMIsUploading\">Upload</button></div></form></div>";
+	module.exports = "<div class=\"upload-form-m-tab-content\"><form class=\"upload-form-m-form\" role=\"form\" name=\"uploadFormMForm\" ng-submit=\"uploadFormM.uploadFormM(uploadFormM.uploadFormMText)\"><div class=\"form-group upload-form-m-text-group\"><pre class=\"upload-form-m-indicator\" ng-show=\"uploadFormM.formMIsUploading\">\n        {$uploadFormM.uploadIndicationText$}\n      </pre><label for=\"upload-form-m\" class=\"control-label sr-only\">Copy and paste form M</label> <textarea name=\"upload-form-m\" id=\"upload-form-m\" required=\"\" ng-model=\"uploadFormM.uploadFormMText\" ng-class=\"['form-control', 'upload-form-m', {'form-m-is-uploading':uploadFormM.formMIsUploading}]\" ng-readonly=\"uploadFormM.formMIsUploading\"></textarea></div><div class=\"upload-form-m-submit\" style=\"text-align: center\"><button type=\"submit\" class=\"btn btn-success\" ng-disabled=\"uploadFormMForm.$invalid || uploadFormM.formMIsUploading\">Upload</button></div></form></div>";
 
 /***/ },
 /* 21 */

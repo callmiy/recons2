@@ -2,8 +2,7 @@
 
 var gulp = require('gulp')
 var plugins = require('gulp-load-plugins')()
-var webpack = require('webpack');
-var browserSync = require('browser-sync').create()
+var webpack = require('webpack')
 
 var baseStaticJs = './core_recons/static/core_recons/js'
 var baseStaticCss = './core_recons/static/core_recons/css'
@@ -142,13 +141,6 @@ gulp.task('webpack-payment', function() {
     .pipe(plugins.rename({suffix: '.min'}))
     .pipe(plugins.sourcemaps.write('.'))
     .pipe(gulp.dest(payment.destDir))
-})
-
-gulp.task('browser-sync', function() {
-  browserSync.init({
-                     proxy: 'localhost:8000',
-                     files: ['**/*.html', '**/*.css', '**/*.js']
-                   })
 })
 
 gulp.task('minify-js', function() {

@@ -33,9 +33,7 @@ function confirmationDialog(ModalService, $q) {
           title: config.title,
 
           close: function() {
-            modal.close.then(function() {
-              if (!config.infoOnly) deferred.resolve(false)
-            })
+            modal.controller.close(false)
           }
         })
 
