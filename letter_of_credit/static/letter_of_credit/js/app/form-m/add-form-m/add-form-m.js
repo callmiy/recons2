@@ -5,8 +5,6 @@
 require('./lc-issue/lc-issue.js')
 require('./lc-cover/lc-cover.js')
 
-var rootCommons = require('commons')
-
 var app = angular.module('add-form-m', [
   'ui.router',
   'rootApp',
@@ -19,8 +17,6 @@ var app = angular.module('add-form-m', [
   'lc-bid-request',
   'confirmation-dialog'
 ])
-
-app.config(rootCommons.interpolateProviderConfig)
 
 app.config(formMStateURLConfig)
 

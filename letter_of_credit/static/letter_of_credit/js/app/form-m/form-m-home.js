@@ -10,8 +10,6 @@ require('./search-form-m-service/search-form-m-service.js')
 require('./search-form-m')
 require('./upload-form-m/upload-form-m.js')
 
-var rootCommons = require('commons')
-
 var app = angular.module('form-m',
   ['rootApp',
    'ui.router',
@@ -20,8 +18,6 @@ var app = angular.module('form-m',
    'add-form-m',
    'form-m-bids'
   ])
-
-//app.config(rootCommons.interpolateProviderConfig)
 
 app.config(formMURLConfig)
 formMURLConfig.$inject = ['$stateProvider']

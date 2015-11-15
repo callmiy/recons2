@@ -98,8 +98,6 @@
 	__webpack_require__(16)
 	__webpack_require__(18)
 
-	var rootCommons = __webpack_require__(6)
-
 	var app = angular.module('form-m',
 	  ['rootApp',
 	   'ui.router',
@@ -108,8 +106,6 @@
 	   'add-form-m',
 	   'form-m-bids'
 	  ])
-
-	//app.config(rootCommons.interpolateProviderConfig)
 
 	app.config(formMURLConfig)
 	formMURLConfig.$inject = ['$stateProvider']
@@ -198,8 +194,6 @@
 	__webpack_require__(3)
 	__webpack_require__(7)
 
-	var rootCommons = __webpack_require__(6)
-
 	var app = angular.module('add-form-m', [
 	  'ui.router',
 	  'rootApp',
@@ -212,8 +206,6 @@
 	  'lc-bid-request',
 	  'confirmation-dialog'
 	])
-
-	app.config(rootCommons.interpolateProviderConfig)
 
 	app.config(formMStateURLConfig)
 
