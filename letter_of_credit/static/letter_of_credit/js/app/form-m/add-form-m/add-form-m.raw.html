@@ -1,5 +1,5 @@
 <div id="add-form-m-root-container" class="add-form-m-root-container" style="margin-top: 5px;">
-  <form class="form-horizontal" name="addFormMForm" novalidate autocomplete="off"
+  <form class="form-horizontal" name="addFormMForm" novalidate autocomplete="off" id="addFormMForm"
         ng-submit="addFormMState.submit(addFormMState.formM)">
 
     <div class="row add-form-m-form-row">
@@ -71,7 +71,7 @@
                        typeahead-select-on-blur="true" typeahead-select-on-exact="true"
                 />
 
-                <span class="input-group-addon" ng-show="!addFormMState.fieldIsEditable.applicant">
+                <span class="input-group-addon" ng-show="addFormMState.fieldIsEditable.applicant">
                   <img ng-src="{$$root.addIconSrc$}" alt="" add-customer
                        added-new-customer="addFormMState.formM.applicant"/>
                 </span>
@@ -112,7 +112,7 @@
                     ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.amount, 'glyphicon-eye-open': addFormMState.fieldIsEditable.amount}]"></i>
                 </span>
 
-                <input class="form-control" id="amount" required ng-model="addFormMState.formM.amount"
+                <input class="form-control" id="amount" name="amount" required ng-model="addFormMState.formM.amount"
                        number-format autocomplete="off"
                        ng-readonly="!addFormMState.fieldIsEditable.amount"/>
               </div>
@@ -154,7 +154,7 @@
           </div>
 
           <div class="col-sm-5" style="text-align: left ">
-            <button type="submit" class="btn btn-info"
+            <button type="submit" name="formMAddSubmitBtn" class="btn btn-info"
                     ng-disabled="addFormMState.disableSubmitBtn()">
               Save
             </button>

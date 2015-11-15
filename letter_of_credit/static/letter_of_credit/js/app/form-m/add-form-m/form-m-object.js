@@ -16,7 +16,7 @@ function formMObject(LcBidRequest, $q) {
       /*
        *@param {angular.form.model} bid model that we want to create for the form M
        */
-      self.bid = {}
+      self.bidObj = {}
 
       self.existingBids = []
 

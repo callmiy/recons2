@@ -10,22 +10,24 @@ def add_form_m_btn_is_disabled(context):
     return context.browser.driver.find_element_by_name(context.submit_btn_name).get_attribute('disabled')
 
 
-@given("There is new form M with form M data")
+@given("There is new form M request with form M data")
 def step_impl(context):
     """
     :type context behave.runner.Context
     """
     form_m_data = dict(
         number='MF20159999990',
-        customer_name='ACADEMIC PRESS LTD',
-        currency_code='EKM',
         amount=410252
     )
-
-    CustomerFactory(name=form_m_data['customer_name'])
-    CurrencyFactory(code=form_m_data['currency_code'])
-
     context.form_m_data = form_m_data
+
+
+@given("There is customer in the system")
+def step_impl(context):
+    """
+    :type context behave.runner.Context
+    """
+    context.applicant = CustomerFactory(name='ACADEMIC PRESS LTD')
 
 
 @when("I complete the 'add form M' form with basic information")
@@ -35,14 +37,11 @@ def step_impl(context):
     """
     browser = context.browser
 
-    if browser.is_element_present_by_id('add-form-m-form-show-trigger', wait_time=4):
-        browser.find_by_id('add-form-m-form-show-trigger').first.click()
-
-    if browser.is_element_present_by_name('addFormMModalForm', wait_time=4):
+    if browser.is_element_present_by_name('addFormMForm', wait_time=4):
         # currency and applicant are selected via drop-downs. This is the selector for the drop-down
         type_ahead_css_selector = 'li[id^=typeahead-][id*=-option-]'
 
-        submit_btn_name = 'add-form-m-submit'
+        submit_btn_name = 'formMAddSubmitBtn'
         context.submit_btn_name = submit_btn_name
 
         # the submit button is disabled until form is completely filled and valid
@@ -51,21 +50,14 @@ def step_impl(context):
         form_m_data = context.form_m_data
         form_m_number = form_m_data['number']
 
-        form_m_td_xpath = '//td[text()="%s"]' % form_m_number
-        context.form_m_td_xpath = form_m_td_xpath  # will be re-used later when form M is submitted
-
-        nt.assert_false(
-            browser.is_element_present_by_xpath(form_m_td_xpath),
-            'Form M number that is about to be created must not already be listed on the page.')
-
         browser.fill('form-m-number', form_m_number)
 
-        browser.fill('applicant', form_m_data['customer_name'])
-        if browser.is_element_present_by_css(type_ahead_css_selector, wait_time=3):
+        browser.fill('applicant', context.applicant.name[:-1])  # otherwise typeahead dropdown will not show
+        if browser.is_element_present_by_css(type_ahead_css_selector, wait_time=5):
             browser.find_by_css(type_ahead_css_selector).first.click()
 
-        browser.fill('currency', form_m_data['currency_code'])
-        if browser.is_element_present_by_css(type_ahead_css_selector, wait_time=3):
+        browser.fill('currency', context.currency.code[:-1])  # otherwise typeahead dropdown will not show
+        if browser.is_element_present_by_css(type_ahead_css_selector, wait_time=5):
             browser.find_by_css(type_ahead_css_selector).first.click()
 
         browser.fill('amount', form_m_data['amount'])
@@ -88,8 +80,13 @@ def step_impl(context):
     :type context behave.runner.Context
     """
     nt.assert_true(
-        context.browser.is_element_present_by_xpath(context.form_m_td_xpath, wait_time=4),
-        'Form M number has been created and must now be listed on the page.')
+        context.browser.is_element_present_by_css('.confirmation-dialog.ui-dialog-content', wait_time=4),
+        'Form M has been created and confirmation dialog must now be shown.')
+
+    nt.assert_true(
+        context.browser.is_text_present('"%s" successfully saved' % context.form_m_data['number']),
+        'Form M has been created and "success message must now be displayed in confirmation dialog title"')
+    time.sleep(2)
 
 
 @step("complete bid request form")

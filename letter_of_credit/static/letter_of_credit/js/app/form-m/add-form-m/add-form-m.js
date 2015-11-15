@@ -119,7 +119,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
      */
     vm.cover = null
 
-    vm.bid = formMObject.bid
+    vm.bid = formMObject.bidObj
 
     /*
      *@param {angular.form.model} the form M issues model
@@ -251,7 +251,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     formMToSave.currency = formMToSave.currency.url
     formMToSave.date_received = formatDate(formMToSave.date_received)
 
-    if (!kanmiiUnderscore.isEmpty(vm.bid)) {
+    if (!kanmiiUnderscore.isEmpty(vm.bid) && vm.bid.amount && vm.bid.goods_description) {
       formMToSave.goods_description = vm.bid.goods_description
       formMToSave.bid = {amount: vm.bid.amount}
     }

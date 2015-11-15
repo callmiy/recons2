@@ -18,7 +18,7 @@ def step_impl(context):
     """
     :type context behave.runner.Context
     """
-    username = 'recons_test_user'
+    username = 'lc_test_user'
     UserFactory(username=username)
 
     context.browser.visit(context.config.server_url + '/accounts/login/')
@@ -36,12 +36,22 @@ def step_impl(context, num_form_m):
     [FormMFactory(currency=context.currency) for x in range(int(num_form_m))]
 
 
-@step("I am at form M list page")
+@step("I am at form M page")
 def step_impl(context):
     """
     :type context behave.runner.Context
     """
     context.browser.visit(context.config.server_url + '/letter-of-credit/app/home#/form-m')
+    # We pre-select and store the tab links so it is easy to visit links
+    context.browser.tab_links = context.browser.find_by_css('ul.nav-tabs>li>a')
+
+
+@step("I am in list form M tab")
+def step_impl(context):
+    """
+    :type context behave.runner.Context
+    """
+    context.browser.tab_links.first.click()
 
 
 @then('I see "{num_rows}" rows of form Ms, each displaying few details about each form M')

@@ -1,3 +1,4 @@
+@form_m_list
 Feature: List Form Ms Interface
   As a user
   I should be able to see a list of form Ms in the system
@@ -13,7 +14,8 @@ Feature: List Form Ms Interface
     Num links = ceil(num_form_m / 20) + 2 if num_form_m > 20 else 2
     """
     Given there are "<num_form_m>" form Ms in the system
-    And I am at form M list page
+    And I am at form M page
+    And I am in list form M tab
     Then I see "<num_rows>" rows of form Ms, each displaying few details about each form M
     And "<num_links>" pager links for retrieving the next sets of form Ms
 
