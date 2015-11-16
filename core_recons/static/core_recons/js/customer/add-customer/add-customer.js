@@ -8,18 +8,18 @@ CustomerModalCtrl.$inject = [
   '$element',
   'close',
   'Branch',
-  'xhrErrorDisplay'
+  'xhrErrorDisplay',
+  'customerName'
 ]
-function CustomerModalCtrl(resetForm, element, close, Branch, xhrErrorDisplay) {
+function CustomerModalCtrl(resetForm, element, close, Branch, xhrErrorDisplay, customerName) {
   var vm = this
-  vm.customer = {}
+  vm.customer = {
+    name: customerName
+  }
   vm.revealNewBranchForm = revealNewBranchForm
   vm.dismissNewBranchForm = dismissNewBranchForm
 
-  vm.close = closeModal
-  function closeModal() {
-    close()
-  }
+  vm.close = close
 
   vm.reset = reset
   function reset(form) {
@@ -60,7 +60,7 @@ function CustomerModalCtrl(resetForm, element, close, Branch, xhrErrorDisplay) {
   function dismissNewBranchForm() {
     $newBranchContainer.hide()
     $addCustomerFormCtrl.show()
-    $addNewCustomerContainer.removeClass('ui-widget-overlay ui-front').find('.form-control').each(function() {
+    $addNewCustomerContainer.removeClass('ui-widget-overlay ui-front').find('.form-control').each(function () {
       $(this).prop('disabled', false)
     })
   }
@@ -68,7 +68,7 @@ function CustomerModalCtrl(resetForm, element, close, Branch, xhrErrorDisplay) {
   function revealNewBranchForm() {
     $addCustomerFormCtrl.hide()
     $newBranchContainer.show()
-    $addNewCustomerContainer.addClass('ui-widget-overlay ui-front').find('.form-control').each(function() {
+    $addNewCustomerContainer.addClass('ui-widget-overlay ui-front').find('.form-control').each(function () {
       $(this).prop('disabled', true)
     })
   }
@@ -81,20 +81,20 @@ addCustomerDirective.$inject = ['ModalService', '$parse', 'ToggleDimElement']
 function addCustomerDirective(ModalService, $parse, ToggleDimElement) {
   return {
     restrict: 'A',
-    link: function(scope, elm, attributes, self) {
-
+    link: function (scope, elm, attributes, self) {
       elm.css({cursor: 'pointer'}).bind('click', showModal)
 
       function showModal() {
         ModalService.showModal({
           template: require('./add-customer.html'),
-          controller: 'CustomerModalCtrl as customerModal'
+          controller: 'CustomerModalCtrl as customerModal',
+          inputs: {customerName: self.initCustomerName}
 
-        }).then(function(modal) {
+        }).then(function (modal) {
           var parentEl = $parse(attributes.dimParent)(scope.$parent)
 
           function executeAfterDim() {
-            parentEl.find('.form-control').each(function() {
+            parentEl.find('.form-control').each(function () {
               var $el = $(this)
               $el.prop('disabled', !$el.prop('disabled'))
             })
@@ -102,25 +102,21 @@ function addCustomerDirective(ModalService, $parse, ToggleDimElement) {
 
           modal.element.dialog({
             dialogClass: 'no-close',
-
             title: 'Add Customer',
-
             modal: true,
-
             minWidth: 600,
 
-            //minHeight: 450,
-
-            open: function() {
+            open: function () {
               if (parentEl) ToggleDimElement.dim(parentEl, executeAfterDim)
             },
 
-            close: function() {
+            close: function () {
               if (parentEl) ToggleDimElement.unDim(parentEl, executeAfterDim)
+              modal.controller.close()
             }
           })
 
-          modal.close.then(function(customer) {
+          modal.close.then(function (customer) {
             if (customer && angular.isObject(customer)) {
               self.addCustomer(customer)
             }
@@ -137,7 +133,8 @@ function addCustomerDirective(ModalService, $parse, ToggleDimElement) {
 
     bindToController: {
       newCustomer: '=addedNewCustomer',
-      customerAdded: '&onCustomerAdded'
+      customerAdded: '&onCustomerAdded',
+      initCustomerName: '='
     }
   }
 }
@@ -160,7 +157,7 @@ function AddCustomerDirectiveCtrl(Customer, xhrErrorDisplay) {
     }
 
     function newCustomerSaveError(xhr) {
-      xhrErrorDisplay(xhr);
+      xhrErrorDisplay(xhr)
     }
   }
 }

@@ -2,38 +2,32 @@
 
 var rootApp = angular.module('rootApp')
 
-rootApp.directive('numberFormat', ['$filter', function($filter) {
+rootApp.directive('numberFormat', ['$filter', function ($filter) {
 
   function link($scope, $elm, attrs, ngModelCtrl) {
     if (!ngModelCtrl) return
 
-    // called when model is updated directly on the scope
-    function render() {
+    ngModelCtrl.$render = function render() {
       $elm.val($filter('number')(ngModelCtrl.$viewValue, 2))
     }
 
-    ngModelCtrl.$render = render;
-
-    // called when the model is updated in the input box
-    function numberParser(viewValue) {
+    ngModelCtrl.$parsers.push(function numberParser(viewValue) {
       var replaced = viewValue.replace(/,/g, '')
-      return viewValue ? Number(replaced) : undefined;
-    }
+      return viewValue ? Number(replaced) : ''
+    })
 
-    ngModelCtrl.$parsers.push(numberParser);
-
-    //called on focusout event
     function valueChangeListener() {
-      var value, filteredVal;
-      value = $elm.val();
+      var value, filteredVal
+
+      value = $elm.val()
 
       if (!value) return
 
-      value = $elm.val().replace(/,/g, '');
+      value = value.replace(/,/g, '');
 
-      filteredVal = $filter('number')(value, 2);
+      filteredVal = $filter('number')(value, 2)
       $elm.val(filteredVal);
-      ngModelCtrl.$setViewValue(filteredVal);
+      ngModelCtrl.$setViewValue(filteredVal)
     }
 
     $elm.bind('focusout', valueChangeListener);
@@ -49,7 +43,7 @@ rootApp.directive('numberFormat', ['$filter', function($filter) {
       }
       // ignore all other keys which we do not need
       if (String.fromCharCode(key) !== ',' &&
-          String.fromCharCode(key) !== '.' && !(48 <= key && key <= 57)) {
+        String.fromCharCode(key) !== '.' && !(48 <= key && key <= 57)) {
         return;
       }
     }
