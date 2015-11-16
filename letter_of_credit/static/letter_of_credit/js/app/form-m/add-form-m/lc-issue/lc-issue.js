@@ -18,7 +18,6 @@ function lcIssueDirective() {
     templateUrl: require('lcAppCommons').buildUrl('form-m/add-form-m/lc-issue/lc-issue.html'),
     scope: true,
     bindToController: {
-      formM: '=mfContext',
       issues: '=',
       onIssuesChanged: '&',
       onNonClosedIssuesChanged: '&'
@@ -44,6 +43,7 @@ LcIssueDirectiveController.$inject = [
 function LcIssueDirectiveController($scope, LCIssueConcrete, getTypeAheadLCIssue, formatDate, xhrErrorDisplay,
   resetForm2, clearFormField, confirmationDialog, formMObject) {
   var vm = this
+  vm.formM = formMObject
   var title = 'Add Letter Of Credit Issues'
 
   initExistingIssues()

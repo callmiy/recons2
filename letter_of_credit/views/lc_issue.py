@@ -10,9 +10,19 @@ import logging
 logger = logging.getLogger('recons_logger')
 
 
+class LcIssueConcreteFilter(django_filters.FilterSet):
+    text = django_filters.CharFilter(lookup_type='icontains')
+    form_m_number = django_filters.CharFilter(name='mf__number', lookup_type='icontains')
+
+    class Meta:
+        model = LCIssueConcrete
+        fields = ('text', 'form_m_number',)
+
+
 class LCIssueConcreteListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = LCIssueConcreteSerializer
     queryset = LCIssueConcrete.objects.all()
+    filter_class = LcIssueConcreteFilter
 
     def __init__(self, **kwargs):
         self.logger_prefix = 'Creating new letter of credit issue:'
