@@ -656,7 +656,8 @@
 
 	var app = angular.module('lc-issue', [
 	  'rootApp',
-	  'lc-issue-service'
+	  'lc-issue-service',
+	  'add-form-m-form-m-object'
 	])
 
 	app.directive('lcIssue', lcIssueDirective)
@@ -688,11 +689,12 @@
 	  'xhrErrorDisplay',
 	  'resetForm2',
 	  'clearFormField',
-	  'confirmationDialog'
+	  'confirmationDialog',
+	  'formMObject'
 	]
 
 	function LcIssueDirectiveController($scope, LCIssueConcrete, getTypeAheadLCIssue, formatDate, xhrErrorDisplay,
-	  resetForm2, clearFormField, confirmationDialog) {
+	  resetForm2, clearFormField, confirmationDialog, formMObject) {
 	  var vm = this
 	  var title = 'Add Letter Of Credit Issues'
 
@@ -719,9 +721,9 @@
 	    var closedAt = formatDate(new Date())
 
 	    var text = 'Sure you want to close issue:\n"' +
-	               $scope.addFormMState.formatIssueText(issue.issue.text) + '"?'
+	      $scope.addFormMState.formatIssueText(issue.issue.text) + '"?'
 
-	    confirmationDialog.showDialog({title: 'Close issue', text: text}).then(function(answer) {
+	    confirmationDialog.showDialog({title: 'Close issue', text: text}).then(function (answer) {
 	      if (answer) {
 	        LCIssueConcrete.put({
 	          id: issue.id,
@@ -756,13 +758,13 @@
 	  vm.getIssue = function getIssue(text) {
 	    var _ids = []
 
-	    vm.issues.forEach(function(issue) {
+	    vm.issues.forEach(function (issue) {
 	      _ids.push(issue.id)
 	    })
 
 	    var x = []
 
-	    x.concat(vm.nonClosedIssues).concat(vm.closedIssues).forEach(function(issue) {
+	    x.concat(vm.nonClosedIssues).concat(vm.closedIssues).forEach(function (issue) {
 	      _ids.push(issue.issue.id)
 	    })
 
@@ -776,11 +778,11 @@
 	    else vm.title = 'Dismiss'
 	  }
 
-	  $scope.$watch(function getFormM() {return vm.formM}, function(newFormM) {
+	  $scope.$watch(function getFormM() {return vm.formM}, function (newFormM) {
 	    if (newFormM) {
 	      var formMIssues = newFormM.form_m_issues
 	      if (formMIssues && formMIssues.length !== (vm.closedIssues.length + vm.nonClosedIssues.length)) {
-	        formMIssues.forEach(function(issue) {
+	        formMIssues.forEach(function (issue) {
 	          if (!issue.closed_at) {
 	            vm.nonClosedIssues.push(issue)
 	            return true
@@ -817,9 +819,9 @@
 	  return {
 	    restrict: 'A',
 	    require: 'ngModel',
-	    link: function($scope, elm, atts, ctrl) {
+	    link: function ($scope, elm, atts, ctrl) {
 	      var vm = $scope.lcIssue
-	      ctrl.$validators.issues = function() {
+	      ctrl.$validators.issues = function () {
 	        return !vm.showContainer || Boolean(vm.issues.length)
 	      }
 	    }
@@ -1029,9 +1031,6 @@
 	    restrict: 'A',
 	    templateUrl: __webpack_require__(5).buildUrl('form-m/add-form-m/lc-bid/lc-bid.html'),
 	    scope: true,
-	    bindToController: {
-	      bid: '='
-	    },
 	    controller: 'LcBidDirectiveController as lcBid'
 	  }
 	}

@@ -7,12 +7,14 @@ rootApp.directive('numberFormat', ['$filter', function ($filter) {
   function link($scope, $elm, attrs, ngModelCtrl) {
     if (!ngModelCtrl) return
 
+    var REGEXP = new RegExp(",", 'g')
+
     ngModelCtrl.$render = function render() {
       $elm.val($filter('number')(ngModelCtrl.$viewValue, 2))
     }
 
     ngModelCtrl.$parsers.push(function numberParser(viewValue) {
-      var replaced = viewValue.replace(/,/g, '')
+      var replaced = viewValue.replace(REGEXP, '')
       return viewValue ? Number(replaced) : ''
     })
 
@@ -23,10 +25,10 @@ rootApp.directive('numberFormat', ['$filter', function ($filter) {
 
       if (!value) return
 
-      value = value.replace(/,/g, '');
+      value = value.replace(REGEXP, '')
 
       filteredVal = $filter('number')(value, 2)
-      $elm.val(filteredVal);
+      $elm.val(filteredVal)
       ngModelCtrl.$setViewValue(filteredVal)
     }
 
@@ -38,14 +40,10 @@ rootApp.directive('numberFormat', ['$filter', function ($filter) {
 
       // If the keys include the CTRL, SHIFT, ALT, or META keys, or the arrow keys, do nothing.
       // This lets us support copy and paste too
-      if (key === 0 || key === 8 || (15 < key && key < 19) || (37 <= key && key <= 40)) {
-        return;
-      }
+      if (key === 0 || key === 8 || (15 < key && key < 19) || (37 <= key && key <= 40)) return
+
       // ignore all other keys which we do not need
-      if (String.fromCharCode(key) !== ',' &&
-        String.fromCharCode(key) !== '.' && !(48 <= key && key <= 57)) {
-        return;
-      }
+      if (String.fromCharCode(key) !== ',' && String.fromCharCode(key) !== '.' && !(48 <= key && key <= 57)) return
     }
 
     $elm.bind('keypress', keypressListener);

@@ -13,9 +13,6 @@ function lcBidDirective() {
     restrict: 'A',
     templateUrl: require('lcAppCommons').buildUrl('form-m/add-form-m/lc-bid/lc-bid.html'),
     scope: true,
-    bindToController: {
-      bid: '='
-    },
     controller: 'LcBidDirectiveController as lcBid'
   }
 }
