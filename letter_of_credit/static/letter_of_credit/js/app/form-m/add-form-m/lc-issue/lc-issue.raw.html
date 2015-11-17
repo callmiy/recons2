@@ -5,9 +5,9 @@
               Specify LC Request Issues
             </span>
 
-    <div class="form-m-add-on-show-icon">
+    <div class="form-m-add-on-show-icon lc-issue-add-on-show-icon">
       <span
-          ng-class="['glyphicon', {'glyphicon-chevron-down': !lcIssue.showContainer, 'glyphicon-chevron-up': lcIssue.showContainer}]">
+        ng-class="['glyphicon', {'glyphicon-chevron-down': !lcIssue.showContainer, 'glyphicon-chevron-up': lcIssue.showContainer}]">
       </span>
 
       {$lcIssue.title$}
@@ -36,6 +36,7 @@
         <span class="input-group-addon">{$$index + 1$}</span>
 
         <input type="text" class="form-control" id="issue-text-display" name="issue-text-display" disabled
+               ng-attr-data-id="{$'issue-text-display-'+issue.id$}"
                ng-value="issue.text" style="padding-left: 10px;"/>
 
         <span class="input-group-addon" style="cursor: pointer" ng-click="lcIssue.deleteIssue($index)">

@@ -63,7 +63,7 @@
                     ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.applicant, 'glyphicon-eye-open': addFormMState.fieldIsEditable.applicant}]"></i>
                 </span>
 
-                <input class="form-control" type="text" min="3" id="applicant" name="applicant" required
+                <input class="form-control" type="text" ng-minlength="3" id="applicant" name="applicant" required
                        ng-model="addFormMState.formM.applicant" autocomplete="off"
                        ng-pattern="addFormMState.validators.applicant"
                        ng-readonly="!addFormMState.fieldIsEditable.applicant" typeahead-min-length="3"
@@ -72,7 +72,8 @@
                 />
 
                 <span class="input-group-addon" ng-show="addFormMState.fieldIsEditable.applicant">
-                  <img ng-src="{$$root.addIconSrc$}" alt="" add-customer init-customer-name="newFormMForm.applicant.$viewValue"
+                  <img id="add-new-customer" ng-src="{$$root.addIconSrc$}" alt="Add new customer" add-customer
+                       init-customer-name="newFormMForm.applicant.$viewValue"
                        added-new-customer="addFormMState.formM.applicant"/>
                 </span>
               </div>
