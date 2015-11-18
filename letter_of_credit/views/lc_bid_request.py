@@ -1,8 +1,9 @@
+import json
+
 from rest_framework import generics, pagination
 import django_filters
 from letter_of_credit.models import LcBidRequest
 from letter_of_credit.serializers import LcBidRequestSerializer
-
 import logging
 
 logger = logging.getLogger('recons_logger')
@@ -35,7 +36,10 @@ class LcBidRequestListCreateAPIView(generics.ListCreateAPIView):
     filter_class = LcBidRequestFilter
 
     def create(self, request, *args, **kwargs):
-        logger.info('Creating new letter of credit bid request with incoming data = \n%r', request.data)
+        logger.info(
+            'Creating new letter of credit bid request with incoming data = \n%s',
+            json.dumps(request.data, indent=4)
+        )
         return super(LcBidRequestListCreateAPIView, self).create(request, *args, **kwargs)
 
 
@@ -44,5 +48,8 @@ class LcBidRequestUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LcBidRequestSerializer
 
     def update(self, request, *args, **kwargs):
-        logger.info('Updating letter of credit bid request with incoming data = \n%r', request.data)
+        logger.info(
+            'Updating letter of credit bid request with incoming data = \n%s',
+            json.dumps(request.data, indent=4)
+        )
         return super(LcBidRequestUpdateAPIView, self).update(request, *args, **kwargs)

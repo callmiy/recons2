@@ -13,7 +13,7 @@ Feature: The bid listing interface - listing and navigation
     Given there are "<num_bids>" bids in the system
     And I am logged in
     And I am at form M page
-    And I am at bid list tab
+    Given I am at bid list tab
     Then I see "<num_rows>" rows of bids, each displaying few details about each bid
     And "<num_links>" pager links for retrieving the next sets of bids
 

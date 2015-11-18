@@ -4,7 +4,7 @@
        class="form-m-add-on-toggle form-m-bid-toggle-show clearfix">
     <span class="form-m-add-on-show-helper" ng-if="lcBid.formM.showBidForm">Make Bid Request</span>
 
-    <div class="form-m-add-on-show-icon">
+    <div class="form-m-add-on-show-icon form-m-bid-add-on-show-icon">
       <span
           ng-class="['glyphicon', {'glyphicon-chevron-down': !lcBid.formM.showBidForm, 'glyphicon-chevron-up': lcBid.formM.showBidForm}]">
       </span>
@@ -21,7 +21,7 @@
 
       <div class="col-sm-9">
         <input class="form-control" id="goods-description" name="bidGoodsDescription" required ng-minlength="5"
-               ng-required="lcBid.formM.showBidForm"
+               ng-required="lcBid.formM.showBidForm" to-upper
                ng-model="lcBid.formM.bidObj.goods_description"/>
 
 

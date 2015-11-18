@@ -91,7 +91,7 @@ class FormIssueBidCoverUtil:
         return data
 
     def create_issues(self, issues):
-        logger.info('{} creating form M issues: {:}'.format(self.log_prefix, issues))
+        logger.info('{} creating form M issues with data:\n{:}'.format(self.log_prefix, json.dumps(issues, indent=4)))
         data = []
         for issue in issues:
             data.append({'issue': issue['url'], 'mf': self.form_m_url})
@@ -115,7 +115,9 @@ class FormIssueBidCoverUtil:
                     'id': int(URL_RE.search(issue['issue']).group(1))
                 }
             })
-        logger.info('{} form M issues successfully created:\n{}'.format(self.log_prefix, json.dumps(issues, indent=4)))
+        logger.info(
+            '{} form M issues successfully created:\n{}'.format(self.log_prefix, json.dumps(issues, indent=4))
+        )
         return issues
 
     def create_cover(self, cover):
@@ -148,7 +150,7 @@ class FormMListCreateAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         incoming_data = request.data
-        logger.info('%s with incoming data = \n%r', self.log_prefix, json.dumps(incoming_data, indent=4))
+        logger.info('%s with incoming data = \n%s', self.log_prefix, json.dumps(incoming_data, indent=4))
 
         serializer = self.get_serializer(data=incoming_data)
         serializer.is_valid(raise_exception=True)

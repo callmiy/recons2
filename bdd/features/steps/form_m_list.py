@@ -42,11 +42,12 @@ def step_impl(context):
     :type context behave.runner.Context
     """
     context.browser.visit(context.config.server_url + '/letter-of-credit/app/home#/form-m')
-    # We pre-select and store the tab links so it is easy to visit links
+    # We pre-select and store the tab links so it is easy to visit links from other features and steps
     context.browser.tab_links = context.browser.find_by_css('ul.nav-tabs>li>a')
+    context.active_tab_css_selector = '.nav-tabs>.active'
 
 
-@step("I am in list form M tab")
+@given("I am in list form M tab")
 def step_impl(context):
     """
     :type context behave.runner.Context
