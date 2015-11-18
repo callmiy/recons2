@@ -30,14 +30,6 @@ function formMObject(LcBidRequest, $q, LCIssueConcrete) {
 
     function getIssues() {
       LCIssueConcrete.query({form_m_number: self.number}).$promise.then(function (data) {
-        //This is necessary because of a bug in angular ui router 0.2.15 - whenever a state is transited to using
-        //$state.go or $state.transitTo, somehow ui router calls the controller for the state being transited to
-        //twice. In this particular case, there are always 2 copies of each issue in the model (can we have "set"
-        // please?)
-
-        self.closedIssues = []
-        self.nonClosedIssues = []
-
         data.forEach(function (issue) {
           if (!issue.closed_at) self.nonClosedIssues.push(issue)
           else self.closedIssues.push(issue)

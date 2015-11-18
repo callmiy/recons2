@@ -35,6 +35,5 @@ Feature: Store and manage form M issues
     Then I notice a ui element showing the issue I just selected
     Then I notice that save button is enabled
     When I submit the completed form
-    Then I see a dialog containing information about form M
-    And I notice that dialog contains information about saved form M
+    Then I notice that dialog contains information about saved form M
     And confirm that there is an issue attached to form M in the system

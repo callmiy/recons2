@@ -125,8 +125,9 @@ def step_impl(context):
     :type context: behave.runner.Context
     """
     context.cover_type_selected = 'ITF'
-    context.browser.find_by_xpath(
-        '//select[@name="coverType"]//option[@label="%s"]' % context.cover_type_selected
+    context.browser.find_by_css(
+        '.cover-form-container>fieldset[name=coverForm] select[name="coverType"]>option[label="%s"]' %
+        context.cover_type_selected
     ).first.click()
 
 

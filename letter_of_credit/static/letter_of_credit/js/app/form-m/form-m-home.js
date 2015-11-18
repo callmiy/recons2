@@ -42,26 +42,36 @@ function FormMController($state, $scope) {
   var listFormMTab = {
     title: 'List Form M',
     viewName: 'listFormM',
-    select: function() {
+    select: function () {
       $scope.updateAddFormMTitle()
       $state.go('form_m.list')
     }
   }
 
   var addFormMTitle = 'Form M'
-
+  /** Angular uib tab executes 'select' function which invokes $state.go. However, if we are transiting to this state
+   from a place outside angular uib tab, this will result in the state transition function been called twice (see
+   "$scope.goToFormM" function below for example) - one for the calling position and another for angular uib tab. This
+   flag keeps track of whether state transition function had been called and thus helps to avoid duplicate call. A
+   consequence of the duplicate call is that the controller for the addFormMTab is called twice with all sorts of
+   unintended consequences.
+   */
+  var addFormMGoTo = true
   var addFormMTab = {
     title: addFormMTitle,
     active: true,
     viewName: 'addFormM',
-    select: function() { $state.go('form_m.add')}
+    select: function () {
+      if (addFormMGoTo) $state.go('form_m.add')
+      addFormMGoTo = true
+    }
   }
 
   var reportsTab = {
     title: 'Reports',
     active: false,
     viewName: 'formMReports',
-    select: function() {
+    select: function () {
       $scope.updateAddFormMTitle()
       $state.go('form_m.add')
     }
@@ -71,7 +81,7 @@ function FormMController($state, $scope) {
     title: 'Pending Bids',
     active: false,
     viewName: 'bids',
-    select: function() {
+    select: function () {
       $scope.updateAddFormMTitle()
       $state.go('form_m.bids')
     }
@@ -84,11 +94,12 @@ function FormMController($state, $scope) {
     reports: reportsTab
   }
 
-  $scope.updateAddFormMTitle = function(formM) {
+  $scope.updateAddFormMTitle = function (formM) {
     $scope.tabs.addFormM.title = formM ? 'Details of "' + formM.number + '"' : addFormMTitle
   }
 
   $scope.goToFormM = function goToFormM(formM) {
+    addFormMGoTo = false
     $state.transitionTo('form_m.add', {detailedFormM: formM})
     $scope.tabs.addFormM.active = true
   }

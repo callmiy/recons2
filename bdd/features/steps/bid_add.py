@@ -36,7 +36,7 @@ def step_impl(context):
     """
     :type context: behave.runner.Context
     """
-    context.bid_form = context.browser.find_by_name('bidForm').first
+    context.bid_form = context.browser.find_by_css('[data-form-label="bidForm"]').first
     nt.assert_false(context.bid_form.visible, 'The bid form must not be visible until form M form is completed.')
 
 
