@@ -5,9 +5,9 @@
       Register Cover
     </span>
 
-    <div class="form-m-add-on-show-icon">
+    <div class="form-m-add-on-show-icon form-m-cover-add-on-show-icon">
       <span
-          ng-class="['glyphicon', {'glyphicon-chevron-down': !lcCover.showContainer, 'glyphicon-chevron-up': lcCover.showContainer}]">
+        ng-class="['glyphicon', {'glyphicon-chevron-down': !lcCover.showContainer, 'glyphicon-chevron-up': lcCover.showContainer}]">
       </span>
 
       {$lcCover.title$}
@@ -16,7 +16,7 @@
 
   <fieldset ng-form name="coverForm" ng-show="lcCover.showContainer" style="margin-top: 10px;">
     <div
-        ng-class="['form-group', 'has-feedback', 'cover-type-group', {'has-error': lcCover.isValid('coverType'), 'has-success': lcCover.isValid('coverType', 'ok')}]">
+      ng-class="['form-group', 'has-feedback', 'cover-type-group', {'has-error': lcCover.isValid('coverType'), 'has-success': lcCover.isValid('coverType', 'ok')}]">
 
       <label class="control-label col-sm-3" for="cover-type">Cover Type</label>
 
@@ -28,9 +28,10 @@
           <option value="">--Choose cover type--</option>
         </select>
 
-        <i ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': lcCover.isValid('coverType'), 'glyphicon-ok': lcCover.isValid('coverType', 'ok')}]"
-           ng-if="lcCover.isValid('coverType') || lcCover.isValid('coverType', 'ok')"
-           data-form-control-icon-for="coverType"></i>
+        <i
+          ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': lcCover.isValid('coverType'), 'glyphicon-ok': lcCover.isValid('coverType', 'ok')}]"
+          ng-if="lcCover.isValid('coverType') || lcCover.isValid('coverType', 'ok')"
+          data-form-control-icon-for="coverType"></i>
 
         <div ng-messages="coverForm.coverType.$error" role="alert">
           <div ng-if="lcCover.isValid('coverType')">
@@ -41,7 +42,7 @@
     </div>
 
     <div
-        ng-class="['form-group', 'has-feedback', 'cover-type-group', {'has-error': lcCover.isValid('coverAmount'), 'has-success': lcCover.isValid('coverAmount', 'ok')}]">
+      ng-class="['form-group', 'has-feedback', 'cover-type-group', {'has-error': lcCover.isValid('coverAmount'), 'has-success': lcCover.isValid('coverAmount', 'ok')}]">
       <label class="control-label col-sm-3" for="cover-amount">Amount</label>
 
       <div class="col-sm-9">
@@ -54,9 +55,10 @@
                  ng-model="lcCover.amountGetterSetter"
                  ng-model-options="{getterSetter:true, updateOn: 'blur'}" ng-disabled="!lcCover.showContainer"/>
 
-          <i ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': lcCover.isValid('coverAmount'), 'glyphicon-ok': lcCover.isValid('coverAmount', 'ok')}]"
-             ng-if="lcCover.isValid('coverAmount') || lcCover.isValid('coverAmount', 'ok')"
-             data-form-control-icon-for="coverAmount"></i>
+          <i
+            ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': lcCover.isValid('coverAmount'), 'glyphicon-ok': lcCover.isValid('coverAmount', 'ok')}]"
+            ng-if="lcCover.isValid('coverAmount') || lcCover.isValid('coverAmount', 'ok')"
+            data-form-control-icon-for="coverAmount"></i>
         </div>
 
         <div ng-messages="coverForm.coverAmount.$error" role="alert">
@@ -86,7 +88,7 @@
       </thead>
 
       <tbody>
-        <tr ng-repeat="cover in addFormMState.formM.covers">
+        <tr ng-repeat="cover in addFormMState.formM.covers" ng-attr-id="{$'form-m-cover-row-' + cover.id$}">
           <td>{$::$index + 1 $}</td>
           <td>{$::cover.cover_label$}</td>
           <td>{$::addFormMState.formM.currency.code$}</td>

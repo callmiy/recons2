@@ -18,7 +18,8 @@ class FormMCoverSerializer(serializers.HyperlinkedModelSerializer):
             'form_m_number',
             'currency',
             'applicant',
-            'lc_number'
+            'lc_number',
+            'id',
         )
 
 
@@ -32,6 +33,7 @@ class FormMCoverBasicSerializer(serializers.HyperlinkedModelSerializer):
             'cover_type',
             'cover_label',
             'received_at',
+            'id',
         )
 
 

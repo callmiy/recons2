@@ -23,10 +23,7 @@ Feature: Store and manage form M issues
     When I fill applicant field
     Then I see a drop down containing the text I typed into the input field
     When I click the first item in the drop down
-    Then I notice that the drop down has disappeared
-    Then I notice that save button is disabled
     When I fill currency field
-    Then I notice that save button is disabled
     When I fill amount field
     Then I notice that save button is enabled
     When I click any where in the box that contains the text 'Add Letter Of Credit Issues'
@@ -39,8 +36,5 @@ Feature: Store and manage form M issues
     Then I notice that save button is enabled
     When I submit the completed form
     Then I see a dialog containing information about form M
-    And I see the dialog title informing that form M was successfully saved
     And I notice that dialog contains information about saved form M
-    And confirm that there is one form M in the system
     And confirm that there is an issue attached to form M in the system
-

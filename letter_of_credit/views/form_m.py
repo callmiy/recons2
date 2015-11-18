@@ -134,7 +134,8 @@ class FormIssueBidCoverUtil:
             'amount': data['amount'],
             'cover_type': data['cover_type'],
             'cover_label': data['cover_label'],
-            'received_at': data['received_at']
+            'received_at': data['received_at'],
+            'id': data['id']
         }
 
 

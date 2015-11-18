@@ -201,6 +201,20 @@ def step_impl(context):
         "The border colour of applicant input must no longer be rgb(169, 68, 66) when applicant input is valid")
 
 
+@when("I fill currency, amount and submit completed form")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    context.execute_steps(u"""
+    When I fill currency field
+    Then I notice that save button is disabled
+    When I fill amount field
+    Then I notice that save button is enabled
+    When I submit the completed form
+     """)
+
+
 @then("I verify that the form M has been properly saved")
 def step_impl(context):
     """
@@ -213,6 +227,7 @@ def step_impl(context):
     And confirm that there is one form M in the system
     When I click on dialog close button
     Then I see that dialog has disappeared from page
+    And that tab title has changed to a text containing information about saved form M
     """)
 
 
@@ -244,6 +259,19 @@ def step_impl(context):
     """
     nt.assert_false(add_form_m_btn_is_disabled(context),
                     'submit button must be enabled when form m is completely filled and valid')
+
+
+@step("that the tab title is 'Form M'")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    text = context.browser.find_by_css(context.active_tab_css_selector).first.text
+    nt.eq_(
+        text,
+        'Form M',
+        'Active tab title must be: %s' % text
+    )
 
 
 @when("I submit the completed form")
@@ -332,4 +360,18 @@ def step_impl(context):
     nt.assert_false(
         context.browser.is_element_present_by_css(confirmation_dialog_css_selector),
         'Confirmation dialog must disappear from page when its close button is clicked.'
+    )
+
+
+@step("that tab title has changed to a text containing information about saved form M")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    text = context.browser.find_by_css(context.active_tab_css_selector).first.text
+    text1 = 'Details of "%s"' % context.form_m_data['number']
+    nt.eq_(
+        text,
+        text1,
+        """Tab title must change to '%s' after form M successfully created.""" % text
     )

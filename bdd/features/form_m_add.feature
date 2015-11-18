@@ -25,6 +25,7 @@ Feature: Add a form M
     Then I notice that save button is disabled
     When I fill amount field
     Then I notice that save button is enabled
+    And that the tab title is 'Form M'
     When I submit the completed form
     Then I see a dialog containing information about form M
     And I see the dialog title informing that form M was successfully saved
@@ -32,6 +33,7 @@ Feature: Add a form M
     And confirm that there is one form M in the system
     When I click on dialog close button
     Then I see that dialog has disappeared from page
+    And that tab title has changed to a text containing information about saved form M
 
   @no_customer
   Scenario: Fill a form M - basic information only (customer not already in system)
@@ -44,10 +46,7 @@ Feature: Add a form M
     When I click add customer button
     Then I notice that the dialog has disappeared
     And I see that the text and border colour of original input field for applicant is no longer rgb'169, 68, 66' - indicating that input is valid
-    When I fill currency field
-    Then I notice that save button is disabled
-    When I fill amount field
-    Then I notice that save button is enabled
-    When I submit the completed form
-#    Multiple steps - see form_m_add.py for all steps
+    # Multiple steps - from @customer_present
+    When I fill currency, amount and submit completed form
+    # Multiple steps - from @customer_present
     Then I verify that the form M has been properly saved
