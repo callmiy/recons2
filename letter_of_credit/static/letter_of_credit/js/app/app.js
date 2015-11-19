@@ -490,8 +490,6 @@
 	        summary += '\n\nBid Amount     : ' + data.currency_data.code + ' ' + $filter('number')(data.bid.amount, 2)
 	      }
 
-	      if (data.cover) data.covers.push(data.cover)
-
 	      $state.go('form_m.add', {detailedFormM: data, showSummary: summary})
 	    }
 
@@ -581,17 +579,25 @@
 
 	/*jshint camelcase:false*/
 
-	var app = angular.module('add-form-m-form-m-object', ['lc-issue-service'])
+	var app = angular.module('add-form-m-form-m-object', [
+	  'lc-issue-service',
+	  'lc-cover-service'
+	])
 
 	app.factory('formMObject', formMObject)
 
-	formMObject.$inject = ['LcBidRequest', '$q', 'LCIssueConcrete']
+	formMObject.$inject = [
+	  'LcBidRequest',
+	  '$q',
+	  'LCIssueConcrete',
+	  'FormMCover'
+	]
 
-	function formMObject(LcBidRequest, $q, LCIssueConcrete) {
+	function formMObject(LcBidRequest, $q, LCIssueConcrete, FormMCover) {
 	  function Factory() {
 	    var self = this
 
-	    function getBids() {
+	    function setBids() {
 	      LcBidRequest.getPaginated({mf: self.number}).$promise.then(function (data) {
 
 	        if (data.count) {
@@ -607,12 +613,20 @@
 	      })
 	    }
 
-	    function getIssues() {
+	    function setIssues() {
 	      LCIssueConcrete.query({form_m_number: self.number}).$promise.then(function (data) {
 	        data.forEach(function (issue) {
 	          if (!issue.closed_at) self.nonClosedIssues.push(issue)
 	          else self.closedIssues.push(issue)
 	        })
+	      })
+	    }
+
+	    function setCovers() {
+	      FormMCover.query({form_m_number: self.number}).$promise.then(function (data) {
+	        self.covers = data
+	      }, function (xhr) {
+	        console.log(xhr)
 	      })
 	    }
 
@@ -639,10 +653,10 @@
 	        self.goods_description = detailedFormM.goods_description
 	        self.form_m_issues = detailedFormM.form_m_issues
 	        self.url = detailedFormM.url
-	        self.covers = detailedFormM.covers
 
-	        getBids()
-	        getIssues()
+	        setBids()
+	        setIssues()
+	        setCovers()
 
 	      } else {
 	        self.date_received = new Date()
@@ -953,7 +967,8 @@
 	"use strict";
 
 	var app = angular.module('lc-cover', [
-	  'rootApp'
+	  'rootApp',
+	  'add-form-m-form-m-object'
 	])
 
 	app.directive('lcCover', lcIssueDirective)
@@ -980,16 +995,17 @@
 	  '$scope',
 	  'formMCoverTypes',
 	  '$filter',
-	  'formFieldIsValid'
+	  'formFieldIsValid',
+	  'formMObject'
 	]
 
-	function LcCoverDirectiveController($scope, formMCoverTypes, $filter, formFieldIsValid) {
-	  console.log('cover init =', 'init')
+	function LcCoverDirectiveController($scope, formMCoverTypes, $filter, formFieldIsValid, formMObject) {
 	  var vm = this
 	  var title = 'Register Cover'
 	  init()
 
 	  function init(form) {
+	    vm.formM = formMObject
 	    vm.title = title
 	    vm.showContainer = false
 	    vm.cover = {}
@@ -1096,7 +1112,7 @@
 	  }
 
 	  vm.isValid = function (name, validity) {
-	    return formFieldIsValid(vm.formM, 'bidForm', name, validity)
+	    return formFieldIsValid($scope, 'bidForm', name, validity)
 	  }
 
 	  vm.amountGetterSetter = function (val) {
@@ -1213,12 +1229,12 @@
 	    }
 	  }
 
-	  //$scope.$watch(function () {return formMObject}, function onFormMObjectChanged(formM) {
-	  //  if (formM) {
-	  //    formMObject.bidForm = $scope.bidForm
-	  //    vm.formM = formM
-	  //  }
-	  //}, true)
+	  $scope.$watch(function () {return formMObject}, function onFormMObjectChanged(formM) {
+	    if (formM) {
+	      formMObject.bidForm = $scope.bidForm
+	      vm.formM = formM
+	    }
+	  }, true)
 	}
 
 

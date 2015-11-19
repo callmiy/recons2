@@ -1,6 +1,6 @@
 <div class="bid-request-form-container form-m-add-on-container">
 
-  <div ng-click="lcBid.toggleShow(lcBid.formM.bidForm)"
+  <div ng-click="lcBid.toggleShow(bidForm)"
        class="form-m-add-on-toggle form-m-bid-toggle-show clearfix">
     <span class="form-m-add-on-show-helper" ng-if="lcBid.formM.showBidForm">Make Bid Request</span>
 
@@ -13,9 +13,10 @@
     </div>
   </div>
 
-  <fieldset ng-form name="lcBid.formM.bidForm" data-form-label="bidForm" ng-show="lcBid.formM.showBidForm">
+  <fieldset ng-form name="bidForm" ng-show="lcBid.formM.showBidForm">
     <div
         ng-class="['form-group', 'has-feedback', 'bid-goods-description', {'has-error': lcBid.isValid('bidGoodsDescription'), 'has-success': lcBid.isValid('bidGoodsDescription', 'ok')}]">
+
       <label class="control-label col-sm-3" for="goods-description">Goods Description</label>
 
       <div class="col-sm-9">
@@ -28,7 +29,7 @@
            ng-if="lcBid.isValid('bidGoodsDescription') || lcBid.isValid('bidGoodsDescription', 'ok')"
            data-form-control-icon-for="bidGoodsDescription"></i>
 
-        <div ng-messages="lcBid.formM.bidForm.bidGoodsDescription.$error" role="alert">
+        <div ng-messages="bidForm.bidGoodsDescription.$error" role="alert">
           <div ng-if="lcBid.isValid('bidGoodsDescription')">
             <div ng-messages-include="form-error-messages"></div>
           </div>
@@ -51,7 +52,7 @@
            data-form-control-icon-for="bidAmount">
         </i>
 
-        <div ng-messages="lcBid.formM.bidForm.bidAmount.$error" role="alert">
+        <div ng-messages="bidForm.bidAmount.$error" role="alert">
           <div ng-if="lcBid.isValid('bidAmount')">
             <div ng-messages-include="form-error-messages"></div>
           </div>
@@ -60,7 +61,7 @@
     </div>
 
     <div style="text-align: right" ng-show="lcBid.formM.showEditBid">
-      <button type="button" class="btn btn-info" ng-click="lcBid.editBid()" ng-disabled="lcBid.editBidInvalid(lcBid.formM.bidForm)">
+      <button type="button" class="btn btn-info" ng-click="lcBid.editBid()" ng-disabled="lcBid.editBidInvalid(bidForm)">
         Edit Bid
       </button>
     </div>

@@ -20,20 +20,7 @@ class FormMCoverSerializer(serializers.HyperlinkedModelSerializer):
             'applicant',
             'lc_number',
             'id',
-        )
-
-
-class FormMCoverBasicSerializer(serializers.HyperlinkedModelSerializer):
-    cover_label = serializers.ReadOnlyField(source='get_cover_type_display')
-
-    class Meta:
-        model = FormMCover
-        fields = (
-            'amount',
-            'cover_type',
-            'cover_label',
-            'received_at',
-            'id',
+            'url',
         )
 
 
@@ -46,7 +33,6 @@ class FormMSerializer(serializers.HyperlinkedModelSerializer):
         queryset=LCRegister.objects.all(),
         required=False
     )
-    covers = FormMCoverBasicSerializer(read_only=True, many=True)
 
     class Meta:
         model = FormM
@@ -63,7 +49,6 @@ class FormMSerializer(serializers.HyperlinkedModelSerializer):
             'form_m_issues',
             'goods_description',
             'lc',
-            'covers',
         )
 
     def create(self, validated_data):

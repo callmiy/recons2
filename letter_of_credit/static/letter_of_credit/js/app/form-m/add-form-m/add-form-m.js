@@ -290,8 +290,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
         summary += '\n\nBid Amount     : ' + data.currency_data.code + ' ' + $filter('number')(data.bid.amount, 2)
       }
 
-      if (data.cover) data.covers.push(data.cover)
-
       $state.go('form_m.add', {detailedFormM: data, showSummary: summary})
     }
 

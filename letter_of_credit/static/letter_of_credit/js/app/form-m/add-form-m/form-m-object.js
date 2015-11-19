@@ -2,17 +2,25 @@
 
 /*jshint camelcase:false*/
 
-var app = angular.module('add-form-m-form-m-object', ['lc-issue-service'])
+var app = angular.module('add-form-m-form-m-object', [
+  'lc-issue-service',
+  'lc-cover-service'
+])
 
 app.factory('formMObject', formMObject)
 
-formMObject.$inject = ['LcBidRequest', '$q', 'LCIssueConcrete']
+formMObject.$inject = [
+  'LcBidRequest',
+  '$q',
+  'LCIssueConcrete',
+  'FormMCover'
+]
 
-function formMObject(LcBidRequest, $q, LCIssueConcrete) {
+function formMObject(LcBidRequest, $q, LCIssueConcrete, FormMCover) {
   function Factory() {
     var self = this
 
-    function getBids() {
+    function setBids() {
       LcBidRequest.getPaginated({mf: self.number}).$promise.then(function (data) {
 
         if (data.count) {
@@ -28,12 +36,20 @@ function formMObject(LcBidRequest, $q, LCIssueConcrete) {
       })
     }
 
-    function getIssues() {
+    function setIssues() {
       LCIssueConcrete.query({form_m_number: self.number}).$promise.then(function (data) {
         data.forEach(function (issue) {
           if (!issue.closed_at) self.nonClosedIssues.push(issue)
           else self.closedIssues.push(issue)
         })
+      })
+    }
+
+    function setCovers() {
+      FormMCover.query({form_m_number: self.number}).$promise.then(function (data) {
+        self.covers = data
+      }, function (xhr) {
+        console.log(xhr)
       })
     }
 
@@ -60,10 +76,10 @@ function formMObject(LcBidRequest, $q, LCIssueConcrete) {
         self.goods_description = detailedFormM.goods_description
         self.form_m_issues = detailedFormM.form_m_issues
         self.url = detailedFormM.url
-        self.covers = detailedFormM.covers
 
-        getBids()
-        getIssues()
+        setBids()
+        setIssues()
+        setCovers()
 
       } else {
         self.date_received = new Date()

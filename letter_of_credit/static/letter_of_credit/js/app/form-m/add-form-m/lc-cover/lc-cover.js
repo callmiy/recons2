@@ -1,7 +1,8 @@
 "use strict";
 
 var app = angular.module('lc-cover', [
-  'rootApp'
+  'rootApp',
+  'add-form-m-form-m-object'
 ])
 
 app.directive('lcCover', lcIssueDirective)
@@ -28,16 +29,17 @@ LcCoverDirectiveController.$inject = [
   '$scope',
   'formMCoverTypes',
   '$filter',
-  'formFieldIsValid'
+  'formFieldIsValid',
+  'formMObject'
 ]
 
-function LcCoverDirectiveController($scope, formMCoverTypes, $filter, formFieldIsValid) {
-  console.log('cover init =', 'init')
+function LcCoverDirectiveController($scope, formMCoverTypes, $filter, formFieldIsValid, formMObject) {
   var vm = this
   var title = 'Register Cover'
   init()
 
   function init(form) {
+    vm.formM = formMObject
     vm.title = title
     vm.showContainer = false
     vm.cover = {}

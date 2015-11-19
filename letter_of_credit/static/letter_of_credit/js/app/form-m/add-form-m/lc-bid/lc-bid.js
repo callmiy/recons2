@@ -50,7 +50,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
   }
 
   vm.isValid = function (name, validity) {
-    return formFieldIsValid(vm.formM, 'bidForm', name, validity)
+    return formFieldIsValid($scope, 'bidForm', name, validity)
   }
 
   vm.amountGetterSetter = function (val) {
@@ -167,10 +167,10 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
     }
   }
 
-  //$scope.$watch(function () {return formMObject}, function onFormMObjectChanged(formM) {
-  //  if (formM) {
-  //    formMObject.bidForm = $scope.bidForm
-  //    vm.formM = formM
-  //  }
-  //}, true)
+  $scope.$watch(function () {return formMObject}, function onFormMObjectChanged(formM) {
+    if (formM) {
+      formMObject.bidForm = $scope.bidForm
+      vm.formM = formM
+    }
+  }, true)
 }

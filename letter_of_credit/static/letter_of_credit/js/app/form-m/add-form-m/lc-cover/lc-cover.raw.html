@@ -70,11 +70,11 @@
     </div>
   </fieldset>
 
-  <div class="existing-covers items-table-display" ng-if="addFormMState.formM.covers.length">
+  <div class="existing-covers items-table-display" ng-if="lcCover.formM.covers.length">
     <hr/>
     <table class="table table-responsive table-striped">
       <caption>
-        Covers <span class="badge"> {$addFormMState.formM.covers.length$}</span>
+        Covers <span class="badge"> {$lcCover.formM.covers.length$}</span>
       </caption>
 
       <thead>
@@ -88,7 +88,7 @@
       </thead>
 
       <tbody>
-        <tr ng-repeat="cover in addFormMState.formM.covers" ng-attr-id="{$'form-m-cover-row-' + cover.id$}">
+        <tr ng-repeat="cover in lcCover.formM.covers" ng-attr-id="{$'form-m-cover-row-' + cover.id$}">
           <td>{$::$index + 1 $}</td>
           <td>{$::cover.cover_label$}</td>
           <td>{$::addFormMState.formM.currency.code$}</td>

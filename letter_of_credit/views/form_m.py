@@ -17,24 +17,6 @@ logger = logging.getLogger('recons_logger')
 URL_RE = re.compile(r'.+/(\d+)$')
 
 
-class FormMCoverListCreateAPIView(generics.ListCreateAPIView):
-    queryset = FormMCover.objects.all()
-    serializer_class = FormMCoverSerializer
-
-    def create(self, request, *args, **kwargs):
-        logger.info('Creating form m cover with incoming data: %s', json.dumps(request.data, indent=4))
-        return super(FormMCoverListCreateAPIView, self).create(request, *args, **kwargs)
-
-
-class FormMCoverRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = FormMCover.objects.all()
-    serializer_class = FormMCoverSerializer
-
-    def update(self, request, *args, **kwargs):
-        logger.info('Updating form m cover with incoming data: %s', json.dumps(request.data, indent=4))
-        return super(FormMCoverRetrieveUpdateDestroyAPIView, self).update(request, *args, **kwargs)
-
-
 class FormMListPagination(pagination.PageNumberPagination):
     page_size = 20
 
@@ -128,15 +110,6 @@ class FormIssueBidCoverUtil:
         serializer.save()
         data = serializer.data
         logger.info('{} form m cover successfully created:\n{}'.format(self.log_prefix, json.dumps(data, indent=4)))
-        # we do this because form M displays only a subset of data from form M cover serializer (much of the data
-        # is already part of form m serializer)
-        return {
-            'amount': data['amount'],
-            'cover_type': data['cover_type'],
-            'cover_label': data['cover_label'],
-            'received_at': data['received_at'],
-            'id': data['id']
-        }
 
 
 class FormMListCreateAPIView(generics.ListCreateAPIView):
@@ -163,7 +136,7 @@ class FormMListCreateAPIView(generics.ListCreateAPIView):
             form_m_data['bid'] = util.create_bid(incoming_data['bid'])
 
         if 'cover' in incoming_data:
-            form_m_data['cover'] = util.create_cover(incoming_data['cover'])
+            util.create_cover(incoming_data['cover'])
 
         if 'issues' in incoming_data:
             form_m_data['form_m_issues'] += util.create_issues(incoming_data['issues'])
@@ -199,7 +172,7 @@ class FormMRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
         util = FormIssueBidCoverUtil(request, form_m_data['url'], self.log_prefix)
         if 'cover' in incoming_data:
-            form_m_data['cover'] = util.create_cover(incoming_data['cover'])
+            util.create_cover(incoming_data['cover'])
 
         if 'bid' in incoming_data:
             form_m_data['bid'] = util.create_bid(incoming_data['bid'])
