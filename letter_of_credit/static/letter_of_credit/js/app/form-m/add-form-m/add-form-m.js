@@ -66,13 +66,10 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   $state, $scope, confirmationDialog, formMObject) {
   var vm = this
 
+  //1. fix summary for issues when form M saved
+
   vm.detailedFormM = angular.copy($stateParams.detailedFormM)
   $stateParams.detailedFormM = null
-
-  /*
-   *@param {angular.form} the HTML fieldSet element for form M cover
-   */
-  var coverForm
 
   initialize()
   function initialize(form) {
@@ -109,11 +106,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       form.$setUntouched()
     }
 
-    /*
-     *@param {angular.form.model} the form M cover model
-     */
-    vm.cover = null
-
     vm.bid = formMObject.bidObj
   }
 
@@ -128,11 +120,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
         infoOnly: true
       })
     }
-  }
-
-  vm.onCoverChanged = function onCoverChanged(cover, form) {
-    vm.cover = cover
-    coverForm = form
   }
 
   vm.enableFieldEdit = function enableFieldEdit(field) {
@@ -157,7 +144,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   function disableSubmitBtn() {
     if ($scope.newFormMForm.$invalid) return true
 
-    if (coverForm && coverForm.$invalid) return true
+    if (kanmiiUnderscore.has(vm.formM.coverForm, '$invalid') && vm.formM.coverForm.$invalid) return true
 
     if (kanmiiUnderscore.has(vm.formM.bidForm, '$invalid') && vm.formM.bidForm.$invalid) return true
 
@@ -165,13 +152,13 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
     if (vm.showEditBid) return true
 
-    var compared = compareDetailedFormMWithForm()
+    var compared = formMObject.compareFormMs(vm.detailedFormM)
 
     if (!compared) return false
 
     if (kanmiiUnderscore.all(compared)) {
       if (!kanmiiUnderscore.isEmpty(vm.bid) && vm.bid.goods_description && vm.bid.amount) return false
-      if (vm.cover && !kanmiiUnderscore.isEmpty(vm.cover)) return false
+      if (!kanmiiUnderscore.isEmpty(vm.formM.cover)) return false
       return !vm.formM.selectedIssues.length
     }
 
@@ -224,84 +211,12 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   }
 
   vm.submit = function submit(formM) {
-    var formMToSave = angular.copy(formM)
+    formMObject.saveFormM(formM, vm.detailedFormM).then(function saveFormMSuccess(data) {
+      $state.go('form_m.add', data)
 
-    formMToSave.applicant = formMToSave.applicant.url
-    formMToSave.currency = formMToSave.currency.url
-    formMToSave.date_received = formatDate(formMToSave.date_received)
-
-    if (!kanmiiUnderscore.isEmpty(vm.bid) && vm.bid.amount && vm.bid.goods_description) {
-      formMToSave.goods_description = vm.bid.goods_description
-      formMToSave.bid = {amount: vm.bid.amount}
-    }
-
-    if (vm.formM.selectedIssues.length) formMToSave.issues = vm.formM.selectedIssues
-
-    if (vm.cover && !kanmiiUnderscore.isEmpty(vm.cover)) {
-      formMToSave.cover = {
-        amount: vm.cover.amount,
-        cover_type: vm.cover.cover_type[0]
-      }
-    }
-
-    if (!vm.detailedFormM) new FormM(formMToSave).$save(formMSavedSuccess, formMSavedError)
-
-    else {
-      if (kanmiiUnderscore.all(compareDetailedFormMWithForm1(formMToSave))) {
-        formMToSave.do_not_update = 'do_not_update'
-        formMToSave.applicant_data = vm.formM.applicant
-        formMToSave.currency_data = vm.formM.currency
-      }
-      formMToSave.id = vm.detailedFormM.id
-      new FormM(formMToSave).$put(formMSavedSuccess, formMSavedError)
-    }
-
-    function formMSavedSuccess(data) {
-
-      var summary = vm.formM.createFormMMessage() + vm.formM.createIssuesMessage()
-
-      if (data.bid) {
-        summary += '\n\nBid Amount     : ' + data.currency_data.code + ' ' + $filter('number')(data.bid.amount, 2)
-      }
-
-      $state.go('form_m.add', {detailedFormM: data, showSummary: summary})
-    }
-
-    function formMSavedError(xhr) {
-      xhrErrorDisplay(xhr, formMAttributesVerboseNames)
-    }
-  }
-
-  function compareDetailedFormMWithForm() {
-    if (!vm.detailedFormM) return false
-
-    return {
-      number: vm.formM.number && angular.equals(vm.formM.number, vm.detailedFormM.number),
-
-      date_received: angular.equals(vm.formM.date_received, new Date(vm.detailedFormM.date_received)),
-
-      amount: vm.formM.amount && angular.equals(vm.formM.amount, Number(vm.detailedFormM.amount)),
-
-      currency: vm.formM.currency && (vm.formM.currency.code === vm.detailedFormM.currency_data.code),
-
-      applicant: vm.formM.applicant && (vm.formM.applicant.name === vm.detailedFormM.applicant_data.name)
-    }
-  }
-
-  function compareDetailedFormMWithForm1(formM) {
-    if (!vm.detailedFormM) return false
-
-    return {
-      number: formM.number && angular.equals(formM.number, vm.detailedFormM.number),
-
-      date_received: angular.equals(formM.date_received, new Date(vm.detailedFormM.date_received)),
-
-      amount: formM.amount && angular.equals(formM.amount, Number(vm.detailedFormM.amount)),
-
-      currency: formM.currency && (formM.currency.code === vm.detailedFormM.currency_data.code),
-
-      applicant: formM.applicant && (formM.applicant.name === vm.detailedFormM.applicant_data.name)
-    }
+    }, function saveFormMError(xhr) {
+      xhrErrorDisplay(xhr)
+    })
   }
 }
 

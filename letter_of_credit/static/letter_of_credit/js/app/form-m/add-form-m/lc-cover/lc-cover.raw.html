@@ -1,28 +1,28 @@
 <div class="cover-form-container form-m-add-on-container" style="margin-top: 40px;">
 
   <div ng-click="lcCover.toggleShow(coverForm)" class="form-m-add-on-toggle form-m-cover-toggle-show clearfix">
-    <span class="form-m-add-on-show-helper" ng-show="lcCover.showContainer">
+    <span class="form-m-add-on-show-helper" ng-show="lcCover.formM.showCoverForm">
       Register Cover
     </span>
 
     <div class="form-m-add-on-show-icon form-m-cover-add-on-show-icon">
       <span
-        ng-class="['glyphicon', {'glyphicon-chevron-down': !lcCover.showContainer, 'glyphicon-chevron-up': lcCover.showContainer}]">
+        ng-class="['glyphicon', {'glyphicon-chevron-down': !lcCover.formM.showCoverForm, 'glyphicon-chevron-up': lcCover.formM.showCoverForm}]">
       </span>
 
       {$lcCover.title$}
     </div>
   </div>
 
-  <fieldset ng-form name="coverForm" ng-show="lcCover.showContainer" style="margin-top: 10px;">
+  <fieldset ng-form name="coverForm" ng-show="lcCover.formM.showCoverForm" style="margin-top: 10px;">
     <div
       ng-class="['form-group', 'has-feedback', 'cover-type-group', {'has-error': lcCover.isValid('coverType'), 'has-success': lcCover.isValid('coverType', 'ok')}]">
 
       <label class="control-label col-sm-3" for="cover-type">Cover Type</label>
 
       <div class="col-sm-9">
-        <select class="form-control" id="cover-type" name="coverType" required ng-model="lcCover.cover.cover_type"
-                ng-required="lcCover.showContainer"
+        <select class="form-control" id="cover-type" name="coverType" required ng-model="lcCover.formM.cover.cover_type"
+                ng-required="lcCover.formM.showCoverForm"
                 ng-options="item[1] for item in lcCover.coverTypes">
 
           <option value="">--Choose cover type--</option>
@@ -51,9 +51,9 @@
             <span>{$lcCover.formM.currency.code$}</span>
           </span>
 
-          <input class="form-control" id="cover-amount" name="coverAmount" ng-required="lcCover.showContainer"
+          <input class="form-control" id="cover-amount" name="coverAmount" ng-required="lcCover.formM.showCoverForm"
                  ng-model="lcCover.amountGetterSetter"
-                 ng-model-options="{getterSetter:true, updateOn: 'blur'}" ng-disabled="!lcCover.showContainer"/>
+                 ng-model-options="{getterSetter:true, updateOn: 'blur'}" ng-disabled="!lcCover.formM.showCoverForm"/>
 
           <i
             ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': lcCover.isValid('coverAmount'), 'glyphicon-ok': lcCover.isValid('coverAmount', 'ok')}]"

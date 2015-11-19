@@ -168,9 +168,12 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
   }
 
   $scope.$watch(function () {return formMObject}, function onFormMObjectChanged(formM) {
-    if (formM) {
-      formMObject.bidForm = $scope.bidForm
-      vm.formM = formM
+    formMObject.bidForm = $scope.bidForm
+
+    if(formM){
+      if (!formM.amount || !formM.number) {
+        init(formMObject.bidForm)
+      }
     }
   }, true)
 }

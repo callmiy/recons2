@@ -266,13 +266,10 @@
 	  $state, $scope, confirmationDialog, formMObject) {
 	  var vm = this
 
+	  //1. fix summary for issues when form M saved
+
 	  vm.detailedFormM = angular.copy($stateParams.detailedFormM)
 	  $stateParams.detailedFormM = null
-
-	  /*
-	   *@param {angular.form} the HTML fieldSet element for form M cover
-	   */
-	  var coverForm
 
 	  initialize()
 	  function initialize(form) {
@@ -309,11 +306,6 @@
 	      form.$setUntouched()
 	    }
 
-	    /*
-	     *@param {angular.form.model} the form M cover model
-	     */
-	    vm.cover = null
-
 	    vm.bid = formMObject.bidObj
 	  }
 
@@ -328,11 +320,6 @@
 	        infoOnly: true
 	      })
 	    }
-	  }
-
-	  vm.onCoverChanged = function onCoverChanged(cover, form) {
-	    vm.cover = cover
-	    coverForm = form
 	  }
 
 	  vm.enableFieldEdit = function enableFieldEdit(field) {
@@ -357,7 +344,7 @@
 	  function disableSubmitBtn() {
 	    if ($scope.newFormMForm.$invalid) return true
 
-	    if (coverForm && coverForm.$invalid) return true
+	    if (kanmiiUnderscore.has(vm.formM.coverForm, '$invalid') && vm.formM.coverForm.$invalid) return true
 
 	    if (kanmiiUnderscore.has(vm.formM.bidForm, '$invalid') && vm.formM.bidForm.$invalid) return true
 
@@ -365,13 +352,13 @@
 
 	    if (vm.showEditBid) return true
 
-	    var compared = compareDetailedFormMWithForm()
+	    var compared = formMObject.compareFormMs(vm.detailedFormM)
 
 	    if (!compared) return false
 
 	    if (kanmiiUnderscore.all(compared)) {
 	      if (!kanmiiUnderscore.isEmpty(vm.bid) && vm.bid.goods_description && vm.bid.amount) return false
-	      if (vm.cover && !kanmiiUnderscore.isEmpty(vm.cover)) return false
+	      if (!kanmiiUnderscore.isEmpty(vm.formM.cover)) return false
 	      return !vm.formM.selectedIssues.length
 	    }
 
@@ -424,84 +411,12 @@
 	  }
 
 	  vm.submit = function submit(formM) {
-	    var formMToSave = angular.copy(formM)
+	    formMObject.saveFormM(formM, vm.detailedFormM).then(function saveFormMSuccess(data) {
+	      $state.go('form_m.add', data)
 
-	    formMToSave.applicant = formMToSave.applicant.url
-	    formMToSave.currency = formMToSave.currency.url
-	    formMToSave.date_received = formatDate(formMToSave.date_received)
-
-	    if (!kanmiiUnderscore.isEmpty(vm.bid) && vm.bid.amount && vm.bid.goods_description) {
-	      formMToSave.goods_description = vm.bid.goods_description
-	      formMToSave.bid = {amount: vm.bid.amount}
-	    }
-
-	    if (vm.formM.selectedIssues.length) formMToSave.issues = vm.formM.selectedIssues
-
-	    if (vm.cover && !kanmiiUnderscore.isEmpty(vm.cover)) {
-	      formMToSave.cover = {
-	        amount: vm.cover.amount,
-	        cover_type: vm.cover.cover_type[0]
-	      }
-	    }
-
-	    if (!vm.detailedFormM) new FormM(formMToSave).$save(formMSavedSuccess, formMSavedError)
-
-	    else {
-	      if (kanmiiUnderscore.all(compareDetailedFormMWithForm1(formMToSave))) {
-	        formMToSave.do_not_update = 'do_not_update'
-	        formMToSave.applicant_data = vm.formM.applicant
-	        formMToSave.currency_data = vm.formM.currency
-	      }
-	      formMToSave.id = vm.detailedFormM.id
-	      new FormM(formMToSave).$put(formMSavedSuccess, formMSavedError)
-	    }
-
-	    function formMSavedSuccess(data) {
-
-	      var summary = vm.formM.createFormMMessage() + vm.formM.createIssuesMessage()
-
-	      if (data.bid) {
-	        summary += '\n\nBid Amount     : ' + data.currency_data.code + ' ' + $filter('number')(data.bid.amount, 2)
-	      }
-
-	      $state.go('form_m.add', {detailedFormM: data, showSummary: summary})
-	    }
-
-	    function formMSavedError(xhr) {
-	      xhrErrorDisplay(xhr, formMAttributesVerboseNames)
-	    }
-	  }
-
-	  function compareDetailedFormMWithForm() {
-	    if (!vm.detailedFormM) return false
-
-	    return {
-	      number: vm.formM.number && angular.equals(vm.formM.number, vm.detailedFormM.number),
-
-	      date_received: angular.equals(vm.formM.date_received, new Date(vm.detailedFormM.date_received)),
-
-	      amount: vm.formM.amount && angular.equals(vm.formM.amount, Number(vm.detailedFormM.amount)),
-
-	      currency: vm.formM.currency && (vm.formM.currency.code === vm.detailedFormM.currency_data.code),
-
-	      applicant: vm.formM.applicant && (vm.formM.applicant.name === vm.detailedFormM.applicant_data.name)
-	    }
-	  }
-
-	  function compareDetailedFormMWithForm1(formM) {
-	    if (!vm.detailedFormM) return false
-
-	    return {
-	      number: formM.number && angular.equals(formM.number, vm.detailedFormM.number),
-
-	      date_received: angular.equals(formM.date_received, new Date(vm.detailedFormM.date_received)),
-
-	      amount: formM.amount && angular.equals(formM.amount, Number(vm.detailedFormM.amount)),
-
-	      currency: formM.currency && (formM.currency.code === vm.detailedFormM.currency_data.code),
-
-	      applicant: formM.applicant && (formM.applicant.name === vm.detailedFormM.applicant_data.name)
-	    }
+	    }, function saveFormMError(xhr) {
+	      xhrErrorDisplay(xhr)
+	    })
 	  }
 	}
 
@@ -519,25 +434,28 @@
 	var app = angular.module('add-form-m-form-m-object', [
 	  'rootApp',
 	  'lc-issue-service',
-	  'lc-cover-service'
+	  'lc-cover-service',
+	  'form-m-service'
 	])
 
 	app.factory('formMObject', formMObject)
 
 	formMObject.$inject = [
 	  'LcBidRequest',
-	  '$q',
 	  'LCIssueConcrete',
 	  'FormMCover',
 	  'confirmationDialog',
 	  'formatDate',
 	  'xhrErrorDisplay',
 	  'kanmiiUnderscore',
-	  '$filter'
+	  '$filter',
+	  'getTypeAheadLCIssue',
+	  'FormM',
+	  '$q'
 	]
 
-	function formMObject(LcBidRequest, $q, LCIssueConcrete, FormMCover, confirmationDialog, formatDate, xhrErrorDisplay,
-	  kanmiiUnderscore, $filter) {
+	function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDialog, formatDate, xhrErrorDisplay,
+	  kanmiiUnderscore, $filter, getTypeAheadLCIssue, FormM, $q) {
 	  function Factory() {
 	    var self = this
 
@@ -579,16 +497,19 @@
 	       *@param {angular.form.model} bid model that we want to create for the form M
 	       */
 	      self.bidObj = {}
-
+	      self.showEditBid = false
+	      self.showBidForm = false
 	      self.existingBids = []
 
 	      self.closedIssues = []
 	      self.nonClosedIssues = []
 	      self.selectedIssues = []
 	      self.issue = null
+	      self.showIssueForm = false
 
-	      self.showEditBid = false
-	      self.showBidForm = false
+	      self.covers = []
+	      self.cover = {}
+	      self.showCoverForm = false
 
 	      if (detailedFormM) {
 	        self.date_received = new Date(detailedFormM.date_received)
@@ -613,25 +534,12 @@
 	        self.goods_description = null
 	        self.form_m_issues = null
 	        self.url = null
-	        self.covers = null
 	      }
 
 	      cb(self)
 	    }
 
-	    self.initBids = function initBids() {
-	      var deferred = $q.defer()
-
-	      if (self.number) {
-
-	      } else deferred.resolve(self)
-
-	      return deferred.promise
-	    }
-
-	    self.formatIssueText = function formatIssueText(text) {
-	      return text.replace(/:ISSUE$/i, '')
-	    }
+	    self.formatIssueText = function formatIssueText(text) {return text.replace(/:ISSUE$/i, '')}
 
 	    self.closeIssue = function closeIssue(issue, $index) {
 	      var text = 'Sure you want to close issue:\n"' + self.formatIssueText(issue.issue_text) + '"?'
@@ -652,13 +560,13 @@
 	      function issueClosedError(xhr) {xhrErrorDisplay(xhr)}
 	    }
 
-	    self.createIssuesMessage = function createIssuesMessage() {
+	    self.createIssuesMessage = function createIssuesMessage(issues) {
 	      if (!self.nonClosedIssues.length) return ''
 
 	      var issuesText = '\n\n\nPlease note the following issues which must be regularized before the LC ' +
 	        'request can be treated:\n'
 
-	      kanmiiUnderscore.each(self.nonClosedIssues, function (issue, index) {
+	      kanmiiUnderscore.each(self.nonClosedIssues.concat((issues && issues.length) ? issues : []), function (issue, index) {
 	        ++index
 	        issuesText += ('(' + index + ') ' + self.formatIssueText(issue.issue_text) + '\n')
 	      })
@@ -682,6 +590,127 @@
 	        infoOnly: true
 	      })
 	    }
+
+	    /**
+	     * Fresh in the sense that they have not been attached to this form M either has newly selected issues or closed
+	     * issues or non-closed issues
+	     * @param {string} text - the text of the issue to get
+	     * @returns {[]} - an array of fresh issues for this form M
+	     */
+	    self.getFreshIssues = function getFreshIssues(text) {
+	      var _ids = []
+
+	      self.selectedIssues.forEach(function (issue) {
+	        _ids.push(issue.id)
+	      })
+
+	      var x = []
+	      var URL_REGEXP = new RegExp(".+/(\\d+)$")
+
+	      x.concat(self.nonClosedIssues).concat(self.closedIssues).forEach(function (issue) {
+	        _ids.push(URL_REGEXP.exec(issue.issue)[1])
+	      })
+
+	      return getTypeAheadLCIssue({text: text, exclude_issue_ids: _ids.join(',')})
+	    }
+
+	    self.saveFormM = function saveFormM(formM, detailedFormM) {
+	      var formMToSave = {
+	        applicant: formM.applicant.url,
+	        currency: formM.currency.url,
+	        date_received: formatDate(formM.date_received),
+	        amount: formM.amount,
+	        number: formM.number
+	      }
+
+	      if (!kanmiiUnderscore.isEmpty(formM.bidObj) && formM.bidObj.amount && formM.bidObj.goods_description) {
+	        formMToSave.goods_description = formM.bidObj.goods_description
+	        formMToSave.bid = {amount: formM.bidObj.amount}
+	      }
+
+	      if (formM.selectedIssues.length) formMToSave.issues = formM.selectedIssues
+
+	      if (!kanmiiUnderscore.isEmpty(formM.cover)) {
+	        formMToSave.cover = {
+	          amount: formM.cover.amount,
+	          cover_type: formM.cover.cover_type[0]
+	        }
+	      }
+
+	      var deferred = $q.defer()
+
+	      if (!detailedFormM) new FormM(formMToSave).$save(formMSavedSuccess, formMSavedError)
+
+	      else {
+	        //if we did not edit the main form M i.e detailedFormM = formM, then there is no need for database update
+	        //we store some attributes of formM that we care about in formMToSave because this will now become detailed
+	        //form M when we return from server.
+	        if (kanmiiUnderscore.all(self.compareFormMs(detailedFormM, formM))) {
+	          formMToSave.do_not_update = 'do_not_update'
+	          formMToSave.applicant_data = formM.applicant
+	          formMToSave.currency_data = formM.currency
+	          formMToSave.url = formM.url
+	        }
+	        formMToSave.id = detailedFormM.id
+	        new FormM(formMToSave).$put(formMSavedSuccess, formMSavedError)
+	      }
+
+	      function formMSavedSuccess(data) {
+
+	        var summary = self.createFormMMessage() + self.createIssuesMessage(data.new_issues)
+
+	        if (data.bid) {
+	          summary += '\n\nBid Amount     : ' + data.currency_data.code + ' ' + $filter('number')(data.bid.amount, 2)
+	        }
+
+	        deferred.resolve({detailedFormM: data, showSummary: summary})
+	      }
+
+	      function formMSavedError(xhr) {
+	        deferred.reject(xhr)
+	      }
+
+	      return deferred.promise
+	    }
+
+	    /**
+	     * Compare certain attributes of two form Ms and returns an object with the attribute as key and equalities of the
+	     * values of the attributes in the two form Ms as values.
+	     *
+	     * @param {{}} formM - first form M to compare. If this is null, then there is no point doing comparison
+	     * @param {null|{}} otherFormM - optional second form M to compare. If this is not given, then we compare first
+	     *   form M with self
+	     * @returns {{}} - an object of form Ms attributes' values equalities
+	     */
+	    self.compareFormMs = function compareFormMs(formM, otherFormM) {
+	      if (!formM) return false
+
+	      if (otherFormM) {
+	        return {
+	          number: otherFormM.number && angular.equals(otherFormM.number, formM.number),
+
+	          date_received: angular.equals(otherFormM.date_received, new Date(formM.date_received)),
+
+	          amount: otherFormM.amount && angular.equals(otherFormM.amount, Number(formM.amount)),
+
+	          currency: otherFormM.currency && (otherFormM.currency.code === formM.currency_data.code),
+
+	          applicant: otherFormM.applicant && (otherFormM.applicant.name === formM.applicant_data.name)
+	        }
+	      }
+
+	      return {
+	        number: self.number && angular.equals(self.number, formM.number),
+
+	        date_received: angular.equals(self.date_received, new Date(formM.date_received)),
+
+	        amount: self.amount && angular.equals(self.amount, Number(formM.amount)),
+
+	        currency: self.currency && (self.currency.code === formM.currency_data.code),
+
+	        applicant: self.applicant && (self.applicant.name === formM.applicant_data.name)
+	      }
+	    }
 	  }
 
 	  return new Factory()
@@ -698,7 +727,6 @@
 
 	var app = angular.module('lc-issue', [
 	  'rootApp',
-	  'lc-issue-service',
 	  'add-form-m-form-m-object'
 	])
 
@@ -722,21 +750,19 @@
 
 	LcIssueDirectiveController.$inject = [
 	  '$scope',
-	  'getTypeAheadLCIssue',
 	  'resetForm2',
 	  'clearFormField',
 	  'formMObject'
 	]
 
-	function LcIssueDirectiveController($scope, getTypeAheadLCIssue, resetForm2, clearFormField, formMObject) {
+	function LcIssueDirectiveController($scope, resetForm2, clearFormField, formMObject) {
 	  var vm = this
 	  vm.formM = formMObject
 	  var title = 'Add Letter Of Credit Issues'
 
-	  initContainerVars()
-	  function initContainerVars(form) {
+	  init()
+	  function init(form) {
 	    vm.title = title
-	    vm.showContainer = false
 
 	    if (form) resetForm2(form, [
 	      {form: form, elements: ['issue']}
@@ -753,34 +779,24 @@
 	    vm.formM.selectedIssues.splice(index, 1)
 	  }
 
-	  vm.getIssue = function getIssue(text) {
-	    var _ids = []
-
-	    vm.formM.selectedIssues.forEach(function (issue) {
-	      _ids.push(issue.id)
-	    })
-
-	    var x = []
-
-	    x.concat(vm.formM.nonClosedIssues).concat(vm.formM.closedIssues).forEach(function (issue) {
-	      _ids.push(issue.issue.id)
-	    })
-
-	    return getTypeAheadLCIssue({text: text, exclude_issue_ids: _ids.join(',')})
-	  }
-
 	  vm.toggleShow = function toggleShow(form) {
-	    vm.showContainer = vm.formM.amount && vm.formM.number && !vm.showContainer
+	    formMObject.showIssueForm = vm.formM.amount && vm.formM.number && !formMObject.showIssueForm
 
-	    if (!vm.showContainer) initContainerVars(form)
+	    if (!formMObject.showIssueForm) init(form)
 	    else vm.title = 'Dismiss'
 	  }
 
-	  $scope.$watch(function getFormM() {return vm.formM}, function () {
+	  $scope.$watch(function getFormM() {return vm.formM}, function (formM) {
 	    vm.formM.issuesForm = $scope.issuesForm
+
+	    if(formM){
+	      if (!formM.amount || !formM.number) {
+	        init(formMObject.issueForm)
+	      }
+	    }
 	  }, true)
 
-	  $scope.$watch(function getShowContainer() {return vm.showContainer}, function onUpdateShowContainer() {
+	  $scope.$watch(function getShowContainer() {return formMObject.showIssueForm}, function onUpdateShowContainer() {
 	    $scope.issuesForm.issue.$validate()
 	  })
 	}
@@ -792,7 +808,7 @@
 	    link: function ($scope, elm, atts, ctrl) {
 	      var vm = $scope.lcIssue
 	      ctrl.$validators.issues = function () {
-	        return !vm.showContainer || Boolean(vm.formM.selectedIssues.length)
+	        return !vm.formM.showIssueForm || Boolean(vm.formM.selectedIssues.length)
 	      }
 	    }
 	  }
@@ -929,14 +945,12 @@
 
 	function LcCoverDirectiveController($scope, formMCoverTypes, $filter, formFieldIsValid, formMObject) {
 	  var vm = this
+	  vm.formM = formMObject
 	  var title = 'Register Cover'
 	  init()
 
 	  function init(form) {
-	    vm.formM = formMObject
 	    vm.title = title
-	    vm.showContainer = false
-	    vm.cover = {}
 	    vm.coverTypes = null
 
 	    if (form) {
@@ -949,37 +963,33 @@
 	    return formFieldIsValid($scope, 'coverForm', name, validity)
 	  }
 
-	  vm.amountGetterSetter = function(val) {
+	  vm.amountGetterSetter = function (val) {
 	    if (arguments.length) {
-	      if (!/[\d,\.]+/.test(val)) vm.cover.amount = null
-	      else vm.cover.amount = Number(val.replace(/,/g, ''))
-	    } else return vm.cover.amount ? $filter('number')(vm.cover.amount, 2) : undefined
+	      if (!/[\d,\.]+/.test(val)) formMObject.cover.amount = null
+	      else formMObject.cover.amount = Number(val.replace(/,/g, ''))
+	    } else return formMObject.cover.amount ? $filter('number')(formMObject.cover.amount, 2) : ''
 	  }
 
 	  vm.toggleShow = function toggleShow(form) {
-	    vm.showContainer = vm.formM.amount && vm.formM.number && !vm.showContainer
+	    formMObject.showCoverForm = vm.formM.amount && vm.formM.number && !formMObject.showCoverForm
 
-	    if (!vm.showContainer) {
+	    if (!formMObject.showCoverForm) {
 	      init(form)
 	    }
 	    else {
 	      vm.title = 'Dismiss'
 	      vm.coverTypes = formMCoverTypes
-	      vm.cover.amount = vm.formM.amount
+	      formMObject.cover.amount = vm.formM.amount
 	    }
 	  }
 
-	  $scope.$watch(function getFormM() {return vm.formM}, function(newFormM) {
-	    if (newFormM) {
-	      if (! newFormM.number || !newFormM.amount) init()
+	  $scope.$watch(function getFormM() {return vm.formM}, function (formM) {
+	    formMObject.coverForm = $scope.coverForm
+	    if (formM) {
+	      if (!formM.amount || !formM.number) {
+	        init(formMObject.coverForm)
+	      }
 	    }
-	  }, true)
-
-	  $scope.$watch(function getCover() {return vm.cover}, function(newCover) {
-	    vm.onCoverChanged({
-	      cover: newCover, coverForm: $scope.coverForm
-	    })
-
 	  }, true)
 	}
 
@@ -1158,9 +1168,12 @@
 	  }
 
 	  $scope.$watch(function () {return formMObject}, function onFormMObjectChanged(formM) {
-	    if (formM) {
-	      formMObject.bidForm = $scope.bidForm
-	      vm.formM = formM
+	    formMObject.bidForm = $scope.bidForm
+
+	    if(formM){
+	      if (!formM.amount || !formM.number) {
+	        init(formMObject.bidForm)
+	      }
 	    }
 	  }, true)
 	}

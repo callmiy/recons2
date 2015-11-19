@@ -35,14 +35,12 @@ LcCoverDirectiveController.$inject = [
 
 function LcCoverDirectiveController($scope, formMCoverTypes, $filter, formFieldIsValid, formMObject) {
   var vm = this
+  vm.formM = formMObject
   var title = 'Register Cover'
   init()
 
   function init(form) {
-    vm.formM = formMObject
     vm.title = title
-    vm.showContainer = false
-    vm.cover = {}
     vm.coverTypes = null
 
     if (form) {
@@ -55,36 +53,32 @@ function LcCoverDirectiveController($scope, formMCoverTypes, $filter, formFieldI
     return formFieldIsValid($scope, 'coverForm', name, validity)
   }
 
-  vm.amountGetterSetter = function(val) {
+  vm.amountGetterSetter = function (val) {
     if (arguments.length) {
-      if (!/[\d,\.]+/.test(val)) vm.cover.amount = null
-      else vm.cover.amount = Number(val.replace(/,/g, ''))
-    } else return vm.cover.amount ? $filter('number')(vm.cover.amount, 2) : undefined
+      if (!/[\d,\.]+/.test(val)) formMObject.cover.amount = null
+      else formMObject.cover.amount = Number(val.replace(/,/g, ''))
+    } else return formMObject.cover.amount ? $filter('number')(formMObject.cover.amount, 2) : ''
   }
 
   vm.toggleShow = function toggleShow(form) {
-    vm.showContainer = vm.formM.amount && vm.formM.number && !vm.showContainer
+    formMObject.showCoverForm = vm.formM.amount && vm.formM.number && !formMObject.showCoverForm
 
-    if (!vm.showContainer) {
+    if (!formMObject.showCoverForm) {
       init(form)
     }
     else {
       vm.title = 'Dismiss'
       vm.coverTypes = formMCoverTypes
-      vm.cover.amount = vm.formM.amount
+      formMObject.cover.amount = vm.formM.amount
     }
   }
 
-  $scope.$watch(function getFormM() {return vm.formM}, function(newFormM) {
-    if (newFormM) {
-      if (! newFormM.number || !newFormM.amount) init()
+  $scope.$watch(function getFormM() {return vm.formM}, function (formM) {
+    formMObject.coverForm = $scope.coverForm
+    if (formM) {
+      if (!formM.amount || !formM.number) {
+        init(formMObject.coverForm)
+      }
     }
-  }, true)
-
-  $scope.$watch(function getCover() {return vm.cover}, function(newCover) {
-    vm.onCoverChanged({
-      cover: newCover, coverForm: $scope.coverForm
-    })
-
   }, true)
 }

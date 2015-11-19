@@ -50,7 +50,8 @@ def step_impl(context):
 
 
 @then(
-    "I notice that the text 'Add Letter Of Credit Issues' has changed to 'Dismiss' and there is now an upward pointing arrow")
+    "I notice that the text 'Add Letter Of Credit Issues' has changed to 'Dismiss' and there is now an upward "
+    "pointing arrow")
 def step_impl(context):
     """
     :type context: behave.runner.Context
@@ -136,6 +137,17 @@ def step_impl(context):
         context.selected_issue.text,
         'The value of the selected issue and that of the database must be the same.'
     )
+
+
+@step("Dialog contains information about selected issues")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    text = context.confirmation_dialog.text
+
+    nt.assert_in('Please note the following issues which must be regularized before the LC request can be treated:',
+                 text)
 
 
 @step("confirm that there is an issue attached to form M in the system")

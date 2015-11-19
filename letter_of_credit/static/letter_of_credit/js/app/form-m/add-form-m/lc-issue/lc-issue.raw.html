@@ -1,20 +1,20 @@
 <div class="form-m-lc-issue-container form-m-add-on-container">
   <div ng-click="lcIssue.toggleShow(issuesForm)"
        class="form-m-add-on-toggle form-m-lc-issue-toggle-show clearfix">
-            <span class="form-m-add-on-show-helper" ng-show="lcIssue.showContainer">
+            <span class="form-m-add-on-show-helper" ng-show="lcIssue.formM.showIssueForm">
               Specify LC Request Issues
             </span>
 
     <div class="form-m-add-on-show-icon lc-issue-add-on-show-icon">
       <span
-        ng-class="['glyphicon', {'glyphicon-chevron-down': !lcIssue.showContainer, 'glyphicon-chevron-up': lcIssue.showContainer}]">
+        ng-class="['glyphicon', {'glyphicon-chevron-down': !lcIssue.formM.showIssueForm, 'glyphicon-chevron-up': lcIssue.formM.showIssueForm}]">
       </span>
 
       {$lcIssue.title$}
     </div>
   </div>
 
-  <fieldset ng-form="" name="issuesForm" class="form-m-add-lc-issue" ng-show="lcIssue.showContainer"
+  <fieldset ng-form="" name="issuesForm" class="form-m-add-lc-issue" ng-show="lcIssue.formM.showIssueForm"
             style="margin-top: 10px;">
     <div class="form-group lc-issue-select-group">
       <label for="issue" class="control-label col-sm-12" style="text-align: center">
@@ -25,7 +25,7 @@
         <input type="text" class="form-control" id="issue" name="issue"
                ng-model="lcIssue.formM.issue" validate-issues
                typeahead-min-length="3" typeahead-on-select="lcIssue.issueSelected($item, $model, $label)"
-               uib-typeahead="issue as issue.text for issue in lcIssue.getIssue($viewValue)"/>
+               uib-typeahead="issue as issue.text for issue in lcIssue.formM.getFreshIssues($viewValue)"/>
       </div>
     </div>
 

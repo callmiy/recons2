@@ -4,7 +4,6 @@
 
 var app = angular.module('lc-issue', [
   'rootApp',
-  'lc-issue-service',
   'add-form-m-form-m-object'
 ])
 
@@ -28,21 +27,19 @@ app.controller('LcIssueDirectiveController', LcIssueDirectiveController)
 
 LcIssueDirectiveController.$inject = [
   '$scope',
-  'getTypeAheadLCIssue',
   'resetForm2',
   'clearFormField',
   'formMObject'
 ]
 
-function LcIssueDirectiveController($scope, getTypeAheadLCIssue, resetForm2, clearFormField, formMObject) {
+function LcIssueDirectiveController($scope, resetForm2, clearFormField, formMObject) {
   var vm = this
   vm.formM = formMObject
   var title = 'Add Letter Of Credit Issues'
 
-  initContainerVars()
-  function initContainerVars(form) {
+  init()
+  function init(form) {
     vm.title = title
-    vm.showContainer = false
 
     if (form) resetForm2(form, [
       {form: form, elements: ['issue']}
@@ -59,34 +56,24 @@ function LcIssueDirectiveController($scope, getTypeAheadLCIssue, resetForm2, cle
     vm.formM.selectedIssues.splice(index, 1)
   }
 
-  vm.getIssue = function getIssue(text) {
-    var _ids = []
-
-    vm.formM.selectedIssues.forEach(function (issue) {
-      _ids.push(issue.id)
-    })
-
-    var x = []
-
-    x.concat(vm.formM.nonClosedIssues).concat(vm.formM.closedIssues).forEach(function (issue) {
-      _ids.push(issue.issue.id)
-    })
-
-    return getTypeAheadLCIssue({text: text, exclude_issue_ids: _ids.join(',')})
-  }
-
   vm.toggleShow = function toggleShow(form) {
-    vm.showContainer = vm.formM.amount && vm.formM.number && !vm.showContainer
+    formMObject.showIssueForm = vm.formM.amount && vm.formM.number && !formMObject.showIssueForm
 
-    if (!vm.showContainer) initContainerVars(form)
+    if (!formMObject.showIssueForm) init(form)
     else vm.title = 'Dismiss'
   }
 
-  $scope.$watch(function getFormM() {return vm.formM}, function () {
+  $scope.$watch(function getFormM() {return vm.formM}, function (formM) {
     vm.formM.issuesForm = $scope.issuesForm
+
+    if(formM){
+      if (!formM.amount || !formM.number) {
+        init(formMObject.issueForm)
+      }
+    }
   }, true)
 
-  $scope.$watch(function getShowContainer() {return vm.showContainer}, function onUpdateShowContainer() {
+  $scope.$watch(function getShowContainer() {return formMObject.showIssueForm}, function onUpdateShowContainer() {
     $scope.issuesForm.issue.$validate()
   })
 }
@@ -98,7 +85,7 @@ app.directive('validateIssues', function validateIssues() {
     link: function ($scope, elm, atts, ctrl) {
       var vm = $scope.lcIssue
       ctrl.$validators.issues = function () {
-        return !vm.showContainer || Boolean(vm.formM.selectedIssues.length)
+        return !vm.formM.showIssueForm || Boolean(vm.formM.selectedIssues.length)
       }
     }
   }
