@@ -149,6 +149,8 @@ def step_impl(context):
     nt.assert_in('Please note the following issues which must be regularized before the LC request can be treated:',
                  text)
 
+    nt.assert_in('(1) %s' % context.selected_issue.text.replace(':ISSUE', ''), text)
+
 
 @step("confirm that there is an issue attached to form M in the system")
 def step_impl(context):

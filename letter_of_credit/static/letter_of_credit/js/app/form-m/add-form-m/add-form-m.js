@@ -105,8 +105,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       form.$setPristine()
       form.$setUntouched()
     }
-
-    vm.bid = formMObject.bidObj
   }
 
   function formMSavedSuccessMessage() {
@@ -150,14 +148,14 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
     if (kanmiiUnderscore.has(vm.formM.issuesForm, '$invalid') && vm.formM.issuesForm.$invalid) return true
 
-    if (vm.showEditBid) return true
+    if (formMObject.showEditBid) return true
 
     var compared = formMObject.compareFormMs(vm.detailedFormM)
 
     if (!compared) return false
 
     if (kanmiiUnderscore.all(compared)) {
-      if (!kanmiiUnderscore.isEmpty(vm.bid) && vm.bid.goods_description && vm.bid.amount) return false
+      if (formMObject.bid.goods_description && formMObject.bid.amount) return false
       if (!kanmiiUnderscore.isEmpty(vm.formM.cover)) return false
       return !vm.formM.selectedIssues.length
     }

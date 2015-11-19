@@ -40,6 +40,8 @@ function LcIssueDirectiveController($scope, resetForm2, clearFormField, formMObj
   init()
   function init(form) {
     vm.title = title
+    formMObject.selectedIssues = []
+    formMObject.issue = null
 
     if (form) resetForm2(form, [
       {form: form, elements: ['issue']}
@@ -47,8 +49,8 @@ function LcIssueDirectiveController($scope, resetForm2, clearFormField, formMObj
   }
 
   vm.issueSelected = function issueSelected($item, $model) {
-    vm.formM.selectedIssues.push($model)
-    vm.formM.issue = null
+    formMObject.selectedIssues.push($model)
+    formMObject.issue = null
     clearFormField($scope.issuesForm, 'issue')
   }
 
@@ -66,7 +68,7 @@ function LcIssueDirectiveController($scope, resetForm2, clearFormField, formMObj
   $scope.$watch(function getFormM() {return vm.formM}, function (formM) {
     vm.formM.issuesForm = $scope.issuesForm
 
-    if(formM){
+    if (formM) {
       if (!formM.amount || !formM.number) {
         init(formMObject.issueForm)
       }

@@ -305,8 +305,6 @@
 	      form.$setPristine()
 	      form.$setUntouched()
 	    }
-
-	    vm.bid = formMObject.bidObj
 	  }
 
 	  function formMSavedSuccessMessage() {
@@ -350,14 +348,14 @@
 
 	    if (kanmiiUnderscore.has(vm.formM.issuesForm, '$invalid') && vm.formM.issuesForm.$invalid) return true
 
-	    if (vm.showEditBid) return true
+	    if (formMObject.showEditBid) return true
 
 	    var compared = formMObject.compareFormMs(vm.detailedFormM)
 
 	    if (!compared) return false
 
 	    if (kanmiiUnderscore.all(compared)) {
-	      if (!kanmiiUnderscore.isEmpty(vm.bid) && vm.bid.goods_description && vm.bid.amount) return false
+	      if (formMObject.bid.goods_description && formMObject.bid.amount) return false
 	      if (!kanmiiUnderscore.isEmpty(vm.formM.cover)) return false
 	      return !vm.formM.selectedIssues.length
 	    }
@@ -493,23 +491,74 @@
 	    }
 
 	    self.init = function init(detailedFormM, cb) {
-	      /*
-	       *@param {angular.form.model} bid model that we want to create for the form M
-	       */
-	      self.bidObj = {}
-	      self.showEditBid = false
-	      self.showBidForm = false
-	      self.existingBids = []
+	      setInitialProperties()
+	      function setInitialProperties(){
+	        /*
+	         *@param {angular.form.model} will hold data for bid we wish to create or edit
+	         */
+	        self.bid = {}
 
-	      self.closedIssues = []
-	      self.nonClosedIssues = []
-	      self.selectedIssues = []
-	      self.issue = null
-	      self.showIssueForm = false
+	        /**
+	         * Flag that determines whether we are editing bid and will show an edit bid button.
+	         * @type {boolean}
+	         */
+	        self.showEditBid = false
 
-	      self.covers = []
-	      self.cover = {}
-	      self.showCoverForm = false
+	        /**
+	         * Flag that controls whether to show bid form
+	         * @type {boolean}
+	         */
+	        self.showBidForm = false
+
+	        /**
+	         * Bids that already exist for this form M. These bids can be edited.
+	         * @type {Array}
+	         */
+	        self.existingBids = []
+
+	        /**
+	         * Issues already created for this form M that user has closed. They are merely for display.
+	         * @type {Array}
+	         */
+	        self.closedIssues = []
+
+	        /**
+	         * Issues already created for this form M that are open. User can use this interface to close them
+	         * @type {Array}
+	         */
+	        self.nonClosedIssues = []
+
+	        /**
+	         * Fresh issues that user wishes to create. Will be appended to open issues when created.
+	         * @type {Array}
+	         */
+	        self.selectedIssues = []
+
+	        /**
+	         * The issue that user is currently selecting. Will be pushed into self.selectedIssues
+	         * @type {null|{}}
+	         */
+	        self.issue = null
+
+	        /**
+	         * Flag that controls whether issue form is displayed or hidden.
+	         * @type {boolean}
+	         */
+	        self.showIssueForm = false
+
+	        self.covers = []
+	        self.cover = {}
+	        self.showCoverForm = false
+
+	        self.date_received = new Date()
+	        self.number = null
+	        self.applicant = null
+	        self.currency = null
+	        self.amount = null
+	        self.goods_description = null
+	        self.form_m_issues = null
+	        self.url = null
+	      }
 
 	      if (detailedFormM) {
 	        self.date_received = new Date(detailedFormM.date_received)
@@ -524,16 +573,6 @@
 	        setBids()
 	        setIssues()
 	        setCovers()
-
-	      } else {
-	        self.date_received = new Date()
-	        self.number = null
-	        self.applicant = null
-	        self.currency = null
-	        self.amount = null
-	        self.goods_description = null
-	        self.form_m_issues = null
-	        self.url = null
 	      }
 
 	      cb(self)
@@ -561,12 +600,14 @@
 	    }
 
 	    self.createIssuesMessage = function createIssuesMessage(issues) {
-	      if (!self.nonClosedIssues.length) return ''
+	      issues = self.nonClosedIssues.concat((issues && issues.length) ? issues : [])
+
+	      if (!issues.length) return ''
 
 	      var issuesText = '\n\n\nPlease note the following issues which must be regularized before the LC ' +
 	        'request can be treated:\n'
 
-	      kanmiiUnderscore.each(self.nonClosedIssues.concat((issues && issues.length) ? issues : []), function (issue, index) {
+	      kanmiiUnderscore.each(issues, function (issue, index) {
 	        ++index
 	        issuesText += ('(' + index + ') ' + self.formatIssueText(issue.issue_text) + '\n')
 	      })
@@ -620,12 +661,16 @@
 	        currency: formM.currency.url,
 	        date_received: formatDate(formM.date_received),
 	        amount: formM.amount,
-	        number: formM.number
+	        number: formM.number,
+	        goods_description: formM.goods_description
 	      }
 
-	      if (!kanmiiUnderscore.isEmpty(formM.bidObj) && formM.bidObj.amount && formM.bidObj.goods_description) {
-	        formMToSave.goods_description = formM.bidObj.goods_description
-	        formMToSave.bid = {amount: formM.bidObj.amount}
+	      if (formM.bid.amount && formM.bid.goods_description) {
+	        formMToSave.goods_description = formM.bid.goods_description
+	        formMToSave.bid = {amount: formM.bid.amount}
+	        // In case user changed goods_description via bid directive
+	        self.goods_description = formM.bid.goods_description
+	        formM.goods_description = formM.bid.goods_description
 	      }
 
 	      if (formM.selectedIssues.length) formMToSave.issues = formM.selectedIssues
@@ -656,13 +701,14 @@
 	      }
 
 	      function formMSavedSuccess(data) {
-
+	        console.log('data = ', data.new_issues)
 	        var summary = self.createFormMMessage() + self.createIssuesMessage(data.new_issues)
 
-	        if (data.bid) {
-	          summary += '\n\nBid Amount     : ' + data.currency_data.code + ' ' + $filter('number')(data.bid.amount, 2)
+	        if (formMToSave.bid) {
+	          summary += '\n\nBid Amount     : ' + data.currency_data.code + ' ' + $filter('number')(formMToSave.bid.amount, 2)
 	        }
 
+	        delete data.new_issues
 	        deferred.resolve({detailedFormM: data, showSummary: summary})
 	      }
 
@@ -688,27 +734,21 @@
 	      if (otherFormM) {
 	        return {
 	          number: otherFormM.number && angular.equals(otherFormM.number, formM.number),
-
 	          date_received: angular.equals(otherFormM.date_received, new Date(formM.date_received)),
-
 	          amount: otherFormM.amount && angular.equals(otherFormM.amount, Number(formM.amount)),
-
 	          currency: otherFormM.currency && (otherFormM.currency.code === formM.currency_data.code),
-
-	          applicant: otherFormM.applicant && (otherFormM.applicant.name === formM.applicant_data.name)
+	          applicant: otherFormM.applicant && (otherFormM.applicant.name === formM.applicant_data.name),
+	          goods_description: otherFormM.goods_description === formM.goods_description
 	        }
 	      }
 
 	      return {
 	        number: self.number && angular.equals(self.number, formM.number),
-
 	        date_received: angular.equals(self.date_received, new Date(formM.date_received)),
-
 	        amount: self.amount && angular.equals(self.amount, Number(formM.amount)),
-
 	        currency: self.currency && (self.currency.code === formM.currency_data.code),
-
-	        applicant: self.applicant && (self.applicant.name === formM.applicant_data.name)
+	        applicant: self.applicant && (self.applicant.name === formM.applicant_data.name),
+	        goods_description: self.goods_description === formM.goods_description
 	      }
 	    }
 	  }
@@ -763,6 +803,8 @@
 	  init()
 	  function init(form) {
 	    vm.title = title
+	    formMObject.selectedIssues = []
+	    formMObject.issue = null
 
 	    if (form) resetForm2(form, [
 	      {form: form, elements: ['issue']}
@@ -770,8 +812,8 @@
 	  }
 
 	  vm.issueSelected = function issueSelected($item, $model) {
-	    vm.formM.selectedIssues.push($model)
-	    vm.formM.issue = null
+	    formMObject.selectedIssues.push($model)
+	    formMObject.issue = null
 	    clearFormField($scope.issuesForm, 'issue')
 	  }
 
@@ -789,7 +831,7 @@
 	  $scope.$watch(function getFormM() {return vm.formM}, function (formM) {
 	    vm.formM.issuesForm = $scope.issuesForm
 
-	    if(formM){
+	    if (formM) {
 	      if (!formM.amount || !formM.number) {
 	        init(formMObject.issueForm)
 	      }
@@ -1034,17 +1076,16 @@
 	function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnderscore, LcBidRequest, xhrErrorDisplay,
 	  confirmationDialog, formMObject, resetForm2) {
 	  var vm = this
+	  vm.formM = formMObject
 	  var title = 'Make Bid Request'
 	  init()
 
 	  function init(form) {
-	    vm.formM = formMObject
-
 	    vm.title = title
 	    vm.formM.showBidForm = false
 	    vm.formM.showEditBid = false
 	    vm.bidToEdit = null
-	    vm.formM.bidObj.amount = null
+	    formMObject.bid = {}
 
 	    if (form) resetForm2(form)
 	  }
@@ -1055,10 +1096,10 @@
 
 	  vm.amountGetterSetter = function (val) {
 	    if (arguments.length) {
-	      if (!/[\d,\.]+/.test(val)) vm.formM.bidObj.amount = null
-	      else vm.formM.bidObj.amount = Number(val.replace(/,/g, ''))
+	      if (!/[\d,\.]+/.test(val)) vm.formM.bid.amount = null
+	      else vm.formM.bid.amount = Number(val.replace(/,/g, ''))
 
-	    } else return vm.formM.bidObj.amount ? $filter('number')(vm.formM.bidObj.amount, 2) : undefined
+	    } else return vm.formM.bid.amount ? $filter('number')(vm.formM.bid.amount, 2) : null
 	  }
 
 	  vm.toggleShow = function toggleShow(form) {
@@ -1069,10 +1110,8 @@
 	    }
 	    else {
 	      vm.title = 'Dismiss'
-	      var goods = formMObject.goods_description
-	      if (goods) vm.formM.bidObj.goods_description = goods
-
-	      vm.formM.bidObj.amount = !vm.formM.existingBids.length ? formMObject.amount : null
+	      formMObject.bid.goods_description = formMObject.goods_description
+	      vm.formM.bid.amount = !vm.formM.existingBids.length ? formMObject.amount : null
 	    }
 	  }
 
@@ -1091,7 +1130,7 @@
 	    vm.bidToEdit = angular.copy(bid)
 	    vm.bidToEdit.amount = Number(vm.bidToEdit.amount)
 	    vm.bidToEdit.$index = $index
-	    vm.formM.bidObj.amount = vm.bidToEdit.amount
+	    vm.formM.bid.amount = vm.bidToEdit.amount
 	  }
 
 	  vm.trashBid = function trashBid(bid, $index) {
@@ -1129,10 +1168,10 @@
 	    var text = '\n\nForm M:           ' + vm.bidToEdit.form_m_number +
 	      '\nBid Amount' +
 	      '\n  before edit:    ' + ccy + $filter('number')(vm.bidToEdit.amount, 2) +
-	      '\n  after edit:     ' + ccy + $filter('number')(vm.formM.bidObj.amount, 2) +
+	      '\n  after edit:     ' + ccy + $filter('number')(vm.formM.bid.amount, 2) +
 	      '\nGoods description' +
 	      '\n  before edit:    ' + vm.bidToEdit.goods_description +
-	      '\n\n  after edit:     ' + vm.formM.bidObj.goods_description
+	      '\n\n  after edit:     ' + vm.formM.bid.goods_description
 
 	    confirmationDialog.showDialog({
 	      title: title,
@@ -1143,8 +1182,8 @@
 
 	    function doEdit() {
 	      var bid = angular.copy(vm.bidToEdit)
-	      bid.amount = vm.formM.bidObj.amount
-	      bid.goods_description = vm.formM.bidObj.goods_description
+	      bid.amount = vm.formM.bid.amount
+	      bid.goods_description = formMObject.bid.goods_description
 
 	      //we need to do this so this bid can show up at the bid list interface in case user wishes to download and
 	      //send the bid to treasury
@@ -1162,8 +1201,8 @@
 
 	  function bidNotModified() {
 	    return {
-	      amount: vm.bidToEdit.amount === vm.formM.bidObj.amount,
-	      goods_description: vm.bidToEdit.goods_description === vm.formM.bidObj.goods_description
+	      amount: vm.bidToEdit.amount === formMObject.bid.amount,
+	      goods_description: vm.bidToEdit.goods_description === formMObject.bid.goods_description
 	    }
 	  }
 

@@ -34,17 +34,16 @@ LcBidDirectiveController.$inject = [
 function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnderscore, LcBidRequest, xhrErrorDisplay,
   confirmationDialog, formMObject, resetForm2) {
   var vm = this
+  vm.formM = formMObject
   var title = 'Make Bid Request'
   init()
 
   function init(form) {
-    vm.formM = formMObject
-
     vm.title = title
     vm.formM.showBidForm = false
     vm.formM.showEditBid = false
     vm.bidToEdit = null
-    vm.formM.bidObj.amount = null
+    formMObject.bid = {}
 
     if (form) resetForm2(form)
   }
@@ -55,10 +54,10 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
 
   vm.amountGetterSetter = function (val) {
     if (arguments.length) {
-      if (!/[\d,\.]+/.test(val)) vm.formM.bidObj.amount = null
-      else vm.formM.bidObj.amount = Number(val.replace(/,/g, ''))
+      if (!/[\d,\.]+/.test(val)) vm.formM.bid.amount = null
+      else vm.formM.bid.amount = Number(val.replace(/,/g, ''))
 
-    } else return vm.formM.bidObj.amount ? $filter('number')(vm.formM.bidObj.amount, 2) : undefined
+    } else return vm.formM.bid.amount ? $filter('number')(vm.formM.bid.amount, 2) : null
   }
 
   vm.toggleShow = function toggleShow(form) {
@@ -69,10 +68,8 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
     }
     else {
       vm.title = 'Dismiss'
-      var goods = formMObject.goods_description
-      if (goods) vm.formM.bidObj.goods_description = goods
-
-      vm.formM.bidObj.amount = !vm.formM.existingBids.length ? formMObject.amount : null
+      formMObject.bid.goods_description = formMObject.goods_description
+      vm.formM.bid.amount = !vm.formM.existingBids.length ? formMObject.amount : null
     }
   }
 
@@ -91,7 +88,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
     vm.bidToEdit = angular.copy(bid)
     vm.bidToEdit.amount = Number(vm.bidToEdit.amount)
     vm.bidToEdit.$index = $index
-    vm.formM.bidObj.amount = vm.bidToEdit.amount
+    vm.formM.bid.amount = vm.bidToEdit.amount
   }
 
   vm.trashBid = function trashBid(bid, $index) {
@@ -129,10 +126,10 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
     var text = '\n\nForm M:           ' + vm.bidToEdit.form_m_number +
       '\nBid Amount' +
       '\n  before edit:    ' + ccy + $filter('number')(vm.bidToEdit.amount, 2) +
-      '\n  after edit:     ' + ccy + $filter('number')(vm.formM.bidObj.amount, 2) +
+      '\n  after edit:     ' + ccy + $filter('number')(vm.formM.bid.amount, 2) +
       '\nGoods description' +
       '\n  before edit:    ' + vm.bidToEdit.goods_description +
-      '\n\n  after edit:     ' + vm.formM.bidObj.goods_description
+      '\n\n  after edit:     ' + vm.formM.bid.goods_description
 
     confirmationDialog.showDialog({
       title: title,
@@ -143,8 +140,8 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
 
     function doEdit() {
       var bid = angular.copy(vm.bidToEdit)
-      bid.amount = vm.formM.bidObj.amount
-      bid.goods_description = vm.formM.bidObj.goods_description
+      bid.amount = vm.formM.bid.amount
+      bid.goods_description = formMObject.bid.goods_description
 
       //we need to do this so this bid can show up at the bid list interface in case user wishes to download and
       //send the bid to treasury
@@ -162,8 +159,8 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
 
   function bidNotModified() {
     return {
-      amount: vm.bidToEdit.amount === vm.formM.bidObj.amount,
-      goods_description: vm.bidToEdit.goods_description === vm.formM.bidObj.goods_description
+      amount: vm.bidToEdit.amount === formMObject.bid.amount,
+      goods_description: vm.bidToEdit.goods_description === formMObject.bid.goods_description
     }
   }
 

@@ -58,19 +58,16 @@ class FormIssueBidCoverUtil:
         self.log_prefix = log_prefix
 
     def create_bid(self, bid):
-        if not len(bid):
-            return bid
+        if len(bid):
+            amount = bid['amount']
+            logger.info('{} creating bid for amount "{:,.2f}"'.format(self.log_prefix, amount))
 
-        amount = bid['amount']
-        logger.info('{} creating bid for amount "{:,.2f}"'.format(self.log_prefix, amount))
-
-        serializer = LcBidRequestSerializer(data={'amount': amount, 'mf': self.form_m_url},
-                                            context={'request': self.request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        data = serializer.data
-        logger.info('{} bid successfully created:\n{}'.format(self.log_prefix, json.dumps(data, indent=4)))
-        return data
+            serializer = LcBidRequestSerializer(data={'amount': amount, 'mf': self.form_m_url},
+                                                context={'request': self.request})
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            data = serializer.data
+            logger.info('{} bid successfully created:\n{}'.format(self.log_prefix, json.dumps(data, indent=4)))
 
     def create_issues(self, issues):
         logger.info('%s creating form M issues with data:\n%s', self.log_prefix, json.dumps(issues, indent=4))
@@ -114,10 +111,11 @@ class FormMListCreateAPIView(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         form_m_data = serializer.data
+        headers = self.get_success_headers(form_m_data)
 
         util = FormIssueBidCoverUtil(request, form_m_data['url'], self.log_prefix)
         if 'bid' in incoming_data:
-            form_m_data['bid'] = util.create_bid(incoming_data['bid'])
+            util.create_bid(incoming_data['bid'])
 
         if 'cover' in incoming_data:
             util.create_cover(incoming_data['cover'])
@@ -125,7 +123,8 @@ class FormMListCreateAPIView(generics.ListCreateAPIView):
         if 'issues' in incoming_data:
             form_m_data['new_issues'] = util.create_issues(incoming_data['issues'])
 
-        headers = self.get_success_headers(form_m_data)
+        logger.info('%s Form m successfully created. Data will be sent to client:\n%s', self.log_prefix,
+                    json.dumps(form_m_data, indent=4))
         return Response(form_m_data, status=status.HTTP_201_CREATED, headers=headers)
 
 
@@ -157,11 +156,14 @@ class FormMRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
         util = FormIssueBidCoverUtil(request, form_m_data['url'], self.log_prefix)
         if 'cover' in incoming_data:
             util.create_cover(incoming_data['cover'])
+            del form_m_data['cover']
 
         if 'bid' in incoming_data:
-            form_m_data['bid'] = util.create_bid(incoming_data['bid'])
+            util.create_bid(incoming_data['bid'])
+            del form_m_data['bid']
 
         if 'issues' in incoming_data:
             form_m_data['new_issues'] = util.create_issues(incoming_data['issues'])
+            del form_m_data['issues']
 
         return Response(form_m_data)

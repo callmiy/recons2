@@ -64,23 +64,74 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
     }
 
     self.init = function init(detailedFormM, cb) {
-      /*
-       *@param {angular.form.model} bid model that we want to create for the form M
-       */
-      self.bidObj = {}
-      self.showEditBid = false
-      self.showBidForm = false
-      self.existingBids = []
+      setInitialProperties()
+      function setInitialProperties(){
+        /*
+         *@param {angular.form.model} will hold data for bid we wish to create or edit
+         */
+        self.bid = {}
 
-      self.closedIssues = []
-      self.nonClosedIssues = []
-      self.selectedIssues = []
-      self.issue = null
-      self.showIssueForm = false
+        /**
+         * Flag that determines whether we are editing bid and will show an edit bid button.
+         * @type {boolean}
+         */
+        self.showEditBid = false
 
-      self.covers = []
-      self.cover = {}
-      self.showCoverForm = false
+        /**
+         * Flag that controls whether to show bid form
+         * @type {boolean}
+         */
+        self.showBidForm = false
+
+        /**
+         * Bids that already exist for this form M. These bids can be edited.
+         * @type {Array}
+         */
+        self.existingBids = []
+
+        /**
+         * Issues already created for this form M that user has closed. They are merely for display.
+         * @type {Array}
+         */
+        self.closedIssues = []
+
+        /**
+         * Issues already created for this form M that are open. User can use this interface to close them
+         * @type {Array}
+         */
+        self.nonClosedIssues = []
+
+        /**
+         * Fresh issues that user wishes to create. Will be appended to open issues when created.
+         * @type {Array}
+         */
+        self.selectedIssues = []
+
+        /**
+         * The issue that user is currently selecting. Will be pushed into self.selectedIssues
+         * @type {null|{}}
+         */
+        self.issue = null
+
+        /**
+         * Flag that controls whether issue form is displayed or hidden.
+         * @type {boolean}
+         */
+        self.showIssueForm = false
+
+        self.covers = []
+        self.cover = {}
+        self.showCoverForm = false
+
+        self.date_received = new Date()
+        self.number = null
+        self.applicant = null
+        self.currency = null
+        self.amount = null
+        self.goods_description = null
+        self.form_m_issues = null
+        self.url = null
+      }
 
       if (detailedFormM) {
         self.date_received = new Date(detailedFormM.date_received)
@@ -95,16 +146,6 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         setBids()
         setIssues()
         setCovers()
-
-      } else {
-        self.date_received = new Date()
-        self.number = null
-        self.applicant = null
-        self.currency = null
-        self.amount = null
-        self.goods_description = null
-        self.form_m_issues = null
-        self.url = null
       }
 
       cb(self)
@@ -132,12 +173,14 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
     }
 
     self.createIssuesMessage = function createIssuesMessage(issues) {
-      if (!self.nonClosedIssues.length) return ''
+      issues = self.nonClosedIssues.concat((issues && issues.length) ? issues : [])
+
+      if (!issues.length) return ''
 
       var issuesText = '\n\n\nPlease note the following issues which must be regularized before the LC ' +
         'request can be treated:\n'
 
-      kanmiiUnderscore.each(self.nonClosedIssues.concat((issues && issues.length) ? issues : []), function (issue, index) {
+      kanmiiUnderscore.each(issues, function (issue, index) {
         ++index
         issuesText += ('(' + index + ') ' + self.formatIssueText(issue.issue_text) + '\n')
       })
@@ -191,12 +234,16 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         currency: formM.currency.url,
         date_received: formatDate(formM.date_received),
         amount: formM.amount,
-        number: formM.number
+        number: formM.number,
+        goods_description: formM.goods_description
       }
 
-      if (!kanmiiUnderscore.isEmpty(formM.bidObj) && formM.bidObj.amount && formM.bidObj.goods_description) {
-        formMToSave.goods_description = formM.bidObj.goods_description
-        formMToSave.bid = {amount: formM.bidObj.amount}
+      if (formM.bid.amount && formM.bid.goods_description) {
+        formMToSave.goods_description = formM.bid.goods_description
+        formMToSave.bid = {amount: formM.bid.amount}
+        // In case user changed goods_description via bid directive
+        self.goods_description = formM.bid.goods_description
+        formM.goods_description = formM.bid.goods_description
       }
 
       if (formM.selectedIssues.length) formMToSave.issues = formM.selectedIssues
@@ -227,13 +274,14 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
       }
 
       function formMSavedSuccess(data) {
-
+        console.log('data = ', data.new_issues)
         var summary = self.createFormMMessage() + self.createIssuesMessage(data.new_issues)
 
-        if (data.bid) {
-          summary += '\n\nBid Amount     : ' + data.currency_data.code + ' ' + $filter('number')(data.bid.amount, 2)
+        if (formMToSave.bid) {
+          summary += '\n\nBid Amount     : ' + data.currency_data.code + ' ' + $filter('number')(formMToSave.bid.amount, 2)
         }
 
+        delete data.new_issues
         deferred.resolve({detailedFormM: data, showSummary: summary})
       }
 
@@ -259,27 +307,21 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
       if (otherFormM) {
         return {
           number: otherFormM.number && angular.equals(otherFormM.number, formM.number),
-
           date_received: angular.equals(otherFormM.date_received, new Date(formM.date_received)),
-
           amount: otherFormM.amount && angular.equals(otherFormM.amount, Number(formM.amount)),
-
           currency: otherFormM.currency && (otherFormM.currency.code === formM.currency_data.code),
-
-          applicant: otherFormM.applicant && (otherFormM.applicant.name === formM.applicant_data.name)
+          applicant: otherFormM.applicant && (otherFormM.applicant.name === formM.applicant_data.name),
+          goods_description: otherFormM.goods_description === formM.goods_description
         }
       }
 
       return {
         number: self.number && angular.equals(self.number, formM.number),
-
         date_received: angular.equals(self.date_received, new Date(formM.date_received)),
-
         amount: self.amount && angular.equals(self.amount, Number(formM.amount)),
-
         currency: self.currency && (self.currency.code === formM.currency_data.code),
-
-        applicant: self.applicant && (self.applicant.name === formM.applicant_data.name)
+        applicant: self.applicant && (self.applicant.name === formM.applicant_data.name),
+        goods_description: self.goods_description === formM.goods_description
       }
     }
   }
