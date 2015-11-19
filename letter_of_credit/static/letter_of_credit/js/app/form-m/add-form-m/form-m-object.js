@@ -3,6 +3,7 @@
 /*jshint camelcase:false*/
 
 var app = angular.module('add-form-m-form-m-object', [
+  'rootApp',
   'lc-issue-service',
   'lc-cover-service'
 ])
@@ -13,10 +14,16 @@ formMObject.$inject = [
   'LcBidRequest',
   '$q',
   'LCIssueConcrete',
-  'FormMCover'
+  'FormMCover',
+  'confirmationDialog',
+  'formatDate',
+  'xhrErrorDisplay',
+  'kanmiiUnderscore',
+  '$filter'
 ]
 
-function formMObject(LcBidRequest, $q, LCIssueConcrete, FormMCover) {
+function formMObject(LcBidRequest, $q, LCIssueConcrete, FormMCover, confirmationDialog, formatDate, xhrErrorDisplay,
+  kanmiiUnderscore, $filter) {
   function Factory() {
     var self = this
 
@@ -63,6 +70,8 @@ function formMObject(LcBidRequest, $q, LCIssueConcrete, FormMCover) {
 
       self.closedIssues = []
       self.nonClosedIssues = []
+      self.selectedIssues = []
+      self.issue = null
 
       self.showEditBid = false
       self.showBidForm = false
@@ -104,6 +113,60 @@ function formMObject(LcBidRequest, $q, LCIssueConcrete, FormMCover) {
       } else deferred.resolve(self)
 
       return deferred.promise
+    }
+
+    self.formatIssueText = function formatIssueText(text) {
+      return text.replace(/:ISSUE$/i, '')
+    }
+
+    self.closeIssue = function closeIssue(issue, $index) {
+      var text = 'Sure you want to close issue:\n"' + self.formatIssueText(issue.issue_text) + '"?'
+      confirmationDialog.showDialog({title: 'Close issue', text: text}).then(function (answer) {
+        if (answer) {
+          issue.closed_at = formatDate(new Date())
+          LCIssueConcrete.put(issue).$promise.then(issueClosedSuccess, issueClosedError)
+        }
+      })
+
+      function issueClosedSuccess() {
+        var text = 'Issue closed successfully:\n' + self.formatIssueText(issue.issue_text)
+        confirmationDialog.showDialog({title: 'Close issue', text: text, infoOnly: true})
+        self.nonClosedIssues.splice($index, 1)
+        self.closedIssues.push(issue)
+      }
+
+      function issueClosedError(xhr) {xhrErrorDisplay(xhr)}
+    }
+
+    self.createIssuesMessage = function createIssuesMessage() {
+      if (!self.nonClosedIssues.length) return ''
+
+      var issuesText = '\n\n\nPlease note the following issues which must be regularized before the LC ' +
+        'request can be treated:\n'
+
+      kanmiiUnderscore.each(self.nonClosedIssues, function (issue, index) {
+        ++index
+        issuesText += ('(' + index + ') ' + self.formatIssueText(issue.issue_text) + '\n')
+      })
+
+      return issuesText
+    }
+
+    self.createFormMMessage = function createFormMMessage() {
+      var number = $filter('number')(self.amount, 2)
+      var header = self.applicant.name + ' - ' + self.number + ' - ' + self.currency.code + ' ' + number
+      return header + '\n\nForm M Number : ' + self.number + '\n' +
+        'Value         : ' + self.currency.code + ' ' +
+        number + '\n' +
+        'Applicant     : ' + self.applicant.name
+    }
+
+    self.showSummary = function showSummary() {
+      confirmationDialog.showDialog({
+        title: self.number,
+        text: self.createFormMMessage() + self.createIssuesMessage(),
+        infoOnly: true
+      })
     }
   }
 

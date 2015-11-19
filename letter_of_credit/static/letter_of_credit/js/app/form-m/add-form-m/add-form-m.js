@@ -74,11 +74,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
    */
   var coverForm
 
-  /*
-   *@param {angular.form} the HTML fieldSet element for form M issues
-   */
-  var issuesForm
-
   initialize()
   function initialize(form) {
     formMObject.init(vm.detailedFormM, function (formM) {
@@ -94,7 +89,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
           amount: false
         }
 
-      } else  {
+      } else {
         $scope.updateAddFormMTitle()
         vm.fieldIsEditable = {
           number: true,
@@ -120,13 +115,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     vm.cover = null
 
     vm.bid = formMObject.bidObj
-
-    /*
-     *@param {angular.form.model} the form M issues model
-     */
-    vm.issues = []
-    vm.closedIssues = []
-    vm.nonClosedIssues = []
   }
 
   function formMSavedSuccessMessage() {
@@ -145,15 +133,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   vm.onCoverChanged = function onCoverChanged(cover, form) {
     vm.cover = cover
     coverForm = form
-  }
-
-  vm.onIssuesChanged = function onIssuesChanged(issues, form) {
-    vm.issues = issues
-    issuesForm = form
-  }
-
-  vm.onNonClosedIssuesChanged = function onNonClosedIssuesChanged(issues) {
-    vm.nonClosedIssues = issues
   }
 
   vm.enableFieldEdit = function enableFieldEdit(field) {
@@ -182,7 +161,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
     if (kanmiiUnderscore.has(vm.formM.bidForm, '$invalid') && vm.formM.bidForm.$invalid) return true
 
-    if (issuesForm && issuesForm.$invalid) return true
+    if (kanmiiUnderscore.has(vm.formM.issuesForm, '$invalid') && vm.formM.issuesForm.$invalid) return true
 
     if (vm.showEditBid) return true
 
@@ -193,7 +172,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     if (kanmiiUnderscore.all(compared)) {
       if (!kanmiiUnderscore.isEmpty(vm.bid) && vm.bid.goods_description && vm.bid.amount) return false
       if (vm.cover && !kanmiiUnderscore.isEmpty(vm.cover)) return false
-      return !vm.issues.length
+      return !vm.formM.selectedIssues.length
     }
 
     return false
@@ -256,7 +235,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       formMToSave.bid = {amount: vm.bid.amount}
     }
 
-    if (vm.issues.length) formMToSave.issues = vm.issues
+    if (vm.formM.selectedIssues.length) formMToSave.issues = vm.formM.selectedIssues
 
     if (vm.cover && !kanmiiUnderscore.isEmpty(vm.cover)) {
       formMToSave.cover = {
@@ -278,13 +257,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
 
     function formMSavedSuccess(data) {
-      //even though non-closed issues will be set in the lc-issue directive, we need to read them off data received
-      //from server so we can display them as part of summary to users. :TODO find a better implementation
-      vm.nonClosedIssues = data.form_m_issues.filter(function (issue) {
-        return !issue.closed_at
-      })
 
-      var summary = showFormMMessage() + showIssuesMessage()
+      var summary = vm.formM.createFormMMessage() + vm.formM.createIssuesMessage()
 
       if (data.bid) {
         summary += '\n\nBid Amount     : ' + data.currency_data.code + ' ' + $filter('number')(data.bid.amount, 2)
@@ -296,43 +270,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     function formMSavedError(xhr) {
       xhrErrorDisplay(xhr, formMAttributesVerboseNames)
     }
-  }
-
-  vm.downloadSummary = function downloadSummary() {
-    confirmationDialog.showDialog({
-      title: vm.formM.number,
-      text: $scope.showFormMMessage() + $scope.showIssuesMessage(),
-      infoOnly: true
-    })
-  }
-
-  $scope.showFormMMessage = showFormMMessage
-  function showFormMMessage() {
-    var number = $filter('number')(vm.formM.amount, 2)
-    var header = vm.formM.applicant.name + ' - ' + vm.formM.number + ' - ' + vm.formM.currency.code + ' ' + number
-    return header + '\n\nForm M Number : ' + vm.formM.number + '\n' +
-      'Value         : ' + vm.formM.currency.code + ' ' +
-      number + '\n' +
-      'Applicant     : ' + vm.formM.applicant.name
-  }
-
-  $scope.showIssuesMessage = showIssuesMessage
-  function showIssuesMessage() {
-    if (!vm.nonClosedIssues.length) return ''
-
-    var issuesText = '\n\n\nPlease note the following issues which must be regularized before the LC ' +
-      'request can be treated:\n'
-
-    kanmiiUnderscore.each(vm.nonClosedIssues, function (issue, index) {
-      ++index
-      issuesText += ('(' + index + ') ' + vm.formatIssueText(issue.text || issue.issue.text) + '\n')
-    })
-
-    return issuesText
-  }
-
-  vm.formatIssueText = function (text) {
-    return text.replace(/:ISSUE$/i, '')
   }
 
   function compareDetailedFormMWithForm() {

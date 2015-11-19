@@ -26,17 +26,3 @@ class LCIssueConcreteSerializer(serializers.HyperlinkedModelSerializer):
             'closed_at',
             'url'
         )
-
-
-class LCIssueConcreteSerializerFormM(serializers.HyperlinkedModelSerializer):
-    issue = LCIssueSerializer(read_only=True)
-
-    class Meta:
-        model = LCIssueConcrete
-        fields = (
-            'id',
-            'issue',
-            'created_at',
-            'closed_at',
-            'url'
-        )

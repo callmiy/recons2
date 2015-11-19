@@ -73,7 +73,7 @@ class FormIssueBidCoverUtil:
         return data
 
     def create_issues(self, issues):
-        logger.info('{} creating form M issues with data:\n{:}'.format(self.log_prefix, json.dumps(issues, indent=4)))
+        logger.info('%s creating form M issues with data:\n%s', self.log_prefix, json.dumps(issues, indent=4))
         data = []
         for issue in issues:
             data.append({'issue': issue['url'], 'mf': self.form_m_url})
@@ -82,34 +82,17 @@ class FormIssueBidCoverUtil:
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        issues = []
-        # we need to do this because the structure of FormMSerializer['form_m_issues'] (the LCIssueConcreteSerializer
-        # data that is nested into FormMSerializer) differs from vanilla LCIssueConcreteSerializer
-        for issue in serializer.data:
-            issues.append({
-                'closed_at': issue['closed_at'],
-                'created_at': issue['created_at'],
-                'id': issue['id'],
-                'url': issue['url'],
-                'issue': {
-                    'text': issue['issue_text'],
-                    'url': issue['issue'],
-                    'id': int(URL_RE.search(issue['issue']).group(1))
-                }
-            })
-        logger.info(
-            '{} form M issues successfully created:\n{}'.format(self.log_prefix, json.dumps(issues, indent=4))
-        )
-        return issues
+        logger.info('%s form M issues successfully created:\n%s', self.log_prefix,
+                    json.dumps(serializer.data, indent=4))
 
     def create_cover(self, cover):
-        logger.info('{} creating form M cover with data\n{}'.format(self.log_prefix, cover))
+        logger.info('%s creating form M cover with data\n%s', self.log_prefix, cover)
         cover['mf'] = self.form_m_url
         serializer = FormMCoverSerializer(data=cover, context={'request': self.request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         data = serializer.data
-        logger.info('{} form m cover successfully created:\n{}'.format(self.log_prefix, json.dumps(data, indent=4)))
+        logger.info('%s form m cover successfully created:\n%s', self.log_prefix, json.dumps(data, indent=4))
 
 
 class FormMListCreateAPIView(generics.ListCreateAPIView):
@@ -139,7 +122,7 @@ class FormMListCreateAPIView(generics.ListCreateAPIView):
             util.create_cover(incoming_data['cover'])
 
         if 'issues' in incoming_data:
-            form_m_data['form_m_issues'] += util.create_issues(incoming_data['issues'])
+            util.create_issues(incoming_data['issues'])
 
         headers = self.get_success_headers(form_m_data)
         return Response(form_m_data, status=status.HTTP_201_CREATED, headers=headers)
@@ -178,6 +161,6 @@ class FormMRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
             form_m_data['bid'] = util.create_bid(incoming_data['bid'])
 
         if 'issues' in incoming_data:
-            form_m_data['form_m_issues'] += util.create_issues(incoming_data['issues'])
+            util.create_issues(incoming_data['issues'])
 
         return Response(form_m_data)

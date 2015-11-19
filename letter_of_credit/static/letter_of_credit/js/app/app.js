@@ -274,11 +274,6 @@
 	   */
 	  var coverForm
 
-	  /*
-	   *@param {angular.form} the HTML fieldSet element for form M issues
-	   */
-	  var issuesForm
-
 	  initialize()
 	  function initialize(form) {
 	    formMObject.init(vm.detailedFormM, function (formM) {
@@ -294,7 +289,7 @@
 	          amount: false
 	        }
 
-	      } else  {
+	      } else {
 	        $scope.updateAddFormMTitle()
 	        vm.fieldIsEditable = {
 	          number: true,
@@ -320,13 +315,6 @@
 	    vm.cover = null
 
 	    vm.bid = formMObject.bidObj
-
-	    /*
-	     *@param {angular.form.model} the form M issues model
-	     */
-	    vm.issues = []
-	    vm.closedIssues = []
-	    vm.nonClosedIssues = []
 	  }
 
 	  function formMSavedSuccessMessage() {
@@ -345,15 +333,6 @@
 	  vm.onCoverChanged = function onCoverChanged(cover, form) {
 	    vm.cover = cover
 	    coverForm = form
-	  }
-
-	  vm.onIssuesChanged = function onIssuesChanged(issues, form) {
-	    vm.issues = issues
-	    issuesForm = form
-	  }
-
-	  vm.onNonClosedIssuesChanged = function onNonClosedIssuesChanged(issues) {
-	    vm.nonClosedIssues = issues
 	  }
 
 	  vm.enableFieldEdit = function enableFieldEdit(field) {
@@ -382,7 +361,7 @@
 
 	    if (kanmiiUnderscore.has(vm.formM.bidForm, '$invalid') && vm.formM.bidForm.$invalid) return true
 
-	    if (issuesForm && issuesForm.$invalid) return true
+	    if (kanmiiUnderscore.has(vm.formM.issuesForm, '$invalid') && vm.formM.issuesForm.$invalid) return true
 
 	    if (vm.showEditBid) return true
 
@@ -393,7 +372,7 @@
 	    if (kanmiiUnderscore.all(compared)) {
 	      if (!kanmiiUnderscore.isEmpty(vm.bid) && vm.bid.goods_description && vm.bid.amount) return false
 	      if (vm.cover && !kanmiiUnderscore.isEmpty(vm.cover)) return false
-	      return !vm.issues.length
+	      return !vm.formM.selectedIssues.length
 	    }
 
 	    return false
@@ -456,7 +435,7 @@
 	      formMToSave.bid = {amount: vm.bid.amount}
 	    }
 
-	    if (vm.issues.length) formMToSave.issues = vm.issues
+	    if (vm.formM.selectedIssues.length) formMToSave.issues = vm.formM.selectedIssues
 
 	    if (vm.cover && !kanmiiUnderscore.isEmpty(vm.cover)) {
 	      formMToSave.cover = {
@@ -478,13 +457,8 @@
 	    }
 
 	    function formMSavedSuccess(data) {
-	      //even though non-closed issues will be set in the lc-issue directive, we need to read them off data received
-	      //from server so we can display them as part of summary to users. :TODO find a better implementation
-	      vm.nonClosedIssues = data.form_m_issues.filter(function (issue) {
-	        return !issue.closed_at
-	      })
 
-	      var summary = showFormMMessage() + showIssuesMessage()
+	      var summary = vm.formM.createFormMMessage() + vm.formM.createIssuesMessage()
 
 	      if (data.bid) {
 	        summary += '\n\nBid Amount     : ' + data.currency_data.code + ' ' + $filter('number')(data.bid.amount, 2)
@@ -496,43 +470,6 @@
 	    function formMSavedError(xhr) {
 	      xhrErrorDisplay(xhr, formMAttributesVerboseNames)
 	    }
-	  }
-
-	  vm.downloadSummary = function downloadSummary() {
-	    confirmationDialog.showDialog({
-	      title: vm.formM.number,
-	      text: $scope.showFormMMessage() + $scope.showIssuesMessage(),
-	      infoOnly: true
-	    })
-	  }
-
-	  $scope.showFormMMessage = showFormMMessage
-	  function showFormMMessage() {
-	    var number = $filter('number')(vm.formM.amount, 2)
-	    var header = vm.formM.applicant.name + ' - ' + vm.formM.number + ' - ' + vm.formM.currency.code + ' ' + number
-	    return header + '\n\nForm M Number : ' + vm.formM.number + '\n' +
-	      'Value         : ' + vm.formM.currency.code + ' ' +
-	      number + '\n' +
-	      'Applicant     : ' + vm.formM.applicant.name
-	  }
-
-	  $scope.showIssuesMessage = showIssuesMessage
-	  function showIssuesMessage() {
-	    if (!vm.nonClosedIssues.length) return ''
-
-	    var issuesText = '\n\n\nPlease note the following issues which must be regularized before the LC ' +
-	      'request can be treated:\n'
-
-	    kanmiiUnderscore.each(vm.nonClosedIssues, function (issue, index) {
-	      ++index
-	      issuesText += ('(' + index + ') ' + vm.formatIssueText(issue.text || issue.issue.text) + '\n')
-	    })
-
-	    return issuesText
-	  }
-
-	  vm.formatIssueText = function (text) {
-	    return text.replace(/:ISSUE$/i, '')
 	  }
 
 	  function compareDetailedFormMWithForm() {
@@ -580,6 +517,7 @@
 	/*jshint camelcase:false*/
 
 	var app = angular.module('add-form-m-form-m-object', [
+	  'rootApp',
 	  'lc-issue-service',
 	  'lc-cover-service'
 	])
@@ -590,10 +528,16 @@
 	  'LcBidRequest',
 	  '$q',
 	  'LCIssueConcrete',
-	  'FormMCover'
+	  'FormMCover',
+	  'confirmationDialog',
+	  'formatDate',
+	  'xhrErrorDisplay',
+	  'kanmiiUnderscore',
+	  '$filter'
 	]
 
-	function formMObject(LcBidRequest, $q, LCIssueConcrete, FormMCover) {
+	function formMObject(LcBidRequest, $q, LCIssueConcrete, FormMCover, confirmationDialog, formatDate, xhrErrorDisplay,
+	  kanmiiUnderscore, $filter) {
 	  function Factory() {
 	    var self = this
 
@@ -640,6 +584,8 @@
 
 	      self.closedIssues = []
 	      self.nonClosedIssues = []
+	      self.selectedIssues = []
+	      self.issue = null
 
 	      self.showEditBid = false
 	      self.showBidForm = false
@@ -682,6 +628,60 @@
 
 	      return deferred.promise
 	    }
+
+	    self.formatIssueText = function formatIssueText(text) {
+	      return text.replace(/:ISSUE$/i, '')
+	    }
+
+	    self.closeIssue = function closeIssue(issue, $index) {
+	      var text = 'Sure you want to close issue:\n"' + self.formatIssueText(issue.issue_text) + '"?'
+	      confirmationDialog.showDialog({title: 'Close issue', text: text}).then(function (answer) {
+	        if (answer) {
+	          issue.closed_at = formatDate(new Date())
+	          LCIssueConcrete.put(issue).$promise.then(issueClosedSuccess, issueClosedError)
+	        }
+	      })
+
+	      function issueClosedSuccess() {
+	        var text = 'Issue closed successfully:\n' + self.formatIssueText(issue.issue_text)
+	        confirmationDialog.showDialog({title: 'Close issue', text: text, infoOnly: true})
+	        self.nonClosedIssues.splice($index, 1)
+	        self.closedIssues.push(issue)
+	      }
+
+	      function issueClosedError(xhr) {xhrErrorDisplay(xhr)}
+	    }
+
+	    self.createIssuesMessage = function createIssuesMessage() {
+	      if (!self.nonClosedIssues.length) return ''
+
+	      var issuesText = '\n\n\nPlease note the following issues which must be regularized before the LC ' +
+	        'request can be treated:\n'
+
+	      kanmiiUnderscore.each(self.nonClosedIssues, function (issue, index) {
+	        ++index
+	        issuesText += ('(' + index + ') ' + self.formatIssueText(issue.issue_text) + '\n')
+	      })
+
+	      return issuesText
+	    }
+
+	    self.createFormMMessage = function createFormMMessage() {
+	      var number = $filter('number')(self.amount, 2)
+	      var header = self.applicant.name + ' - ' + self.number + ' - ' + self.currency.code + ' ' + number
+	      return header + '\n\nForm M Number : ' + self.number + '\n' +
+	        'Value         : ' + self.currency.code + ' ' +
+	        number + '\n' +
+	        'Applicant     : ' + self.applicant.name
+	    }
+
+	    self.showSummary = function showSummary() {
+	      confirmationDialog.showDialog({
+	        title: self.number,
+	        text: self.createFormMMessage() + self.createIssuesMessage(),
+	        infoOnly: true
+	      })
+	    }
 	  }
 
 	  return new Factory()
@@ -712,9 +712,7 @@
 	    templateUrl: __webpack_require__(5).buildUrl('form-m/add-form-m/lc-issue/lc-issue.html'),
 	    scope: true,
 	    bindToController: {
-	      issues: '=',
-	      onIssuesChanged: '&',
-	      onNonClosedIssuesChanged: '&'
+	      onIssuesChanged: '&'
 	    },
 	    controller: 'LcIssueDirectiveController as lcIssue'
 	  }
@@ -724,89 +722,47 @@
 
 	LcIssueDirectiveController.$inject = [
 	  '$scope',
-	  'LCIssueConcrete',
 	  'getTypeAheadLCIssue',
-	  'formatDate',
-	  'xhrErrorDisplay',
 	  'resetForm2',
 	  'clearFormField',
-	  'confirmationDialog',
 	  'formMObject'
 	]
 
-	function LcIssueDirectiveController($scope, LCIssueConcrete, getTypeAheadLCIssue, formatDate, xhrErrorDisplay,
-	  resetForm2, clearFormField, confirmationDialog, formMObject) {
+	function LcIssueDirectiveController($scope, getTypeAheadLCIssue, resetForm2, clearFormField, formMObject) {
 	  var vm = this
 	  vm.formM = formMObject
 	  var title = 'Add Letter Of Credit Issues'
-
-	  initExistingIssues()
-	  function initExistingIssues() {
-	    vm.closedIssues = []
-	    vm.nonClosedIssues = []
-	  }
 
 	  initContainerVars()
 	  function initContainerVars(form) {
 	    vm.title = title
 	    vm.showContainer = false
 
-	    vm.issues = []
-	    vm.issue = null
-
 	    if (form) resetForm2(form, [
 	      {form: form, elements: ['issue']}
 	    ])
 	  }
 
-	  vm.closeIssue = function closeIssue(issue, $index) {
-	    var closedAt = formatDate(new Date())
-
-	    var text = 'Sure you want to close issue:\n"' +
-	      $scope.addFormMState.formatIssueText(issue.issue.text) + '"?'
-
-	    confirmationDialog.showDialog({title: 'Close issue', text: text}).then(function (answer) {
-	      if (answer) {
-	        LCIssueConcrete.put({
-	          id: issue.id,
-	          mf: vm.formM.url,
-	          issue: issue.issue.url,
-	          closed_at: closedAt
-	        }).$promise.then(issueClosedSuccess, issueClosedError)
-	      }
-	    })
-
-	    function issueClosedSuccess() {
-	      var text = 'Issue closed successfully:\n' + $scope.addFormMState.formatIssueText(issue.issue.text)
-	      confirmationDialog.showDialog({title: 'Close issue', text: text, infoOnly: true})
-	      vm.nonClosedIssues.splice($index, 1)
-	      issue.closed_at = closedAt
-	      vm.closedIssues.push(issue)
-	    }
-
-	    function issueClosedError(xhr) {xhrErrorDisplay(xhr)}
-	  }
-
 	  vm.issueSelected = function issueSelected($item, $model) {
-	    vm.issues.push($model)
-	    vm.issue = null
+	    vm.formM.selectedIssues.push($model)
+	    vm.formM.issue = null
 	    clearFormField($scope.issuesForm, 'issue')
 	  }
 
 	  vm.deleteIssue = function deleteIssue(index) {
-	    vm.issues.splice(index, 1)
+	    vm.formM.selectedIssues.splice(index, 1)
 	  }
 
 	  vm.getIssue = function getIssue(text) {
 	    var _ids = []
 
-	    vm.issues.forEach(function (issue) {
+	    vm.formM.selectedIssues.forEach(function (issue) {
 	      _ids.push(issue.id)
 	    })
 
 	    var x = []
 
-	    x.concat(vm.nonClosedIssues).concat(vm.closedIssues).forEach(function (issue) {
+	    x.concat(vm.formM.nonClosedIssues).concat(vm.formM.closedIssues).forEach(function (issue) {
 	      _ids.push(issue.issue.id)
 	    })
 
@@ -820,36 +776,8 @@
 	    else vm.title = 'Dismiss'
 	  }
 
-	  $scope.$watch(function getFormM() {return vm.formM}, function (newFormM) {
-	    if (newFormM) {
-	      var formMIssues = newFormM.form_m_issues
-	      if (formMIssues && formMIssues.length !== (vm.closedIssues.length + vm.nonClosedIssues.length)) {
-	        formMIssues.forEach(function (issue) {
-	          if (!issue.closed_at) {
-	            vm.nonClosedIssues.push(issue)
-	            return true
-	          }
-	          else {
-	            vm.closedIssues.push(issue)
-	            return false
-	          }
-	        })
-	      }
-
-	      if (!newFormM.number || !newFormM.amount) {
-	        initExistingIssues()
-	        initContainerVars()
-	      }
-	    }
-	  }, true)
-
-	  $scope.$watch(function getIssues() {return vm.issues}, function onUpdateIssues(newIssues) {
-	    $scope.issuesForm.issue.$validate()
-	    if (newIssues) vm.onIssuesChanged({issues: newIssues, issuesForm: $scope.issuesForm})
-	  }, true)
-
-	  $scope.$watch(function getNonClosedIssues() {return vm.nonClosedIssues}, function onUpdateNonClosedIssues(newIssues) {
-	    if (newIssues) vm.onNonClosedIssuesChanged({issues: newIssues})
+	  $scope.$watch(function getFormM() {return vm.formM}, function () {
+	    vm.formM.issuesForm = $scope.issuesForm
 	  }, true)
 
 	  $scope.$watch(function getShowContainer() {return vm.showContainer}, function onUpdateShowContainer() {
@@ -864,7 +792,7 @@
 	    link: function ($scope, elm, atts, ctrl) {
 	      var vm = $scope.lcIssue
 	      ctrl.$validators.issues = function () {
-	        return !vm.showContainer || Boolean(vm.issues.length)
+	        return !vm.showContainer || Boolean(vm.formM.selectedIssues.length)
 	      }
 	    }
 	  }

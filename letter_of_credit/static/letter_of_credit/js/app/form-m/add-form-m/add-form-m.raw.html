@@ -148,7 +148,7 @@
 
         <div class="form-group add-form-m-form-control">
           <div class="col-sm-3">
-            <button type="button" class="btn btn-info" ng-click="addFormMState.downloadSummary()"
+            <button type="button" class="btn btn-info" ng-click="addFormMState.formM.showSummary()"
                     ng-show="addFormMState.detailedFormM">
               View summary
             </button>
@@ -174,10 +174,7 @@
       <div class="col-sm-6">
         <div lc-bid></div>
 
-        <div lc-issue mf-context="addFormMState.formM"
-             on-non-closed-issues-changed="addFormMState.onNonClosedIssuesChanged(issues)"
-             on-issues-changed="addFormMState.onIssuesChanged(issues, issuesForm)">
-        </div>
+        <div lc-issue></div>
       </div>
     </div>
   </form>

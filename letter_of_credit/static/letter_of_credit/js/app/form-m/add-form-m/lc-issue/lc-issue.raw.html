@@ -23,13 +23,13 @@
 
       <div class="col-sm-12">
         <input type="text" class="form-control" id="issue" name="issue"
-               ng-model="lcIssue.issue" validate-issues
+               ng-model="lcIssue.formM.issue" validate-issues
                typeahead-min-length="3" typeahead-on-select="lcIssue.issueSelected($item, $model, $label)"
                uib-typeahead="issue as issue.text for issue in lcIssue.getIssue($viewValue)"/>
       </div>
     </div>
 
-    <div ng-repeat="issue in lcIssue.issues">
+    <div ng-repeat="issue in lcIssue.formM.selectedIssues">
       <div class="input-group">
         <label for="issue-text-display" class="sr-only"></label>
 
@@ -46,14 +46,14 @@
     </div>
   </fieldset>
 
-  <div class="existing-issues open-issues items-table-display" ng-if="lcIssue.nonClosedIssues.length">
+  <div class="existing-issues open-issues items-table-display" ng-if="lcIssue.formM.nonClosedIssues.length">
 
     <hr/>
 
     <table class="table table-responsive table-striped">
 
       <caption>
-        Issues not closed <span class="badge">{$lcIssue.nonClosedIssues.length$}</span>
+        Issues not closed <span class="badge">{$lcIssue.formM.nonClosedIssues.length$}</span>
       </caption>
 
       <thead>
@@ -65,12 +65,12 @@
       </thead>
 
       <tbody>
-        <tr ng-repeat="issue in lcIssue.nonClosedIssues">
+        <tr ng-repeat="nonClosedIssue in lcIssue.formM.nonClosedIssues">
           <td>{$$index + 1$}</td>
-          <td style="text-align: left;">{$::addFormMState.formatIssueText(issue.issue.text)$}</td>
+          <td style="text-align: left;">{$::lcIssue.formM.formatIssueText(nonClosedIssue.issue_text)$}</td>
           <td>
             <span class="glyphicon glyphicon-trash" style="cursor: pointer"
-                  ng-click="lcIssue.closeIssue(issue, $index)">
+                  ng-click="lcIssue.formM.closeIssue(nonClosedIssue, $index)">
             </span>
           </td>
         </tr>
@@ -78,13 +78,13 @@
     </table>
   </div>
 
-  <div class="existing-issues closed-issues items-table-display" ng-if="lcIssue.closedIssues.length">
+  <div class="existing-issues closed-issues items-table-display" ng-if="lcIssue.formM.closedIssues.length">
 
     <hr/>
 
     <table class="table table-responsive table-striped">
       <caption>
-        Issues that have been closed <span class="badge">{$lcIssue.closedIssues.length$}</span>
+        Issues that have been closed <span class="badge">{$lcIssue.formM.closedIssues.length$}</span>
       </caption>
       <thead>
         <tr>
@@ -96,9 +96,9 @@
       </thead>
 
       <tbody>
-        <tr ng-repeat="closedIssue in lcIssue.closedIssues">
+        <tr ng-repeat="closedIssue in lcIssue.formM.closedIssues">
           <td>{$::$index + 1$}</td>
-          <td style="text-align: left;">{$::addFormMState.formatIssueText(closedIssue.issue.text)$}</td>
+          <td style="text-align: left;">{$::lcIssue.formM.formatIssueText(closedIssue.issue_text)$}</td>
           <td>{$::closedIssue.created_at |date:'dd-MMM-yyyy'$}</td>
           <td>{$::closedIssue.closed_at |date:'dd-MMM-yyyy'$}</td>
         </tr>
