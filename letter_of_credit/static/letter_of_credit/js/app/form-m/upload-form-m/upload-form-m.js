@@ -8,8 +8,9 @@ var rootCommons = require('commons')
 
 var app = angular.module('upload-form-m',
   ['rootApp',
-   'ui.router',
-   'upload-form-m-service'
+    'ui.router',
+    'upload-form-m-service',
+    'kanmii-underscore'
   ])
 
 app.config(rootCommons.interpolateProviderConfig)
@@ -33,53 +34,71 @@ function uploadFormMURLConfig($stateProvider) {
 }
 
 app.controller('UploadFormMController', UploadFormMController)
+UploadFormMController.$inject = ['UploadFormM', '$timeout', 'kanmiiUnderscore']
 
-UploadFormMController.$inject = ['UploadFormM', '$timeout']
-
-function UploadFormMController(UploadFormM, $timeout) {
+function UploadFormMController(UploadFormM, $timeout, kanmiiUnderscore) {
   var vm = this
 
   initial()
-  function initial() {
+  function initial(form) {
     vm.formMIsUploading = false
     vm.uploadIndicationText = 'Uploading Form Ms.........please wait'
     vm.uploadFormMText = ''
+
+    if (form) {
+      form.$setPristine()
+      form.$setUntouched()
+    }
   }
 
-  vm.uploadFormM = function uploadFormM(text) {
+  vm.uploadFormM = function uploadFormM(text, uploadFormMForm) {
     vm.formMIsUploading = true
 
-    var uploaded = [],
-      row
+    var uploaded = {}
+    var row
+    var mf
+    var formM
+    var ba
 
     function parseDate(dt) {
-      return '20' + dt.slice(6) + '-' + dt.slice(3, 5) + '-' + dt.slice(0, 2)
+      var exec = /(\d{2})\D(\d{1,2})\D(\d{4})/.exec(dt)
+      return exec[3] + '-' + exec[1] + '-' + exec[2]
     }
 
     Papa.parse(text, {
       delimiter: '\t',
-      header: false,
-      step: function(data) {
+      header: true,
+      step: function (data) {
         row = data.data[0]
+        mf = row['MF NUM'].trim()
+        ba = row['BA NUM'].trim()
+        formM = {
+          ba: ba,
+          mf: mf,
+          ccy: row.CURRENCY.trim(),
+          applicant: row['APPLICANT NAME'].trim(),
+          fob: row.FOB.replace(/[,\s]/g, ''),
+          cost_freight: row['COST AND FREIGHT'].replace(/[,\s]/g, ''),
+          submitted_at: parseDate(row['DATE SUBMITTED']),
+          validated_at: parseDate(row['DATE SUBMITTED']),
+          goods_description: row.DESCS.trim()
+        }
 
-        uploaded.push({
-          ba: row[0],
-          mf: row[1],
-          ccy: row[2],
-          applicant: row[3],
-          fob: row[5].replace(/,/g, ''),
-          submitted_at: parseDate(row[6]),
-          validated_at: parseDate(row[7])
-        })
+        if (kanmiiUnderscore.has(uploaded, mf)) {
+          if (row.STAX.trim() === 'Validated') {
+            formM.submitted_at = uploaded[mf].submitted_at
+            uploaded[mf] = formM
+
+          } else if (row.STAX.trim() === 'Submitted') uploaded[mf].submitted_at = formM.submitted_at
+
+        } else {
+          if (ba.length === 16) uploaded[mf] = formM
+        }
       }
     })
 
-    UploadFormM.save({
-      uploaded: uploaded,
-      likely_duplicates: true
-    })
-      .$promise
-      .then(formMCreatedSuccess, formMCreatedError)
+    UploadFormM.save({uploaded: kanmiiUnderscore.values(uploaded), likely_duplicates: true})
+      .$promise.then(formMCreatedSuccess, formMCreatedError)
 
     function formMCreatedSuccess(data) {
       var creationResult = data.created_data,
@@ -87,18 +106,19 @@ function UploadFormMController(UploadFormM, $timeout) {
         numCreatedPreviously = uploaded.length - numCreatedNow
 
       vm.uploadIndicationText = 'Done Upload form Ms\n' +
-                                '=========================\n' +
-                                'Total new form Ms created: ' + numCreatedNow + '\n'
+        '=========================\n' +
+        'Total new form Ms created: ' + numCreatedNow + '\n'
       if (numCreatedPreviously) {
         vm.uploadIndicationText += ('Total not created (because uploaded previously): ' + numCreatedPreviously)
       }
 
-      $timeout(function() {
-        initial()
+      $timeout(function () {
+        initial(uploadFormMForm)
       }, 4500)
     }
 
     function formMCreatedError(xhr) {
+      vm.uploadIndicationText = 'Error uploading form!'
       console.log(xhr);
     }
   }

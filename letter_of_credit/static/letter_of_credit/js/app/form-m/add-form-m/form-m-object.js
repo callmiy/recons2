@@ -26,7 +26,7 @@ formMObject.$inject = [
 ]
 
 function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDialog, formatDate, xhrErrorDisplay,
-  kanmiiUnderscore, $filter, getTypeAheadLCIssue, FormM, $q) {
+                     kanmiiUnderscore, $filter, getTypeAheadLCIssue, FormM, $q) {
   function Factory() {
     var self = this
 
@@ -65,7 +65,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
 
     self.init = function init(detailedFormM, cb) {
       setInitialProperties()
-      function setInitialProperties(){
+      function setInitialProperties() {
         /*
          *@param {angular.form.model} will hold data for bid we wish to create or edit
          */
@@ -240,7 +240,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
 
       if (formM.bid.amount && formM.bid.goods_description) {
         formMToSave.goods_description = formM.bid.goods_description
-        formMToSave.bid = {amount: formM.bid.amount}
+        formMToSave.bid = {amount: Number(formM.bid.amount)}
         // In case user changed goods_description via bid directive
         self.goods_description = formM.bid.goods_description
         formM.goods_description = formM.bid.goods_description

@@ -175,7 +175,18 @@
 	    }
 	  }
 
+	  var uploadFormMTab = {
+	    title: 'Upload Form M',
+	    active: false,
+	    viewName: 'uploadFormM',
+	    select: function () {
+	      $scope.updateAddFormMTitle()
+	      $state.go('form_m.upload')
+	    }
+	  }
+
 	  $scope.tabs = {
+	    uploadFormM: uploadFormMTab,
 	    listFormM: listFormMTab,
 	    addFormM: addFormMTab,
 	    bids: bidsTab,
@@ -453,7 +464,7 @@
 	]
 
 	function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDialog, formatDate, xhrErrorDisplay,
-	  kanmiiUnderscore, $filter, getTypeAheadLCIssue, FormM, $q) {
+	                     kanmiiUnderscore, $filter, getTypeAheadLCIssue, FormM, $q) {
 	  function Factory() {
 	    var self = this
 
@@ -492,7 +503,7 @@
 
 	    self.init = function init(detailedFormM, cb) {
 	      setInitialProperties()
-	      function setInitialProperties(){
+	      function setInitialProperties() {
 	        /*
 	         *@param {angular.form.model} will hold data for bid we wish to create or edit
 	         */
@@ -667,7 +678,7 @@
 
 	      if (formM.bid.amount && formM.bid.goods_description) {
 	        formMToSave.goods_description = formM.bid.goods_description
-	        formMToSave.bid = {amount: formM.bid.amount}
+	        formMToSave.bid = {amount: Number(formM.bid.amount)}
 	        // In case user changed goods_description via bid directive
 	        self.goods_description = formM.bid.goods_description
 	        formM.goods_description = formM.bid.goods_description
@@ -2084,8 +2095,9 @@
 
 	var app = angular.module('upload-form-m',
 	  ['rootApp',
-	   'ui.router',
-	   'upload-form-m-service'
+	    'ui.router',
+	    'upload-form-m-service',
+	    'kanmii-underscore'
 	  ])
 
 	app.config(rootCommons.interpolateProviderConfig)
@@ -2109,53 +2121,71 @@
 	}
 
 	app.controller('UploadFormMController', UploadFormMController)
+	UploadFormMController.$inject = ['UploadFormM', '$timeout', 'kanmiiUnderscore']
 
-	UploadFormMController.$inject = ['UploadFormM', '$timeout']
-
-	function UploadFormMController(UploadFormM, $timeout) {
+	function UploadFormMController(UploadFormM, $timeout, kanmiiUnderscore) {
 	  var vm = this
 
 	  initial()
-	  function initial() {
+	  function initial(form) {
 	    vm.formMIsUploading = false
 	    vm.uploadIndicationText = 'Uploading Form Ms.........please wait'
 	    vm.uploadFormMText = ''
+
+	    if (form) {
+	      form.$setPristine()
+	      form.$setUntouched()
+	    }
 	  }
 
-	  vm.uploadFormM = function uploadFormM(text) {
+	  vm.uploadFormM = function uploadFormM(text, uploadFormMForm) {
 	    vm.formMIsUploading = true
 
-	    var uploaded = [],
-	      row
+	    var uploaded = {}
+	    var row
+	    var mf
+	    var formM
+	    var ba
 
 	    function parseDate(dt) {
-	      return '20' + dt.slice(6) + '-' + dt.slice(3, 5) + '-' + dt.slice(0, 2)
+	      var exec = /(\d{2})\D(\d{1,2})\D(\d{4})/.exec(dt)
+	      return exec[3] + '-' + exec[1] + '-' + exec[2]
 	    }
 
 	    Papa.parse(text, {
 	      delimiter: '\t',
-	      header: false,
-	      step: function(data) {
+	      header: true,
+	      step: function (data) {
 	        row = data.data[0]
+	        mf = row['MF NUM'].trim()
+	        ba = row['BA NUM'].trim()
+	        formM = {
+	          ba: ba,
+	          mf: mf,
+	          ccy: row.CURRENCY.trim(),
+	          applicant: row['APPLICANT NAME'].trim(),
+	          fob: row.FOB.replace(/[,\s]/g, ''),
+	          cost_freight: row['COST AND FREIGHT'].replace(/[,\s]/g, ''),
+	          submitted_at: parseDate(row['DATE SUBMITTED']),
+	          validated_at: parseDate(row['DATE SUBMITTED']),
+	          goods_description: row.DESCS.trim()
+	        }
 
-	        uploaded.push({
-	          ba: row[0],
-	          mf: row[1],
-	          ccy: row[2],
-	          applicant: row[3],
-	          fob: row[5].replace(/,/g, ''),
-	          submitted_at: parseDate(row[6]),
-	          validated_at: parseDate(row[7])
-	        })
+	        if (kanmiiUnderscore.has(uploaded, mf)) {
+	          if (row.STAX.trim() === 'Validated') {
+	            formM.submitted_at = uploaded[mf].submitted_at
+	            uploaded[mf] = formM
+
+	          } else if (row.STAX.trim() === 'Submitted') uploaded[mf].submitted_at = formM.submitted_at
+
+	        } else {
+	          if (ba.length === 16) uploaded[mf] = formM
+	        }
 	      }
 	    })
 
-	    UploadFormM.save({
-	      uploaded: uploaded,
-	      likely_duplicates: true
-	    })
-	      .$promise
-	      .then(formMCreatedSuccess, formMCreatedError)
+	    UploadFormM.save({uploaded: kanmiiUnderscore.values(uploaded), likely_duplicates: true})
+	      .$promise.then(formMCreatedSuccess, formMCreatedError)
 
 	    function formMCreatedSuccess(data) {
 	      var creationResult = data.created_data,
@@ -2163,18 +2193,19 @@
 	        numCreatedPreviously = uploaded.length - numCreatedNow
 
 	      vm.uploadIndicationText = 'Done Upload form Ms\n' +
-	                                '=========================\n' +
-	                                'Total new form Ms created: ' + numCreatedNow + '\n'
+	        '=========================\n' +
+	        'Total new form Ms created: ' + numCreatedNow + '\n'
 	      if (numCreatedPreviously) {
 	        vm.uploadIndicationText += ('Total not created (because uploaded previously): ' + numCreatedPreviously)
 	      }
 
-	      $timeout(function() {
-	        initial()
+	      $timeout(function () {
+	        initial(uploadFormMForm)
 	      }, 4500)
 	    }
 
 	    function formMCreatedError(xhr) {
+	      vm.uploadIndicationText = 'Error uploading form!'
 	      console.log(xhr);
 	    }
 	  }
@@ -2298,7 +2329,7 @@
 /* 21 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"upload-form-m-tab-content\"><form class=\"upload-form-m-form\" role=\"form\" name=\"uploadFormMForm\" ng-submit=\"uploadFormM.uploadFormM(uploadFormM.uploadFormMText)\"><div class=\"form-group upload-form-m-text-group\"><pre class=\"upload-form-m-indicator\" ng-show=\"uploadFormM.formMIsUploading\">\n        {$uploadFormM.uploadIndicationText$}\n      </pre><label for=\"upload-form-m\" class=\"control-label sr-only\">Copy and paste form M</label> <textarea name=\"upload-form-m\" id=\"upload-form-m\" required=\"\" ng-model=\"uploadFormM.uploadFormMText\" ng-class=\"['form-control', 'upload-form-m', {'form-m-is-uploading':uploadFormM.formMIsUploading}]\" ng-readonly=\"uploadFormM.formMIsUploading\"></textarea></div><div class=\"upload-form-m-submit\" style=\"text-align: center\"><button type=\"submit\" class=\"btn btn-success\" ng-disabled=\"uploadFormMForm.$invalid || uploadFormM.formMIsUploading\">Upload</button></div></form></div>";
+	module.exports = "<div class=\"upload-form-m-tab-content\"><form class=\"upload-form-m-form\" role=\"form\" name=\"uploadFormMForm\" ng-submit=\"uploadFormM.uploadFormM(uploadFormM.uploadFormMText, uploadFormMForm)\"><div class=\"form-group upload-form-m-text-group\"><pre class=\"upload-form-m-indicator\" ng-show=\"uploadFormM.formMIsUploading\">\r\n        {$uploadFormM.uploadIndicationText$}\r\n      </pre><label for=\"upload-form-m\" class=\"control-label sr-only\">Copy and paste form M</label> <textarea name=\"upload-form-m\" id=\"upload-form-m\" required=\"\" ng-model=\"uploadFormM.uploadFormMText\" ng-class=\"['form-control', 'upload-form-m', {'form-m-is-uploading':uploadFormM.formMIsUploading}]\" ng-readonly=\"uploadFormM.formMIsUploading\"></textarea></div><div class=\"upload-form-m-submit\" style=\"text-align: center\"><button type=\"submit\" class=\"btn btn-success\" ng-disabled=\"uploadFormMForm.$invalid || uploadFormM.formMIsUploading\">Upload</button></div></form></div>";
 
 /***/ },
 /* 22 */

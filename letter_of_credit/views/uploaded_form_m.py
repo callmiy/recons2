@@ -1,10 +1,8 @@
 import json
-
 from django.shortcuts import render, redirect
 import django_filters
 from rest_framework import generics, status
 from rest_framework.response import Response
-
 from core_recons.utilities import admin_url
 from letter_of_credit.models import UploadedFormM
 from letter_of_credit.serializers import UploadedFormMSerializer
@@ -48,7 +46,7 @@ class UploadedFormMListCreateAPIView(generics.ListCreateAPIView):
                 logger.info(
                     '%s form M uploaded previously, will be deleted from incoming data:\n%r',
                     self.log_prefix,
-                    datum
+                    json.dumps(datum, indent=4)
                 )
             else:
                 fresh_data_list.append(datum)
@@ -68,7 +66,7 @@ class UploadedFormMListCreateAPIView(generics.ListCreateAPIView):
         return Response({'created_data': serializer.data}, status=status.HTTP_201_CREATED, headers=headers)
 
     def create(self, request, *args, **kwargs):
-        logger.info('%s with incoming data = \n%r', self.log_prefix, request.data)
+        logger.info('%s with incoming data = \n%r', self.log_prefix, json.dumps(request.data, indent=4))
 
         # if we are doing a bulk create and at the same time incoming data is likely to contain form Ms we had
         # created previously, then request.data will look like:
@@ -88,16 +86,13 @@ class UploadedFormMUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UploadedFormMSerializer
 
     def update(self, request, *args, **kwargs):
-        logger.info('Updating letter of credit with incoming data = \n%r', request.data)
+        logger.info('Updating letter of credit with incoming data = \n%r', json.dumps(request.data, indent=4))
         return super(UploadedFormMUpdateAPIView, self).update(request, *args, **kwargs)
 
 
 class UploadFromSingleWindowView(View):
     def get(self, request):
-        return render(
-            request,
-            'letter_of_credit/uploaded-form-m/uploaded-form-m.html',
-        )
+        return render(request, 'letter_of_credit/uploaded-form-m/uploaded-form-m.html',)
 
     def post(self, request):
         text = request.POST['upload-lc-register'].strip()
