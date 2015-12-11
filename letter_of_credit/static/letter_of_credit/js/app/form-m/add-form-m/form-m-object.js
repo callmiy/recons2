@@ -6,7 +6,8 @@ var app = angular.module('add-form-m-form-m-object', [
   'rootApp',
   'lc-issue-service',
   'lc-cover-service',
-  'form-m-service'
+  'form-m-service',
+  'comment-service'
 ])
 
 app.factory('formMObject', formMObject)
@@ -22,11 +23,12 @@ formMObject.$inject = [
   '$filter',
   'getTypeAheadLCIssue',
   'FormM',
-  '$q'
+  '$q',
+  'Comment'
 ]
 
 function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDialog, formatDate, xhrErrorDisplay,
-                     kanmiiUnderscore, $filter, getTypeAheadLCIssue, FormM, $q) {
+  kanmiiUnderscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
   function Factory() {
     var self = this
 
@@ -40,6 +42,16 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
             self.existingBids = results
           }
         }
+
+      }, function (xhr) {
+        console.log('xhr = ', xhr)
+      })
+    }
+
+    function setComments(formM) {
+      Comment.query({ct: self.ct, pk: formM.id}).$promise.then(function (data) {
+        self.comments = data
+        console.log(self.comments)
 
       }, function (xhr) {
         console.log('xhr = ', xhr)
@@ -96,6 +108,12 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         self.closedIssues = []
 
         /**
+         * Comments already created for this form M.
+         * @type {Array}
+         */
+        self.comments = []
+
+        /**
          * Issues already created for this form M that are open. User can use this interface to close them
          * @type {Array}
          */
@@ -131,6 +149,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         self.goods_description = null
         self.form_m_issues = null
         self.url = null
+        self.ct = null
       }
 
       if (detailedFormM) {
@@ -142,10 +161,11 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         self.goods_description = detailedFormM.goods_description
         self.form_m_issues = detailedFormM.form_m_issues
         self.url = detailedFormM.url
-
+        self.ct = detailedFormM.ct
         setBids()
         setIssues()
         setCovers()
+        setComments(detailedFormM)
       }
 
       cb(self)

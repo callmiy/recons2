@@ -2,7 +2,9 @@ from django.views.generic import View
 from django.core.urlresolvers import reverse
 import json
 from letter_of_credit.models import FormMCover
-from core_recons.views.update_model_date import UpdateModelDate
+from .update_model_date import UpdateModelDate
+from .content_type import ContentTypeListCreateAPIView, ContentTypeRetrieveUpdateDestroyAPIView
+from .comment import CommentListCreateAPIView, CommentRetrieveUpdateDestroyAPIView
 
 
 class CoreAppsView(View):
@@ -21,6 +23,7 @@ class CoreAppsView(View):
             'letterOfCreditAPIUrl': reverse('lcregister-list'),
             'letterOfCreditStatusesAPIUrl': reverse('lcstatus-list'),
             'formMCoverAPIUrl': reverse('formmcover-list'),
+            'commentAPIUrl': reverse('comment-list'),
         })
 
     @staticmethod

@@ -46,6 +46,7 @@ class FormMSerializer(serializers.HyperlinkedModelSerializer):
             'url',
             'goods_description',
             'lc',
+            'ct',
         )
 
     def create(self, validated_data):
