@@ -5,9 +5,9 @@ from .views import ContentTypeListCreateAPIView, ContentTypeRetrieveUpdateDestro
 urlpatterns = patterns(
         '',
 
-        url(r'^content-type/?$', ContentTypeListCreateAPIView.as_view(), name='contenttype-list'),
+        url(r'^ct/?$', ContentTypeListCreateAPIView.as_view(), name='contenttype-list'),
 
-        url(r'^content-type/(?P<pk>\d+)/?$', ContentTypeRetrieveUpdateDestroyAPIView.as_view(),
+        url(r'^ct/(?P<pk>\d+)/?$', ContentTypeRetrieveUpdateDestroyAPIView.as_view(),
             name='contenttype-detail'),
 )
 

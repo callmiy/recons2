@@ -259,11 +259,7 @@
 	  'getTypeAheadCurrency',
 	  'SearchDetailedOrUploadedFormMService',
 	  'kanmiiUnderscore',
-	  'formatDate',
 	  'xhrErrorDisplay',
-	  'formMAttributesVerboseNames',
-	  'FormM',
-	  '$filter',
 	  '$stateParams',
 	  'resetForm2',
 	  '$state',
@@ -273,7 +269,7 @@
 	]
 
 	function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
-	  kanmiiUnderscore, formatDate, xhrErrorDisplay, formMAttributesVerboseNames, FormM, $filter, $stateParams, resetForm2,
+	  kanmiiUnderscore, xhrErrorDisplay, $stateParams, resetForm2,
 	  $state, $scope, confirmationDialog, formMObject) {
 	  var vm = this
 
@@ -487,7 +483,7 @@
 	    }
 
 	    function setComments(formM) {
-	      Comment.query({ct: self.ct, pk: formM.id}).$promise.then(function (data) {
+	      Comment.query({ct: self.ct_id, pk: formM.id}).$promise.then(function (data) {
 	        self.comments = data
 	        console.log(self.comments)
 
@@ -587,7 +583,7 @@
 	        self.goods_description = null
 	        self.form_m_issues = null
 	        self.url = null
-	        self.ct = null
+	        self.ct_id = null
 	      }
 
 	      if (detailedFormM) {
@@ -599,7 +595,8 @@
 	        self.goods_description = detailedFormM.goods_description
 	        self.form_m_issues = detailedFormM.form_m_issues
 	        self.url = detailedFormM.url
-	        self.ct = detailedFormM.ct
+	        self.ct_id = detailedFormM.ct_id
+	        self.ct_url = detailedFormM.ct_url
 	        setBids()
 	        setIssues()
 	        setCovers()

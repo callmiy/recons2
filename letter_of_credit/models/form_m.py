@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from adhocmodels.models import Customer, Currency
 from core_recons.models import Comment
-from core_recons.utilities import get_content_type_id
+from core_recons.utilities import get_content_type_url, get_content_type_id
 from letter_of_credit.models import LCRegister
 
 
@@ -78,8 +78,11 @@ class FormM(models.Model):
     def lc_number(self):
         return self.lc and self.lc.lc_number or None
 
-    def ct(self):
+    def ct_id(self):
         return get_content_type_id(self)
+
+    def ct_url(self):
+        return get_content_type_url(self)
 
 
 class FormMCover(models.Model):

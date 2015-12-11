@@ -48,11 +48,7 @@ AddFormMStateController.$inject = [
   'getTypeAheadCurrency',
   'SearchDetailedOrUploadedFormMService',
   'kanmiiUnderscore',
-  'formatDate',
   'xhrErrorDisplay',
-  'formMAttributesVerboseNames',
-  'FormM',
-  '$filter',
   '$stateParams',
   'resetForm2',
   '$state',
@@ -62,7 +58,7 @@ AddFormMStateController.$inject = [
 ]
 
 function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
-  kanmiiUnderscore, formatDate, xhrErrorDisplay, formMAttributesVerboseNames, FormM, $filter, $stateParams, resetForm2,
+  kanmiiUnderscore, xhrErrorDisplay, $stateParams, resetForm2,
   $state, $scope, confirmationDialog, formMObject) {
   var vm = this
 

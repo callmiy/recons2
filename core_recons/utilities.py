@@ -1,4 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
+from django.core.urlresolvers import reverse
 
 digits_char = [str(x) for x in range(10)]
 
@@ -13,3 +14,7 @@ def admin_url(cls):
 
 def get_content_type_id(instance):
     return ContentType.objects.get_for_model(instance).pk
+
+
+def get_content_type_url(instance):
+    return reverse('contenttype-detail', kwargs={'pk': ContentType.objects.get_for_model(instance).pk})
