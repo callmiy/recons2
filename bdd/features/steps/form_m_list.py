@@ -52,7 +52,7 @@ def step_impl(context):
     """
     :type context behave.runner.Context
     """
-    context.browser.tab_links.first.click()
+    context.browser.tab_links[1].click()
 
 
 @then('I see "{num_rows}" rows of form Ms, each displaying few details about each form M')

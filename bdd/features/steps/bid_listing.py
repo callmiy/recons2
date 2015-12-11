@@ -19,7 +19,7 @@ def step_impl(context):
     """
     :type context behave.runner.Context
     """
-    context.browser.tab_links[2].click()
+    context.browser.tab_links[3].click()
 
 
 @then('I see "(?P<num_rows>.+)" rows of bids, each displaying few details about each bid')
