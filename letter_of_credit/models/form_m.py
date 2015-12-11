@@ -1,6 +1,8 @@
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.urlresolvers import reverse
 from django.db import models
 from adhocmodels.models import Customer, Currency
+from core_recons.models import Comment
 from letter_of_credit.models import LCRegister
 
 
@@ -18,6 +20,7 @@ class FormM(models.Model):
     lc = models.ForeignKey(LCRegister, null=True, blank=True, verbose_name='LC', related_name='form_m')
     goods_description = models.CharField('Goods Description', max_length=1000, blank=True, null=True)
     deleted_at = models.DateField('Date deleted', null=True, blank=True)
+    comments = GenericRelation(Comment, related_query_name='form_m_comment')
 
     objects = models.Manager()
     not_deleted = FormMNotDeletedManager()
@@ -78,12 +81,7 @@ class FormMCover(models.Model):
     ITF = 0
     STF = 1
     UNCONFIRMED = 2
-
-    COVER_TYPES = (
-        (ITF, 'ITF'),
-        (STF, 'STF'),
-        (UNCONFIRMED, 'UNCONFIRMED'),
-    )
+    COVER_TYPES = ((ITF, 'ITF'), (STF, 'STF'), (UNCONFIRMED, 'UNCONFIRMED'),)
 
     mf = models.ForeignKey(FormM, verbose_name='Form M', related_name='covers')
     amount = models.DecimalField('Cover Amount', max_digits=20, decimal_places=2)

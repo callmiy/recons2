@@ -23,11 +23,10 @@ class Comment(models.Model):
 
 
 class CommentHistory(models.Model):
-    comment = models.ForeignKey(Comment, verbose_name='Related Comment', related_name='histories',
+    comment = models.ForeignKey(Comment, verbose_name='Related Comment', related_name='comment_histories',
                                 on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Time created')
     deleted_at = models.DateTimeField('Time deleted', null=True, blank=True)
-
     text = models.TextField('Text')
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
