@@ -3,7 +3,8 @@
 /*jshint camelcase:false*/
 
 var path = require('path')
-var baseConfig = require('../webpack.config.base').webpackBaseConfig
+var deepCopy = require('deepcopy')
+var baseConfig = deepCopy(require('../webpack.config.base').webpackBaseConfig)
 
 var rootApp = path.join(__dirname, 'static', 'core_recons')
 var destDir = path.join(rootApp, 'js')

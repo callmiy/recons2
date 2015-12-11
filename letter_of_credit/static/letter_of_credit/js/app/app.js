@@ -707,12 +707,12 @@
 	          formMToSave.currency_data = formM.currency
 	          formMToSave.url = formM.url
 	        }
+
 	        formMToSave.id = detailedFormM.id
 	        new FormM(formMToSave).$put(formMSavedSuccess, formMSavedError)
 	      }
 
 	      function formMSavedSuccess(data) {
-	        console.log('data = ', data.new_issues)
 	        var summary = self.createFormMMessage() + self.createIssuesMessage(data.new_issues)
 
 	        if (formMToSave.bid) {
@@ -1116,9 +1116,7 @@
 	  vm.toggleShow = function toggleShow(form) {
 	    vm.formM.showBidForm = vm.formM.amount && vm.formM.number && !vm.formM.showBidForm
 
-	    if (!vm.formM.showBidForm) {
-	      init(form)
-	    }
+	    if (!vm.formM.showBidForm) init(form)
 	    else {
 	      vm.title = 'Dismiss'
 	      formMObject.bid.goods_description = formMObject.goods_description

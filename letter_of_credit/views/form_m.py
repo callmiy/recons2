@@ -156,14 +156,17 @@ class FormMRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
         util = FormIssueBidCoverUtil(request, form_m_data['url'], self.log_prefix)
         if 'cover' in incoming_data:
             util.create_cover(incoming_data['cover'])
-            del form_m_data['cover']
+            if 'cover' in form_m_data:
+                del form_m_data['cover']
 
         if 'bid' in incoming_data:
             util.create_bid(incoming_data['bid'])
-            del form_m_data['bid']
+            if 'bid' in form_m_data:
+                del form_m_data['bid']
 
         if 'issues' in incoming_data:
             form_m_data['new_issues'] = util.create_issues(incoming_data['issues'])
-            del form_m_data['issues']
+            if 'issues' in form_m_data:
+                del form_m_data['issues']
 
         return Response(form_m_data)

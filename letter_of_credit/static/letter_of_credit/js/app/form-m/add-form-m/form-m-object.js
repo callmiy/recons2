@@ -269,12 +269,12 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
           formMToSave.currency_data = formM.currency
           formMToSave.url = formM.url
         }
+
         formMToSave.id = detailedFormM.id
         new FormM(formMToSave).$put(formMSavedSuccess, formMSavedError)
       }
 
       function formMSavedSuccess(data) {
-        console.log('data = ', data.new_issues)
         var summary = self.createFormMMessage() + self.createIssuesMessage(data.new_issues)
 
         if (formMToSave.bid) {

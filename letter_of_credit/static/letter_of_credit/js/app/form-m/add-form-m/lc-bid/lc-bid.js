@@ -63,9 +63,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
   vm.toggleShow = function toggleShow(form) {
     vm.formM.showBidForm = vm.formM.amount && vm.formM.number && !vm.formM.showBidForm
 
-    if (!vm.formM.showBidForm) {
-      init(form)
-    }
+    if (!vm.formM.showBidForm) init(form)
     else {
       vm.title = 'Dismiss'
       formMObject.bid.goods_description = formMObject.goods_description
