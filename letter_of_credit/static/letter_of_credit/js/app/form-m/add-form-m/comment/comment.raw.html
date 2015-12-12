@@ -40,6 +40,14 @@
       </div>
     </div>
 
+    <div style="text-align: right" ng-show="!formMComment.formM.showEditComment">
+      <button type="button" class="btn btn-info"
+              ng-click="formMComment.addComment(formMComment.formM.commentText)"
+              ng-disabled="commentForm.$invalid">
+        Add Comment
+      </button>
+    </div>
+
     <div style="text-align: right" ng-show="formMComment.formM.showEditComment">
       <button type="button" class="btn btn-info" ng-click="formMComment.editComment()"
               ng-disabled="formMComment.editCommentInvalid(commentForm)">

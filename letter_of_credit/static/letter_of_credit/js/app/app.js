@@ -273,8 +273,7 @@
 	]
 
 	function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
-	  kanmiiUnderscore, xhrErrorDisplay, $stateParams, resetForm2,
-	  $state, $scope, confirmationDialog, formMObject) {
+	  kanmiiUnderscore, xhrErrorDisplay, $stateParams, resetForm2, $state, $scope, confirmationDialog, formMObject) {
 	  var vm = this
 
 	  //1. fix summary for issues when form M saved
@@ -349,8 +348,7 @@
 	    }
 	  }
 
-	  vm.disableSubmitBtn = disableSubmitBtn
-	  function disableSubmitBtn() {
+	  vm.disableSubmitBtn = function disableSubmitBtn() {
 	    if ($scope.newFormMForm.$invalid) return true
 
 	    if (kanmiiUnderscore.has(vm.formM.coverForm, '$invalid') && vm.formM.coverForm.$invalid) return true
@@ -359,7 +357,9 @@
 
 	    if (kanmiiUnderscore.has(vm.formM.issuesForm, '$invalid') && vm.formM.issuesForm.$invalid) return true
 
-	    if (formMObject.showEditBid) return true
+	    if (kanmiiUnderscore.has(vm.formM.commentForm, '$invalid') && vm.formM.commentForm.$invalid) return true
+
+	    if (formMObject.showEditBid || formMObject.showCommentForm) return true
 
 	    var compared = formMObject.compareFormMs(vm.detailedFormM)
 
@@ -484,8 +484,8 @@
 	      })
 	    }
 
-	    function setComments(formM) {
-	      Comment.query({ct: self.ct_id, pk: formM.id}).$promise.then(function (data) {
+	    function setComments(id) {
+	      Comment.query({ct: self.ct_id, pk: id}).$promise.then(function (data) {
 	        self.comments = data
 
 	      }, function (xhr) {
@@ -615,10 +615,11 @@
 	        self.url = detailedFormM.url
 	        self.ct_id = detailedFormM.ct_id
 	        self.ct_url = detailedFormM.ct_url
+	        self._id = detailedFormM.id
 	        setBids()
 	        setIssues()
 	        setCovers()
-	        setComments(detailedFormM)
+	        setComments(self._id)
 	      }
 
 	      cb(self)
@@ -796,6 +797,20 @@
 	        applicant: self.applicant && (self.applicant.name === formM.applicant_data.name),
 	        goods_description: self.goods_description === formM.goods_description
 	      }
+	    }
+
+	    self.addComment = function addComment(text) {
+	      var deferred = $q.defer()
+
+	      Comment.save({content_type: self.ct_url, object_id: self._id, text: text})
+	        .$promise.then(function commentFormMSaveSuccess(data) {
+	        deferred.resolve(data)
+
+	      }, function (xhr) {
+	        xhrErrorDisplay(xhr)
+	      })
+
+	      return deferred.promise
 	    }
 	  }
 
@@ -1374,6 +1389,12 @@
 	    }
 	  }
 
+	  vm.addComment = function addComment(text) {
+	    formMObject.addComment(text).then(function (data) {
+	      console.log(data)
+	    })
+	  }
+
 	  $scope.$watch(function () {return formMObject}, function onFormMObjectChanged() {
 	    formMObject.commentForm = $scope.commentForm
 	  }, true)
@@ -1923,7 +1944,6 @@
 	          dialogClass: 'no-close',
 	          modal: true,
 	          minWidth: 500,
-	          minHeight: 200,
 	          title: 'Search Form M',
 
 	          close: function() {

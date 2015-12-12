@@ -25,23 +25,14 @@ function confirmationDialog(ModalService, $q) {
       function modalHandler(modal) {
         modal.element.dialog({
           modal: true,
-
           dialogClass: 'no-close',
-
           minWidth: 500,
-
           title: config.title,
 
-          close: function() {
-            modal.controller.close(false)
-          }
+          close: function() {modal.controller.close(false)}
         })
 
-        if (!config.infoOnly) {
-          modal.close.then(function(answer) {
-            deferred.resolve(answer)
-          })
-        }
+        if (!config.infoOnly) modal.close.then(function(answer) {deferred.resolve(answer)})
       }
 
       return deferred.promise

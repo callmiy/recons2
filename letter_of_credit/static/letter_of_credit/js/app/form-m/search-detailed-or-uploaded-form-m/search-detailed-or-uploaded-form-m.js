@@ -60,7 +60,6 @@ function SearchDetailedOrUploadedFormMService(UploadFormM, xhrErrorDisplay, Moda
           dialogClass: 'no-close',
           modal: true,
           minWidth: 500,
-          minHeight: 200,
           title: 'Search Form M',
 
           close: function() {

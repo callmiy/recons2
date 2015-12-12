@@ -62,8 +62,7 @@ AddFormMStateController.$inject = [
 ]
 
 function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
-  kanmiiUnderscore, xhrErrorDisplay, $stateParams, resetForm2,
-  $state, $scope, confirmationDialog, formMObject) {
+  kanmiiUnderscore, xhrErrorDisplay, $stateParams, resetForm2, $state, $scope, confirmationDialog, formMObject) {
   var vm = this
 
   //1. fix summary for issues when form M saved
@@ -138,8 +137,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
   }
 
-  vm.disableSubmitBtn = disableSubmitBtn
-  function disableSubmitBtn() {
+  vm.disableSubmitBtn = function disableSubmitBtn() {
     if ($scope.newFormMForm.$invalid) return true
 
     if (kanmiiUnderscore.has(vm.formM.coverForm, '$invalid') && vm.formM.coverForm.$invalid) return true
@@ -148,7 +146,9 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
     if (kanmiiUnderscore.has(vm.formM.issuesForm, '$invalid') && vm.formM.issuesForm.$invalid) return true
 
-    if (formMObject.showEditBid) return true
+    if (kanmiiUnderscore.has(vm.formM.commentForm, '$invalid') && vm.formM.commentForm.$invalid) return true
+
+    if (formMObject.showEditBid || formMObject.showCommentForm) return true
 
     var compared = formMObject.compareFormMs(vm.detailedFormM)
 

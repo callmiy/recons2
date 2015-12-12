@@ -106,6 +106,12 @@ function FormMCommentDirectiveController($scope, formFieldIsValid, kanmiiUndersc
     }
   }
 
+  vm.addComment = function addComment(text) {
+    formMObject.addComment(text).then(function (data) {
+      console.log(data)
+    })
+  }
+
   $scope.$watch(function () {return formMObject}, function onFormMObjectChanged() {
     formMObject.commentForm = $scope.commentForm
   }, true)

@@ -48,8 +48,8 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
       })
     }
 
-    function setComments(formM) {
-      Comment.query({ct: self.ct_id, pk: formM.id}).$promise.then(function (data) {
+    function setComments(id) {
+      Comment.query({ct: self.ct_id, pk: id}).$promise.then(function (data) {
         self.comments = data
 
       }, function (xhr) {
@@ -179,10 +179,11 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         self.url = detailedFormM.url
         self.ct_id = detailedFormM.ct_id
         self.ct_url = detailedFormM.ct_url
+        self._id = detailedFormM.id
         setBids()
         setIssues()
         setCovers()
-        setComments(detailedFormM)
+        setComments(self._id)
       }
 
       cb(self)
@@ -360,6 +361,20 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         applicant: self.applicant && (self.applicant.name === formM.applicant_data.name),
         goods_description: self.goods_description === formM.goods_description
       }
+    }
+
+    self.addComment = function addComment(text) {
+      var deferred = $q.defer()
+
+      Comment.save({content_type: self.ct_url, object_id: self._id, text: text})
+        .$promise.then(function commentFormMSaveSuccess(data) {
+        deferred.resolve(data)
+
+      }, function (xhr) {
+        xhrErrorDisplay(xhr)
+      })
+
+      return deferred.promise
     }
   }
 
