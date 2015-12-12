@@ -47,7 +47,7 @@
 	"use strict";
 
 	__webpack_require__(1)
-	__webpack_require__(23)
+	__webpack_require__(24)
 
 	var rootCommons = __webpack_require__(7)
 
@@ -77,7 +77,7 @@
 
 	      kanmiiTitle: 'Home',
 
-	      template: __webpack_require__(26)
+	      template: __webpack_require__(27)
 	    })
 	}
 
@@ -91,12 +91,12 @@
 	/*jshint camelcase:false*/
 
 	__webpack_require__(2)
-	__webpack_require__(10)
-	__webpack_require__(13)
-	__webpack_require__(15)
+	__webpack_require__(11)
+	__webpack_require__(14)
 	__webpack_require__(16)
 	__webpack_require__(17)
-	__webpack_require__(19)
+	__webpack_require__(18)
+	__webpack_require__(20)
 
 	var app = angular.module('form-m',
 	  ['rootApp',
@@ -117,7 +117,7 @@
 
 	      kanmiiTitle: 'Form M',
 
-	      template: __webpack_require__(22),
+	      template: __webpack_require__(23),
 
 	      controller: 'FormMController as formMHome'
 	    })
@@ -217,7 +217,7 @@
 	__webpack_require__(4)
 	__webpack_require__(8)
 	__webpack_require__(9)
-	__webpack_require__(27)
+	__webpack_require__(10)
 
 	var app = angular.module('add-form-m', [
 	  'ui.router',
@@ -545,7 +545,7 @@
 	        /*
 	         *@param {angular.form.model} will hold data for comment we wish to create or edit
 	         */
-	        self.comment = {}
+	        self.commentText = null
 
 	        /**
 	         * Flag that determines whether we are editing comment and will show an edit comment button.
@@ -1270,6 +1270,124 @@
 
 	/*jshint camelcase:false*/
 
+	var app = angular.module('form-m-comment', [
+	  'rootApp',
+	  'kanmii-underscore',
+	  'comment-service'
+	])
+
+	app.directive('formMComment', formMCommentDirective)
+
+	formMCommentDirective.$inject = []
+
+	function formMCommentDirective() {
+	  return {
+	    restrict: 'A',
+	    templateUrl: __webpack_require__(5).buildUrl('form-m/add-form-m/comment/comment.html'),
+	    scope: true,
+	    controller: 'FormMCommentDirectiveController as formMComment'
+	  }
+	}
+
+	app.controller('FormMCommentDirectiveController', FormMCommentDirectiveController)
+
+	FormMCommentDirectiveController.$inject = [
+	  '$scope',
+	  'formFieldIsValid',
+	  'kanmiiUnderscore',
+	  'xhrErrorDisplay',
+	  'confirmationDialog',
+	  'formMObject',
+	  'resetForm2'
+	]
+
+	function FormMCommentDirectiveController($scope, formFieldIsValid, kanmiiUnderscore, xhrErrorDisplay,
+	  confirmationDialog, formMObject, resetForm2) {
+	  var vm = this
+	  vm.formM = formMObject
+	  var title = 'Add comment'
+	  init()
+
+	  function init(form) {
+	    vm.title = title
+	    vm.formM.showCommentForm = false
+	    vm.formM.showEditComment = false
+	    vm.commentToEdit = {}
+	    formMObject.commentText = null
+
+	    if (form) resetForm2(form)
+	  }
+
+	  vm.isValid = function (name, validity) { return formFieldIsValid($scope, 'commentForm', name, validity) }
+
+	  vm.toggleShow = function toggleShow(form) {
+	    vm.formM.showCommentForm = vm.formM.amount && vm.formM.number && !vm.formM.showCommentForm
+
+	    if (!vm.formM.showCommentForm) init(form)
+	    else vm.title = 'Dismiss'
+	  }
+
+	  vm.editCommentInvalid = function editCommentInvalid(form) {
+	    if (kanmiiUnderscore.isEmpty(vm.commentToEdit) || form.$invalid) return true
+
+	    return vm.commentToEdit.text === formMObject.commentText
+	  }
+
+	  vm.onCommentDblClick = function onCommentDblClick(comment, $index) {
+	    vm.formM.showEditComment = true
+	    vm.formM.showCommentForm = false
+	    vm.toggleShow()
+	    vm.commentToEdit = angular.copy(comment)
+	    vm.commentToEdit.$index = $index
+	    formMObject.commentText = vm.commentToEdit.text
+	  }
+
+	  vm.trashComment = function trashComment(comment, $index) {
+	    var text = '\n\nComment:\n' + comment.text
+	    console.log($index)
+
+	    confirmationDialog.showDialog({
+	      text: 'Sure you want to delete comment:' + text, title: 'Delete comment for ' + comment.text.slice(0, 5)
+	    }).then(function (answer) {
+	      if (answer) {
+	      }
+	    })
+	  }
+
+	  vm.viewComment = function viewComment(comment) {
+	    confirmationDialog.showDialog({
+	      title: 'View comment "' + comment.text.slice(0, 40) + '"',
+	      text: comment.text,
+	      infoOnly: true
+	    })
+	  }
+
+	  vm.editComment = function editComment() {
+	    confirmationDialog.showDialog({
+	      title: 'Edit comment "' + vm.commentToEdit.text.slice(0, 40) + '"',
+	      text: 'Are you sure you want to edit comment:\n======================================\n' + vm.commentToEdit.text
+	    }).then(function (answer) {
+	      if (answer) doEdit()
+	    })
+
+	    function doEdit() {
+	    }
+	  }
+
+	  $scope.$watch(function () {return formMObject}, function onFormMObjectChanged() {
+	    formMObject.commentForm = $scope.commentForm
+	  }, true)
+	}
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	/*jshint camelcase:false*/
+
 	var rootCommons = __webpack_require__(7)
 
 	var app = angular.module('form-m-bids', [
@@ -1294,7 +1412,7 @@
 
 	      views: {
 	        bids: {
-	          template: __webpack_require__(11),
+	          template: __webpack_require__(12),
 
 	          controller: 'BidRequestController as bidHome'
 	        }
@@ -1475,17 +1593,17 @@
 	  }
 	}
 
-	__webpack_require__(12)
+	__webpack_require__(13)
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-m-home-view\"><div class=\"action-buttons\" style=\"text-align: right;margin-bottom: 30px;\"><button class=\"btn btn-info\" ng-click=\"bidHome.searchBids()\">Search Bid Requests</button> <a class=\"btn btn-success\" ng-href=\"{$bidHome.downloadUrl()$}\" ng-disabled=\"bidHome.downloadBtnDisabled()\" ng-click=\"bidHome.refreshPage()\">Download</a> <button type=\"button\" name=\"bid-home-mark-as-requested-btn\" class=\"btn btn-success\" ng-click=\"bidHome.markRequested()\" ng-disabled=\"bidHome.markRequestedBtnDisabled()\">Mark as requested</button></div><div display-pending-bid=\"\" pending-bids=\"bidHome.bidRequests\" pager-object=\"bidHome.paginationHooks\" update-collection=\"bidHome.getBidsOnNavigation(linkUrl)\" pagination-size=\"20\" selected-bids=\"bidHome.selectedBids\" on-selected-bids-changed=\"bidHome.onSelectedBidsChanged(newSelections)\" on-row-dbl-click=\"bidHome.rowDblClickCb(bid)\"></div></div>";
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1624,7 +1742,7 @@
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict"
@@ -1653,7 +1771,7 @@
 
 	      views: {
 	        'listFormM': {
-	          template: __webpack_require__(14),
+	          template: __webpack_require__(15),
 
 	          controller: 'FormMListController as formMList'
 	        }
@@ -1734,13 +1852,13 @@
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"manage-form-m-tab-content\"><div class=\"action-buttons pull-right\"><button class=\"btn btn-info\" search-form-m=\"\" search-form-m-result=\"formMList.searchedFormMResult\">Search Form M</button></div><div model-table=\"\" model-collection=\"formMList.formMs\" table-model-manager=\"::formMList.modelManager\" table-caption=\"::formMList.tableCaption\" pagination-size=\"20\" update-collection=\"formMList.getFormMCollectionOnNavigation(linkUrl)\" pager-object=\"formMList.paginationHooks\" on-row-dbl-click-callback=\"formMList.modelRowDblClick(rowModel)\"></div></div>";
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1853,7 +1971,7 @@
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1994,7 +2112,7 @@
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2013,7 +2131,7 @@
 	        .css({cursor: 'pointer'})
 	        .bind('click', function() {
 	                ModalService.showModal({
-	                  template: __webpack_require__(18),
+	                  template: __webpack_require__(19),
 
 	                  controller: 'SearchFormMModalCtrl as searchFormMModal'
 
@@ -2109,20 +2227,20 @@
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	module.exports = "<div id=\"search-form-m-root-container\" class=\"search-form-m-root-container\"><form novalidate=\"\" class=\"form-horizontal\" ng-submit=\"searchFormMModal.submitSearchParams(searchFormMModal.searchParams)\" name=\"searchFormMModalForm\"><fieldset class=\"search-form-m-container\" style=\"position: relative; padding: 7px;\"><div class=\"form-group form-m-number-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"form-m-number\">Form M Number</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" maxlength=\"13\" id=\"form-m-number\" min=\"0\" ng-pattern=\"/(?:mf)?\\d{4,11}/i\" ng-model=\"searchFormMModal.searchParams.number\"></div></div><div class=\"form-group applicant-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"applicant\">Applicant</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" type=\"text\" min=\"3\" id=\"applicant\" ng-model=\"searchFormMModal.searchParams.applicant\" typeahead-min-length=\"3\" uib-typeahead=\"applicant as applicant.name for applicant in searchFormMModal.getApplicant($viewValue)\"></div></div><div class=\"form-group currency-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"currency\">Currency</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" id=\"currency\" maxlength=\"3\" ng-model=\"searchFormMModal.searchParams.currency\" uib-typeahead=\"currency as currency.code for currency in searchFormMModal.getCurrency($viewValue)\" typeahead-min-length=\"2\"></div></div><div class=\"form-group amount-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"amount\">Amount</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" id=\"amount\" min=\"0\" ng-model=\"searchFormMModal.searchParams.amount\" number-format=\"\" ng-pattern=\"/^\\d[\\d,]*(?:\\.\\d*)?$/\"></div></div></fieldset><div class=\"form-m-lc-issue-container\"><span ng-click=\"searchFormMModal.toggleShowLcIssueContainer()\" class=\"form-m-lc-issue-toggle-show\"><span ng-class=\"['glyphicon', {'glyphicon-chevron-down': !searchFormMModal.showLcIssueContainer, 'glyphicon-chevron-up': searchFormMModal.showLcIssueContainer}]\"></span> {$searchFormMModal.searchLcIssuesTitle$}</span><div class=\"form-m-search-lc-issue\" ng-show=\"searchFormMModal.showLcIssueContainer\"><lc-issue lc-issue-show=\"searchFormMModal.showLcIssueContainer\" lc-issues-selected=\"searchFormMModal.selectedLcIssues\"></lc-issue></div></div><div class=\"row search-form-m-form-control\"><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: left\"><span class=\"btn btn-default\" ng-click=\"searchFormMModal.reset(searchFormMModalForm)\">Reset</span></div><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: center\"><button type=\"submit\" class=\"btn btn-info\" ng-disabled=\"searchFormMModalForm.$invalid\">Search Form M</button></div><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: right\"><span class=\"btn btn-default\" ng-click=\"searchFormMModal.close()\">Close</span></div></div></form></div>";
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict"
 
 	/*jshint camelcase:false*/
 
-	__webpack_require__(20)
+	__webpack_require__(21)
 
 	var rootCommons = __webpack_require__(7)
 
@@ -2145,7 +2263,7 @@
 
 	      views: {
 	        'uploadFormM': {
-	          template: __webpack_require__(21),
+	          template: __webpack_require__(22),
 
 	          controller: 'UploadFormMController as uploadFormM'
 	        }
@@ -2246,7 +2364,7 @@
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2359,19 +2477,19 @@
 
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"upload-form-m-tab-content\"><form class=\"upload-form-m-form\" role=\"form\" name=\"uploadFormMForm\" ng-submit=\"uploadFormM.uploadFormM(uploadFormM.uploadFormMText, uploadFormMForm)\"><div class=\"form-group upload-form-m-text-group\"><pre class=\"upload-form-m-indicator\" ng-show=\"uploadFormM.formMIsUploading\">\r\n        {$uploadFormM.uploadIndicationText$}\r\n      </pre><label for=\"upload-form-m\" class=\"control-label sr-only\">Copy and paste form M</label> <textarea name=\"upload-form-m\" id=\"upload-form-m\" required=\"\" ng-model=\"uploadFormM.uploadFormMText\" ng-class=\"['form-control', 'upload-form-m', {'form-m-is-uploading':uploadFormM.formMIsUploading}]\" ng-readonly=\"uploadFormM.formMIsUploading\"></textarea></div><div class=\"upload-form-m-submit\" style=\"text-align: center\"><button type=\"submit\" class=\"btn btn-success\" ng-disabled=\"uploadFormMForm.$invalid || uploadFormM.formMIsUploading\">Upload</button></div></form></div>";
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-m-home-view\"><div uib-tabset=\"\"><div uib-tab=\"\" ng-repeat=\"(key, tab) in tabs\" heading=\"{$tab.title$}\" active=\"tab.active\" select=\"tab.select()\"><div class=\"\" ui-view=\"{$tab.viewName$}\"></div></div></div></div>";
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2425,12 +2543,12 @@
 	}
 
 
-	__webpack_require__(24)
 	__webpack_require__(25)
+	__webpack_require__(26)
 
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2634,7 +2752,7 @@
 
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2763,132 +2881,10 @@
 
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-m-home-view\"><div class=\"form-m-home-action-buttons btn-group-vertical\" role=\"group\"><a class=\"btn btn-info form-m-home-action-button\" ui-sref=\"lc\">Letter of credit</a> <a class=\"btn btn-info form-m-home-action-button\" ui-sref=\"form_m\">Form M</a></div></div>";
-
-/***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	/*jshint camelcase:false*/
-
-	var app = angular.module('form-m-comment', [
-	  'rootApp',
-	  'kanmii-underscore',
-	  'comment-service'
-	])
-
-	app.directive('formMComment', formMCommentDirective)
-
-	formMCommentDirective.$inject = []
-
-	function formMCommentDirective() {
-	  return {
-	    restrict: 'A',
-	    templateUrl: __webpack_require__(5).buildUrl('form-m/add-form-m/comment/comment.html'),
-	    scope: true,
-	    controller: 'FormMCommentDirectiveController as formMComment'
-	  }
-	}
-
-	app.controller('FormMCommentDirectiveController', FormMCommentDirectiveController)
-
-	FormMCommentDirectiveController.$inject = [
-	  '$scope',
-	  'formFieldIsValid',
-	  'kanmiiUnderscore',
-	  'xhrErrorDisplay',
-	  'confirmationDialog',
-	  'formMObject',
-	  'resetForm2'
-	]
-
-	function FormMCommentDirectiveController($scope, formFieldIsValid, kanmiiUnderscore, xhrErrorDisplay,
-	  confirmationDialog, formMObject, resetForm2) {
-	  var vm = this
-	  vm.formM = formMObject
-	  var title = 'Add comment'
-	  init()
-
-	  function init(form) {
-	    vm.title = title
-	    vm.formM.showCommentForm = false
-	    vm.formM.showEditComment = false
-	    vm.commentToEdit = null
-	    formMObject.comment = null
-
-	    if (form) resetForm2(form)
-	  }
-
-	  vm.isValid = function (name, validity) {
-	    return formFieldIsValid($scope, 'commentForm', name, validity)
-	  }
-
-	  vm.toggleShow = function toggleShow(form) {
-	    vm.formM.showCommentForm = !vm.formM.showCommentForm
-
-	    if (!vm.formM.showCommentForm) init(form)
-	    else vm.title = 'Dismiss'
-	  }
-
-	  vm.editCommentInvalid = function editCommentInvalid(form) {
-	    if (kanmiiUnderscore.isEmpty(vm.commentToEdit)) return true
-
-	    if (form.$invalid) return true
-
-	    return kanmiiUnderscore.all(commentNotModified())
-	  }
-
-	  vm.onCommentDblClick = function onCommentDblClick(comment, $index) {
-	    vm.formM.showEditComment = true
-	    vm.formM.showCommentForm = false
-	    vm.toggleShow()
-	    vm.commentToEdit = angular.copy(comment)
-	    vm.commentToEdit.$index = $index
-	  }
-
-	  vm.trashComment = function trashComment(comment, $index) {
-	    var text = '\n\nComment:\n' + comment.text
-	    console.log($index)
-
-	    confirmationDialog.showDialog({
-	      text: 'Sure you want to delete comment:' + text, title: 'Delete comment for ' + comment.text.slice(0, 5)
-	    }).then(function (answer) {
-	      if (answer) {
-	      }
-	    })
-	  }
-
-	  vm.editComment = function editComment() {
-	    var title = 'Edit comment "' + formMObject.comment.text.slice(0, 5) + '"'
-	    var text = '\n\nForm M:           ' + formMObject.comment.text.slice(0, 5)
-
-	    confirmationDialog.showDialog({
-	      title: title,
-	      text: 'Are you sure you want to edit comment:' + text
-	    }).then(function (answer) {
-	      if (answer) doEdit()
-	    })
-
-	    function doEdit() {
-	    }
-	  }
-
-	  function commentNotModified() {
-	    return {
-	      amount: vm.commentToEdit.text === formMObject.comment.text
-	    }
-	  }
-
-	  $scope.$watch(function () {return formMObject}, function onFormMObjectChanged() {
-	    formMObject.commentForm = $scope.commentForm
-	  }, true)
-	}
-
 
 /***/ }
 /******/ ]);

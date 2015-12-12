@@ -109,7 +109,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         /*
          *@param {angular.form.model} will hold data for comment we wish to create or edit
          */
-        self.comment = {}
+        self.commentText = null
 
         /**
          * Flag that determines whether we are editing comment and will show an edit comment button.

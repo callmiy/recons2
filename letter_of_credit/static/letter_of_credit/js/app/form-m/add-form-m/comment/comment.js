@@ -44,29 +44,25 @@ function FormMCommentDirectiveController($scope, formFieldIsValid, kanmiiUndersc
     vm.title = title
     vm.formM.showCommentForm = false
     vm.formM.showEditComment = false
-    vm.commentToEdit = null
-    formMObject.comment = null
+    vm.commentToEdit = {}
+    formMObject.commentText = null
 
     if (form) resetForm2(form)
   }
 
-  vm.isValid = function (name, validity) {
-    return formFieldIsValid($scope, 'commentForm', name, validity)
-  }
+  vm.isValid = function (name, validity) { return formFieldIsValid($scope, 'commentForm', name, validity) }
 
   vm.toggleShow = function toggleShow(form) {
-    vm.formM.showCommentForm = !vm.formM.showCommentForm
+    vm.formM.showCommentForm = vm.formM.amount && vm.formM.number && !vm.formM.showCommentForm
 
     if (!vm.formM.showCommentForm) init(form)
     else vm.title = 'Dismiss'
   }
 
   vm.editCommentInvalid = function editCommentInvalid(form) {
-    if (kanmiiUnderscore.isEmpty(vm.commentToEdit)) return true
+    if (kanmiiUnderscore.isEmpty(vm.commentToEdit) || form.$invalid) return true
 
-    if (form.$invalid) return true
-
-    return kanmiiUnderscore.all(commentNotModified())
+    return vm.commentToEdit.text === formMObject.commentText
   }
 
   vm.onCommentDblClick = function onCommentDblClick(comment, $index) {
@@ -75,6 +71,7 @@ function FormMCommentDirectiveController($scope, formFieldIsValid, kanmiiUndersc
     vm.toggleShow()
     vm.commentToEdit = angular.copy(comment)
     vm.commentToEdit.$index = $index
+    formMObject.commentText = vm.commentToEdit.text
   }
 
   vm.trashComment = function trashComment(comment, $index) {
@@ -89,24 +86,23 @@ function FormMCommentDirectiveController($scope, formFieldIsValid, kanmiiUndersc
     })
   }
 
-  vm.editComment = function editComment() {
-    var title = 'Edit comment "' + formMObject.comment.text.slice(0, 5) + '"'
-    var text = '\n\nForm M:           ' + formMObject.comment.text.slice(0, 5)
-
+  vm.viewComment = function viewComment(comment) {
     confirmationDialog.showDialog({
-      title: title,
-      text: 'Are you sure you want to edit comment:' + text
+      title: 'View comment "' + comment.text.slice(0, 40) + '"',
+      text: comment.text,
+      infoOnly: true
+    })
+  }
+
+  vm.editComment = function editComment() {
+    confirmationDialog.showDialog({
+      title: 'Edit comment "' + vm.commentToEdit.text.slice(0, 40) + '"',
+      text: 'Are you sure you want to edit comment:\n======================================\n' + vm.commentToEdit.text
     }).then(function (answer) {
       if (answer) doEdit()
     })
 
     function doEdit() {
-    }
-  }
-
-  function commentNotModified() {
-    return {
-      amount: vm.commentToEdit.text === formMObject.comment.text
     }
   }
 

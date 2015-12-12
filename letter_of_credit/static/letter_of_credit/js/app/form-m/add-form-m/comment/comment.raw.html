@@ -15,16 +15,16 @@
 
   <fieldset ng-form name="commentForm" ng-show="formMComment.formM.showCommentForm">
     <div
-      ng-class="['form-group', 'has-feedback', 'bid-goods-description', {'has-error': formMComment.isValid('commentText'), 'has-success': formMComment.isValid('commentText', 'ok')}]">
+      ng-class="['form-group', 'has-feedback', 'form-m-comment-text', {'has-error': formMComment.isValid('commentText'), 'has-success': formMComment.isValid('commentText', 'ok')}]">
 
-      <label class="control-label col-sm-3" for="comment-text">Comment text</label>
+      <div class="col-sm-12">
+        <label style="text-align: center; display: block; margin-top: 10px;"
+               class="control-label" for="comment-text">Comment text</label>
 
-      <div class="col-sm-9">
         <textarea class="form-control" id="comment-text" name="commentText" required ng-minlength="5"
                   ng-required="formMComment.formM.showCommentForm"
-                  ng-model="formMComment.formM.comment"
-                  style="height: 100px;"></textarea>
-
+                  ng-model="formMComment.formM.commentText"
+                  style="height: 150px;"></textarea>
 
         <i
           ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': formMComment.isValid('commentText'), 'glyphicon-ok': formMComment.isValid('commentText', 'ok')}]"
@@ -69,18 +69,20 @@
         <tr ng-repeat="comment in formMComment.formM.comments"
             ng-dblclick="formMComment.onCommentDblClick(comment, $index)"
             style="cursor:pointer;">
-          <td style="width: 66px;">{$$index + 1$}</td>
+          <td>{$$index + 1$}</td>
 
-          <td style="width: 15px;">
-            {$::comment.created_at$}
+          <td>
+            {$::comment.created_at|date:'dd-MMM-yyyy'$}
+          </td>
+
+          <td data-toggle="tooltip" data-placement="bottom" title="{$::comment.text$}">
+            {$::comment.text.slice(0, 50)$}
           </td>
 
           <td>
-            {$::comment.text$}
-          </td>
-
-          <td ng-click="formMComment.Comment(comment, $index)">
-            <span class="glyphicon glyphicon-trash"></span>
+            <span style="margin-right: 10px;;" ng-click="formMComment.viewComment(comment)"
+                  class="glyphicon glyphicon-new-window"></span>
+            <span ng-click="formMComment.trashComment(comment, $index)" class="glyphicon glyphicon-remove"></span>
           </td>
         </tr>
       </tbody>
