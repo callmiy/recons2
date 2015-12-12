@@ -51,7 +51,6 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
     function setComments(formM) {
       Comment.query({ct: self.ct_id, pk: formM.id}).$promise.then(function (data) {
         self.comments = data
-        console.log(self.comments)
 
       }, function (xhr) {
         console.log('xhr = ', xhr)
@@ -106,6 +105,23 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
          * @type {Array}
          */
         self.closedIssues = []
+
+        /*
+         *@param {angular.form.model} will hold data for comment we wish to create or edit
+         */
+        self.comment = {}
+
+        /**
+         * Flag that determines whether we are editing comment and will show an edit comment button.
+         * @type {boolean}
+         */
+        self.showEditComment = false
+
+        /**
+         * Flag that controls whether to show comment form
+         * @type {boolean}
+         */
+        self.showCommentForm = false
 
         /**
          * Comments already created for this form M.

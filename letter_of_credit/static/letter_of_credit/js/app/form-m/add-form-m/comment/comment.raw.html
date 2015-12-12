@@ -1,0 +1,89 @@
+<div class="form-m-comment-form-container form-m-add-on-container" style="margin-bottom: 30px;">
+
+  <div ng-click="formMComment.toggleShow(commentForm)"
+       class="form-m-add-on-toggle form-m-comment-toggle-show clearfix">
+    <span class="form-m-add-on-show-helper" ng-if="formMComment.formM.showCommentForm">Add a comment</span>
+
+    <div class="form-m-add-on-show-icon form-m-comment-add-on-show-icon">
+      <span
+        ng-class="['glyphicon', {'glyphicon-chevron-down': !formMComment.formM.showCommentForm, 'glyphicon-chevron-up': formMComment.formM.showCommentForm}]">
+      </span>
+
+      {$formMComment.title$}
+    </div>
+  </div>
+
+  <fieldset ng-form name="commentForm" ng-show="formMComment.formM.showCommentForm">
+    <div
+      ng-class="['form-group', 'has-feedback', 'bid-goods-description', {'has-error': formMComment.isValid('commentText'), 'has-success': formMComment.isValid('commentText', 'ok')}]">
+
+      <label class="control-label col-sm-3" for="comment-text">Comment text</label>
+
+      <div class="col-sm-9">
+        <textarea class="form-control" id="comment-text" name="commentText" required ng-minlength="5"
+                  ng-required="formMComment.formM.showCommentForm"
+                  ng-model="formMComment.formM.comment"
+                  style="height: 100px;"></textarea>
+
+
+        <i
+          ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': formMComment.isValid('commentText'), 'glyphicon-ok': formMComment.isValid('commentText', 'ok')}]"
+          ng-if="formMComment.isValid('commentText') || formMComment.isValid('commentText', 'ok')"
+          data-form-control-icon-for="commentText">
+        </i>
+
+        <div ng-messages="commentForm.commentText.$error" role="alert">
+          <div ng-if="formMComment.isValid('commentText')">
+            <div ng-messages-include="form-error-messages"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: right" ng-show="formMComment.formM.showEditComment">
+      <button type="button" class="btn btn-info" ng-click="formMComment.editComment()"
+              ng-disabled="formMComment.editCommentInvalid(commentForm)">
+        Edit Comment
+      </button>
+    </div>
+  </fieldset>
+
+  <div class="items-table-display" ng-if="formMComment.formM.comments.length">
+
+    <hr/>
+
+    <table class="table table-responsive table-striped">
+      <caption>
+        Comments <span class="badge">{$formMComment.formM.comments.length$}</span>
+      </caption>
+      <thead>
+        <tr>
+          <td>S/N</td>
+          <td>Created At</td>
+          <td>Text</td>
+          <td></td>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr ng-repeat="comment in formMComment.formM.comments"
+            ng-dblclick="formMComment.onCommentDblClick(comment, $index)"
+            style="cursor:pointer;">
+          <td style="width: 66px;">{$$index + 1$}</td>
+
+          <td style="width: 15px;">
+            {$::comment.created_at$}
+          </td>
+
+          <td>
+            {$::comment.text$}
+          </td>
+
+          <td ng-click="formMComment.Comment(comment, $index)">
+            <span class="glyphicon glyphicon-trash"></span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

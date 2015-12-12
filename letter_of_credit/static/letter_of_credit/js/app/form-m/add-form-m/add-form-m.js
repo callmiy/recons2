@@ -5,6 +5,8 @@
 require('./form-m-object.js')
 require('./lc-issue/lc-issue.js')
 require('./lc-cover/lc-cover.js')
+require('./lc-bid/lc-bid.js')
+require('./comment/comment.js')
 
 var app = angular.module('add-form-m', [
   'ui.router',
@@ -15,16 +17,18 @@ var app = angular.module('add-form-m', [
   'form-m-service',
   'lc-cover',
   'lc-issue',
+  'lc-bid',
+  'form-m-comment',
   'lc-bid-request',
   'confirmation-dialog',
   'add-form-m-form-m-object'
 ])
 
-app.config(formMStateURLConfig)
+app.config(formMStateConfig)
 
-formMStateURLConfig.$inject = ['$stateProvider']
+formMStateConfig.$inject = ['$stateProvider']
 
-function formMStateURLConfig($stateProvider) {
+function formMStateConfig($stateProvider) {
   $stateProvider
     .state('form_m.add', {
       kanmiiTitle: 'Add form M',
@@ -213,5 +217,3 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     })
   }
 }
-
-require('./lc-bid/lc-bid.js')

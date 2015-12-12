@@ -2,7 +2,7 @@
 
 /*jshint camelcase:false*/
 
-var app = angular.module('add-form-m')
+var app = angular.module('lc-bid', [])
 
 app.directive('lcBid', lcBidDirective)
 

@@ -216,6 +216,8 @@
 	__webpack_require__(3)
 	__webpack_require__(4)
 	__webpack_require__(8)
+	__webpack_require__(9)
+	__webpack_require__(27)
 
 	var app = angular.module('add-form-m', [
 	  'ui.router',
@@ -226,16 +228,18 @@
 	  'form-m-service',
 	  'lc-cover',
 	  'lc-issue',
+	  'lc-bid',
+	  'form-m-comment',
 	  'lc-bid-request',
 	  'confirmation-dialog',
 	  'add-form-m-form-m-object'
 	])
 
-	app.config(formMStateURLConfig)
+	app.config(formMStateConfig)
 
-	formMStateURLConfig.$inject = ['$stateProvider']
+	formMStateConfig.$inject = ['$stateProvider']
 
-	function formMStateURLConfig($stateProvider) {
+	function formMStateConfig($stateProvider) {
 	  $stateProvider
 	    .state('form_m.add', {
 	      kanmiiTitle: 'Add form M',
@@ -425,8 +429,6 @@
 	  }
 	}
 
-	__webpack_require__(9)
-
 
 /***/ },
 /* 3 */
@@ -485,7 +487,6 @@
 	    function setComments(formM) {
 	      Comment.query({ct: self.ct_id, pk: formM.id}).$promise.then(function (data) {
 	        self.comments = data
-	        console.log(self.comments)
 
 	      }, function (xhr) {
 	        console.log('xhr = ', xhr)
@@ -540,6 +541,23 @@
 	         * @type {Array}
 	         */
 	        self.closedIssues = []
+
+	        /*
+	         *@param {angular.form.model} will hold data for comment we wish to create or edit
+	         */
+	        self.comment = {}
+
+	        /**
+	         * Flag that determines whether we are editing comment and will show an edit comment button.
+	         * @type {boolean}
+	         */
+	        self.showEditComment = false
+
+	        /**
+	         * Flag that controls whether to show comment form
+	         * @type {boolean}
+	         */
+	        self.showCommentForm = false
 
 	        /**
 	         * Comments already created for this form M.
@@ -1072,7 +1090,7 @@
 
 	/*jshint camelcase:false*/
 
-	var app = angular.module('add-form-m')
+	var app = angular.module('lc-bid', [])
 
 	app.directive('lcBid', lcBidDirective)
 
@@ -2749,6 +2767,128 @@
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-m-home-view\"><div class=\"form-m-home-action-buttons btn-group-vertical\" role=\"group\"><a class=\"btn btn-info form-m-home-action-button\" ui-sref=\"lc\">Letter of credit</a> <a class=\"btn btn-info form-m-home-action-button\" ui-sref=\"form_m\">Form M</a></div></div>";
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	/*jshint camelcase:false*/
+
+	var app = angular.module('form-m-comment', [
+	  'rootApp',
+	  'kanmii-underscore',
+	  'comment-service'
+	])
+
+	app.directive('formMComment', formMCommentDirective)
+
+	formMCommentDirective.$inject = []
+
+	function formMCommentDirective() {
+	  return {
+	    restrict: 'A',
+	    templateUrl: __webpack_require__(5).buildUrl('form-m/add-form-m/comment/comment.html'),
+	    scope: true,
+	    controller: 'FormMCommentDirectiveController as formMComment'
+	  }
+	}
+
+	app.controller('FormMCommentDirectiveController', FormMCommentDirectiveController)
+
+	FormMCommentDirectiveController.$inject = [
+	  '$scope',
+	  'formFieldIsValid',
+	  'kanmiiUnderscore',
+	  'xhrErrorDisplay',
+	  'confirmationDialog',
+	  'formMObject',
+	  'resetForm2'
+	]
+
+	function FormMCommentDirectiveController($scope, formFieldIsValid, kanmiiUnderscore, xhrErrorDisplay,
+	  confirmationDialog, formMObject, resetForm2) {
+	  var vm = this
+	  vm.formM = formMObject
+	  var title = 'Add comment'
+	  init()
+
+	  function init(form) {
+	    vm.title = title
+	    vm.formM.showCommentForm = false
+	    vm.formM.showEditComment = false
+	    vm.commentToEdit = null
+	    formMObject.comment = null
+
+	    if (form) resetForm2(form)
+	  }
+
+	  vm.isValid = function (name, validity) {
+	    return formFieldIsValid($scope, 'commentForm', name, validity)
+	  }
+
+	  vm.toggleShow = function toggleShow(form) {
+	    vm.formM.showCommentForm = !vm.formM.showCommentForm
+
+	    if (!vm.formM.showCommentForm) init(form)
+	    else vm.title = 'Dismiss'
+	  }
+
+	  vm.editCommentInvalid = function editCommentInvalid(form) {
+	    if (kanmiiUnderscore.isEmpty(vm.commentToEdit)) return true
+
+	    if (form.$invalid) return true
+
+	    return kanmiiUnderscore.all(commentNotModified())
+	  }
+
+	  vm.onCommentDblClick = function onCommentDblClick(comment, $index) {
+	    vm.formM.showEditComment = true
+	    vm.formM.showCommentForm = false
+	    vm.toggleShow()
+	    vm.commentToEdit = angular.copy(comment)
+	    vm.commentToEdit.$index = $index
+	  }
+
+	  vm.trashComment = function trashComment(comment, $index) {
+	    var text = '\n\nComment:\n' + comment.text
+	    console.log($index)
+
+	    confirmationDialog.showDialog({
+	      text: 'Sure you want to delete comment:' + text, title: 'Delete comment for ' + comment.text.slice(0, 5)
+	    }).then(function (answer) {
+	      if (answer) {
+	      }
+	    })
+	  }
+
+	  vm.editComment = function editComment() {
+	    var title = 'Edit comment "' + formMObject.comment.text.slice(0, 5) + '"'
+	    var text = '\n\nForm M:           ' + formMObject.comment.text.slice(0, 5)
+
+	    confirmationDialog.showDialog({
+	      title: title,
+	      text: 'Are you sure you want to edit comment:' + text
+	    }).then(function (answer) {
+	      if (answer) doEdit()
+	    })
+
+	    function doEdit() {
+	    }
+	  }
+
+	  function commentNotModified() {
+	    return {
+	      amount: vm.commentToEdit.text === formMObject.comment.text
+	    }
+	  }
+
+	  $scope.$watch(function () {return formMObject}, function onFormMObjectChanged() {
+	    formMObject.commentForm = $scope.commentForm
+	  }, true)
+	}
+
 
 /***/ }
 /******/ ]);
