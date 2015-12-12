@@ -42,7 +42,7 @@
 
     <div style="text-align: right" ng-show="!formMComment.formM.showEditComment">
       <button type="button" class="btn btn-info"
-              ng-click="formMComment.addComment(formMComment.formM.commentText)"
+              ng-click="formMComment.addComment(formMComment.formM.commentText, commentForm)"
               ng-disabled="commentForm.$invalid">
         Add Comment
       </button>
@@ -84,13 +84,15 @@
           </td>
 
           <td data-toggle="tooltip" data-placement="bottom" title="{$::comment.text$}">
-            {$::comment.text.slice(0, 50)$}
+            {$::comment.text.slice(0, 30)$}
           </td>
 
           <td>
             <span style="margin-right: 10px;;" ng-click="formMComment.viewComment(comment)"
-                  class="glyphicon glyphicon-new-window"></span>
-            <span ng-click="formMComment.trashComment(comment, $index)" class="glyphicon glyphicon-remove"></span>
+                  class="glyphicon glyphicon-new-window" data-toggle="tooltip" title="View comment"></span>
+
+            <span data-toggle="tooltip" title="Close comment"
+                  ng-click="formMComment.formM.closeComment(comment, $index)" class="glyphicon glyphicon-remove"></span>
           </td>
         </tr>
       </tbody>

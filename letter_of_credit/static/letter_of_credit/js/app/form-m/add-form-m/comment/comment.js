@@ -38,8 +38,9 @@ function FormMCommentDirectiveController($scope, formFieldIsValid, kanmiiUndersc
   var vm = this
   vm.formM = formMObject
   var title = 'Add comment'
-  init()
+  var confirmationTitleLength = 40
 
+  init()
   function init(form) {
     vm.title = title
     vm.formM.showCommentForm = false
@@ -75,11 +76,11 @@ function FormMCommentDirectiveController($scope, formFieldIsValid, kanmiiUndersc
   }
 
   vm.trashComment = function trashComment(comment, $index) {
-    var text = '\n\nComment:\n' + comment.text
     console.log($index)
 
     confirmationDialog.showDialog({
-      text: 'Sure you want to delete comment:' + text, title: 'Delete comment for ' + comment.text.slice(0, 5)
+      text: 'Sure you want to delete comment:\n================================\n' + comment.text,
+      title: 'Delete comment "' + comment.text.slice(0, confirmationTitleLength) + '"'
     }).then(function (answer) {
       if (answer) {
       }
@@ -88,7 +89,7 @@ function FormMCommentDirectiveController($scope, formFieldIsValid, kanmiiUndersc
 
   vm.viewComment = function viewComment(comment) {
     confirmationDialog.showDialog({
-      title: 'View comment "' + comment.text.slice(0, 40) + '"',
+      title: 'View comment "' + comment.text.slice(0, confirmationTitleLength) + '"',
       text: comment.text,
       infoOnly: true
     })
@@ -96,7 +97,7 @@ function FormMCommentDirectiveController($scope, formFieldIsValid, kanmiiUndersc
 
   vm.editComment = function editComment() {
     confirmationDialog.showDialog({
-      title: 'Edit comment "' + vm.commentToEdit.text.slice(0, 40) + '"',
+      title: 'Edit comment "' + vm.commentToEdit.text.slice(0, confirmationTitleLength) + '"',
       text: 'Are you sure you want to edit comment:\n======================================\n' + vm.commentToEdit.text
     }).then(function (answer) {
       if (answer) doEdit()
@@ -106,10 +107,8 @@ function FormMCommentDirectiveController($scope, formFieldIsValid, kanmiiUndersc
     }
   }
 
-  vm.addComment = function addComment(text) {
-    formMObject.addComment(text).then(function (data) {
-      console.log(data)
-    })
+  vm.addComment = function addComment(text, commentForm) {
+    formMObject.addComment(text).then(function () { init(commentForm) })
   }
 
   $scope.$watch(function () {return formMObject}, function onFormMObjectChanged() {

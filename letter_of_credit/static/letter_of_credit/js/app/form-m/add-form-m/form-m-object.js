@@ -31,6 +31,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
   kanmiiUnderscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
   function Factory() {
     var self = this
+    var confirmationTitleLength = 40
 
     function setBids() {
       LcBidRequest.getPaginated({mf: self.number}).$promise.then(function (data) {
@@ -49,7 +50,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
     }
 
     function setComments(id) {
-      Comment.query({ct: self.ct_id, pk: id}).$promise.then(function (data) {
+      Comment.query({ct: self.ct_id, pk: id, not_deleted: true}).$promise.then(function (data) {
         self.comments = data
 
       }, function (xhr) {
@@ -368,10 +369,50 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
 
       Comment.save({content_type: self.ct_url, object_id: self._id, text: text})
         .$promise.then(function commentFormMSaveSuccess(data) {
+        var text = data.text
+
+        confirmationDialog.showDialog({
+          title: 'Comment successfully created "' + text.slice(0, confirmationTitleLength) + '"',
+          text: text,
+          infoOnly: true
+        })
+
+        self.comments.push(data)
         deferred.resolve(data)
 
       }, function (xhr) {
         xhrErrorDisplay(xhr)
+      })
+
+      return deferred.promise
+    }
+
+    self.closeComment = function closeComment(comment, $index) {
+      var deferred = $q.defer()
+      var text = comment.text
+
+      confirmationDialog.showDialog({
+        title: 'Close comment "' + text.slice(0, confirmationTitleLength) + '"',
+        text: 'Sure you want to close comment:\n===============================\n' + text
+      }).then(function (answer) {
+        if (answer) {
+          comment.deleted_at = (new Date()).toJSON()
+
+          Comment.put(comment).$promise.then(function commentFormMSaveSuccess(data) {
+
+            confirmationDialog.showDialog({
+              title: 'Comment successfully closed "' + text.slice(0, confirmationTitleLength) + '"',
+              text: text,
+              infoOnly: true
+            })
+
+            deferred.resolve(data)
+            self.comments.splice($index, 1)
+
+          }, function (xhr) {
+            xhrErrorDisplay(xhr)
+          })
+        }
       })
 
       return deferred.promise
