@@ -9,6 +9,7 @@ class Comment(models.Model):
     object_id = models.PositiveIntegerField()
     object_instance = GenericForeignKey('content_type', 'object_id')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Time created')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Time updated')
     deleted_at = models.DateTimeField('Time deleted', null=True, blank=True)
 
     class Meta:

@@ -544,7 +544,7 @@
 	        self.closedIssues = []
 
 	        /*
-	         *@param {angular.form.model} will hold data for comment we wish to create or edit
+	         *@param {angular.form.model} will hold text of comment we wish to create or edit
 	         */
 	        self.commentText = null
 
@@ -823,7 +823,7 @@
 	      return deferred.promise
 	    }
 
-	    self.closeComment = function closeComment(comment, $index) {
+	    self.closeComment = function closeComment(comment) {
 	      var deferred = $q.defer()
 	      var text = comment.text
 
@@ -834,8 +834,7 @@
 	        if (answer) {
 	          comment.deleted_at = (new Date()).toJSON()
 
-	          Comment.put(comment).$promise.then(function commentFormMSaveSuccess(data) {
-
+	          Comment.put(comment).$promise.then(function formMCommentCloseSuccess(data) {
 	            confirmationDialog.showDialog({
 	              title: 'Comment successfully closed "' + text.slice(0, confirmationTitleLength) + '"',
 	              text: text,
@@ -843,7 +842,53 @@
 	            })
 
 	            deferred.resolve(data)
-	            self.comments.splice($index, 1)
+	            var comments = []
+
+	            self.comments.forEach(function (comment) {
+	              if (comment.id === data.id) return
+	              comments.push(comment)
+	            })
+
+	            self.comments = comments
+
+	          }, function (xhr) {
+	            xhrErrorDisplay(xhr)
+	          })
+	        }
+	      })
+
+	      return deferred.promise
+	    }
+
+	    self.editComment = function editComment(text, comment) {
+	      var deferred = $q.defer()
+
+	      confirmationDialog.showDialog({
+	        title: 'Edit comment "' + comment.text.slice(0, confirmationTitleLength) + '"',
+	        text: 'Are you sure you want to edit comment:\n======================================\n' + comment.text
+
+	      }).then(function (answer) {
+	        if (answer) {
+	          comment.text = text
+
+	          Comment.put(comment).$promise.then(function formMCommentEditedSuccess(data) {
+	            confirmationDialog.showDialog({
+	              title: 'Comment successfully changed "' + text.slice(0, confirmationTitleLength) + '"',
+	              text: text,
+	              infoOnly: true
+	            })
+
+	            deferred.resolve(data)
+	            var comments = angular.copy(self.comments)
+
+	            for (var index = 0, len = comments.length; index < len; index++) {
+	              if (data.id === comments[index].id) {
+	                comments[index] = data
+	                break
+	              }
+	            }
+
+	            self.comments = comments
 
 	          }, function (xhr) {
 	            xhrErrorDisplay(xhr)
@@ -1369,7 +1414,7 @@
 	    vm.title = title
 	    vm.formM.showCommentForm = false
 	    vm.formM.showEditComment = false
-	    vm.commentToEdit = {}
+	    vm.commentToEdit = null
 	    formMObject.commentText = null
 
 	    if (form) resetForm2(form)
@@ -1390,25 +1435,12 @@
 	    return vm.commentToEdit.text === formMObject.commentText
 	  }
 
-	  vm.onCommentDblClick = function onCommentDblClick(comment, $index) {
+	  vm.onCommentDblClick = function onCommentDblClick(comment) {
 	    vm.formM.showEditComment = true
 	    vm.formM.showCommentForm = false
 	    vm.toggleShow()
 	    vm.commentToEdit = angular.copy(comment)
-	    vm.commentToEdit.$index = $index
 	    formMObject.commentText = vm.commentToEdit.text
-	  }
-
-	  vm.trashComment = function trashComment(comment, $index) {
-	    console.log($index)
-
-	    confirmationDialog.showDialog({
-	      text: 'Sure you want to delete comment:\n================================\n' + comment.text,
-	      title: 'Delete comment "' + comment.text.slice(0, confirmationTitleLength) + '"'
-	    }).then(function (answer) {
-	      if (answer) {
-	      }
-	    })
 	  }
 
 	  vm.viewComment = function viewComment(comment) {
@@ -1419,20 +1451,12 @@
 	    })
 	  }
 
-	  vm.editComment = function editComment() {
-	    confirmationDialog.showDialog({
-	      title: 'Edit comment "' + vm.commentToEdit.text.slice(0, confirmationTitleLength) + '"',
-	      text: 'Are you sure you want to edit comment:\n======================================\n' + vm.commentToEdit.text
-	    }).then(function (answer) {
-	      if (answer) doEdit()
-	    })
-
-	    function doEdit() {
-	    }
+	  vm.editComment = function editComment(text, form) {
+	    formMObject.editComment(text, vm.commentToEdit).then(function () {init(form)})
 	  }
 
-	  vm.addComment = function addComment(text, commentForm) {
-	    formMObject.addComment(text).then(function () { init(commentForm) })
+	  vm.addComment = function addComment(text, form) {
+	    formMObject.addComment(text).then(function () { init(form) })
 	  }
 
 	  $scope.$watch(function () {return formMObject}, function onFormMObjectChanged() {

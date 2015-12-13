@@ -11,6 +11,7 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
             'url',
             'content_type',
             'created_at',
+            'updated_at',
             'deleted_at',
             'object_id',
             'text',

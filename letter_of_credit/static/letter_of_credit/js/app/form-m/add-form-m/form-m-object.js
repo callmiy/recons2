@@ -108,7 +108,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         self.closedIssues = []
 
         /*
-         *@param {angular.form.model} will hold data for comment we wish to create or edit
+         *@param {angular.form.model} will hold text of comment we wish to create or edit
          */
         self.commentText = null
 
@@ -387,7 +387,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
       return deferred.promise
     }
 
-    self.closeComment = function closeComment(comment, $index) {
+    self.closeComment = function closeComment(comment) {
       var deferred = $q.defer()
       var text = comment.text
 
@@ -398,8 +398,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         if (answer) {
           comment.deleted_at = (new Date()).toJSON()
 
-          Comment.put(comment).$promise.then(function commentFormMSaveSuccess(data) {
-
+          Comment.put(comment).$promise.then(function formMCommentCloseSuccess(data) {
             confirmationDialog.showDialog({
               title: 'Comment successfully closed "' + text.slice(0, confirmationTitleLength) + '"',
               text: text,
@@ -407,7 +406,53 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
             })
 
             deferred.resolve(data)
-            self.comments.splice($index, 1)
+            var comments = []
+
+            self.comments.forEach(function (comment) {
+              if (comment.id === data.id) return
+              comments.push(comment)
+            })
+
+            self.comments = comments
+
+          }, function (xhr) {
+            xhrErrorDisplay(xhr)
+          })
+        }
+      })
+
+      return deferred.promise
+    }
+
+    self.editComment = function editComment(text, comment) {
+      var deferred = $q.defer()
+
+      confirmationDialog.showDialog({
+        title: 'Edit comment "' + comment.text.slice(0, confirmationTitleLength) + '"',
+        text: 'Are you sure you want to edit comment:\n======================================\n' + comment.text
+
+      }).then(function (answer) {
+        if (answer) {
+          comment.text = text
+
+          Comment.put(comment).$promise.then(function formMCommentEditedSuccess(data) {
+            confirmationDialog.showDialog({
+              title: 'Comment successfully changed "' + text.slice(0, confirmationTitleLength) + '"',
+              text: text,
+              infoOnly: true
+            })
+
+            deferred.resolve(data)
+            var comments = angular.copy(self.comments)
+
+            for (var index = 0, len = comments.length; index < len; index++) {
+              if (data.id === comments[index].id) {
+                comments[index] = data
+                break
+              }
+            }
+
+            self.comments = comments
 
           }, function (xhr) {
             xhrErrorDisplay(xhr)
