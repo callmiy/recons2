@@ -6,7 +6,7 @@ Feature: Store and manage form M issues
   I should be able to do this with the form M issues interface
 
   Background: I must be a logged in user
-    Given There is new form M request with form M data
+    Given There is form M request with form M data
     And There is currency in the system
     And I am logged in
     And I am at form M page

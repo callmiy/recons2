@@ -1,6 +1,12 @@
+from datetime import date
+
 from behave import *
+from selenium.webdriver import ActionChains
+
 from adhocmodels.factories import CustomerFactory
 import nose.tools as nt
+
+from letter_of_credit.factories import FormMFactory
 from letter_of_credit.models import FormM
 import time
 
@@ -12,15 +18,19 @@ def add_form_m_btn_is_disabled(context):
     return context.browser.driver.find_element_by_name(context.submit_btn_name).get_attribute('disabled')
 
 
-@given("There is new form M request with form M data")
+def get_element_attribute_value(context, element_name, attribute_name):
+    return context.browser.driver.find_element_by_name(element_name).get_attribute(attribute_name)
+
+
+@given("There is form M request with form M data")
 def step_impl(context):
     """
     :type context behave.runner.Context
     """
     context.form_m_data = dict(
-        number='MF20159999990',
-        amount=410252,
-        applicant='ACADEMIC PRESS LTD'
+            number='MF20159999990',
+            amount=410252,
+            applicant='ACADEMIC PRESS LTD'
     )
 
 
@@ -38,7 +48,7 @@ def step_impl(context):
     :type context: behave.runner.Context
     """
     if context.browser.is_element_present_by_name('addFormMForm', wait_time=1):
-        context.browser.fill('form-m-number', context.form_m_data['number'])
+        context.browser.fill('formMNumber', context.form_m_data['number'])
 
 
 @then("I notice that save button is disabled")
@@ -82,8 +92,8 @@ def step_impl(context):
     # This is the selector for type-ahead the drop-down
     context.type_ahead_css_selector = 'li[id^=typeahead-][id*=-option-]'
     nt.assert_true(
-        context.browser.is_element_present_by_css(context.type_ahead_css_selector, wait_time=0),
-        'There must be a drop-down containing text typed into the input field')
+            context.browser.is_element_present_by_css(context.type_ahead_css_selector, wait_time=0),
+            'There must be a drop-down containing text typed into the input field')
 
 
 @when("I click the first item in the drop down")
@@ -100,8 +110,9 @@ def step_impl(context):
     :type context: behave.runner.Context
     """
     nt.assert_false(
-        context.browser.is_element_present_by_css(context.type_ahead_css_selector, wait_time=0),
-        'The drop-down containing text typed into the input field must disappear after the drop-down is clicked on.')
+            context.browser.is_element_present_by_css(context.type_ahead_css_selector, wait_time=0),
+            'The drop-down containing text typed into the input field must disappear after the drop-down is clicked '
+            'on.')
 
 
 @step("I enter applicant's name in applicant field")
@@ -139,8 +150,9 @@ def step_impl(context):
 
 
 @step(
-    "I see that the text and border colour of original input field for applicant is now rgb'169, 68, 66' - indicating "
-    "form error")
+        "I see that the text and border colour of original input field for applicant is now rgb'169, 68, "
+        "66' - indicating "
+        "form error")
 def step_impl(context):
     """
     :type context: behave.runner.Context
@@ -170,8 +182,8 @@ def step_impl(context):
 
 
 @step(
-    "I see that the text and border colour of original input field for applicant is no longer rgb'169, 68, "
-    "66' - indicating that input is valid")
+        "I see that the text and border colour of original input field for applicant is no longer rgb'169, 68, "
+        "66' - indicating that input is valid")
 def step_impl(context):
     """
     :type context: behave.runner.Context
@@ -191,14 +203,14 @@ def step_impl(context):
     time.sleep(1)
 
     nt.assert_not_in(
-        '169, 68, 66',
-        context.applicant_input.value_of_css_property('color'),
-        "The text colour of applicant input must no longer be rgb(169, 68, 66) when input is valid")
+            '169, 68, 66',
+            context.applicant_input.value_of_css_property('color'),
+            "The text colour of applicant input must no longer be rgb(169, 68, 66) when input is valid")
 
     nt.assert_not_in(
-        '169, 68, 66',
-        context.applicant_input.value_of_css_property('border'),
-        "The border colour of applicant input must no longer be rgb(169, 68, 66) when applicant input is valid")
+            '169, 68, 66',
+            context.applicant_input.value_of_css_property('border'),
+            "The border colour of applicant input must no longer be rgb(169, 68, 66) when applicant input is valid")
 
 
 @when("I fill currency, amount and submit completed form")
@@ -268,9 +280,9 @@ def step_impl(context):
     """
     text = context.browser.find_by_css(context.active_tab_css_selector).first.text
     nt.eq_(
-        text,
-        'Form M',
-        'Active tab title must be: %s' % text
+            text,
+            'Form M',
+            'Active tab title must be: %s' % text
     )
 
 
@@ -288,8 +300,9 @@ def step_impl(context):
     :type context: behave.runner.Context
     """
     nt.assert_true(
-        context.browser.is_element_present_by_css(confirmation_dialog_css_selector),
-        'Dialog with css selector "%s" must pop up after form M successfully saved.' % confirmation_dialog_css_selector
+            context.browser.is_element_present_by_css(confirmation_dialog_css_selector),
+            'Dialog with css selector "%s" must pop up after form M successfully saved.' %
+            confirmation_dialog_css_selector
     )
 
 
@@ -299,9 +312,9 @@ def step_impl(context):
     :type context behave.runner.Context
     """
     nt.eq_(
-        context.browser.find_by_css(dialog_title_css_selector).first.text,
-        '"%s" successfully saved' % context.form_m_data['number'],
-        'Form M has been created and "success message must now be displayed in confirmation dialog title"')
+            context.browser.find_by_css(dialog_title_css_selector).first.text,
+            '"%s" successfully saved' % context.form_m_data['number'],
+            'Form M has been created and "success message must now be displayed in confirmation dialog title"')
 
 
 @step("I notice that dialog contains information about saved form M")
@@ -311,7 +324,6 @@ def step_impl(context):
     """
     # Will be reused in other steps
     context.confirmation_dialog = context.browser.find_by_css(confirmation_dialog_css_selector).first
-    text = context.confirmation_dialog.text
 
     # Will be reused in other steps
     context.confirmation_dialog_debug_message = "Confirmation dialog text is:\n%s\nand must contain text:\n%s"
@@ -320,17 +332,9 @@ def step_impl(context):
     form_m_number = context.form_m_data['number']
     applicant = context.form_m_data['applicant']
 
-    text1 = '%s - %s - %s' % (applicant, form_m_number, currency_amount)
-    nt.assert_in(text1, text, context.confirmation_dialog_debug_message % (text, text1))
-
-    text2 = 'Form M Number : %s' % form_m_number
-    nt.assert_in(text2, text, context.confirmation_dialog_debug_message % (text, text2))
-
-    text3 = 'Value         : %s' % currency_amount
-    nt.assert_in(text3, text, context.confirmation_dialog_debug_message % (text, text3))
-
-    text4 = 'Applicant     : %s' % applicant
-    nt.assert_in(text4, text, context.confirmation_dialog_debug_message % (text, text4))
+    text = '%s - %s - %s\n\nForm M Number : %s\nValue         : %s\nApplicant     : %s' % (
+        applicant, form_m_number, currency_amount, form_m_number, currency_amount, applicant)
+    nt.assert_in(text, context.confirmation_dialog.text)
 
 
 @step("confirm that there is one form M in the system")
@@ -339,9 +343,8 @@ def step_impl(context):
     :type context: behave.runner.Context
     """
     mf = FormM.objects.all()
-    nt.eq_(mf.count(), 1, "There must be exactly one form M in the system")
-    nt.eq_(mf[0].number, context.form_m_data['number'],
-           "Form m number in the system must be same as form M data we completed on the form")
+    nt.eq_(mf.count(), 1)
+    nt.eq_(mf[0].number, context.form_m_data['number'])
 
 
 @when("I click on dialog close button")
@@ -358,8 +361,8 @@ def step_impl(context):
     :type context: behave.runner.Context
     """
     nt.assert_false(
-        context.browser.is_element_present_by_css(confirmation_dialog_css_selector),
-        'Confirmation dialog must disappear from page when its close button is clicked.'
+            context.browser.is_element_present_by_css(confirmation_dialog_css_selector),
+            'Confirmation dialog must disappear from page when its close button is clicked.'
     )
 
 
@@ -369,9 +372,437 @@ def step_impl(context):
     :type context: behave.runner.Context
     """
     text = context.browser.find_by_css(context.active_tab_css_selector).first.text
-    text1 = 'Details of "%s"' % context.form_m_data['number']
+    nt.eq_(text, 'Details of "%s"' % context.form_m_data['number'])
+
+
+@step("form M already saved in the system")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    FormMFactory(number=context.form_m_data['number'], currency=context.currency, applicant=context.applicant,
+                 amount=context.form_m_data['amount'])
+
+
+@when("I fill 'Form M Number', 'Applicant', 'Currency', and 'Amount' fields and submit form")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    context.execute_steps(u"""
+    When I fill form M number field
+    Then I notice that save button is disabled
+    When I fill applicant field
+    Then I see a drop down containing the text I typed into the input field
+    When I click the first item in the drop down
+    Then I notice that the drop down has disappeared
+    Then I notice that save button is disabled
+    When I fill currency field
+    Then I notice that save button is disabled
+    When I fill amount field
+    Then I notice that save button is enabled
+    When I submit the completed form
+     """)
+
+
+@then("I see a dialog with title that says request did not succeed")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    dialog_title = "Request Not Completed"
     nt.eq_(
-        text,
-        text1,
-        """Tab title must change to '%s' after form M successfully created.""" % text
+            context.browser.find_by_css(dialog_title_css_selector).first.text,
+            dialog_title,
+            'Http post action was not successful and a dialog with title "%s" must be displayed after action' %
+            dialog_title)
+
+    context.error_dialog_css_selector = '.xhr-error.ui-dialog-content'
+
+
+@step("Dialog informs me that form M number must be unique")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_in('Error 400\nBAD REQUEST\nError in FORM M NUMBER\n- This field must be unique.',
+                 context.browser.find_by_css(context.error_dialog_css_selector).first.text)
+
+
+@step("I wish to change the form M number")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    context.form_number_to_changed_to = 'MF20159999991'
+
+
+@step("I see that 'Form M Number' field is empty")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.eq_(context.browser.find_by_name('formMNumber').first.value, '', "Form M number field must be empty")
+
+
+@step("I see that 'Applicant' field is empty")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.eq_(context.browser.find_by_name('applicant').first.value, '', "Applicant field must be empty")
+
+
+@step("I see that 'Currency' field is empty")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.eq_(context.browser.find_by_name('currency').first.value, '', "Currency field must be empty")
+
+
+@step("I see that 'Amount' field is empty")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.eq_(context.browser.find_by_name('amount').first.value, '', "Amount field must be empty")
+
+
+@step("I see that 'Date Received' field contains today's date")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.eq_(context.browser.find_by_name('receivedDate').first.value, date.today().strftime('%d-%b-%Y'))
+
+
+@step("I see that 'Form M Number' field is editable")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_false(get_element_attribute_value(context, 'formMNumber', 'readonly'))
+
+
+@step("I see that 'Applicant' field is editable")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_false(get_element_attribute_value(context, 'applicant', 'readonly'))
+
+
+@step("I see that 'Currency' field is editable")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_false(get_element_attribute_value(context, 'currency', 'readonly'))
+
+
+@step("I see that 'Amount' field is editable")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_false(get_element_attribute_value(context, 'amount', 'readonly'))
+
+
+@step("I see that 'Date Received' field is editable")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_false(get_element_attribute_value(context, 'receivedDate', 'readonly'))
+
+
+@step("I see that 'Form M Number' field has eye-open icon")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_true(
+            context.browser.is_element_present_by_css('.form-m-number-group .glyphicon-eye-open'),
+            "'Form M number' field must have eye-open icon"
     )
+    nt.assert_false(
+            context.browser.is_element_present_by_css('.form-m-number-group .glyphicon-pencil'),
+            "'Form M number' field must not have pencil icon"
+    )
+
+
+@step("I see that 'Applicant' field has eye-open icon")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_true(
+            context.browser.is_element_present_by_css('.applicant-group .glyphicon-eye-open'),
+            "'Applicant' field must have eye-open icon"
+    )
+    nt.assert_false(
+            context.browser.is_element_present_by_css('.applicant-group .glyphicon-pencil'),
+            "'Applicant' field must not have pencil icon"
+    )
+
+
+@step("I see that 'Currency' field has eye-open icon")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_true(
+            context.browser.is_element_present_by_css('.currency-group .glyphicon-eye-open'),
+            "'Currency' field must have eye-open icon"
+    )
+    nt.assert_false(
+            context.browser.is_element_present_by_css('.currency-group .glyphicon-pencil'),
+            "'Currency' field must not have pencil icon"
+    )
+
+
+@step("I see that 'Amount' field has eye-open icon")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_true(
+            context.browser.is_element_present_by_css('.amount-group .glyphicon-eye-open'),
+            "'Amount' field must have eye-open icon"
+    )
+    nt.assert_false(
+            context.browser.is_element_present_by_css('.amount-group .glyphicon-pencil'),
+            "'Amount' field must not have pencil icon"
+    )
+
+
+@step("I see that 'Date Received' field has eye-open icon")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_true(
+            context.browser.is_element_present_by_css('.received-date-group .glyphicon-eye-open'),
+            "'Date Received' field must have eye-open icon"
+    )
+    nt.assert_false(
+            context.browser.is_element_present_by_css('.received-date-group .glyphicon-pencil'),
+            "'Date Received' field must not have pencil icon"
+    )
+
+
+@when("I double click on the search icon of 'Search Form M' field")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    ActionChains(context.browser.driver).double_click(
+            context.browser.driver.find_element_by_id('form-m-search-trigger')).perform()
+
+
+@then("I see a dialog with title 'Search Form M'")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    if context.browser.is_element_present_by_css('search-form-m-root-container', wait_time=2):
+        nt.assert_is(
+                'Search Form M', context.browser.find_by_css(dialog_title_css_selector)
+        )
+
+
+@when("I fill field 'Search Form M Number' field with number of form M I wish to edit")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    context.browser.fill('searchUploadedFormMNumber', context.form_m_data['number'])
+
+
+@step("I click on 'Search Form M' button")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    context.browser.find_by_name('searchUploadedFormMSubmit').first.click()
+
+
+@then("I see that dialog with title 'Search Form M' has disappeared")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_false(context.browser.is_element_present_by_css('search-form-m-root-container', wait_time=2))
+
+
+@step("that tab title has changed to a text containing information about fetched form M")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.eq_(context.browser.find_by_css(context.active_tab_css_selector).first.text,
+           'Details of "%s"' % context.form_m_data['number'])
+
+
+@step("'Form M Number' field is now filled with fetched form M number")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.eq_(context.browser.find_by_name('formMNumber').first.value, context.form_m_data['number'])
+
+
+@step("'Applicant' field is now filled with fetched form M applicant")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.eq_(context.browser.find_by_name('applicant').first.value, context.form_m_data['applicant'])
+
+
+@step("'Currency' field is now filled with fetched form M currency code")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.eq_(context.browser.find_by_name('currency').first.value, context.currency.code)
+
+
+@step("'Amount' field is now filled with fetched form M amount")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.eq_(context.browser.find_by_name('amount').first.value, '{:,.2f}'.format(context.form_m_data['amount']))
+
+
+@step("'Form M Number' field is not editable")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_true(get_element_attribute_value(context, 'formMNumber', 'readonly'))
+
+
+@step("'Applicant' field is not editable")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_true(get_element_attribute_value(context, 'applicant', 'readonly'))
+
+
+@step("'Currency' field is not editable")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_true(get_element_attribute_value(context, 'currency', 'readonly'))
+
+
+@step("'Amount' field is not editable")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_true(get_element_attribute_value(context, 'amount', 'readonly'))
+
+
+@step("'Date Received' field is not editable")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_true(get_element_attribute_value(context, 'receivedDate', 'readonly'))
+
+
+@step("'Form M Number' field has pencil icon")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_false(
+            context.browser.is_element_present_by_css('.form-m-number-group .glyphicon-eye-open'),
+            "'Form M number' field must not have eye-open icon"
+    )
+    nt.assert_true(
+            context.browser.is_element_present_by_css('.form-m-number-group .glyphicon-pencil'),
+            "'Form M number' field must have pencil icon"
+    )
+
+
+@step("'Applicant' field has pencil icon")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_false(
+            context.browser.is_element_present_by_css('.applicant-group .glyphicon-eye-open'),
+            "'Applicant' field must not have eye-open icon"
+    )
+    nt.assert_true(
+            context.browser.is_element_present_by_css('.applicant-group .glyphicon-pencil'),
+            "'Applicant' field must have pencil icon"
+    )
+
+
+@step("'Currency' field has pencil icon")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_false(
+            context.browser.is_element_present_by_css('.currency-group .glyphicon-eye-open'),
+            "'Currency' field must not have eye-open icon"
+    )
+    nt.assert_true(
+            context.browser.is_element_present_by_css('.currency-group .glyphicon-pencil'),
+            "'Currency' field must have pencil icon"
+    )
+
+
+@step("'Amount' field has pencil icon")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_false(
+            context.browser.is_element_present_by_css('.amount-group .glyphicon-eye-open'),
+            "'Amount' field must not have eye-open icon"
+    )
+    nt.assert_true(
+            context.browser.is_element_present_by_css('.amount-group .glyphicon-pencil'),
+            "'Amount' field must have pencil icon"
+    )
+
+
+@step("'Date Received' field has pencil icon")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_false(
+            context.browser.is_element_present_by_css('.received-date-group .glyphicon-eye-open'),
+            "'Date Received' field must not have eye-open icon"
+    )
+    nt.assert_true(
+            context.browser.is_element_present_by_css('.received-date-group .glyphicon-pencil'),
+            "'Date Received' field must have pencil icon"
+    )
+
+
+@when("I click on pencil icon of form M number")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    context.browser.find_by_css('.form-m-number-group .glyphicon-pencil').first.click()
+
+
+@when("I fill form M number field with form number I want to change to")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    context.browser.fill('formMNumber', context.form_number_to_changed_to)

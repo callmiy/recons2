@@ -5,7 +5,7 @@ Feature: Add and manage form M cover
   I want to be able to save form M cover data in the system using the form M cover interface of form M detail interface
 
   Background: I must be a logged in user
-    Given There is new form M request with form M data
+    Given There is form M request with form M data
     And There is currency in the system
     And I am logged in
     And I am at form M page

@@ -6,7 +6,7 @@ Feature: Add a form M
   So I should be able to use the form M interface for this purpose
 
   Background: I must be a logged in user
-    Given There is new form M request with form M data
+    Given There is form M request with form M data
     And There is currency in the system
     And I am logged in
     And I am at form M page
@@ -50,3 +50,15 @@ Feature: Add a form M
     When I fill currency, amount and submit completed form
     # Multiple steps - from @customer_present
     Then I verify that the form M has been properly saved
+
+  @fill_form_m_uniqueness
+  Scenario: Fill form M - form M number must be unique
+    Given There is customer in the system
+    And form M already saved in the system
+    When I fill 'Form M Number', 'Applicant', 'Currency', and 'Amount' fields and submit form
+    Then I see a dialog with title that says request did not succeed
+    And Dialog informs me that form M number must be unique
+
+  Scenario: Fill form M - form M request date not today
+
+  Scenario: Fill form M - retrieve single window form M

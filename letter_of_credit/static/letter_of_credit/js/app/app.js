@@ -269,11 +269,13 @@
 	  '$state',
 	  '$scope',
 	  'confirmationDialog',
-	  'formMObject'
+	  'formMObject',
+	  'formMAttributesVerboseNames'
 	]
 
 	function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
-	  kanmiiUnderscore, xhrErrorDisplay, $stateParams, resetForm2, $state, $scope, confirmationDialog, formMObject) {
+	  kanmiiUnderscore, xhrErrorDisplay, $stateParams, resetForm2, $state, $scope, confirmationDialog, formMObject,
+	  formMAttributesVerboseNames) {
 	  var vm = this
 
 	  //1. fix summary for issues when form M saved
@@ -424,7 +426,7 @@
 	      $state.go('form_m.add', data)
 
 	    }, function saveFormMError(xhr) {
-	      xhrErrorDisplay(xhr)
+	      xhrErrorDisplay(xhr, formMAttributesVerboseNames)
 	    })
 	  }
 	}
@@ -2011,7 +2013,7 @@
 	          title: 'Search Form M',
 
 	          close: function() {
-	            modal.close.then()
+	            modal.controller.close()
 	          }
 	        })
 

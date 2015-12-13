@@ -6,11 +6,12 @@ Feature: Add Bid
   So I should be able to use bid interface to accomplish this
 
   Background: I must be a logged in user
-    Given There is new form M request with form M data
+    Given There is form M request with form M data
     And There is currency in the system
     And I am logged in
     And I am at form M page
 
+  @bid_add_basic
   Scenario: Fill a form M - add bid (basic)
     Given There is customer in the system
     And I notice the text 'Make Bid Request' with a down pointing arrow before the text

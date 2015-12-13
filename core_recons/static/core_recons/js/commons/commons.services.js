@@ -67,8 +67,8 @@ function formatDate() {
 }
 
 services.controller('XhrErrorDisplayCtrl', XhrErrorDisplayCtrl)
-XhrErrorDisplayCtrl.$inject = ['error', 'errorKeyMap']
-function XhrErrorDisplayCtrl(error, errorKeyMap) {
+XhrErrorDisplayCtrl.$inject = ['error', 'errorKeyMap', 'close']
+function XhrErrorDisplayCtrl(error, errorKeyMap, close) {
   error = angular.copy(error)
 
   console.log(error);//TODO: remove console logging
@@ -78,6 +78,7 @@ function XhrErrorDisplayCtrl(error, errorKeyMap) {
     this.errorKeyMap = errorKeyMap
   }
   this.error = error
+  this.close = close
 }
 
 services.factory('xhrErrorDisplay', xhrErrorDisplay)
@@ -94,7 +95,8 @@ function xhrErrorDisplay(ModalService) {
       modal.element.dialog({
         modal: true,
         dialogClass: 'no-close',
-        title: 'Request Not Completed'
+        title: 'Request Not Completed',
+        close: function() {modal.controller.close()}
       })
     }
   }

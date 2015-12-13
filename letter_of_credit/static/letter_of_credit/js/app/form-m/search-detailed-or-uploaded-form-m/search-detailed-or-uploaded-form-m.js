@@ -63,7 +63,7 @@ function SearchDetailedOrUploadedFormMService(UploadFormM, xhrErrorDisplay, Moda
           title: 'Search Form M',
 
           close: function() {
-            modal.close.then()
+            modal.controller.close()
           }
         })
 

@@ -12,7 +12,7 @@
             <div class="col-sm-9">
               <div class="input-group">
                 <span class="input-group-addon" data-toggle="tooltip" ng-dblclick="addFormMState.getUploadedFormM()"
-                      title="Search form M in single window">
+                      title="Search form M in single window" id="form-m-search-trigger">
                   <i class="glyphicon glyphicon-search"></i>
                 </span>
 
@@ -45,7 +45,7 @@
                 </span>
 
                 <input class="form-control" maxlength="13" id="form-m-number" required
-                       name="form-m-number" autocomplete="off"
+                       name="formMNumber" autocomplete="off"
                        to-upper ng-pattern="/mf\d{11}/i" ng-readonly="!addFormMState.fieldIsEditable.number"
                        ng-model="addFormMState.formM.number"/>
               </div>
@@ -131,7 +131,7 @@
                     ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.date_received, 'glyphicon-eye-open': addFormMState.fieldIsEditable.date_received}]"></i>
                 </span>
 
-                <input class="form-control" id="received-date" required
+                <input class="form-control" id="received-date" required name="receivedDate"
                        ng-model="addFormMState.formM.date_received"
                        ng-readonly="!addFormMState.fieldIsEditable.date_received"
                        uib-datepicker-popup="{$addFormMState.datePickerFormat$}"
