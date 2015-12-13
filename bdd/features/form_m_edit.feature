@@ -61,3 +61,46 @@ Feature: Edit form M
     And I notice that save button is disabled
     When I fill form M number field with form number I want to change to
     Then I notice that save button is enabled
+    When I submit the completed form
+    Then I see dialog that says form M that I changed to successfully saved
+    And I notice that dialog contains information about changed form M number
+    And Form M number that I changed to is now in the system
+    But Form M number that I changed from is no longer in the system
+    And Tab title has changed to a text containing information about form M I changed to
+
+  @edit_form_m_applicant
+  Scenario: Edit form M - edit applicant
+    Given There is customer in the system
+    And form M already saved in the system
+    But I wish to change the form M applicant
+    And I see that 'Form M Number' field is empty
+    And I see that 'Applicant' field is empty
+    And I see that 'Currency' field is empty
+    And I see that 'Amount' field is empty
+    And I see that 'Date Received' field contains today's date
+    And I see that 'Form M Number' field is editable
+    And I see that 'Applicant' field is editable
+    And I see that 'Currency' field is editable
+    And I see that 'Amount' field is editable
+    And I see that 'Date Received' field is editable
+    And I see that 'Form M Number' field has eye-open icon
+    And I see that 'Applicant' field has eye-open icon
+    And I see that 'Currency' field has eye-open icon
+    And I see that 'Amount' field has eye-open icon
+    And I see that 'Date Received' field has eye-open icon
+    Then I notice that save button is disabled
+    And that the tab title is 'Form M'
+    When I fetch the form M I wish to edit
+    When I click on pencil icon of form M applicant
+    Then I see that 'Form M applicant' field has eye-open icon
+    And I see that 'Form M applicant' field is editable
+    And I notice that save button is disabled
+    When I fill form M applicant field with applicant I want to change to
+    Then I see a drop down containing the text I typed into the input field
+    When I click the first item in the drop down
+    Then I notice that the drop down has disappeared
+    And I notice that save button is enabled
+    When I submit the completed form
+    Then I see the dialog title informing that form M was successfully saved
+    And I notice that dialog contains information about changed form M applicant
+    And Form M applicant that I changed to is now in the system

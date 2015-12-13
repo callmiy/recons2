@@ -12,6 +12,8 @@ import time
 
 confirmation_dialog_css_selector = '.confirmation-dialog>.content'
 dialog_title_css_selector = '.ui-dialog-title'
+form_m_saved_success_info_template = '{applicant} - {form_m_number} - {currency_amount}\n\nForm M Number : {' \
+                                     'form_m_number}\nValue         : {currency_amount}\nApplicant     : {applicant}'
 
 
 def add_form_m_btn_is_disabled(context):
@@ -328,12 +330,11 @@ def step_impl(context):
     # Will be reused in other steps
     context.confirmation_dialog_debug_message = "Confirmation dialog text is:\n%s\nand must contain text:\n%s"
 
-    currency_amount = '{} {:,.2f}'.format(context.currency.code, context.form_m_data['amount'])
-    form_m_number = context.form_m_data['number']
-    applicant = context.form_m_data['applicant']
-
-    text = '%s - %s - %s\n\nForm M Number : %s\nValue         : %s\nApplicant     : %s' % (
-        applicant, form_m_number, currency_amount, form_m_number, currency_amount, applicant)
+    text = form_m_saved_success_info_template.format(
+            applicant=context.form_m_data['applicant'],
+            form_m_number=context.form_m_data['number'],
+            currency_amount='{} {:,.2f}'.format(context.currency.code, context.form_m_data['amount'])
+    )
     nt.assert_in(text, context.confirmation_dialog.text)
 
 
@@ -371,8 +372,8 @@ def step_impl(context):
     """
     :type context: behave.runner.Context
     """
-    text = context.browser.find_by_css(context.active_tab_css_selector).first.text
-    nt.eq_(text, 'Details of "%s"' % context.form_m_data['number'])
+    nt.eq_(context.browser.find_by_css(context.active_tab_css_selector).first.text,
+           'Details of "%s"' % context.form_m_data['number'])
 
 
 @step("form M already saved in the system")
@@ -806,3 +807,150 @@ def step_impl(context):
     :type context: behave.runner.Context
     """
     context.browser.fill('formMNumber', context.form_number_to_changed_to)
+
+
+@then("I see dialog that says form M that I changed to successfully saved")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    if context.browser.is_element_present_by_css(confirmation_dialog_css_selector, wait_time=1):
+        nt.eq_(context.browser.find_by_css(dialog_title_css_selector).first.text,
+               '"%s" successfully saved' % context.form_number_to_changed_to)
+
+
+@step("I notice that dialog contains information about changed form M number")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    text = form_m_saved_success_info_template.format(
+            applicant=context.form_m_data['applicant'],
+            currency_amount='{} {:,.2f}'.format(context.currency.code, context.form_m_data['amount']),
+            form_m_number=context.form_number_to_changed_to)
+    nt.assert_in(text, context.browser.find_by_css(confirmation_dialog_css_selector).first.text)
+
+
+@step("Form M number that I changed to is now in the system")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_true(FormM.objects.filter(number=context.form_number_to_changed_to).exists(),
+                   'Form M number that I changed to "%s" must be in the system' % context.form_number_to_changed_to)
+
+
+@step("Form M number that I changed from is no longer in the system")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_false(FormM.objects.filter(number=context.form_m_data['number']).exists(),
+                    'Form M number that I changed from "%s" must not be in the system' % context.form_m_data['number'])
+
+
+@step("Tab title has changed to a text containing information about form M I changed to")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.eq_(context.browser.find_by_css(context.active_tab_css_selector).first.text,
+           'Details of "%s"' % context.form_number_to_changed_to)
+
+
+@step("I wish to change the form M applicant")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    context.applicant_to_change_to = 'APPLICANT TO CHANGE TO'
+    CustomerFactory(name=context.applicant_to_change_to)
+
+
+@when("I click on pencil icon of form M applicant")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    context.browser.find_by_css('.applicant-group .glyphicon-pencil').first.click()
+
+
+@then("I see that 'Form M applicant' field has eye-open icon")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_true(
+            context.browser.is_element_present_by_css('.applicant-group .glyphicon-eye-open'),
+            "'Form M applicant' field must have eye-open icon"
+    )
+    nt.assert_false(
+            context.browser.is_element_present_by_css('.applicant-group .glyphicon-pencil'),
+            "'Form M applicant' field must not have pencil icon"
+    )
+
+
+@step("I see that 'Form M applicant' field is editable")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.assert_false(get_element_attribute_value(context, 'applicant', 'readonly'))
+
+
+@when("I fill form M applicant field with applicant I want to change to")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    context.browser.fill('applicant', context.applicant_to_change_to[:-1])
+
+
+@when("I fetch the form M I wish to edit")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    context.execute_steps(u"""
+    When I double click on the search icon of 'Search Form M' field
+    Then I see a dialog with title 'Search Form M'
+    When I fill field 'Search Form M Number' field with number of form M I wish to edit
+    And I click on 'Search Form M' button
+    Then I see that dialog with title 'Search Form M' has disappeared
+    And that tab title has changed to a text containing information about fetched form M
+    And 'Form M Number' field is now filled with fetched form M number
+    And 'Applicant' field is now filled with fetched form M applicant
+    And 'Currency' field is now filled with fetched form M currency code
+    And 'Amount' field is now filled with fetched form M amount
+    And 'Form M Number' field is not editable
+    And 'Applicant' field is not editable
+    And 'Currency' field is not editable
+    And 'Amount' field is not editable
+    And 'Date Received' field is not editable
+    And 'Form M Number' field has pencil icon
+    And 'Applicant' field has pencil icon
+    And 'Currency' field has pencil icon
+    And 'Amount' field has pencil icon
+    And 'Date Received' field has pencil icon
+    And I notice that save button is disabled
+    """)
+
+
+@step("I notice that dialog contains information about changed form M applicant")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    text = form_m_saved_success_info_template.format(
+            applicant=context.applicant_to_change_to,
+            currency_amount='{} {:,.2f}'.format(context.currency.code, context.form_m_data['amount']),
+            form_m_number=context.form_m_data['number'])
+    nt.assert_in(text, context.browser.find_by_css(confirmation_dialog_css_selector).first.text)
+
+
+@step("Form M applicant that I changed to is now in the system")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    nt.eq_(FormM.objects.get(number=context.form_m_data['number']).applicant.name, context.applicant_to_change_to)
