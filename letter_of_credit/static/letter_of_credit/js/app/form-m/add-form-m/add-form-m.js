@@ -165,8 +165,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     return false
   }
 
-  vm.reset = reset
-  function reset(addFormMForm) {
+  vm.reset = function reset(addFormMForm) {
     vm.detailedFormM = null
 
     resetForm2(addFormMForm, [
@@ -180,7 +179,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   vm.getApplicant = getTypeAheadCustomer
   vm.getCurrency = getTypeAheadCurrency
-
   vm.datePickerFormat = 'dd-MMM-yyyy'
   vm.datePickerIsOpen = false
   vm.openDatePicker = function openDatePicker() {

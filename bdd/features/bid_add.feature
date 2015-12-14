@@ -14,8 +14,8 @@ Feature: Add Bid
   @bid_add_basic
   Scenario: Fill a form M - add bid (basic)
     Given There is customer in the system
-    And I notice the text 'Make Bid Request' with a down pointing arrow before the text
-    When I click any where in the box that contains the text 'Make Bid Request'
+    And I notice the text 'New Bid Request' with a down pointing arrow before the text
+    When I click any where in the box that contains the text 'New Bid Request'
     Then I notice that there is no bid form visible
     When I fill form M number field
     Then I notice that save button is disabled
@@ -25,8 +25,8 @@ Feature: Add Bid
     When I fill currency field
     When I fill amount field
     Then I notice that save button is enabled
-    When I click any where in the box that contains the text 'Make Bid Request'
-    Then I notice that the text 'Make Bid Request' has changed to 'Dismiss' and there is now an upward pointing arrow
+    When I click any where in the box that contains the text 'New Bid Request'
+    Then I notice that the text 'New Bid Request' has changed to 'Dismiss' and there is now an upward pointing arrow
     And Bid form is now visible
     And I notice that the bid form amount field contains the same value as form M form amount field
     And bid form goods description field is empty

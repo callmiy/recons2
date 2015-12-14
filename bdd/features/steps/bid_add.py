@@ -5,7 +5,7 @@ import nose.tools as nt
 use_step_matcher("re")
 
 
-@given("I notice the text 'Make Bid Request' with a down pointing arrow before the text")
+@given("I notice the text 'New Bid Request' with a down pointing arrow before the text")
 def step_impl(context):
     """
     :type context: behave.runner.Context
@@ -13,7 +13,7 @@ def step_impl(context):
     context.bid_show_icon = context.browser.find_by_css('.form-m-bid-add-on-show-icon').first
     text = context.bid_show_icon.text
     nt.assert_in(
-        'Make Bid Request',
+        'New Bid Request',
         text,
         'Bid show icon must contain the text "%s" when this ui element has not been interacted with.' % text)
     nt.assert_true(
@@ -23,7 +23,7 @@ def step_impl(context):
     )
 
 
-@when("I click any where in the box that contains the text 'Make Bid Request'")
+@when("I click any where in the box that contains the text 'New Bid Request'")
 def step_impl(context):
     """
     :type context: behave.runner.Context
@@ -40,7 +40,7 @@ def step_impl(context):
     nt.assert_false(context.bid_form.visible, 'The bid form must not be visible until form M form is completed.')
 
 
-@then("I notice that the text 'Make Bid Request' has changed to 'Dismiss' and there is now an upward pointing arrow")
+@then("I notice that the text 'New Bid Request' has changed to 'Dismiss' and there is now an upward pointing arrow")
 def step_impl(context):
     """
     :type context: behave.runner.Context
@@ -48,9 +48,9 @@ def step_impl(context):
     text = context.bid_show_icon.text
 
     nt.assert_not_in(
-        'Make Bid Request',
+        'New Bid Request',
         text,
-        'Bid show icon must not contain the text "Make Bid Request" when bid form is visible, but instead contain '
+        'Bid show icon must not contain the text "New Bid Request" when bid form is visible, but instead contain '
         'text "%s".' % text)
 
     nt.assert_in(

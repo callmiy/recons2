@@ -28,17 +28,22 @@ LcBidDirectiveController.$inject = [
   'xhrErrorDisplay',
   'confirmationDialog',
   'formMObject',
-  'resetForm2'
+  'resetForm2',
+  'moment'
 ]
 
 function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnderscore, LcBidRequest, xhrErrorDisplay,
-  confirmationDialog, formMObject, resetForm2) {
+  confirmationDialog, formMObject, resetForm2, moment) {
   var vm = this
   vm.formM = formMObject
-  var title = 'Make Bid Request'
-  init()
+  var title = 'New Bid Request'
 
+  init()
   function init(form) {
+    vm.datePickerIsOpen = {
+      bidRequestedDate: false,
+      bidCreatedDate: false
+    }
     vm.title = title
     vm.formM.showBidForm = false
     vm.formM.showEditBid = false
@@ -46,6 +51,12 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
     formMObject.bid = {}
 
     if (form) resetForm2(form)
+  }
+
+  vm.openDatePicker = function openDatePicker(prop) {
+    kanmiiUnderscore.each(vm.datePickerIsOpen, function (val, key) {
+      vm.datePickerIsOpen[key] = prop === key
+    })
   }
 
   vm.isValid = function (name, validity) {
@@ -79,17 +90,36 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
     return kanmiiUnderscore.all(bidNotModified())
   }
 
+  function copyBidForEdit() {
+    vm.bidToEdit.amount = Number(vm.bidToEdit.amount)
+    vm.formM.bid.amount = vm.bidToEdit.amount
+    vm.formM.bid.downloaded = vm.bidToEdit.downloaded
+    vm.bidToEdit.created_at = new Date(vm.bidToEdit.created_at)
+    vm.formM.bid.created_at = vm.bidToEdit.created_at
+    vm.bidToEdit.requested_at = vm.bidToEdit.requested_at ? new Date(vm.bidToEdit.requested_at) : null
+    vm.formM.bid.requested_at = vm.bidToEdit.requested_at
+  }
+
+  function toHumanDate(dtObj) {
+    return dtObj ? moment(dtObj).format('DD-MMM-YYYY') : null
+  }
+
+  function toISODate(dtObj) {
+    return dtObj ? moment(dtObj).format('YYYY-MM-DD') : null
+  }
+
   vm.onBidDblClick = function onBidDblClick(bid, $index) {
     vm.formM.showEditBid = true
     vm.formM.showBidForm = false
     vm.toggleShow()
     vm.bidToEdit = angular.copy(bid)
-    vm.bidToEdit.amount = Number(vm.bidToEdit.amount)
     vm.bidToEdit.$index = $index
-    vm.formM.bid.amount = vm.bidToEdit.amount
+    copyBidForEdit()
   }
 
   vm.trashBid = function trashBid(bid, $index) {
+    if (formMObject.showBidForm || formMObject.showEditBid) return
+
     var text = '\n\nApplicant: ' + bid.applicant +
       '\nForm M: ' + bid.form_m_number +
       '\nBid Amount: ' + bid.currency + ' ' + $filter('number')(bid.amount, 2)
@@ -119,35 +149,58 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
 
   vm.editBid = function editBid() {
     var title = 'Edit bid "' + vm.bidToEdit.form_m_number + '"'
-
     var ccy = formMObject.currency.code
-    var text = '\n\nForm M:           ' + vm.bidToEdit.form_m_number +
-      '\nBid Amount' +
-      '\n  before edit:    ' + ccy + $filter('number')(vm.bidToEdit.amount, 2) +
-      '\n  after edit:     ' + ccy + $filter('number')(vm.formM.bid.amount, 2) +
-      '\nGoods description' +
-      '\n  before edit:    ' + vm.bidToEdit.goods_description +
-      '\n\n  after edit:     ' + vm.formM.bid.goods_description
+    var text = '\n\nForm M:           ' + vm.bidToEdit.form_m_number
+
+    if (vm.bidToEdit.amount !== formMObject.bid.amount) {
+      text += '\nBid Amount' +
+        '\n  before edit:    ' + ccy + $filter('number')(vm.bidToEdit.amount, 2) +
+        '\n  after edit:     ' + ccy + $filter('number')(formMObject.bid.amount, 2)
+    }
+
+    if (vm.bidToEdit.goods_description !== formMObject.bid.goods_description) {
+      text += '\nGoods description' +
+        '\n  before edit:    ' + vm.bidToEdit.goods_description +
+        '\n  after edit:     ' + formMObject.bid.goods_description
+    }
+
+    if (!angular.equals(vm.bidToEdit.created_at, formMObject.bid.created_at)) {
+      text += '\nDate created' +
+        '\n  before edit:    ' + toHumanDate(vm.bidToEdit.created_at) +
+        '\n  after edit:     ' + toHumanDate(formMObject.bid.created_at)
+    }
+
+    if (!angular.equals(vm.bidToEdit.requested_at, formMObject.bid.requested_at)) {
+      text += '\nDate requested' +
+        '\n  before edit:    ' + toHumanDate(vm.bidToEdit.requested_at) +
+        '\n  after edit:     ' + toHumanDate(formMObject.bid.requested_at)
+    }
+
+    if (vm.bidToEdit.downloaded !== formMObject.bid.downloaded) {
+      text += '\nDownloaded' +
+        '\n  before edit:    ' + vm.bidToEdit.downloaded +
+        '\n  after edit:     ' + vm.formM.bid.downloaded
+    }
 
     confirmationDialog.showDialog({
       title: title,
       text: 'Are you sure you want to edit Bid:' + text
     }).then(function (answer) {
       if (answer) doEdit()
+      else copyBidForEdit()
     })
 
     function doEdit() {
       var bid = angular.copy(vm.bidToEdit)
-      bid.amount = vm.formM.bid.amount
-      bid.goods_description = formMObject.bid.goods_description
 
-      //we need to do this so this bid can show up at the bid list interface in case user wishes to download and
-      //send the bid to treasury
-      bid.requested_at = null
+      kanmiiUnderscore.each(formMObject.bid, function (val, key) {
+        if (key === 'created_at' || key === 'requested_at') val = toISODate(val)
+        bid[key] = val
+      })
 
       LcBidRequest.put(bid).$promise.then(function () {
         confirmationDialog.showDialog({title: title, text: 'Edit successful: ' + text, infoOnly: true})
-        vm.formM.existingBids.splice(bid.$index, 1, bid)
+        formMObject.existingBids.splice(bid.$index, 1, bid)
         init()
       }, function (xhr) {
         xhrErrorDisplay(xhr)
@@ -158,17 +211,18 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
   function bidNotModified() {
     return {
       amount: vm.bidToEdit.amount === formMObject.bid.amount,
-      goods_description: vm.bidToEdit.goods_description === formMObject.bid.goods_description
+      goods_description: vm.bidToEdit.goods_description === formMObject.bid.goods_description,
+      downloaded: vm.bidToEdit.downloaded === formMObject.bid.downloaded,
+      created_at: angular.equals(vm.bidToEdit.created_at, formMObject.bid.created_at),
+      requested_at: angular.equals(vm.bidToEdit.requested_at, formMObject.bid.requested_at)
     }
   }
 
   $scope.$watch(function () {return formMObject}, function onFormMObjectChanged(formM) {
     formMObject.bidForm = $scope.bidForm
 
-    if(formM){
-      if (!formM.amount || !formM.number) {
-        init(formMObject.bidForm)
-      }
+    if (formM) {
+      if (!formM.amount || !formM.number) init(formMObject.bidForm)
     }
   }, true)
 }

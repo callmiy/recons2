@@ -63,11 +63,6 @@ function UploadFormMController(UploadFormM, xhrErrorDisplay, kanmiiUnderscore, $
     doDismiss()
   }
 
-  vm.dismissIndicatorEvent = function dismissIndicatorEvent($event) {
-    console.log($event)
-    if ($event && $event.keyCode === 27) doDismiss()
-  }
-
   vm.uploadFormM = function uploadFormM(text) {
     vm.formMIsUploading = true
     vm.formMShowIndicator = true

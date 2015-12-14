@@ -134,7 +134,7 @@
                 <input class="form-control" id="received-date" required name="receivedDate"
                        ng-model="addFormMState.formM.date_received"
                        ng-readonly="!addFormMState.fieldIsEditable.date_received"
-                       uib-datepicker-popup="{$addFormMState.datePickerFormat$}"
+                       uib-datepicker-popup="{$addFormMState.formM.datePickerFormat$}"
                        is-open="addFormMState.datePickerIsOpen"/>
 
                 <span class="input-group-addon" ng-click="addFormMState.openDatePicker($event)"

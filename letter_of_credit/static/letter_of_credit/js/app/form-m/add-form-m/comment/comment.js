@@ -54,7 +54,7 @@ function FormMCommentDirectiveController($scope, formFieldIsValid, kanmiiUndersc
   vm.isValid = function (name, validity) { return formFieldIsValid($scope, 'commentForm', name, validity) }
 
   vm.toggleShow = function toggleShow(form) {
-    vm.formM.showCommentForm = vm.formM.amount && vm.formM.number && !vm.formM.showCommentForm
+    vm.formM.showCommentForm = formMObject._id && !vm.formM.showCommentForm
 
     if (!vm.formM.showCommentForm) init(form)
     else vm.title = 'Dismiss'
@@ -90,7 +90,11 @@ function FormMCommentDirectiveController($scope, formFieldIsValid, kanmiiUndersc
     formMObject.addComment(text).then(function () { init(form) })
   }
 
-  $scope.$watch(function () {return formMObject}, function onFormMObjectChanged() {
+  $scope.$watch(function () {return formMObject}, function onFormMObjectChanged(formM) {
     formMObject.commentForm = $scope.commentForm
+
+    if (formM) {
+      if (!formM.amount || !formM.number) init(formMObject.commentForm)
+    }
   }, true)
 }

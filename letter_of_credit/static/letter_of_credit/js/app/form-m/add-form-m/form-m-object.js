@@ -31,6 +31,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
   kanmiiUnderscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
   function Factory() {
     var self = this
+    self.datePickerFormat = 'dd-MMM-yyyy'
     var confirmationTitleLength = 40
 
     function setBids() {
@@ -167,6 +168,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         self.form_m_issues = null
         self.url = null
         self.ct_id = null
+        self._id = null
       }
 
       if (detailedFormM) {

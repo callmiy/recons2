@@ -2,9 +2,9 @@
 
 var rootCommons = require('commons')
 
-angular.module('kanmii-underscore', []).factory('kanmiiUnderscore', function() { return window._ })
+angular.module('kanmii-underscore', []).factory('kanmiiUnderscore', function () { return window._ })
 
-angular.module('kanmii-URI', []).factory('kanmiiUri', function() { return window.URI })
+angular.module('kanmii-URI', []).factory('kanmiiUri', function () { return window.URI })
 
 var app = angular.module('rootApp', [
   'ngRoute',
@@ -16,6 +16,8 @@ var app = angular.module('rootApp', [
   'toggle-dim-element'
 ])
 rootCommons.setStaticPrefix(app)
+
+app.factory('moment', function () { return require('moment') })
 
 app.factory('resetForm', resetForm)
 function resetForm() {
@@ -29,7 +31,7 @@ function resetForm() {
    * @param cb - optional callback
    */
   function reset(form, el, selector, cb) {
-    el.find(selector).each(function() {
+    el.find(selector).each(function () {
       $(this).val('')
     })
 
@@ -48,7 +50,7 @@ function clearFormField() {
   /**
    * this is a hack required to clear form controls where ng-model is a complex object and the control did not validate.
    */
-  return function(form, field) {
+  return function (form, field) {
     form[field].$$lastCommittedViewValue = ''
     form[field].$rollbackViewValue()
   }
@@ -69,9 +71,9 @@ function resetForm2(clearFormField) {
     form.$setUntouched()
 
     if (clearForm) {
-      clearForm.forEach(function(obj) {
+      clearForm.forEach(function (obj) {
         var theForm = obj.form
-        obj.elements.forEach(function(element) {
+        obj.elements.forEach(function (element) {
           clearFormField(theForm, element)
         })
       })
@@ -91,7 +93,7 @@ function formFieldIsValid() {
    * @returns {boolean}
    */
 
-  return function($scope, form, name, validity) {
+  return function ($scope, form, name, validity) {
     var field = $scope[form][name]
     return field.$dirty && field[validity === 'ok' ? '$valid' : '$invalid']
   }
