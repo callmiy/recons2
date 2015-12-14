@@ -17,18 +17,35 @@
     }
 
     .upload-form-m-indicator {
+      border: 2px solid #4E4E4E;
+      padding: 5px;
+      border-radius: 5px;
       position: absolute;
-      top: 40%;
-      left: 15%;
+      top: 10%;
+      left: 25%;
       z-index: 10000;
       font-size: 25px;
       font-weight: 900;
       color: #0F5B71;
-      padding: 0;
       margin: 0;
       background-color: initial;
-      border: 0;
-      border-radius: 0;
+
+      &.error-indicator {
+        color: red
+      }
+
+      & > .dismiss {
+        position: absolute;
+        top: -10px;
+        right: 0;
+        font-size: 20px;
+        color: white;
+        border-radius: 3px;
+        border: 1px solid black;
+        background-color: black;
+        cursor: pointer;
+        padding: 3px 3px 0 3px;
+      }
     }
   }
 }

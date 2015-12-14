@@ -2358,13 +2358,16 @@
 	}
 
 	app.controller('UploadFormMController', UploadFormMController)
-	UploadFormMController.$inject = ['UploadFormM', '$timeout', 'kanmiiUnderscore']
+	UploadFormMController.$inject = ['UploadFormM', 'xhrErrorDisplay', 'kanmiiUnderscore', '$scope']
 
-	function UploadFormMController(UploadFormM, $timeout, kanmiiUnderscore) {
+	function UploadFormMController(UploadFormM, xhrErrorDisplay, kanmiiUnderscore, $scope) {
 	  var vm = this
+	  vm.datePrompt = 'Date must be in format dd-mm-yyyy e.g 31-01-2015'
 
 	  initial()
 	  function initial(form) {
+	    vm.formMShowIndicator = false
+	    vm.indicateError = false
 	    vm.formMIsUploading = false
 	    vm.uploadIndicationText = 'Uploading Form Ms.........please wait'
 	    vm.uploadFormMText = ''
@@ -2375,75 +2378,107 @@
 	    }
 	  }
 
-	  vm.uploadFormM = function uploadFormM(text, uploadFormMForm) {
-	    vm.formMIsUploading = true
+	  function doDismiss() {
+	    vm.formMShowIndicator = false
+	    if (vm.formMIsUploading) initial($scope.uploadFormMForm)
+	  }
 
+	  vm.dismissIndicator = function dismissIndicator() {
+	    doDismiss()
+	  }
+
+	  vm.dismissIndicatorEvent = function dismissIndicatorEvent($event) {
+	    console.log($event)
+	    if ($event && $event.keyCode === 27) doDismiss()
+	  }
+
+	  vm.uploadFormM = function uploadFormM(text) {
+	    vm.formMIsUploading = true
+	    vm.formMShowIndicator = true
 	    var uploaded = {}
 	    var row
 	    var mf
 	    var formM
 	    var ba
+	    var dt
 
 	    function parseDate(dt) {
-	      var exec = /(\d{2})\D(\d{1,2})\D(\d{4})/.exec(dt)
-	      return exec[3] + '-' + exec[1] + '-' + exec[2]
+	      var regExp = /(\d{2})\D(\d{1,2})\D(\d{4})/
+	      var exec = regExp.exec(dt)
+
+	      if (!exec) return null
+
+	      var month = +exec[2].trim()
+
+	      if (month > 12) return null
+
+	      return exec[3] + '-' + month + '-' + exec[1]
 	    }
 
-	    Papa.parse(text, {
-	      delimiter: '\t',
-	      header: true,
-	      step: function (data) {
-	        row = data.data[0]
-	        mf = row['MF NUM'].trim()
-	        ba = row['BA NUM'].trim()
-	        formM = {
-	          ba: ba,
-	          mf: mf,
-	          ccy: row.CURRENCY.trim(),
-	          applicant: row['APPLICANT NAME'].trim(),
-	          fob: row.FOB.replace(/[,\s]/g, ''),
-	          cost_freight: row['COST AND FREIGHT'].replace(/[,\s]/g, ''),
-	          submitted_at: parseDate(row['DATE SUBMITTED']),
-	          validated_at: parseDate(row['DATE SUBMITTED']),
-	          goods_description: row.DESCS.trim()
+	    try {
+	      Papa.parse(text, {
+	        delimiter: '\t',
+	        header: true,
+	        step: function (data) {
+	          row = data.data[0]
+	          mf = row['MF NUM'].trim()
+	          ba = row['BA NUM'].trim()
+	          dt = parseDate(row['DATE SUBMITTED'])
+
+	          if (!dt) throw new Error('Error in form M date: "' + mf + '"\n' + vm.datePrompt)
+
+	          formM = {
+	            ba: ba,
+	            mf: mf,
+	            ccy: row.CURRENCY.trim(),
+	            applicant: row['APPLICANT NAME'].trim(),
+	            fob: row.FOB.replace(/[,\s]/g, ''),
+	            cost_freight: row['COST AND FREIGHT'].replace(/[,\s]/g, ''),
+	            submitted_at: dt,
+	            validated_at: dt,
+	            goods_description: row.DESCS.trim()
+	          }
+
+	          if (kanmiiUnderscore.has(uploaded, mf)) {
+	            if (row.STAX.trim() === 'Validated') {
+	              formM.submitted_at = uploaded[mf].submitted_at
+	              uploaded[mf] = formM
+
+	            } else if (row.STAX.trim() === 'Submitted') uploaded[mf].submitted_at = formM.submitted_at
+
+	          } else {
+	            if (ba.length === 16) uploaded[mf] = formM
+	          }
 	        }
+	      })
+	    } catch (e) {
+	      vm.formMIsUploading = false
+	      vm.indicateError = true
+	      vm.uploadIndicationText = e.message
+	      return
+	    }
 
-	        if (kanmiiUnderscore.has(uploaded, mf)) {
-	          if (row.STAX.trim() === 'Validated') {
-	            formM.submitted_at = uploaded[mf].submitted_at
-	            uploaded[mf] = formM
-
-	          } else if (row.STAX.trim() === 'Submitted') uploaded[mf].submitted_at = formM.submitted_at
-
-	        } else {
-	          if (ba.length === 16) uploaded[mf] = formM
-	        }
-	      }
-	    })
-
-	    UploadFormM.save({uploaded: kanmiiUnderscore.values(uploaded), likely_duplicates: true})
+	    var uploaded1 = kanmiiUnderscore.values(uploaded)
+	    UploadFormM.save({uploaded: uploaded1, likely_duplicates: true})
 	      .$promise.then(formMCreatedSuccess, formMCreatedError)
 
 	    function formMCreatedSuccess(data) {
 	      var creationResult = data.created_data,
 	        numCreatedNow = creationResult.length,
-	        numCreatedPreviously = uploaded.length - numCreatedNow
+	        numCreatedPreviously = uploaded1.length - numCreatedNow
 
-	      vm.uploadIndicationText = 'Done Upload form Ms\n' +
-	        '=========================\n' +
+	      vm.uploadIndicationText = 'Done Uploading form Ms\n======================\n' +
 	        'Total new form Ms created: ' + numCreatedNow + '\n'
 	      if (numCreatedPreviously) {
-	        vm.uploadIndicationText += ('Total not created (because uploaded previously): ' + numCreatedPreviously)
+	        vm.uploadIndicationText += ('Total not created (uploaded previously): ' + numCreatedPreviously)
 	      }
-
-	      $timeout(function () {
-	        initial(uploadFormMForm)
-	      }, 4500)
 	    }
 
 	    function formMCreatedError(xhr) {
+	      vm.formMIsUploading = false
+	      vm.indicateError = true
 	      vm.uploadIndicationText = 'Error uploading form!'
-	      console.log(xhr);
+	      xhrErrorDisplay(xhr)
 	    }
 	  }
 	}
@@ -2566,7 +2601,7 @@
 /* 22 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"upload-form-m-tab-content\"><form class=\"upload-form-m-form\" role=\"form\" name=\"uploadFormMForm\" ng-submit=\"uploadFormM.uploadFormM(uploadFormM.uploadFormMText, uploadFormMForm)\"><div class=\"form-group upload-form-m-text-group\"><pre class=\"upload-form-m-indicator\" ng-show=\"uploadFormM.formMIsUploading\">\r\n        {$uploadFormM.uploadIndicationText$}\r\n      </pre><label for=\"upload-form-m\" class=\"control-label sr-only\">Copy and paste form M</label> <textarea name=\"upload-form-m\" id=\"upload-form-m\" required=\"\" ng-model=\"uploadFormM.uploadFormMText\" ng-class=\"['form-control', 'upload-form-m', {'form-m-is-uploading':uploadFormM.formMIsUploading}]\" ng-readonly=\"uploadFormM.formMIsUploading\"></textarea></div><div class=\"upload-form-m-submit\" style=\"text-align: center\"><button type=\"submit\" class=\"btn btn-success\" ng-disabled=\"uploadFormMForm.$invalid || uploadFormM.formMIsUploading\">Upload</button></div></form></div>";
+	module.exports = "<div class=\"upload-form-m-tab-content\" ng-keypress=\"uploadFormM.dismissIndicatorEvent($event)\"><form class=\"upload-form-m-form\" role=\"form\" name=\"uploadFormMForm\" ng-submit=\"uploadFormM.uploadFormM(uploadFormM.uploadFormMText, uploadFormMForm)\"><div class=\"form-group upload-form-m-text-group\"><pre ng-class=\"['upload-form-m-indicator', {'error-indicator': uploadFormM.indicateError}]\" ng-show=\"uploadFormM.formMShowIndicator\">{$uploadFormM.uploadIndicationText$}\r\n        <span class=\"dismiss\" data-toggle=\"tooltip\" title=\"Dismiss\" ng-click=\"uploadFormM.dismissIndicator()\">x</span>\r\n      </pre><label for=\"upload-form-m\" class=\"control-label\">{$uploadFormM.datePrompt$}</label> <textarea name=\"upload-form-m\" id=\"upload-form-m\" required=\"\" ng-model=\"uploadFormM.uploadFormMText\" ng-class=\"['form-control', 'upload-form-m', {'form-m-is-uploading':uploadFormM.formMIsUploading}]\" ng-readonly=\"uploadFormM.formMIsUploading\"></textarea></div><div class=\"upload-form-m-submit\" style=\"text-align: center\"><button type=\"submit\" class=\"btn btn-success\" ng-disabled=\"uploadFormMForm.$invalid || uploadFormM.formMIsUploading\">Upload</button></div></form></div>";
 
 /***/ },
 /* 23 */

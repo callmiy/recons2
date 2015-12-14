@@ -1,17 +1,20 @@
-<div class="upload-form-m-tab-content">
+<div class="upload-form-m-tab-content" ng-keypress="uploadFormM.dismissIndicatorEvent($event)">
   <form class="upload-form-m-form" role="form" name="uploadFormMForm"
         ng-submit="uploadFormM.uploadFormM(uploadFormM.uploadFormMText, uploadFormMForm)">
     <div class="form-group upload-form-m-text-group">
-      <pre class="upload-form-m-indicator" ng-show="uploadFormM.formMIsUploading">
-        {$uploadFormM.uploadIndicationText$}
+
+      <pre ng-class="['upload-form-m-indicator', {'error-indicator': uploadFormM.indicateError}]"
+           ng-show="uploadFormM.formMShowIndicator">{$uploadFormM.uploadIndicationText$}
+        <span class="dismiss" data-toggle="tooltip" title="Dismiss" ng-click="uploadFormM.dismissIndicator()">x</span>
       </pre>
 
-      <label for="upload-form-m" class="control-label sr-only">Copy and paste form M</label>
+      <label for="upload-form-m" class="control-label">{$uploadFormM.datePrompt$}</label>
 
       <textarea name="upload-form-m" id="upload-form-m" required ng-model="uploadFormM.uploadFormMText"
                 ng-class="['form-control', 'upload-form-m', {'form-m-is-uploading':uploadFormM.formMIsUploading}]"
                 ng-readonly="uploadFormM.formMIsUploading"></textarea>
     </div>
+
     <div class="upload-form-m-submit" style="text-align: center">
       <button type="submit" class="btn btn-success"
               ng-disabled="uploadFormMForm.$invalid || uploadFormM.formMIsUploading">
