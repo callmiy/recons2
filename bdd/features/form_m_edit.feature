@@ -69,25 +69,10 @@ Feature: Edit form M
     And Tab title has changed to a text containing information about form M I changed to
 
   @edit_form_m_applicant
-  Scenario: Edit form M - edit applicant
+  Scenario: Edit form M - edit applicant (applicant to change to already in the system)
     Given There is customer in the system
     And form M already saved in the system
     But I wish to change the form M applicant
-    And I see that 'Form M Number' field is empty
-    And I see that 'Applicant' field is empty
-    And I see that 'Currency' field is empty
-    And I see that 'Amount' field is empty
-    And I see that 'Date Received' field contains today's date
-    And I see that 'Form M Number' field is editable
-    And I see that 'Applicant' field is editable
-    And I see that 'Currency' field is editable
-    And I see that 'Amount' field is editable
-    And I see that 'Date Received' field is editable
-    And I see that 'Form M Number' field has eye-open icon
-    And I see that 'Applicant' field has eye-open icon
-    And I see that 'Currency' field has eye-open icon
-    And I see that 'Amount' field has eye-open icon
-    And I see that 'Date Received' field has eye-open icon
     Then I notice that save button is disabled
     And that the tab title is 'Form M'
     When I fetch the form M I wish to edit
