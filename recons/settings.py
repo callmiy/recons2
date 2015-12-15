@@ -156,7 +156,6 @@ INSTALLED_APPS = (
     'nostro_chgs_form_a',
     'letter_of_credit',
     'contingent_report',
-    'payment',
     'core_recons',
     'bdd',
     # </editor-fold>

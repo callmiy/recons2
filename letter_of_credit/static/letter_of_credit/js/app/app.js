@@ -47,7 +47,7 @@
 	"use strict";
 
 	__webpack_require__(1)
-	__webpack_require__(24)
+	__webpack_require__(23)
 
 	var rootCommons = __webpack_require__(7)
 
@@ -77,7 +77,7 @@
 
 	      kanmiiTitle: 'Home',
 
-	      template: __webpack_require__(27)
+	      template: __webpack_require__(26)
 	    })
 	}
 
@@ -95,8 +95,7 @@
 	__webpack_require__(14)
 	__webpack_require__(16)
 	__webpack_require__(17)
-	__webpack_require__(18)
-	__webpack_require__(20)
+	__webpack_require__(19)
 
 	var app = angular.module('form-m',
 	  ['rootApp',
@@ -117,7 +116,7 @@
 
 	      kanmiiTitle: 'Form M',
 
-	      template: __webpack_require__(23),
+	      template: __webpack_require__(22),
 
 	      controller: 'FormMController as formMHome'
 	    })
@@ -2121,147 +2120,6 @@
 	"use strict";
 	/*jshint camelcase:false*/
 
-	var app = angular.module('form-m-search-service', ['kanmii-underscore', 'toggle-dim-element'])
-
-	app.factory('SearchFormMService', SearchFormMService)
-	SearchFormMService.$inject = [
-	  'FormM',
-	  'xhrErrorDisplay',
-	  'ModalService',
-	  'kanmiiUnderscore',
-	  '$q',
-	  'ToggleDimElement'
-	]
-	function SearchFormMService(FormM, xhrErrorDisplay, ModalService, kanmiiUnderscore, $q, ToggleDimElement) {
-
-	  function searchFormM(submittedSearchParams) {
-	    var deferred = $q.defer()
-	    var searchParams = angular.copy(submittedSearchParams)
-
-	    if (searchParams.applicant) searchParams.applicant = searchParams.applicant.name
-	    if (searchParams.currency) searchParams.currency = searchParams.currency.code
-
-	    FormM.getPaginated(searchParams).$promise.then(searchFormMSuccess, searchFormMError)
-
-	    function searchFormMSuccess(data) {
-	      deferred.resolve(data)
-	    }
-
-	    function searchFormMError(xhr) {
-	      xhrErrorDisplay(xhr)
-	      deferred.reject(xhr)
-	    }
-
-	    return deferred.promise
-	  }
-
-	  function SearchService() {
-	    var service = this
-
-	    service.searchWithModal = searchWithModal
-	    function searchWithModal(config) {
-	      var deferred = $q.defer()
-	      config = config || {}
-
-	      ModalService.showModal({
-	        templateUrl: __webpack_require__(5).buildUrl('form-m/search-form-m-service/search-form-m-modal.html'),
-	        controller: 'SearchFormMServiceModalCtrl as searchFormMModal',
-	        inputs: {
-	          uiOptions: config.uiOptions
-	        }
-
-	      }).then(function(modal) {
-	        modal.element.dialog({
-	          dialogClass: 'no-close',
-	          modal: true,
-	          minWidth: 600,
-	          minHeight: 450,
-	          title: 'Search Form M',
-
-	          open: function() {
-	            config.dim && ToggleDimElement.dim(config.parent, config.dimCb) //jshint -W030
-	          },
-
-	          close: function() {
-	            config.dim && ToggleDimElement.unDim(config.parent, config.unDimCb) //jshint -W030
-	          }
-	        })
-
-	        modal.close.then(function(submittedSearchParams) {
-	          if (submittedSearchParams && angular.isObject(submittedSearchParams) && !kanmiiUnderscore.isEmpty(submittedSearchParams)) {
-	            deferred.resolve(searchFormM(submittedSearchParams))
-	          }
-
-	          config.dim && ToggleDimElement.unDim(config.parent, config.unDimCb) //jshint -W030
-	        })
-	      })
-
-	      return deferred.promise
-	    }
-	  }
-
-	  return new SearchService()
-	}
-
-	app.controller('SearchFormMServiceModalCtrl', SearchFormMServiceModalCtrl)
-	SearchFormMServiceModalCtrl.$inject = [
-	  'uiOptions',
-	  'close',
-	  'resetForm',
-	  '$element',
-	  'getTypeAheadCustomer',
-	  'getTypeAheadCurrency'
-	]
-	function SearchFormMServiceModalCtrl(uiOptions, close, resetForm, element, getTypeAheadCustomer, getTypeAheadCurrency) {
-	  var vm = this
-
-	  vm.displayLcIssueUI = false
-
-	  if (uiOptions) {
-	    vm.displayLcIssueUI = uiOptions.displayLcIssueUI
-	  }
-
-	  initForm()
-	  function initForm() {
-	    vm.searchParams = {}
-	    vm.showLcIssueContainer = false
-	    vm.searchLcIssuesTitle = 'Search By Letter Of Credit Issues'
-	    vm.selectedLcIssues = {}
-	  }
-
-	  vm.toggleShowLcIssueContainer = toggleShowLcIssueContainer
-	  function toggleShowLcIssueContainer() {
-	    vm.showLcIssueContainer = !vm.showLcIssueContainer
-
-	    vm.searchLcIssuesTitle = !vm.showLcIssueContainer ? 'Search By Letter Of Credit Issues' : 'Dismiss'
-	  }
-
-	  vm.close = close
-
-	  vm.reset = reset
-	  function reset(form) {
-	    resetForm(form, element, '.form-control', initForm)
-	    form.$invalid = false
-	    form.$error = {}
-	  }
-
-	  vm.submitSearchParams = submitSearchParams
-	  function submitSearchParams(searchParams) {
-	    close(searchParams)
-	  }
-
-	  vm.getApplicant = getTypeAheadCustomer
-	  vm.getCurrency = getTypeAheadCurrency
-	}
-
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	/*jshint camelcase:false*/
-
 	var app = angular.module('form-m-search', ['kanmii-underscore'])
 
 	app.directive('searchFormM', searchFormMDirective)
@@ -2275,7 +2133,7 @@
 	        .css({cursor: 'pointer'})
 	        .bind('click', function() {
 	                ModalService.showModal({
-	                  template: __webpack_require__(19),
+	                  template: __webpack_require__(18),
 
 	                  controller: 'SearchFormMModalCtrl as searchFormMModal'
 
@@ -2371,20 +2229,20 @@
 
 
 /***/ },
-/* 19 */
+/* 18 */
 /***/ function(module, exports) {
 
 	module.exports = "<div id=\"search-form-m-root-container\" class=\"search-form-m-root-container\"><form novalidate=\"\" class=\"form-horizontal\" ng-submit=\"searchFormMModal.submitSearchParams(searchFormMModal.searchParams)\" name=\"searchFormMModalForm\"><fieldset class=\"search-form-m-container\" style=\"position: relative; padding: 7px;\"><div class=\"form-group form-m-number-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"form-m-number\">Form M Number</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" maxlength=\"13\" id=\"form-m-number\" min=\"0\" ng-pattern=\"/(?:mf)?\\d{4,11}/i\" ng-model=\"searchFormMModal.searchParams.number\"></div></div><div class=\"form-group applicant-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"applicant\">Applicant</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" type=\"text\" min=\"3\" id=\"applicant\" ng-model=\"searchFormMModal.searchParams.applicant\" typeahead-min-length=\"3\" uib-typeahead=\"applicant as applicant.name for applicant in searchFormMModal.getApplicant($viewValue)\"></div></div><div class=\"form-group currency-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"currency\">Currency</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" id=\"currency\" maxlength=\"3\" ng-model=\"searchFormMModal.searchParams.currency\" uib-typeahead=\"currency as currency.code for currency in searchFormMModal.getCurrency($viewValue)\" typeahead-min-length=\"2\"></div></div><div class=\"form-group amount-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"amount\">Amount</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" id=\"amount\" min=\"0\" ng-model=\"searchFormMModal.searchParams.amount\" number-format=\"\" ng-pattern=\"/^\\d[\\d,]*(?:\\.\\d*)?$/\"></div></div></fieldset><div class=\"form-m-lc-issue-container\"><span ng-click=\"searchFormMModal.toggleShowLcIssueContainer()\" class=\"form-m-lc-issue-toggle-show\"><span ng-class=\"['glyphicon', {'glyphicon-chevron-down': !searchFormMModal.showLcIssueContainer, 'glyphicon-chevron-up': searchFormMModal.showLcIssueContainer}]\"></span> {$searchFormMModal.searchLcIssuesTitle$}</span><div class=\"form-m-search-lc-issue\" ng-show=\"searchFormMModal.showLcIssueContainer\"><lc-issue lc-issue-show=\"searchFormMModal.showLcIssueContainer\" lc-issues-selected=\"searchFormMModal.selectedLcIssues\"></lc-issue></div></div><div class=\"row search-form-m-form-control\"><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: left\"><span class=\"btn btn-default\" ng-click=\"searchFormMModal.reset(searchFormMModalForm)\">Reset</span></div><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: center\"><button type=\"submit\" class=\"btn btn-info\" ng-disabled=\"searchFormMModalForm.$invalid\">Search Form M</button></div><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: right\"><span class=\"btn btn-default\" ng-click=\"searchFormMModal.close()\">Close</span></div></div></form></div>";
 
 /***/ },
-/* 20 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict"
 
 	/*jshint camelcase:false*/
 
-	__webpack_require__(21)
+	__webpack_require__(20)
 
 	var rootCommons = __webpack_require__(7)
 
@@ -2407,7 +2265,7 @@
 
 	      views: {
 	        'uploadFormM': {
-	          template: __webpack_require__(22),
+	          template: __webpack_require__(21),
 
 	          controller: 'UploadFormMController as uploadFormM'
 	        }
@@ -2538,7 +2396,7 @@
 
 
 /***/ },
-/* 21 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2651,19 +2509,19 @@
 
 
 /***/ },
-/* 22 */
+/* 21 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"upload-form-m-tab-content\" ng-keypress=\"uploadFormM.dismissIndicatorEvent($event)\"><form class=\"upload-form-m-form\" role=\"form\" name=\"uploadFormMForm\" ng-submit=\"uploadFormM.uploadFormM(uploadFormM.uploadFormMText, uploadFormMForm)\"><div class=\"form-group upload-form-m-text-group\"><pre ng-class=\"['upload-form-m-indicator', {'error-indicator': uploadFormM.indicateError}]\" ng-show=\"uploadFormM.formMShowIndicator\">{$uploadFormM.uploadIndicationText$}\r\n        <span class=\"dismiss\" data-toggle=\"tooltip\" title=\"Dismiss\" ng-click=\"uploadFormM.dismissIndicator()\">x</span>\r\n      </pre><label for=\"upload-form-m\" class=\"control-label\">{$uploadFormM.datePrompt$}</label> <textarea name=\"upload-form-m\" id=\"upload-form-m\" required=\"\" ng-model=\"uploadFormM.uploadFormMText\" ng-class=\"['form-control', 'upload-form-m', {'form-m-is-uploading':uploadFormM.formMIsUploading}]\" ng-readonly=\"uploadFormM.formMIsUploading\"></textarea></div><div class=\"upload-form-m-submit\" style=\"text-align: center\"><button type=\"submit\" class=\"btn btn-success\" ng-disabled=\"uploadFormMForm.$invalid || uploadFormM.formMIsUploading\">Upload</button></div></form></div>";
 
 /***/ },
-/* 23 */
+/* 22 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-m-home-view\"><div uib-tabset=\"\"><div uib-tab=\"\" ng-repeat=\"(key, tab) in tabs\" heading=\"{$tab.title$}\" active=\"tab.active\" select=\"tab.select()\"><div class=\"\" ui-view=\"{$tab.viewName$}\"></div></div></div></div>";
 
 /***/ },
-/* 24 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2717,12 +2575,12 @@
 	}
 
 
+	__webpack_require__(24)
 	__webpack_require__(25)
-	__webpack_require__(26)
 
 
 /***/ },
-/* 25 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2926,7 +2784,7 @@
 
 
 /***/ },
-/* 26 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -3055,7 +2913,7 @@
 
 
 /***/ },
-/* 27 */
+/* 26 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-m-home-view\"><div class=\"form-m-home-action-buttons btn-group-vertical\" role=\"group\"><a class=\"btn btn-info form-m-home-action-button\" ui-sref=\"lc\">Letter of credit</a> <a class=\"btn btn-info form-m-home-action-button\" ui-sref=\"form_m\">Form M</a></div></div>";

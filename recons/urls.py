@@ -38,6 +38,5 @@ urlpatterns = patterns(
     url(r'^adhoc-models/', include('adhocmodels.urls'), name='adhoc-models'),
     url(r'^contingent-report/', include('contingent_report.urls')),
     url(r'^letter-of-credit/', include('letter_of_credit.url'), name='letter-of-credit'),
-    url(r'^lc-payment/', include('payment.url'), name='payment'),
     url(r'^core-app/', include('core_recons.urls'), name='core-app'),
 )

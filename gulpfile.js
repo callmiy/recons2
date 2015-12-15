@@ -9,11 +9,9 @@ var baseStaticCss = './core_recons/static/core_recons/css'
 var bower = './bower_components'
 
 var letterOfCredit = require('./letter_of_credit/build.config')
-var payment = require('./payment/build.config')
 var rootApp = require('./core_recons/build.config')
 
 var lessFiles = [
-  './payment/static/payment/**/*.less',
   './core_recons/static/core_recons/**/*.less',
   '!./core_recons/static/core_recons/css/recons-base.less',
   './letter_of_credit/static/letter_of_credit/**/*.less'
@@ -85,7 +83,6 @@ gulp.task('initial-js', function() {
     .pipe(plugins.addSrc.append(bower + '/urijs/src/URI.js'))
     .pipe(plugins.addSrc.append(baseStaticJs + '/initial/lib.js'))
     .pipe(plugins.addSrc.append(baseStaticJs + '/initial/FileSaver.js'))
-    //.pipe(plugins.addSrc.append(baseStaticJs + '/initial/jquery.treeview.js'))
     .pipe(plugins.sourcemaps.init())
     .pipe(plugins.concat('compiled.js'))
     .pipe(plugins.uglify())
@@ -133,16 +130,6 @@ gulp.task('webpack-letter-of-credit', function() {
     .pipe(gulp.dest(letterOfCredit.destDir))
 })
 
-gulp.task('webpack-payment', function() {
-  return gulp.src(payment.entry)
-    .pipe(plugins.webpack(payment.webpackConfig, webpack))
-    .pipe(plugins.sourcemaps.init())
-    .pipe(plugins.uglify())
-    .pipe(plugins.rename({suffix: '.min'}))
-    .pipe(plugins.sourcemaps.write('.'))
-    .pipe(gulp.dest(payment.destDir))
-})
-
 gulp.task('minify-js', function() {
   return gulp.src(minifyJsFiles, {base: '.'})
     .pipe(plugins.sourcemaps.init())
@@ -156,7 +143,6 @@ gulp.task('initial', ['initial-js', 'initial-css'])
 
 gulp.task('webpack', [
   'webpack-letter-of-credit',
-  //'webpack-payment',
   'webpack-root-app'
 ])
 

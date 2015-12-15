@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
   "use strict";
 
   var $preLabel = $('pre[data-label-for]');
@@ -21,80 +21,84 @@ $(function() {
     'background-color': 'initial',
     'white-space': 'pre-line',
     'border-radius': 0
-  }).on('click', function() {
-    var $el;
-    $el = $(this);
-    if ($targetCtrl.val) {
-      if ($targetCtrl.val()) {
-        $el.hide();
-      } else {
-        $targetCtrl.focus();
-        $el.show();
-      }
-    } else if ($targetCtrl.text) {
-      if ($targetCtrl.text()) {
-        $el.hide();
-      } else {
-        $el.show();
-      }
-    }
-    $targetCtrl.focus();
-  })
-    .next().on({
-      'focusout': function() {
-        var $el = $(this);
-        if ($el.val) {
-          if (!$el.val()) {
-            return $el.prev().show();
-          } else {
-            return $el.prev().hide();
-          }
-        } else if ($el.text) {
-          if (!$el.text()) {
-            return $el.prev().show();
-          } else {
-            return $el.prev().hide();
-          }
+  }).on('click', function () {
+      var $el;
+      $el = $(this);
+      if ($targetCtrl.val) {
+        if ($targetCtrl.val()) {
+          $el.hide();
+        } else {
+          $targetCtrl.focus();
+          $el.show();
         }
-      },
-      'focusin': function() { $(this).prev().hide();}
-    });
+      } else if ($targetCtrl.text) {
+        if ($targetCtrl.text()) {
+          $el.hide();
+        } else {
+          $el.show();
+        }
+      }
+      $targetCtrl.focus();
+    })
+    .next().on({
+    'focusout': function () {
+      var $el = $(this);
+      if ($el.val) {
+        if (!$el.val()) {
+          return $el.prev().show();
+        } else {
+          return $el.prev().hide();
+        }
+      } else if ($el.text) {
+        if (!$el.text()) {
+          return $el.prev().show();
+        } else {
+          return $el.prev().hide();
+        }
+      }
+    },
+    'focusin': function () { $(this).prev().hide();}
+  });
 
   var $idUpload = $('#id_upload-lc-register'),
     returnedData = [],
     reportText
 
-  $idUpload.on('input', function() {
+  $idUpload.on('input', function () {
     var reportHeaderBeginText = 'APPLICANT REF	LC ESTABLISHMENT DATE'
-
     reportText = $idUpload.val().trim()
-
     reportText = reportText.slice(reportText.indexOf(reportHeaderBeginText))
 
-    var results = Papa.parse(reportText, {delimiter: '\t', header: true}).data;
+    var results = Papa.parse(reportText, {
+      delimiter: '\t', header: true, step: function (row) {
+        var returnedObj = {}
+        var obj = row.data[0]
+        var ref = obj['LC NUMBER']
 
-    for (var i = 0; i < results.length; i++) {
-      var obj = results[i],
-        returnedObj = {};
-      for (var key in obj) {
-        if (key in mappings) {
-          var mappingsVal = mappings[key];
-          returnedObj[mappingsVal] = obj[key].trim();
-        }
+        if (ref.indexOf('GTE-') === 0) return
+
+        _.each(obj, function (val, key) {
+          if (key in mappings) {
+            var lcAttribute = mappings[key]
+            returnedObj[lcAttribute] = val
+          }
+        })
+
+        returnedData.push(returnedObj)
       }
-      returnedData.push(returnedObj);
-    }
+    })
+
     $idUpload.val(JSON.stringify(returnedData));
   });
 
-  $('.upload-lc-register-form').submit(function(evt) {
+  $('.upload-lc-register-form').submit(function (evt) {
 
     if (/^\[\{".+/.test($idUpload.val())) {
       $('#upload-lc-register-submit').prop('disabled', true)
       $idUpload.prop('readonly', true)
       $(this).addClass('ui-widget-overlay ui-front')
 
-    } else{
+    } else {
       window.alert('Nothing to upload or invalid upload data!')
       evt.preventDefault()
     }
