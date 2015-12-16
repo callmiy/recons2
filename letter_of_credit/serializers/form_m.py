@@ -26,11 +26,6 @@ class FormMCoverSerializer(serializers.HyperlinkedModelSerializer):
 class FormMSerializer(serializers.HyperlinkedModelSerializer):
     applicant_data = CustomerSerializer(required=False, read_only=True)
     currency_data = CurrencySerializer(required=False, read_only=True)
-    lc = serializers.HyperlinkedRelatedField(
-        view_name='lcregister-detail',
-        queryset=LCRegister.objects.all(),
-        required=False
-    )
 
     class Meta:
         model = FormM
@@ -45,7 +40,7 @@ class FormMSerializer(serializers.HyperlinkedModelSerializer):
             'date_received',
             'url',
             'goods_description',
-            'lc',
+            'lc_number',
             'ct_id',
             'ct_url',
         )
