@@ -11,7 +11,6 @@ require('./comment/comment.js')
 var app = angular.module('add-form-m', [
   'ui.router',
   'rootApp',
-  'kanmii-underscore',
   'customer',
   'search-detailed-or-uploaded-form-m',
   'form-m-service',
@@ -51,7 +50,7 @@ AddFormMStateController.$inject = [
   'getTypeAheadCustomer',
   'getTypeAheadCurrency',
   'SearchDetailedOrUploadedFormMService',
-  'kanmiiUnderscore',
+  'underscore',
   'xhrErrorDisplay',
   '$stateParams',
   'resetForm2',
@@ -63,11 +62,9 @@ AddFormMStateController.$inject = [
 ]
 
 function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
-  kanmiiUnderscore, xhrErrorDisplay, $stateParams, resetForm2, $state, $scope, confirmationDialog, formMObject,
+  underscore, xhrErrorDisplay, $stateParams, resetForm2, $state, $scope, confirmationDialog, formMObject,
   formMAttributesVerboseNames) {
   var vm = this
-
-  //1. fix summary for issues when form M saved
 
   vm.detailedFormM = angular.copy($stateParams.detailedFormM)
   $stateParams.detailedFormM = null
@@ -128,13 +125,13 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   vm.validators = {
     applicant: {
       test: function () {
-        return kanmiiUnderscore.isObject(vm.formM.applicant)
+        return underscore.isObject(vm.formM.applicant)
       }
     },
 
     currency: {
       test: function () {
-        return kanmiiUnderscore.isObject(vm.formM.currency)
+        return underscore.isObject(vm.formM.currency)
       }
     }
   }
@@ -142,13 +139,13 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   vm.disableSubmitBtn = function disableSubmitBtn() {
     if ($scope.newFormMForm.$invalid) return true
 
-    if (kanmiiUnderscore.has(vm.formM.coverForm, '$invalid') && vm.formM.coverForm.$invalid) return true
+    if (underscore.has(vm.formM.coverForm, '$invalid') && vm.formM.coverForm.$invalid) return true
 
-    if (kanmiiUnderscore.has(vm.formM.bidForm, '$invalid') && vm.formM.bidForm.$invalid) return true
+    if (underscore.has(vm.formM.bidForm, '$invalid') && vm.formM.bidForm.$invalid) return true
 
-    if (kanmiiUnderscore.has(vm.formM.issuesForm, '$invalid') && vm.formM.issuesForm.$invalid) return true
+    if (underscore.has(vm.formM.issuesForm, '$invalid') && vm.formM.issuesForm.$invalid) return true
 
-    if (kanmiiUnderscore.has(vm.formM.commentForm, '$invalid') && vm.formM.commentForm.$invalid) return true
+    if (underscore.has(vm.formM.commentForm, '$invalid') && vm.formM.commentForm.$invalid) return true
 
     if (formMObject.showEditBid || formMObject.showCommentForm) return true
 
@@ -156,9 +153,9 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
     if (!compared) return false
 
-    if (kanmiiUnderscore.all(compared)) {
+    if (underscore.all(compared)) {
       if (formMObject.bid.goods_description && formMObject.bid.amount) return false
-      if (!kanmiiUnderscore.isEmpty(vm.formM.cover)) return false
+      if (!underscore.isEmpty(vm.formM.cover)) return false
       return !vm.formM.selectedIssues.length
     }
 

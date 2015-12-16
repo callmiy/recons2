@@ -221,7 +221,6 @@
 	var app = angular.module('add-form-m', [
 	  'ui.router',
 	  'rootApp',
-	  'kanmii-underscore',
 	  'customer',
 	  'search-detailed-or-uploaded-form-m',
 	  'form-m-service',
@@ -261,7 +260,7 @@
 	  'getTypeAheadCustomer',
 	  'getTypeAheadCurrency',
 	  'SearchDetailedOrUploadedFormMService',
-	  'kanmiiUnderscore',
+	  'underscore',
 	  'xhrErrorDisplay',
 	  '$stateParams',
 	  'resetForm2',
@@ -273,11 +272,9 @@
 	]
 
 	function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
-	  kanmiiUnderscore, xhrErrorDisplay, $stateParams, resetForm2, $state, $scope, confirmationDialog, formMObject,
+	  underscore, xhrErrorDisplay, $stateParams, resetForm2, $state, $scope, confirmationDialog, formMObject,
 	  formMAttributesVerboseNames) {
 	  var vm = this
-
-	  //1. fix summary for issues when form M saved
 
 	  vm.detailedFormM = angular.copy($stateParams.detailedFormM)
 	  $stateParams.detailedFormM = null
@@ -338,13 +335,13 @@
 	  vm.validators = {
 	    applicant: {
 	      test: function () {
-	        return kanmiiUnderscore.isObject(vm.formM.applicant)
+	        return underscore.isObject(vm.formM.applicant)
 	      }
 	    },
 
 	    currency: {
 	      test: function () {
-	        return kanmiiUnderscore.isObject(vm.formM.currency)
+	        return underscore.isObject(vm.formM.currency)
 	      }
 	    }
 	  }
@@ -352,13 +349,13 @@
 	  vm.disableSubmitBtn = function disableSubmitBtn() {
 	    if ($scope.newFormMForm.$invalid) return true
 
-	    if (kanmiiUnderscore.has(vm.formM.coverForm, '$invalid') && vm.formM.coverForm.$invalid) return true
+	    if (underscore.has(vm.formM.coverForm, '$invalid') && vm.formM.coverForm.$invalid) return true
 
-	    if (kanmiiUnderscore.has(vm.formM.bidForm, '$invalid') && vm.formM.bidForm.$invalid) return true
+	    if (underscore.has(vm.formM.bidForm, '$invalid') && vm.formM.bidForm.$invalid) return true
 
-	    if (kanmiiUnderscore.has(vm.formM.issuesForm, '$invalid') && vm.formM.issuesForm.$invalid) return true
+	    if (underscore.has(vm.formM.issuesForm, '$invalid') && vm.formM.issuesForm.$invalid) return true
 
-	    if (kanmiiUnderscore.has(vm.formM.commentForm, '$invalid') && vm.formM.commentForm.$invalid) return true
+	    if (underscore.has(vm.formM.commentForm, '$invalid') && vm.formM.commentForm.$invalid) return true
 
 	    if (formMObject.showEditBid || formMObject.showCommentForm) return true
 
@@ -366,9 +363,9 @@
 
 	    if (!compared) return false
 
-	    if (kanmiiUnderscore.all(compared)) {
+	    if (underscore.all(compared)) {
 	      if (formMObject.bid.goods_description && formMObject.bid.amount) return false
-	      if (!kanmiiUnderscore.isEmpty(vm.formM.cover)) return false
+	      if (!underscore.isEmpty(vm.formM.cover)) return false
 	      return !vm.formM.selectedIssues.length
 	    }
 
@@ -454,7 +451,7 @@
 	  'confirmationDialog',
 	  'formatDate',
 	  'xhrErrorDisplay',
-	  'kanmiiUnderscore',
+	  'underscore',
 	  '$filter',
 	  'getTypeAheadLCIssue',
 	  'FormM',
@@ -463,7 +460,7 @@
 	]
 
 	function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDialog, formatDate, xhrErrorDisplay,
-	  kanmiiUnderscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
+	  underscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
 	  function Factory() {
 	    var self = this
 	    self.datePickerFormat = 'dd-MMM-yyyy'
@@ -604,6 +601,7 @@
 	        self.url = null
 	        self.ct_id = null
 	        self._id = null
+	        self.lc_number = null
 	      }
 
 	      if (detailedFormM) {
@@ -618,6 +616,7 @@
 	        self.ct_id = detailedFormM.ct_id
 	        self.ct_url = detailedFormM.ct_url
 	        self._id = detailedFormM.id
+	        self.lc_number = detailedFormM.lc_number
 	        setBids()
 	        setIssues()
 	        setCovers()
@@ -656,7 +655,7 @@
 	      var issuesText = '\n\n\nPlease note the following issues which must be regularized before the LC ' +
 	        'request can be treated:\n'
 
-	      kanmiiUnderscore.each(issues, function (issue, index) {
+	      underscore.each(issues, function (issue, index) {
 	        ++index
 	        issuesText += ('(' + index + ') ' + self.formatIssueText(issue.issue_text) + '\n')
 	      })
@@ -724,7 +723,7 @@
 
 	      if (formM.selectedIssues.length) formMToSave.issues = formM.selectedIssues
 
-	      if (!kanmiiUnderscore.isEmpty(formM.cover)) {
+	      if (!underscore.isEmpty(formM.cover)) {
 	        formMToSave.cover = {
 	          amount: formM.cover.amount,
 	          cover_type: formM.cover.cover_type[0]
@@ -739,7 +738,7 @@
 	        //if we did not edit the main form M i.e detailedFormM = formM, then there is no need for database update
 	        //we store some attributes of formM that we care about in formMToSave because this will now become detailed
 	        //form M when we return from server.
-	        if (kanmiiUnderscore.all(self.compareFormMs(detailedFormM, formM))) {
+	        if (underscore.all(self.compareFormMs(detailedFormM, formM))) {
 	          formMToSave.do_not_update = 'do_not_update'
 	          formMToSave.applicant_data = formM.applicant
 	          formMToSave.currency_data = formM.currency

@@ -18,6 +18,7 @@ var app = angular.module('rootApp', [
 rootCommons.setStaticPrefix(app)
 
 app.factory('moment', function () { return require('moment') })
+app.factory('underscore', function () { return require('underscore') })
 
 app.factory('resetForm', resetForm)
 function resetForm() {

@@ -19,7 +19,7 @@ formMObject.$inject = [
   'confirmationDialog',
   'formatDate',
   'xhrErrorDisplay',
-  'kanmiiUnderscore',
+  'underscore',
   '$filter',
   'getTypeAheadLCIssue',
   'FormM',
@@ -28,7 +28,7 @@ formMObject.$inject = [
 ]
 
 function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDialog, formatDate, xhrErrorDisplay,
-  kanmiiUnderscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
+  underscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
   function Factory() {
     var self = this
     self.datePickerFormat = 'dd-MMM-yyyy'
@@ -169,6 +169,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         self.url = null
         self.ct_id = null
         self._id = null
+        self.lc_number = null
       }
 
       if (detailedFormM) {
@@ -183,6 +184,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         self.ct_id = detailedFormM.ct_id
         self.ct_url = detailedFormM.ct_url
         self._id = detailedFormM.id
+        self.lc_number = detailedFormM.lc_number
         setBids()
         setIssues()
         setCovers()
@@ -221,7 +223,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
       var issuesText = '\n\n\nPlease note the following issues which must be regularized before the LC ' +
         'request can be treated:\n'
 
-      kanmiiUnderscore.each(issues, function (issue, index) {
+      underscore.each(issues, function (issue, index) {
         ++index
         issuesText += ('(' + index + ') ' + self.formatIssueText(issue.issue_text) + '\n')
       })
@@ -289,7 +291,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
 
       if (formM.selectedIssues.length) formMToSave.issues = formM.selectedIssues
 
-      if (!kanmiiUnderscore.isEmpty(formM.cover)) {
+      if (!underscore.isEmpty(formM.cover)) {
         formMToSave.cover = {
           amount: formM.cover.amount,
           cover_type: formM.cover.cover_type[0]
@@ -304,7 +306,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         //if we did not edit the main form M i.e detailedFormM = formM, then there is no need for database update
         //we store some attributes of formM that we care about in formMToSave because this will now become detailed
         //form M when we return from server.
-        if (kanmiiUnderscore.all(self.compareFormMs(detailedFormM, formM))) {
+        if (underscore.all(self.compareFormMs(detailedFormM, formM))) {
           formMToSave.do_not_update = 'do_not_update'
           formMToSave.applicant_data = formM.applicant
           formMToSave.currency_data = formM.currency
