@@ -329,7 +329,7 @@
 	  }
 
 	  vm.enableFieldEdit = function enableFieldEdit(field) {
-	    vm.fieldIsEditable[field] = vm.detailedFormM ? !vm.fieldIsEditable[field] : false
+	    vm.fieldIsEditable[field] = vm.detailedFormM ? !vm.fieldIsEditable[field] : true
 	  }
 
 	  vm.validators = {
