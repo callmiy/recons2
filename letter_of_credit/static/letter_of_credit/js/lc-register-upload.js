@@ -60,35 +60,34 @@ $(function () {
     'focusin': function () { $(this).prev().hide();}
   });
 
-  var $idUpload = $('#id_upload-lc-register'),
-    returnedData = [],
-    reportText
+  var $idUpload   = $('#id_upload-lc-register'),
+      lcInstances = [],
+      reportText
 
   $idUpload.on('input', function () {
     var reportHeaderBeginText = 'APPLICANT REF	LC ESTABLISHMENT DATE'
     reportText = $idUpload.val().trim()
     reportText = reportText.slice(reportText.indexOf(reportHeaderBeginText))
 
-    var results = Papa.parse(reportText, {
+    Papa.parse(reportText, {
       delimiter: '\t', header: true, step: function (row) {
-        var returnedObj = {}
+        var lcInstance = {}
         var obj = row.data[0]
-        var ref = obj['LC NUMBER']
 
-        if (ref.indexOf('GTE-') === 0) return
+        if (obj['LC NUMBER'].indexOf('GTE-') === 0) return
 
         _.each(obj, function (val, key) {
           if (key in mappings) {
             var lcAttribute = mappings[key]
-            returnedObj[lcAttribute] = val
+            lcInstance[lcAttribute] = val.trim()
           }
         })
 
-        returnedData.push(returnedObj)
+        lcInstances.push(lcInstance)
       }
     })
 
-    $idUpload.val(JSON.stringify(returnedData));
+    $idUpload.val(JSON.stringify(lcInstances));
   });
 
   $('.upload-lc-register-form').submit(function (evt) {

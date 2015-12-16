@@ -69,9 +69,9 @@ class LCRegisterUploadView(View):
 
     def get(self, request):
         return render(
-            request,
-            'letter_of_credit/lc-register/upload-lc-register.html',
-            {'mappings': json.dumps(self.REPORT_MODEL_HEADERS_MAPPING)}
+                request,
+                'letter_of_credit/lc-register/upload-lc-register.html',
+                {'mappings': json.dumps(self.REPORT_MODEL_HEADERS_MAPPING)}
         )
 
     def update_only_if_lc_changed(self, lc_number, lc_qs, data):
@@ -101,8 +101,8 @@ class LCRegisterUploadView(View):
 
             if client_attr_val != lc_attr_val:
                 logger.info(
-                    'LC %s: attribute "%s" has changed from "%s" to "%s". It will be updated' % (
-                        lc_number, key, lc_attr_val, client_attr_val)
+                        'LC %s: attribute "%s" has changed from "%s" to "%s". It will be updated' % (
+                            lc_number, key, lc_attr_val, client_attr_val)
                 )
 
                 setattr(lc_obj, key, client_attr_val)
@@ -128,12 +128,15 @@ class LCRegisterUploadView(View):
 
                 data["expiry_date"] = parser_utility.normalize_date(data["expiry_date"])
                 data["estb_date"] = parser_utility.normalize_date(data["estb_date"])
-                data['ccy_obj'] = Currency.objects.get(code=data['ccy_obj'])
-                data["lc_amt_org_ccy"] = round(float(data["lc_amt_org_ccy"].replace(',', '')), 2)
+                data['ccy_obj'] = Currency.objects.get(code=data['ccy_obj'].strip(' \n\r'))
+                data["lc_amt_org_ccy"] = round(float(data["lc_amt_org_ccy"].strip(' \n\r').replace(',', '')), 2)
 
                 logger.info('About to create or update lc after raw data from client cleaned up:\n%s' % data)
 
-                lc_number = data['lc_number']
+                lc_number = data['lc_number'].strip(' \n\r')
+
+                if 'GTE-' in lc_number:
+                    continue
 
                 logger.info("Checking if LC %s exists in database" % lc_number)
                 lc_qs = LCRegister.objects.filter(lc_number=lc_number)
@@ -145,17 +148,16 @@ class LCRegisterUploadView(View):
 
                 else:
                     logger.info(
-                        "LC %s exists in database, it will be updated if at least one attribute value has changed" %
-                        lc_number
-                    )
+                            "LC %s exists in database, it will be updated if at least one attribute value has changed" %
+                            lc_number)
 
                     lc_obj = self.update_only_if_lc_changed(lc_number, lc_qs, data)
 
-                form_m_qs = FormM.objects.filter(number=data['mf'])
+                form_m_qs = FormM.objects.filter(number=data['mf'].strip(' \n\r'), lc__isnull=True)
 
                 if form_m_qs.exists():
                     logger.info('LC %s: if form M was not previously attached, form M "%s" will now be attached.' % (
-                    lc_number, data['mf']))
+                        lc_number, data['mf']))
                     form_m_qs[0].attach_lc(lc=lc_obj)
 
         return redirect(admin_url(LCRegister))

@@ -3,7 +3,7 @@ from adhocmodels.models import Customer, Currency, Branch
 
 
 class LCRegister(models.Model):
-    lc_number = models.CharField('LC Number', max_length=20)
+    lc_number = models.CharField('LC Number', max_length=16)
     mf = models.CharField('Form M Number', max_length=20, null=True, blank=True)
     date_started = models.DateField('Date Started', auto_now_add=True)
     estb_date = models.DateField('Estab. Date')
