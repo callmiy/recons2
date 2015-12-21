@@ -51,29 +51,29 @@ class ContingentReportAdmin(admin.ModelAdmin):
         lcees = set([q.ti_ref for q in queryset])
         if len(lcees) > 1:
             self.message_user(
-                request,
-                message='You can only get Contingent Bal. for one lc, got : %s'
-                        % list(lcees),
-                level=messages.ERROR, fail_silently=False)
+                    request,
+                    message='You can only get Contingent Bal. for one lc, got : %s'
+                            % list(lcees),
+                    level=messages.ERROR, fail_silently=False)
             return
 
         ccys = set([q.ccy for q in queryset])
         if len(ccys) > 1:
             self.message_user(
-                request,
-                message='You can only get Contingent Bal. for same ccy, got: %s'
-                        % list(ccys),
-                level=messages.ERROR, fail_silently=False)
+                    request,
+                    message='You can only get Contingent Bal. for same ccy, got: %s'
+                            % list(ccys),
+                    level=messages.ERROR, fail_silently=False)
             return
 
         ca_bal = '{:,.2f}'.format(queryset.filter(acct_numb__acct_class='ASSET').aggregate(bal=Sum('fx_amt'))['bal'])
         cl_bal = '{:,.2f}'.format(
-            queryset.filter(acct_numb__acct_class='LIABILITY').aggregate(bal=Sum('fx_amt'))['bal']
+                queryset.filter(acct_numb__acct_class='LIABILITY').aggregate(bal=Sum('fx_amt'))['bal']
         )
 
         self.message_user(
-            request, format_html(
-                'Outstanding Bals {2}:<br>CA={0}<br>CL={1}', ca_bal, cl_bal, tuple(lcees)[0])
+                request, format_html(
+                        'Outstanding Bals {2}:<br>CA={0}<br>CL={1}', ca_bal, cl_bal, tuple(lcees)[0])
         )
 
     get_outstanding.short_description = 'Outstanding Balance'
@@ -82,63 +82,9 @@ class ContingentReportAdmin(admin.ModelAdmin):
         selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
 
         return redirect(
-            '%s?ids=%s' % (reverse('reverse-cont-posting'), ','.join(selected)))
+                '%s?ids=%s' % (reverse('reverse-cont-posting'), ','.join(selected)))
 
     reverse_posting.short_description = 'Write Reverse Posting'
-
-
-class OldContingentReportAdmin(admin.ModelAdmin):
-    list_display = (
-        'flex_ref',
-        'lc_ref',
-        'flex_module',
-        'gl_code',
-        'customer_name',
-        'booking_date',
-        'liq_date',
-        'ccy',
-        'fx_amt_fmt',
-        'ngn_amt_fmt',
-        'ispar',
-    )
-    search_fields = (
-        'flex_ref',
-        'lc_ref',
-        'fx_amt',
-        'ngn_amt',
-        'gl_code',
-        'booking_date',
-    )
-
-    ordering = ('-booking_date', 'lc_ref',)
-    actions = ('get_outstanding',)
-
-    def get_outstanding(self, request, queryset):
-        lcees = set([q.ti_ref for q in queryset])
-        if len(lcees) > 1:
-            self.message_user(
-                request, level=messages.ERROR, fail_silently=False,
-                message='You can only get Contingent Bal. for one lc, got : %s'
-                        % list(lcees))
-            return
-
-        ccys = set([q.ccy for q in queryset])
-        if len(ccys) > 1:
-            self.message_user(
-                request, level=messages.ERROR, fail_silently=False,
-                message='You can only get Contingent Bal. for same ccy, got: %s'
-                        % list(ccys))
-            return
-
-        ca_bal = '{:,.2f}'.format(queryset.filter(account_class='ASSET').aggregate(bal=Sum('fx_amt'))['bal'])
-        cl_bal = '{:,.2f}'.format(queryset.filter(account_class='LIABILITY').aggregate(bal=Sum('fx_amt'))['bal'])
-
-        self.message_user(
-            request, format_html(
-                'Outstanding Bals {2}:<br>CA={0}<br>CL={1}', ca_bal, cl_bal, len(lcees))
-        )
-
-    get_outstanding.short_description = 'Outstanding Balance'
 
 
 class ContingentAccountAdmin(admin.ModelAdmin):
@@ -176,30 +122,30 @@ class TIPostingStatusReportAdmin(admin.ModelAdmin):
 
             if income_acct(acct) and contingent_acct(acct):
                 self.message_user(
-                    request,
-                    message='Account Number incorrect',
-                    level=messages.ERROR, fail_silently=False)
+                        request,
+                        message='Account Number incorrect',
+                        level=messages.ERROR, fail_silently=False)
                 return
 
             if cont.ref != ref:
                 self.message_user(
-                    request,
-                    message='Ref must be the same, got: %r' %
-                            set(refs),
-                    level=messages.ERROR, fail_silently=False)
+                        request,
+                        message='Ref must be the same, got: %r' %
+                                set(refs),
+                        level=messages.ERROR, fail_silently=False)
                 return
 
             elif cont.ccy != ccy:
                 self.message_user(
-                    request,
-                    message='Currencies Must be the same, got: %r' %
-                            set(ccys),
-                    level=messages.ERROR, fail_silently=False)
+                        request,
+                        message='Currencies Must be the same, got: %r' %
+                                set(ccys),
+                        level=messages.ERROR, fail_silently=False)
                 return
             else:
                 total += cont.amount
         self.message_user(
-            request, 'Sum Amounts = %s' % '{:,.2f}'.format(total))
+                request, 'Sum Amounts = %s' % '{:,.2f}'.format(total))
 
     sum_up.short_description = 'Get Sum Amounts'
 

@@ -4,7 +4,7 @@ from django.views.generic import View
 from django.shortcuts import render
 from django.http import HttpResponse
 from contingent_report.models import TIPostingStatusReport
-from ti_recons.csv_utilities import wrow as writerow, UploadCSVParserUtility
+from contingent_report.csv_utilities import wrow as writerow, UploadCSVParserUtility
 import csv
 from cStringIO import StringIO
 from xlwt import Workbook

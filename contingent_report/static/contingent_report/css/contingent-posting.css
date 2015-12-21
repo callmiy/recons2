@@ -1,17 +1,1 @@
-textarea {
-  display: block;
-  width: 100%;
-  margin: 0 0 20px 0;
-}
-.button-group {
-  margin: 0 auto;
-  width: 25%;
-}
-table {
-  margin: 20px 0 20px 0;
-}
-.contingent-posting-data table ~ button {
-  display: block;
-  width: 90px;
-  margin: 0 auto;
-}
+textarea{display:block;width:100%;margin:0 0 20px 0}.button-group{margin:0 auto;width:25%}table{margin:20px 0 20px 0}.contingent-posting-data table ~ button{display:block;width:90px;margin:0 auto}

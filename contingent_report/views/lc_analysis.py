@@ -2,7 +2,7 @@ from django.views.generic import View
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from contingent_report.models import LCRegister
+from letter_of_credit.models import LCRegister
 from datetime import date
 import calendar
 
@@ -37,7 +37,7 @@ def get_display_yr_month():
     return ALL_YEAR_MONTHS
 
 
-class LCVolumAnalysisView(View):
+class LCVolumeAnalysisView(View):
     def get(self, request):
         return render(
             request, 'lc-volume-statistics.html',
@@ -70,7 +70,7 @@ class LCVolumAnalysisView(View):
     def dispatch(self, request, *args, **kwargs):
         log.info(
             '[%s]::[%s %s]', request.user, request.method, request.path_info)
-        return super(LCVolumAnalysisView, self).dispatch(
+        return super(LCVolumeAnalysisView, self).dispatch(
             request, *args, **kwargs)
 
 

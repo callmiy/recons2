@@ -2,13 +2,13 @@ from django.views.generic import View
 from django.http import HttpResponse
 from contingent_report.models import (
     ContingentReport,
-    LCRegister,
     TIPostingStatusReport,
     LCClass,
     ContingentAccount
 )
+from letter_of_credit.models import LCRegister
 from django.shortcuts import render
-from ti_recons.csv_utilities import parse_date, wrow
+from contingent_report.csv_utilities import parse_date, wrow
 from xlwt import Workbook
 
 __all__ = (
