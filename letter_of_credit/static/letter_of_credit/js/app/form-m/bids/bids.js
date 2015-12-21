@@ -9,7 +9,6 @@ var app = angular.module('form-m-bids', [
   'lc-bid-request',
   'rootApp',
   'kanmii-URI',
-  'kanmii-underscore',
   'form-m-service'
 ])
 
@@ -41,13 +40,13 @@ BidRequestController.$inject = [
   '$http',
   'kanmiiUri',
   'urls',
-  'kanmiiUnderscore',
+  'underscore',
   'formatDate',
   '$timeout',
   '$q',
   'FormM'
 ]
-function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, kanmiiUnderscore, formatDate, $timeout, $q,
+function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, underscore, formatDate, $timeout, $q,
   FormM) {
   var vm = this;
 
@@ -73,7 +72,7 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, kanm
      */
     vm.bidRequests = []
     vm.paginationHooks = {}
-    LcBidRequest.pending().$promise.then(function(data) {
+    LcBidRequest.pending().$promise.then(function (data) {
       updateBids(data)
     })
   }
@@ -83,7 +82,7 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, kanm
    * @param {{}} bid - the bid object at the row that was double clicked
    */
   vm.rowDblClickCb = function rowDblClickCb(bid) {
-    FormM.getPaginated({number: bid.form_m_number}).$promise.then(function(data) {
+    FormM.getPaginated({number: bid.form_m_number}).$promise.then(function (data) {
       var results = data.results
       if (results.length && results.length === 1) {
         $scope.goToFormM(results[0])
@@ -103,17 +102,17 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, kanm
    */
   vm.getBidsOnNavigation = getBidsOnNavigation
   function getBidsOnNavigation(linkUrl) {
-    $http.get(linkUrl).then(function(response) {
+    $http.get(linkUrl).then(function (response) {
       updateBids(response.data)
     })
   }
 
   $scope.$watch(function searchedBidResult() {return vm.searchedBidResult},
-                function searchedBidResultChanged(searchedBidResult) {
-                  if (searchedBidResult) {
-                    updateBids(searchedBidResult)
-                  }
-                })
+    function searchedBidResultChanged(searchedBidResult) {
+      if (searchedBidResult) {
+        updateBids(searchedBidResult)
+      }
+    })
 
   /**
    * Update the bid collection and pagination hooks
@@ -127,10 +126,10 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, kanm
 
   var url = kanmiiUri(urls.lcBidRequestDownloadUrl)
   vm.downloadUrl = function downloadUrl() {
-    if (!kanmiiUnderscore.isEmpty(vm.selectedBids)) {
+    if (!underscore.isEmpty(vm.selectedBids)) {
       var search = []
 
-      kanmiiUnderscore.each(vm.selectedBids, function(selection, bidId) {
+      underscore.each(vm.selectedBids, function (selection, bidId) {
         if (selection === true) search.push(bidId)
       })
 
@@ -139,17 +138,17 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, kanm
   }
 
   vm.downloadBtnDisabled = function downloadBtnDisabled() {
-    if (kanmiiUnderscore.isEmpty(vm.selectedBids)) return true
+    if (underscore.isEmpty(vm.selectedBids)) return true
 
-    return !kanmiiUnderscore.any(vm.selectedBids, function(selectionVal) {
+    return !underscore.any(vm.selectedBids, function (selectionVal) {
       return selectionVal === true
     })
   }
 
   vm.onSelectedBidsChanged = onSelectedBidsChanged
   function onSelectedBidsChanged(newSelections) {
-    if (newSelections && !kanmiiUnderscore.isEmpty(newSelections)) {
-      kanmiiUnderscore.each(newSelections, function(checked, bidId) {
+    if (newSelections && !underscore.isEmpty(newSelections)) {
+      underscore.each(newSelections, function (checked, bidId) {
         var bid = getBidFromId(bidId)
 
         if (bid && bid.downloaded) vm.selectedDownloadedBids[bidId] = checked
@@ -158,16 +157,13 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, kanm
   }
 
   vm.markRequestedBtnDisabled = function markRequestedBtnDisabled() {
-    if (kanmiiUnderscore.isEmpty(vm.selectedDownloadedBids)) return true
+    if (underscore.isEmpty(vm.selectedDownloadedBids)) return true
 
-    //return true if un-downloaded bid is checked
-    //return false if there is at least one downloaded bid checked
-    var anyNoneDownloadedChecked = kanmiiUnderscore.any(vm.selectedBids, function(checked, bidId) {
-      return !kanmiiUnderscore.has(vm.selectedDownloadedBids, bidId) && checked === true
-    })
+    for (var bidId in vm.selectedBids) {
+      if (!(bidId in vm.selectedDownloadedBids) && vm.selectedBids[bidId]) return true
+    }
 
-    if (anyNoneDownloadedChecked) return true
-    else return !kanmiiUnderscore.any(vm.selectedDownloadedBids, function(checked) {
+    return !underscore.any(vm.selectedDownloadedBids, function (checked) {
       return checked === true
     })
   }
@@ -175,26 +171,25 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, kanm
   vm.markRequested = function markRequested() {
     var editedBids = []
 
-    kanmiiUnderscore.each(vm.selectedDownloadedBids, function(checked, bidId) {
+    underscore.each(vm.selectedDownloadedBids, function (checked, bidId) {
       if (!checked) return
 
       var bid = getBidFromId(bidId)
       if (bid) {
         bid.requested_at = formatDate(new Date())
-        //LcBidRequest.put(bid).$promise.then(bidEditSuccess, bidEditFailure)
         editedBids.push(LcBidRequest.put(bid).$promise)
       }
     })
 
     if (editedBids.length) {
-      $q.all(editedBids).then(function() {
+      $q.all(editedBids).then(function () {
         initialize()
       })
     }
   }
 
   vm.refreshPage = function refreshPage() {
-    $timeout(function() {initialize()}, 3000)
+    $timeout(function () {initialize()}, 3000)
   }
 
   function getBidFromId(bidId) {

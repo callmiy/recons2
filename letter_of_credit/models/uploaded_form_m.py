@@ -29,8 +29,10 @@ class UploadedFormM(models.Model):
 
     def fob_formatted(self):
         return '{:,.2f}'.format(self.fob)
+
     fob_formatted.short_description = 'FOB'
 
     def cost_freight_formatted(self):
-        return '{:,.2f}'.format(self.cost_freight)
+        return '{:,.2f}'.format(self.cost_freight or 0)
+
     cost_freight_formatted.short_description = 'Cost and freight'

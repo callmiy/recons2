@@ -64,7 +64,7 @@ function formMModelManager($filter) {
     },
 
     {
-      title: 'Bid Date', modelKey: 'nothing'
+      title: 'LC Ref', modelKey: 'lc_number'
     }
   ]
 }

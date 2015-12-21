@@ -232,11 +232,12 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
     }
 
     self.createFormMMessage = function createFormMMessage() {
-      var number = $filter('number')(self.amount, 2)
-      var header = self.applicant.name + ' - ' + self.number + ' - ' + self.currency.code + ' ' + number
+      var amount = $filter('number')(self.amount, 2)
+      var ref = self.lc_number ? self.lc_number + '/' : ''
+      var header = self.applicant.name + ' - ' + ref + self.number + ' - ' + self.currency.code + ' ' + amount
       return header + '\n\nForm M Number : ' + self.number + '\n' +
         'Value         : ' + self.currency.code + ' ' +
-        number + '\n' +
+        amount + '\n' +
         'Applicant     : ' + self.applicant.name
     }
 
