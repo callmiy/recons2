@@ -36,7 +36,7 @@ urlpatterns = patterns(
     url(r'^logout/$', 'django.contrib.auth.views.logout_then_login', name='logout-then-login'),
     url(r'^undrawn/', include('undrawnbal.urls'), name='undrawn'),
     url(r'^adhoc-models/', include('adhocmodels.urls'), name='adhoc-models'),
-    url(r'^contingent-report/', include('contingent_report.urls')),
+    url(r'^contingent-report/', include('contingent_report.urls'), name='contingent-report'),
     url(r'^letter-of-credit/', include('letter_of_credit.url'), name='letter-of-credit'),
     url(r'^core-app/', include('core_recons.urls'), name='core-app'),
 )

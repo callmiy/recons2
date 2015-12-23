@@ -35,6 +35,14 @@
       {% endblock page_content %}
     {% endif %}
   </div>
+
+  <script>
+    $(function(){
+      $.datepicker.setDefaults({dateFormat: "dd-mm-yy"});
+      $("input[class*=show-date-picker]").datepicker();
+    });
+  </script>
+
   {% block page_js %}
     <script>
       $(function () {

@@ -102,22 +102,16 @@ class ContingentReport(models.Model):
     ti_ref = models.CharField('TI Ref', max_length=16, blank=True, null=True)
     flex_module = models.CharField('Flexcube Module', max_length=2)
     gl_code = models.CharField('GL Acct. Number', max_length=50)
-    acct_numb = models.ForeignKey(
-            ContingentAccount, related_name='entries', blank=True, null=True)
-    customer_name = models.CharField(
-            'Customer Name', max_length=200, blank=True, null=True)
+    acct_numb = models.ForeignKey(ContingentAccount, related_name='entries', blank=True, null=True)
+    customer_name = models.CharField('Customer Name', max_length=200, blank=True, null=True)
     booking_date = models.DateField('Booking Date')
     liq_date = models.DateField('Liquidation Date')
     ccy = models.CharField('Currency', max_length=3)
     fx_amt = models.DecimalField('FX Amount', max_digits=100, decimal_places=2)
-    ngn_amt = models.DecimalField(
-            'NGN Amount', max_digits=100, decimal_places=2)
-    parent = models.ForeignKey(
-            'self', related_name='members', db_column='parent', null=True,
-            blank=True)
+    ngn_amt = models.DecimalField('NGN Amount', max_digits=100, decimal_places=2)
+    parent = models.ForeignKey('self', related_name='members', db_column='parent', null=True, blank=True)
     ispar = models.BooleanField('Is Parent', default=False)
-    narration = models.CharField(
-            'Narration', max_length=300, null=True, blank=True)
+    narration = models.CharField('Narration', max_length=300, null=True, blank=True)
 
     def fx_amt_fmt(self):
         return '{:,.2f}'.format(self.fx_amt)

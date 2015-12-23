@@ -7,7 +7,7 @@ from datetime import date
 import calendar
 
 import logging
-log = logging.getLogger('my_logger')
+log = logging.getLogger('recons_logger')
 
 __all__ = ('LCDownloadView', 'LCVolumAnalysisView')
 

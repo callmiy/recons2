@@ -12,151 +12,7 @@ from contingent_report.models import (
     ContingentAccount
 )
 from letter_of_credit.models import LCRegister
-from adhocmodels.models import Currency
-
-admin_url = lambda cls: '/admin/%s/' % str(getattr(cls, '_meta')).replace(
-        '.', '/')
-
-
-class LCRegisterUploadView1(View):
-    def get(self, request):
-        return render(request, 'upload-lc-register.html')
-
-    def post(self, request):
-        uploaded_text = request.POST['upload-lc-register-text']
-
-        if uploaded_text:
-            uploaded_text = uploaded_text.strip(' \n\r')
-
-            if uploaded_text:
-                self.parse(StringIO(uploaded_text.encode('utf-8', 'ignore')), request.POST)
-
-        return redirect(admin_url(LCRegister))
-
-    def __get_mf_ba(self, text):
-        if text.startswith('MF201'):
-            return text[:13], text[13:]
-        return '', ''
-
-    def parse(self, fobj, post):
-        lc_col = getattr(col, post['lc_no'])
-        amount_col = getattr(col, post['amount'])
-
-        parser_utility = UploadCSVParserUtility()
-
-        for row in csv.reader(fobj, delimiter='\t'):
-            if not lc_col or not amount_col:
-                continue
-            if self.ok_to_parse(row, lc_col, amount_col):
-                mf_raw = parser_utility.normalize_ref(row[getattr(col, post['mf'])])
-                mf, ba = self.__get_mf_ba(mf_raw)
-
-                estb_date_ = row[getattr(col, post['estb_date'])]
-                estb_date = parser_utility.normalize_date(estb_date_)
-
-                lc_number = parser_utility.normalize_ref(row[lc_col])
-
-                appl_ = row[getattr(col, post['appl'])]
-                applicant = parser_utility.normalize(appl_)
-
-                bene_ = row[getattr(col, post['bene'])]
-                bene = parser_utility.normalize(bene_)
-
-                post_ccy_ = row[getattr(col, post['ccy'])]
-                ccy = parser_utility.normalize(post_ccy_)
-
-                lc_amt_org_ccy = parser_utility.normalize_amount(row[amount_col])
-
-                post_exp_date_ = row[getattr(col, post['exp_date'])]
-                expiry_date = parser_utility.normalize_date(post_exp_date_)
-
-                adv_bank_ = row[getattr(col, post['adv_bank'])]
-                adv_bank = parser_utility.normalize(adv_bank_)
-
-                brn = ''
-                brn_col = getattr(col, post['brn'])
-                if len(row) > brn_col:
-                    post_brn_ = row[brn_col]
-                    brn = parser_utility.normalize(post_brn_)
-
-                lc_obj = LCRegister.objects.filter(lc_number=lc_number)
-                if not lc_obj.exists():
-                    LCRegister.objects.create(
-                            mf=mf,
-                            ba=ba,
-                            estb_date=estb_date,
-                            lc_number=lc_number,
-                            applicant=applicant,
-                            bene=bene,
-                            ccy=ccy,
-                            advising_bank=adv_bank,
-                            ccy_obj=Currency.objects.get(code=ccy),
-                            lc_amt_org_ccy=lc_amt_org_ccy,
-                            expiry_date=expiry_date, )
-                else:
-                    lc = lc_obj[0]
-                    if lc.expiry_date != expiry_date:
-                        lc.expiry_date = expiry_date
-                    if lc.lc_amt_org_ccy != lc_amt_org_ccy:
-                        lc.lc_amt_org_ccy = lc_amt_org_ccy
-                    if not lc.ba and ba:
-                        lc.ba = ba
-                    if not lc.mf and mf:
-                        lc.mf = mf
-                    if not lc.advising_bank and adv_bank:
-                        lc.advising_bank = adv_bank
-                    if not lc.brn_code and brn:
-                        lc.brn_code = brn
-                    lc.save()
-
-    def ok_to_parse(self, row, lc_col, amount_col):
-        return len(row) > 5 and str(row[lc_col]).startswith('ILCL') and \
-               row[amount_col].replace(',', '').replace('.', '').isdigit()
-
-
-class LCRegisterUploadView(View):
-    REPORT_MODEL_HEADERS_MAPPING = {
-        "LC ESTABLISHMENT DATE": "estb_date",
-        "NAME OF IMPORTER": "applicant",
-        "BENEFICIARY": "bene",
-        "CNTRY OF PAYMT": "bene_country",
-        "LC CURR": "ccy_obj",
-        "LC AMOUNT": "lc_amt_org_ccy",
-        "LC NUMBER": "lc_number",
-        "EXPIRY DATE": "expiry_date",
-        'ADVISING BANK': 'advising_bank',
-        'APPLICANT REF': 'mf'
-    }
-
-    def get(self, request):
-        return render(
-                request,
-                'contingent_report/upload-lc-register.html',
-                {'mappings': json.dumps(self.REPORT_MODEL_HEADERS_MAPPING)})
-
-    def post(self, request):
-        uploaded_text = request.POST['upload-lc-register-text'].strip(' \n\r')
-
-        if uploaded_text:
-            parser_utility = UploadCSVParserUtility()
-
-            amounts_in_cents = request.POST.get('amount-cents', False)
-
-            for data in json.loads(uploaded_text):
-                lc = LCRegister.objects.filter(lc_number=data['lc_number'])
-
-                if not lc.exists():
-                    data["expiry_date"] = parser_utility.normalize_date(data["expiry_date"])
-                    data["estb_date"] = parser_utility.normalize_date(data["estb_date"])
-                    data['ccy_obj'] = Currency.objects.get(code=data['ccy_obj'])
-                    data["lc_amt_org_ccy"] = float(data["lc_amt_org_ccy"].replace(',', ''))
-
-                    if amounts_in_cents:
-                        data["lc_amt_org_ccy"] /= 100
-
-                    LCRegister.objects.create(**data)
-
-        return redirect(admin_url(LCRegister))
+from core_recons.utilities import admin_url
 
 
 class LCRegisterUpdateView(View):
@@ -172,9 +28,7 @@ class LCRegisterUpdateView(View):
 
     def get(self, request):
         return render(
-                request,
-                'contingent_report/update-lc-register.html',
-                {'mappings': json.dumps(self.MAPPINGS)}
+                request, 'contingent_report/update-lc-register.html', {'mappings': json.dumps(self.MAPPINGS)}
         )
 
     def post(self, request):
@@ -200,7 +54,7 @@ class LCRegisterUpdateView(View):
 
 class TIPostingStatusUploadView(View):
     def get(self, request):
-        return render(request, 'upload-ti-posting-status-report.html')
+        return render(request, 'contingent_report\upload-ti-posting-status-report.html')
 
     def post(self, request):
         uploaded_text = request.POST['upload-ti-posting-status-text']
@@ -213,9 +67,9 @@ class TIPostingStatusUploadView(View):
 
         return redirect(admin_url(TIPostingStatusReport))
 
-    def parse(self, fobj):
+    def parse(self, file_obj):
         parser_utility = UploadCSVParserUtility()
-        for row in csv.reader(fobj, delimiter='\t'):
+        for row in csv.reader(file_obj, delimiter='\t'):
             if self.ok_to_parse(row):
                 ref = parser_utility.normalize_ref(row[col.b])
                 posting_date = parser_utility.normalize_date(row[col.c])
@@ -253,9 +107,7 @@ class UploadContingentReportView(View):
     """From BO contingent report file."""
 
     def get(self, request, acct_status=None):
-        return render(
-                request,
-                'upload-contingent.html')
+        return render(request, 'contingent_report/upload-contingent.html')
 
     def post(self, request, acct_status=None):
         uploaded_text = request.POST['upload-contingent-text']

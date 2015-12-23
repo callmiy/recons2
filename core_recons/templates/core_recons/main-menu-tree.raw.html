@@ -51,6 +51,24 @@
       </ul>
     </li>
 
+    <li> Contingent Reports
+      <ul>
+        <li>
+          <span>
+            <a href="{% url 'ti-flex-recons-date-prompt' %}" tabindex="-1">
+              TI Flexcube Recons Date Prompt
+            </a>
+          </span>
+        </li>
+
+        <li>
+          <span>
+            <a href="{% url 'unmatched-upload' %}" tabindex="-1">Upload/Display Clirec Records</a>
+          </span>
+        </li>
+      </ul>
+    </li>
+
     {% if user.is_staff %}
       <li> Admin
         <ul>

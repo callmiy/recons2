@@ -2,13 +2,11 @@ from django.conf.urls import url, patterns
 from contingent_report.views.uploads import LCRegisterUpdateView
 from .views import (UploadContingentReportView,
                     TIPostingStatusUploadView,
-                    LCRegisterUploadView,
                     TIFlexDatePromptView,
                     ContingentNonPostView,
                     OldContingentBalancesViewRiskMgmt,
                     ContingentBalancesViewRiskMgmt,
-                    OutStandingLCBalances,
-                    UploadIncomeView, )
+                    OutStandingLCBalances, )
 from contingent_report.views.contingent_postings import PostContingentView
 from contingent_report.views.income_analysis import Income2View
 
@@ -21,13 +19,10 @@ urlpatterns = patterns(
 
         url(r'^uploads/contingent2/$',
             TIFlexDatePromptView.as_view(),
-            name='upload-contingent2'),
+            name='ti-flex-recons-date-prompt'),
 
         url(r'^uploads/ti-posting-status/$', TIPostingStatusUploadView.as_view(),
             name='upload_ti_posting_status'),
-
-        url(r'^uploads/lc-register/$',
-            LCRegisterUploadView.as_view(), name='upload_lc_register'),
 
         url(r'^uploads/lc-register/update$',
             LCRegisterUpdateView.as_view(), name='update_lc_register')
@@ -36,9 +31,6 @@ urlpatterns = patterns(
 # incomes
 urlpatterns += patterns(
         '',
-
-        url(r'^incomes/income1/$',
-            UploadIncomeView.as_view(), name='upload-income'),
 
         url(r'^incomes/income2/$',
             Income2View.as_view(), name='income2'),
