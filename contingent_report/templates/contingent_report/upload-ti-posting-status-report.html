@@ -1,13 +1,4 @@
-{% extends 'cbn-eformm-root.html' %}
-{% block page_title %}TI Posting Status Upload-{% endblock %}
-{% block page_css %}
-<link rel="stylesheet" href="/static/css/upload-ti-posting-status.css">
-{% endblock %}
-{% block page_content %}
-	<div class="row upload-ti-posting-status-form-row">
-		<form action="" class="upload-ti-posting-status-form col-lg-12" method="post">{% csrf_token %}
-			<div class="col-lg-10">
-				<pre data-label-for="id_upload-ti-posting-status">
+{% extends 'core_recons/recons-base.html' %} {% load static %} {% block title %}TI Posting Status Upload-{% endblock %} {% block page_css %}<link rel="stylesheet" href="{% static 'contingent_report/css/upload-ti-posting-status.min.css' %}">{% endblock %} {% block page_content %}<div class="row upload-ti-posting-status-form-row"><form action="" class="upload-ti-posting-status-form col-lg-12" method="post">{% csrf_token %}<div class="col-lg-10"><pre data-label-for="id_upload-ti-posting-status">
 					From BO, export TI POSTING STATUS REPORT data in text file format. Ensure the headers
 					are in the order listed below. Then copy and paste the text here.
 					1. PRODUCT
@@ -19,20 +10,4 @@
 					7. AMOUNT
 					8. NARRATION
 					9. STATUS
-				</pre>
-				<textarea name="upload-ti-posting-status-text" id="id_upload-ti-posting-status"></textarea>
-			</div>
-			<div class="col-lg-2">
-				<input type="submit" value="Upload">
-			</div>
-		</form>
-	</div>
-{% endblock %}
-
-{% block page_js %}
-    <script src="/static/bower_components/papa-parse/papaparse.min.js"></script>
-    <script src="/static/contingent_report/js/lc-posting-status-upload.js"></script>
-    <script>
-        var mappings = JSON.parse('{{ mappings | escapejs }}');
-    </script>
-{% endblock %}
+				</pre><textarea name="upload-ti-posting-status-text" id="id_upload-ti-posting-status"></textarea></div><div class="col-lg-2"><input type="submit" value="Upload"></div></form></div>{% endblock %} {% block page_js %}<script src="{% static 'contingent_report/js/lc-posting-status-upload.min.js' %}"></script><script src="{% static 'contingent_report/js/pre-label.min.js' %}"></script>{% endblock %}

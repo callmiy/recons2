@@ -1,14 +1,4 @@
-{% extends 'core_recons/recons-base.html' %}
-{% load static %}
-{% block title %}Contingent Report Upload-{% endblock %}
-{% block page_css %}
-  <link rel="stylesheet" href="{% static 'contingent_report/css/upload-contingent.css' %}">
-{% endblock %}
-{% block page_content %}
-  <div class="row upload-contingent-form-row">
-    <form action="" class="upload-contingent-form col-lg-12" method="post">{% csrf_token %}
-      <div class="col-lg-10">
-				<pre data-label-for="id_upload-contingent">
+{% extends 'core_recons/recons-base.html' %} {% load static %} {% block title %}Contingent Report Upload-{% endblock %} {% block page_css %}<link rel="stylesheet" href="{% static 'contingent_report/css/upload-contingent.css' %}">{% endblock %} {% block page_content %}<div class="row upload-contingent-form-row"><form action="" class="upload-contingent-form col-lg-12" method="post">{% csrf_token %}<div class="col-lg-10"><pre data-label-for="id_upload-contingent">
 					From BO, export contingent report data in text file format. Ensure the headers
 					are in the order listed below. Then copy and paste the text here.
 					1. TRN REF NO
@@ -23,82 +13,4 @@
 					10. FX BALANCE
 					11. NGN BALANCE
 					12. NARRATION
-				</pre>
-        <textarea name="upload-contingent-text" id="id_upload-contingent"></textarea>
-        <label for="id_upload-contingent" class="sr-only"></label>
-      </div>
-      <div class="col-lg-2"><input type="submit" value="Upload"></div>
-    </form>
-  </div>
-{% endblock %}
-{% block page_js %}
-  <script>
-    $(function () {
-      var $preLabel, $targetCtrl;
-
-      $preLabel = $('pre[data-label-for]');
-
-      $targetCtrl = $("#" + ($preLabel.data('label-for')));
-
-      if ($targetCtrl.val()) {
-        $preLabel.hide();
-      }
-
-      $preLabel.css({
-        position: 'absolute',
-        top: 10,
-        left: 25,
-        margin: 0,
-        padding: 0,
-        color: '#ADACAC',
-        display: 'block',
-        border: 0,
-        cursor: 'text',
-        'background-color': 'initial',
-        'white-space': 'pre-line',
-        'border-radius': 0
-      }).on('click', function () {
-        var $el;
-        $el = $(this);
-        if ($targetCtrl.val) {
-          if ($targetCtrl.val()) {
-            $el.hide();
-          } else {
-            $targetCtrl.focus();
-            $el.show();
-          }
-        } else if ($targetCtrl.text) {
-          if ($targetCtrl.text()) {
-            $el.hide();
-          } else {
-            $el.show();
-          }
-        }
-        return $targetCtrl.focus();
-      }).next().on({
-        'focusout': function () {
-          var $el;
-          $el = $(this);
-          if ($el.val) {
-            if (!$el.val()) {
-              return $el.prev().show();
-            } else {
-              return $el.prev().hide();
-            }
-          } else if ($el.text) {
-            if (!$el.text()) {
-              return $el.prev().show();
-            } else {
-              return $el.prev().hide();
-            }
-          }
-        },
-        'focusin': function () {
-          var $el;
-          $el = $(this);
-          return $el.prev().hide();
-        }
-      });
-    })
-  </script>
-{% endblock page_js %}
+				</pre><textarea name="upload-contingent-text" id="id_upload-contingent"></textarea> <label for="id_upload-contingent" class="sr-only"></label></div><div class="col-lg-2"><input type="submit" value="Upload"></div></form></div>{% endblock %} {% block page_js %}<script src="{% static 'contingent_report/js/pre-label.min.js' %}"></script>{% endblock page_js %}

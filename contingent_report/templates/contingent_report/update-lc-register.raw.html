@@ -1,0 +1,26 @@
+{% extends 'cbn-eformm-root.html' %}
+{% block page_title %}LC Register Update-{% endblock %}
+{% block page_css %}
+    <link rel="stylesheet" href="/static/contingent_report/css/update-lc-register.css">
+{% endblock %}
+{% block page_content %}
+
+    <h1>Use Outstanding LC Report - From Bo</h1>
+    <div class="row upload-lc-register-form-row">
+        <form action="" class="upload-lc-register-form" method="post">{% csrf_token %}
+            <div class="row top-controls">
+                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                    <textarea name="update-lc-register-text" id="id_update-lc-register"></textarea>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"><input type="submit" value="Update"></div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block page_js %}
+    <script src="/static/bower_components/papa-parse/papaparse.min.js"></script>
+    <script src="/static/contingent_report/js/lc-register-update.js"></script>
+    <script>
+        var mappings = JSON.parse('{{ mappings | escapejs }}');
+    </script>
+{% endblock %}

@@ -109,7 +109,7 @@ class UploadContingentReportView(View):
     def get(self, request, acct_status=None):
         return render(request, 'contingent_report/upload-contingent.html')
 
-    def post(self, request, acct_status=None):
+    def post(self, request):
         uploaded_text = request.POST['upload-contingent-text']
 
         if uploaded_text:
@@ -172,9 +172,7 @@ class TIFlexDatePromptView(View):
     """From BO TIPLUS-FLEXCUBE RECONS REP-DATE PROMPT file."""
 
     def get(self, request):
-        return render(
-                request,
-                'upload-ti-flex-date-prompt.html')
+        return render(request, 'contingent_report/upload-ti-flex-date-prompt.html')
 
     def post(self, request):
         uploaded_text = request.POST['ti-flex-date-prompt-text']
