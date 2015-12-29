@@ -1,0 +1,60 @@
+{% extends 'core_recons/recons-base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'contingent_report/css/from-to-date.css' %}">
+{% endblock %}
+
+{% block page_content %}
+{% block from_to_date %}
+<h1>{{ header }}</h1>
+<div class="row from-to-date-row">
+	<form action="" class="from-to-date-form col-lg-12 align-vertical" method="post">
+		{% csrf_token %}
+		<div class="">
+			<fieldset>
+				{% if show_start_date %}
+				<div class="startdate form-row">
+					<label class="aligned" for="id_stdt">Start Date:</label>
+					<input type="text" name="stdt" id="id_stdt" placeholder="Start date" value="{{ stdt }}" class="show-date-picker" size="10" />
+					<span>From Beginning: </span> <input type="checkbox" id="id_begin_chkbx" />
+				</div>
+				{% endif %}
+
+				{% if show_end_date %}
+				<div class="enddate form-row">
+					<label class="aligned" for="id_endt">End Date:</label>
+					<input type="text" name="endt" value="{{ endt }}" id="id_endt"  placeholder="End date" class="show-date-picker" size="10" />
+					<span>Today: </span> <input type="checkbox" id="id_today_chkbx" />
+				</div>
+				{% endif %}
+			</fieldset>
+
+			<div class="submit-row">
+				<input type="submit" value="{% if submit_btn_val %}{{ submit_btn_val }}{% else %}Get Non Post Report{% endif %}" name="from_to_date">
+			</div>
+		</div>
+	</form>
+</div>
+{% endblock from_to_date %}
+{% block other_content %}
+{% endblock other_content %}
+{% endblock %}
+
+{% block page_js %}
+<script>
+	$(function(){
+		$('#id_begin_chkbx').change(function(){
+			$('#id_stdt').val($(this).prop('checked') ? '{% if beginning %}{{beginning}}{% else %}05-05-2013{% endif %}' : '');
+		})
+
+		dd = $.datepicker.formatDate('dd-mm-yy', new Date());
+
+		$('#id_today_chkbx').change(function(){
+			$('#id_endt').val($(this).prop('checked') ? dd : '');
+		})
+	});
+</script>
+{% endblock %}

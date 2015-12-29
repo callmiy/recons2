@@ -21,7 +21,7 @@ class ContingentBalancesView(View):
     def get(self, request):
         return render(
             request,
-            'from-to-date.html',
+            'contingent_report/from-to-date.html',
             {'header': self.info, 'title': self.title,
              'submit_btn_val': self.submit_btn_val,
              'show_end_date': True}
