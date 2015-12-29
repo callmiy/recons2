@@ -15,14 +15,14 @@ urlpatterns = patterns(
             UploadContingentReportView.as_view(),
             name='upload-contingent'),
 
-        url(r'^uploads/ti-flex-recons-date-prompt/$',
+        url(r'^uploads/ti-flex-recons-date-prompt/?$',
             TIFlexDatePromptView.as_view(),
             name='ti-flex-recons-date-prompt-upload'),
 
-        url(r'^uploads/ti-posting-status/$', TIPostingStatusUploadView.as_view(),
+        url(r'^uploads/ti-posting-status/?$', TIPostingStatusUploadView.as_view(),
             name='upload-ti-posting-status'),
 
-        url(r'^uploads/lc-register/update$',
+        url(r'^uploads/lc-register/update/?$',
             LCRegisterUpdateView.as_view(), name='update-lc-register')
 )
 
@@ -31,20 +31,20 @@ urlpatterns += patterns(
         '',
 
         url(
-                r'^reports/old-cont-report/$',
+                r'^reports/old-cont-report/?$',
                 OldContingentBalancesViewRiskMgmt.as_view(),
                 name='old-cont-report'),
 
         url(
-                r'^contingent-non-post/$', ContingentNonPostView.as_view(),
+                r'^contingent-non-post/?$', ContingentNonPostView.as_view(),
                 name='contingent-non-post'),
 
         url(
-                r'^contingent-balances-risk/$',
+                r'^contingent-balances-risk/?$',
                 ContingentBalancesViewRiskMgmt.as_view(),
                 name='contingent-balances-risk'),
 
         url(
-                r'^reports/contingent-lc-bals/$', OutStandingLCBalances.as_view(),
+                r'^reports/contingent-lc-bals/?$', OutStandingLCBalances.as_view(),
                 name='contingent-lc-bals'),
 )
