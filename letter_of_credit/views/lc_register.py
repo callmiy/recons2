@@ -1,6 +1,7 @@
 import django_filters
 from rest_framework import generics, pagination
 
+from contingent_report.models import LCClass
 from core_recons.utilities import admin_url
 from letter_of_credit.models import LCRegister, FormM
 from letter_of_credit.serializers import LetterOfCreditRegisterSerializer
@@ -122,6 +123,7 @@ class LCRegisterUploadView(View):
 
         if uploaded_text:
             parser_utility = UploadCSVParserUtility()
+            lc_classes = LCClass.objects.values_list('prod_code', flat=True)
 
             for data in json.loads(uploaded_text):
                 logger.info('About to create or update lc using raw data from client:\n%s' % data)
@@ -134,6 +136,7 @@ class LCRegisterUploadView(View):
                 logger.info('About to create or update lc after raw data from client cleaned up:\n%s' % data)
 
                 lc_number = data['lc_number'].strip(' \n\r')
+                data['lc_number'] = lc_number
 
                 if 'GTE-' in lc_number:
                     continue
@@ -142,9 +145,13 @@ class LCRegisterUploadView(View):
                 lc_qs = LCRegister.objects.filter(lc_number=lc_number)
 
                 if not lc_qs.exists():
-                    logger.info("LC %s does not exist in database, it will be created" % lc_number)
+                    ref_class = lc_number[:7]
+                    if ref_class in lc_classes:
+                        data['lc_class'] = ref_class
+                    logger.info('LC "%s" does not exist in database, it will be created with data:\n%s', lc_number,
+                                json.dumps(data, indent=4))
                     lc_obj = LCRegister.objects.create(**data)
-                    logger.info("LC %s successfully created." % lc_number)
+                    logger.info('LC "%s" successfully created.' % lc_number)
 
                 else:
                     logger.info(

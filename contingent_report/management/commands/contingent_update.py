@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.db.models import Q
-from contingent_report.models import ContingentReport, TIPostingStatusReport
+from contingent_report.models import ContingentReport, TIPostingStatusReport, LCClass
 from letter_of_credit.models import LCRegister
 
 
@@ -14,13 +14,7 @@ class Command(BaseCommand):
             cont.insert_customer_name()
             cont.save()
 
-        lc_classes = {
-            'ILCLUNC': 'Unconfirmed LC',
-            'ILCLCSH': 'Confirmed Cash Cover (Naira Acct)',
-            'ILCLSTF': 'Stocking Term Facility (Naira)',
-            'ILCLCDO': 'Confirmed Cash Cover (Dom Acct)',
-            'ILCLITF': 'Clean Line (Oversea corres Bank)'
-        }
+        lc_classes = LCClass.objects.values_list('prod_code', flat=True)
 
         for lc in LCRegister.objects.filter(Q(lc_class__isnull=True) | Q(lc_class='')):
             ref_class = lc.lc_number[:7]
