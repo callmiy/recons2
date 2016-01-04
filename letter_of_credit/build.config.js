@@ -35,6 +35,7 @@ module.exports = {
   jsMinify: [
     path.join(destDir, 'app.js'),
     path.join(letterOfCredit, 'js', 'lc-register-upload.js'),
-    path.join(letterOfCredit, 'js', 'uploaded-form-m', 'uploaded-form-m.js')
+    path.join(letterOfCredit, 'js', 'uploaded-form-m', 'uploaded-form-m.js'),
+    path.join(letterOfCredit, 'js', 'process_swift', 'process_swift.js')
   ]
 }

@@ -1,0 +1,23 @@
+{% extends 'core_recons/recons-base.html' %}
+{% load static %}
+
+{% block page_css %}
+  <link rel="stylesheet" href="{% static 'letter_of_credit/css/release-telex.min.css' %}">
+{% endblock %}
+
+{% block page_content %}
+  <form class="" method="post" id="process-swift-form">
+    <div class="">
+      <label class="sr-only" for="process-swift">Swift HTML</label>
+      <input type="file" name="processSwift" id="process-swift" class="form-control"/>
+    </div>
+  <div class="text-center">
+    <input type="submit" value="Process" id="process-swift-submit">
+  </div>
+  </form>
+
+  <div class="message-area"></div>
+{% endblock %}
+{% block page_js %}
+  <script src="{% static 'letter_of_credit/js/process_swift/process_swift.min.js' %}"></script>
+{% endblock page_js %}

@@ -31,6 +31,8 @@ from .uploaded_form_m import (
     UploadFromSingleWindowView
 )
 
+from .process_swift import ProcessSwiftView
+
 
 class AppHomeView(CoreAppsView):
     def get(self, request):
