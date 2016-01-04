@@ -2,10 +2,12 @@ $(function () {
   "use strict";
 
   var $processSwift = document.getElementById('process-swift')
-  var $messageArea = $('.message-area')
+  var $messageArea = $('#swift-messages')
 
   $('#process-swift-form').submit(function (evt) {
     evt.preventDefault()
+    $messageArea.hide().val('')
+
     var file = $processSwift.files[0]
     if (!file) return
 
@@ -31,6 +33,8 @@ $(function () {
         "div:contains(F20: Sender's Reference)",
         "div:contains(F20: Documentary Credit Number)"
       ].join(',')
+
+      var string = ''
 
       $obj.find("div[id^=AUTOGENBOOKMARK_]:contains(Start of Message)").each(function () {
         var $td = $(this).parent()
@@ -59,8 +63,14 @@ $(function () {
 
         var $deliveryStatus = getInner($td, "div[id^=AUTOGENBOOKMARK_]:contains(Network Delivery Status:)")
         var deliveryStatus = $deliveryStatus.size() ? processText($deliveryStatus.text()) : 'Message has not been authorized'
-        console.log(deliveryStatus)
+
+        string += type + '\n' + receiverBic + '\n' + ourRef + '\n' + theirRef + '\n' + '\n' +
+          message + '\n\nInput by:\t         ' + modifier + '\nVerified by:\t  ' + verifier +
+          '\nAuthorized by:\t  ' + auth + '\nAuthorization completed at:\t' + finishedTime +
+            '\nDelivery status:\t' + deliveryStatus + '\n================================================\n\n\n\n'
       })
+
+      $messageArea.show().val(string)
     }
   })
 

@@ -1,6 +1,6 @@
 import django_filters
 from rest_framework import generics, pagination
-
+from rest_framework.renderers import JSONRenderer
 from contingent_report.models import LCClass
 from core_recons.utilities import admin_url
 from letter_of_credit.models import LCRegister, FormM
@@ -148,8 +148,7 @@ class LCRegisterUploadView(View):
                     ref_class = lc_number[:7]
                     if ref_class in lc_classes:
                         data['lc_class'] = ref_class
-                    logger.info('LC "%s" does not exist in database, it will be created with data:\n%s', lc_number,
-                                json.dumps(data, indent=4))
+                    logger.info('LC "%s" does not exist in database, it will be created', lc_number)
                     lc_obj = LCRegister.objects.create(**data)
                     logger.info('LC "%s" successfully created.' % lc_number)
 

@@ -11,12 +11,15 @@
       <label class="sr-only" for="process-swift">Swift HTML</label>
       <input type="file" name="processSwift" id="process-swift" class="form-control"/>
     </div>
-  <div class="text-center">
-    <input type="submit" value="Process" id="process-swift-submit">
-  </div>
+    <div class="text-center">
+      <input type="submit" value="Process" id="process-swift-submit">
+    </div>
   </form>
 
-  <div class="message-area"></div>
+  <div class="message-area">
+    <label class="sr-only" for="swift-messages">Swift Messages</label>
+    <textarea style="display: none; height: 600px" id="swift-messages" class="form-control"></textarea>
+  </div>
 {% endblock %}
 {% block page_js %}
   <script src="{% static 'letter_of_credit/js/process_swift/process_swift.min.js' %}"></script>
