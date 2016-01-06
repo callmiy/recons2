@@ -9,27 +9,27 @@ from datetime import datetime
 
 class DownloadBidsView(View):
     def get(self, request):
-        file_name = '%s.xlsx' % datetime.now().strftime('fx-request-%Y-%m-%d-%H-%S-%f')
-        wb = Workbook()
-        sheet = wb.active
-        row = 2
-        row_index = 1
-
-        font = Font(bold=True)
-
-        sheet.cell(row=1, column=1, value='S/N').font = font
-        sheet.cell(row=1, column=2, value='CUSTOMER').font = font
-        sheet.cell(row=1, column=3, value='CURR').font = font
-        sheet.cell(row=1, column=4, value='AMOUNT').font = font
-        sheet.cell(row=1, column=5, value='PURPOSE').font = font
-        sheet.cell(row=1, column=6, value='A/C NO.').font = font
-        sheet.cell(row=1, column=7, value='MF NO').font = font
-        sheet.cell(row=1, column=8, value='LC REF.').font = font
-        sheet.cell(row=1, column=9, value='MATURITY DATE').font = font
-
         bid_ids = request.GET.getlist('bid_ids')
 
         if bid_ids:
+            file_name = '%s.xlsx' % datetime.now().strftime('fx-request-%Y-%m-%d-%H-%S-%f')
+            wb = Workbook()
+            sheet = wb.active
+            row = 2
+            row_index = 1
+
+            font = Font(bold=True)
+
+            sheet.cell(row=1, column=1, value='S/N').font = font
+            sheet.cell(row=1, column=2, value='CUSTOMER').font = font
+            sheet.cell(row=1, column=3, value='CURR').font = font
+            sheet.cell(row=1, column=4, value='AMOUNT').font = font
+            sheet.cell(row=1, column=5, value='PURPOSE').font = font
+            sheet.cell(row=1, column=6, value='A/C NO.').font = font
+            sheet.cell(row=1, column=7, value='MF NO').font = font
+            sheet.cell(row=1, column=8, value='LC REF.').font = font
+            sheet.cell(row=1, column=9, value='MATURITY DATE').font = font
+
             for bid in LcBidRequest.objects.filter(pk__in=bid_ids):
                 mf = bid.mf
                 applicant = mf.applicant
@@ -48,8 +48,11 @@ class DownloadBidsView(View):
                 sheet.cell(row=row, column=6, value=acct)
 
                 sheet.cell(row=row, column=7, value=mf.number)
-                sheet.cell(row=row, column=8, value='NEW LC')
-                sheet.cell(row=row, column=9, value='CASH BACKED')
+                sheet.cell(row=row, column=8, value=mf.lc_number() or 'NEW LC')
+                maturity = 'CASH BACKED'
+                if bid.maturity:
+                    maturity = bid.maturity.strftime('%d-%b-%Y')
+                sheet.cell(row=row, column=9, value=maturity)
 
                 row += 1
                 row_index += 1

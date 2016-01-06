@@ -1,17 +1,19 @@
 import json
+import logging
+import re
+
+import django_filters
 from django.db.models import Q
 from rest_framework import generics, pagination, status
-import django_filters
 from rest_framework.response import Response
-from letter_of_credit.models import FormM, FormMCover
+
+from letter_of_credit.models import FormM
 from letter_of_credit.serializers import (
     FormMSerializer,
     LcBidRequestSerializer,
     LCIssueConcreteSerializer,
     FormMCoverSerializer
 )
-import logging
-import re
 
 logger = logging.getLogger('recons_logger')
 URL_RE = re.compile(r'.+/(\d+)$')
@@ -59,11 +61,11 @@ class FormIssueBidCoverUtil:
 
     def create_bid(self, bid):
         if len(bid):
-            amount = bid['amount']
-            logger.info('{} creating bid for amount "{:,.2f}"'.format(self.log_prefix, amount))
+            log = {'amount': "{:,.2f}".format(bid['amount']), 'maturity': bid['maturity']}
+            logger.info('%s creating bid with data:\n%s', self.log_prefix, json.dumps(log, indent=4))
 
-            serializer = LcBidRequestSerializer(data={'amount': amount, 'mf': self.form_m_url},
-                                                context={'request': self.request})
+            bid.update({'mf': self.form_m_url})
+            serializer = LcBidRequestSerializer(data=bid, context={'request': self.request})
             serializer.is_valid(raise_exception=True)
             serializer.save()
             data = serializer.data

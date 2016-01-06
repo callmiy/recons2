@@ -22,10 +22,9 @@
       <label class="control-label col-sm-3" for="goods-description">Goods Description</label>
 
       <div class="col-sm-9">
-        <input class="form-control" id="goods-description" name="bidGoodsDescription" required ng-minlength="5"
+        <input class="form-control" id="goods-description" name="bidGoodsDescription" required ng-minlength="3"
                ng-required="lcBid.formM.showBidForm" to-upper
                ng-model="lcBid.formM.bid.goods_description"/>
-
 
         <i
           ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': lcBid.isValid('bidGoodsDescription'), 'glyphicon-ok': lcBid.isValid('bidGoodsDescription', 'ok')}]"
@@ -58,6 +57,37 @@
 
         <div ng-messages="bidForm.bidAmount.$error" role="alert">
           <div ng-if="lcBid.isValid('bidAmount')">
+            <div ng-messages-include="form-error-messages"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      ng-class="['form-group', 'has-feedback', 'bid-maturity-date-group', {'has-error': lcBid.isValid('bidMaturityDate'), 'has-success': lcBid.isValid('bidMaturityDate', 'ok')}]">
+
+      <label class="control-label col-sm-3" for="bid-maturity-date">Maturity Date</label>
+
+      <div class="col-sm-9">
+        <div class="input-group">
+          <input class="form-control" id="bid-maturity-date" name="bidMaturityDate"
+                 ng-model="lcBid.formM.bid.maturity"
+                 uib-datepicker-popup="{$lcBid.formM.datePickerFormat$}"
+                 is-open="lcBid.datePickerIsOpen.bidMaturityDate"/>
+
+            <span class="input-group-addon" ng-click="lcBid.openDatePicker('bidMaturityDate')">
+              <i class=" glyphicon glyphicon-calendar"></i>
+            </span>
+
+          <i
+            ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': lcBid.isValid('bidMaturityDate'), 'glyphicon-ok': lcBid.isValid('bidMaturityDate', 'ok')}]"
+            ng-if="lcBid.isValid('bidMaturityDate') || lcBid.isValid('bidMaturityDate', 'ok')"
+            data-form-control-icon-for="bidMaturityDate">
+          </i>
+        </div>
+
+        <div ng-messages="bidForm.bidMaturityDate.$error" role="alert">
+          <div ng-if="lcBid.isValid('bidMaturityDate')">
             <div ng-messages-include="form-error-messages"></div>
           </div>
         </div>

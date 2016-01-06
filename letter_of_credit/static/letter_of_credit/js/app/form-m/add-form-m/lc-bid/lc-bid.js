@@ -42,7 +42,8 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
   function init(form) {
     vm.datePickerIsOpen = {
       bidRequestedDate: false,
-      bidCreatedDate: false
+      bidCreatedDate: false,
+      bidMaturityDate: false
     }
     vm.title = title
     vm.formM.showBidForm = false
@@ -98,6 +99,8 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
     vm.formM.bid.created_at = vm.bidToEdit.created_at
     vm.bidToEdit.requested_at = vm.bidToEdit.requested_at ? new Date(vm.bidToEdit.requested_at) : null
     vm.formM.bid.requested_at = vm.bidToEdit.requested_at
+    vm.bidToEdit.maturity = vm.bidToEdit.maturity ? new Date(vm.bidToEdit.maturity) : null
+    vm.formM.bid.maturity = vm.bidToEdit.maturity
   }
 
   function toHumanDate(dtObj) {
@@ -147,10 +150,9 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
     }
   }
 
-  vm.editBid = function editBid() {
-    var title = 'Edit bid "' + vm.bidToEdit.form_m_number + '"'
-    var ccy = formMObject.currency.code
+  function createEditBidMessage(){
     var text = '\n\nForm M:           ' + vm.bidToEdit.form_m_number
+    var ccy = formMObject.currency.code
 
     if (vm.bidToEdit.amount !== formMObject.bid.amount) {
       text += '\nBid Amount' +
@@ -162,6 +164,12 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
       text += '\nGoods description' +
         '\n  before edit:    ' + vm.bidToEdit.goods_description +
         '\n  after edit:     ' + formMObject.bid.goods_description
+    }
+
+    if (!angular.equals(vm.bidToEdit.maturity, formMObject.bid.maturity)) {
+      text += '\nMaturity' +
+        '\n  before edit:    ' + toHumanDate(vm.bidToEdit.maturity) +
+        '\n  after edit:     ' + toHumanDate(formMObject.bid.maturity)
     }
 
     if (!angular.equals(vm.bidToEdit.created_at, formMObject.bid.created_at)) {
@@ -182,6 +190,14 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
         '\n  after edit:     ' + vm.formM.bid.downloaded
     }
 
+    return text
+  }
+
+  vm.editBid = function editBid() {
+    var title = 'Edit bid "' + vm.bidToEdit.form_m_number + '"'
+    var text = createEditBidMessage()
+
+
     confirmationDialog.showDialog({
       title: title,
       text: 'Are you sure you want to edit Bid:' + text
@@ -194,7 +210,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
       var bid = angular.copy(vm.bidToEdit)
 
       kanmiiUnderscore.each(formMObject.bid, function (val, key) {
-        if (key === 'created_at' || key === 'requested_at') val = toISODate(val)
+        if (key === 'created_at' || key === 'requested_at' || key === 'maturity') val = toISODate(val)
         bid[key] = val
       })
 
@@ -214,7 +230,8 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
       goods_description: vm.bidToEdit.goods_description === formMObject.bid.goods_description,
       downloaded: vm.bidToEdit.downloaded === formMObject.bid.downloaded,
       created_at: angular.equals(vm.bidToEdit.created_at, formMObject.bid.created_at),
-      requested_at: angular.equals(vm.bidToEdit.requested_at, formMObject.bid.requested_at)
+      requested_at: angular.equals(vm.bidToEdit.requested_at, formMObject.bid.requested_at),
+      maturity: angular.equals(vm.bidToEdit.maturity, formMObject.bid.maturity)
     }
   }
 

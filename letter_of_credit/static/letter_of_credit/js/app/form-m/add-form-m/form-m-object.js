@@ -28,7 +28,7 @@ formMObject.$inject = [
 ]
 
 function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDialog, formatDate, xhrErrorDisplay,
-  underscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
+                     underscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
   function Factory() {
     var self = this
     self.datePickerFormat = 'dd-MMM-yyyy'
@@ -284,7 +284,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
 
       if (formM.bid.amount && formM.bid.goods_description) {
         formMToSave.goods_description = formM.bid.goods_description
-        formMToSave.bid = {amount: Number(formM.bid.amount)}
+        formMToSave.bid = {amount: Number(formM.bid.amount), maturity: formatDate(formM.bid.maturity)}
         // In case user changed goods_description via bid directive
         self.goods_description = formM.bid.goods_description
         formM.goods_description = formM.bid.goods_description

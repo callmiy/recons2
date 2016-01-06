@@ -68,5 +68,6 @@ class LcBidRequestSerializer(serializers.HyperlinkedModelSerializer):
             'form_m_number',
             'applicant',
             'goods_description',
-            'downloaded'
+            'downloaded',
+            'maturity',
         )

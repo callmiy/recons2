@@ -8,6 +8,7 @@ class LcBidRequest(models.Model):
     requested_at = models.DateField('Date Request To Treasury', blank=True, null=True)
     amount = models.DecimalField('Amount', max_digits=20, decimal_places=2)
     downloaded = models.BooleanField('Downloaded', default=False)
+    maturity = models.DateField('Maturity Date', blank=True, null=True)
 
     class Meta:
         db_table = 'lc_bid_request'
