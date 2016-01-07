@@ -196,9 +196,9 @@
 	    $scope.tabs.addFormM.title = formM ? 'Details of "' + formM.number + '"' : addFormMTitle
 	  }
 
-	  $scope.goToFormM = function goToFormM(formM) {
+	  $scope.goToFormM = function goToFormM(formMNumber) {
 	    addFormMGoTo = false
-	    $state.transitionTo('form_m.add', {detailedFormM: formM})
+	    $state.transitionTo('form_m.add', {formM: formMNumber})
 	    $scope.tabs.addFormM.active = true
 	  }
 	}
@@ -242,7 +242,7 @@
 	    .state('form_m.add', {
 	      kanmiiTitle: 'Add form M',
 
-	      params: {detailedFormM: null, showSummary: null},
+	      params: {showSummary: null, formM: null},
 
 	      views: {
 	        addFormM: {
@@ -276,38 +276,40 @@
 	  formMAttributesVerboseNames) {
 	  var vm = this
 
-	  vm.detailedFormM = angular.copy($stateParams.detailedFormM)
-	  $stateParams.detailedFormM = null
+	  vm.detailedFormM = {}
+
+	  function initFormMCb(formM, detailedFormM) {
+	    $stateParams.formM = null
+	    vm.formM = formM
+	    vm.detailedFormM = detailedFormM
+
+	    if (detailedFormM) {
+	      vm.fieldIsEditable = {
+	        number: false,
+	        currency: false,
+	        applicant: false,
+	        date_received: false,
+	        amount: false
+	      }
+	    }
+
+	    $scope.updateAddFormMTitle(detailedFormM)
+	    formMSavedSuccessMessage()
+	  }
 
 	  initialize()
-	  function initialize(form) {
-	    formMObject.init(vm.detailedFormM, function (formM) {
-	      vm.formM = formM
+	  function initialize(form, formMNumber) {
+	    vm.fieldIsEditable = {
+	      number: true,
+	      currency: true,
+	      applicant: true,
+	      date_received: true,
+	      amount: true
+	    }
 
-	      if (vm.formM.number) {
-	        $scope.updateAddFormMTitle(formM)
-	        vm.fieldIsEditable = {
-	          number: false,
-	          currency: false,
-	          applicant: false,
-	          date_received: false,
-	          amount: false
-	        }
-
-	      } else {
-	        $scope.updateAddFormMTitle()
-	        vm.fieldIsEditable = {
-	          number: true,
-	          currency: true,
-	          applicant: true,
-	          date_received: true,
-	          amount: true
-	        }
-	      }
-	    })
+	    formMObject.init(formMNumber || $stateParams.formM, initFormMCb)
 
 	    vm.searchFormM = {}
-	    formMSavedSuccessMessage()
 
 	    if (form) {
 	      form.$setPristine()
@@ -397,9 +399,8 @@
 	    initialize()
 
 	    SearchDetailedOrUploadedFormMService.searchWithModal().then(function (data) {
-	      if (data.detailed) {
-	        vm.detailedFormM = data.detailed
-	        initialize()
+	      if (data.number) {
+	        initialize(null, data.number)
 
 	      } else {
 	        var formM = data.uploaded
@@ -460,7 +461,7 @@
 	]
 
 	function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDialog, formatDate, xhrErrorDisplay,
-	                     underscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
+	  underscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
 	  function Factory() {
 	    var self = this
 	    self.datePickerFormat = 'dd-MMM-yyyy'
@@ -508,7 +509,7 @@
 	      })
 	    }
 
-	    self.init = function init(detailedFormM, cb) {
+	    self.init = function init(formMNumber, cb) {
 	      setInitialProperties()
 	      function setInitialProperties() {
 	        /*
@@ -604,26 +605,38 @@
 	        self.lc_number = null
 	      }
 
-	      if (detailedFormM) {
-	        self.date_received = new Date(detailedFormM.date_received)
-	        self.number = detailedFormM.number
-	        self.applicant = detailedFormM.applicant_data
-	        self.currency = detailedFormM.currency_data
-	        self.amount = Number(detailedFormM.amount)
-	        self.goods_description = detailedFormM.goods_description
-	        self.form_m_issues = detailedFormM.form_m_issues
-	        self.url = detailedFormM.url
-	        self.ct_id = detailedFormM.ct_id
-	        self.ct_url = detailedFormM.ct_url
-	        self._id = detailedFormM.id
-	        self.lc_number = detailedFormM.lc_number
-	        setBids()
-	        setIssues()
-	        setCovers()
-	        setComments(self._id)
+	      var formM
+
+	      if (formMNumber) {
+	        FormM.getPaginated({number: formMNumber}).$promise.then(function (data) {
+	          if (data.count) {
+	            formM = data.results[0]
+	            self.date_received = new Date(formM.date_received)
+	            self.number = formM.number
+	            self.applicant = formM.applicant_data
+	            self.currency = formM.currency_data
+	            self.amount = Number(formM.amount)
+	            self.goods_description = formM.goods_description
+	            self.form_m_issues = formM.form_m_issues
+	            self.url = formM.url
+	            self.ct_id = formM.ct_id
+	            self.ct_url = formM.ct_url
+	            self._id = formM.id
+	            self.lc_number = formM.lc_number
+
+	            setBids()
+	            setIssues()
+	            setCovers()
+	            setComments(self._id)
+	          }
+
+	          cb(self, formM)
+	        })
+
+	      } else {
+	        cb(self)
 	      }
 
-	      cb(self)
 	    }
 
 	    self.formatIssueText = function formatIssueText(text) {return text.replace(/:ISSUE$/i, '')}
@@ -715,20 +728,14 @@
 	      }
 
 	      if (formM.bid.amount && formM.bid.goods_description) {
-	        formMToSave.goods_description = formM.bid.goods_description
+	        formMToSave.goods_description = self.goods_description = formM.bid.goods_description
 	        formMToSave.bid = {amount: Number(formM.bid.amount), maturity: formatDate(formM.bid.maturity)}
-	        // In case user changed goods_description via bid directive
-	        self.goods_description = formM.bid.goods_description
-	        formM.goods_description = formM.bid.goods_description
 	      }
 
 	      if (formM.selectedIssues.length) formMToSave.issues = formM.selectedIssues
 
 	      if (!underscore.isEmpty(formM.cover)) {
-	        formMToSave.cover = {
-	          amount: formM.cover.amount,
-	          cover_type: formM.cover.cover_type[0]
-	        }
+	        formMToSave.cover = {amount: formM.cover.amount, cover_type: formM.cover.cover_type[0]}
 	      }
 
 	      var deferred = $q.defer()
@@ -737,13 +744,9 @@
 
 	      else {
 	        //if we did not edit the main form M i.e detailedFormM = formM, then there is no need for database update
-	        //we store some attributes of formM that we care about in formMToSave because this will now become detailed
-	        //form M when we return from server.
 	        if (underscore.all(self.compareFormMs(detailedFormM, formM))) {
 	          formMToSave.do_not_update = 'do_not_update'
-	          formMToSave.applicant_data = formM.applicant
-	          formMToSave.currency_data = formM.currency
-	          formMToSave.url = formM.url
+	          formMToSave.url = formM.url //needed for bid, cover, issues and comments
 	        }
 
 	        formMToSave.id = detailedFormM.id
@@ -754,11 +757,11 @@
 	        var summary = self.createFormMMessage() + self.createIssuesMessage(data.new_issues)
 
 	        if (formMToSave.bid) {
-	          summary += '\n\nBid Amount     : ' + data.currency_data.code + ' ' + $filter('number')(formMToSave.bid.amount, 2)
+	          summary += '\n\nBid Amount     : ' + formM.currency.code + ' ' + $filter('number')(formMToSave.bid.amount, 2)
 	        }
 
 	        delete data.new_issues
-	        deferred.resolve({detailedFormM: data, showSummary: summary})
+	        deferred.resolve({showSummary: summary, formM: data.number})
 	      }
 
 	      function formMSavedError(xhr) {
@@ -1555,8 +1558,7 @@
 	  'ui.router',
 	  'lc-bid-request',
 	  'rootApp',
-	  'kanmii-URI',
-	  'form-m-service'
+	  'kanmii-URI'
 	])
 
 	app.config(rootCommons.interpolateProviderConfig)
@@ -1590,11 +1592,9 @@
 	  'underscore',
 	  'formatDate',
 	  '$timeout',
-	  '$q',
-	  'FormM'
+	  '$q'
 	]
-	function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, underscore, formatDate, $timeout, $q,
-	  FormM) {
+	function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, underscore, formatDate, $timeout, $q) {
 	  var vm = this;
 
 	  initialize()
@@ -1629,12 +1629,7 @@
 	   * @param {{}} bid - the bid object at the row that was double clicked
 	   */
 	  vm.rowDblClickCb = function rowDblClickCb(bid) {
-	    FormM.getPaginated({number: bid.form_m_number}).$promise.then(function (data) {
-	      var results = data.results
-	      if (results.length && results.length === 1) {
-	        $scope.goToFormM(results[0])
-	      }
-	    })
+	    $scope.goToFormM(bid.form_m_number)
 	  }
 
 	  /**
@@ -1948,7 +1943,7 @@
 	  vm.modelManager = formMModelManager
 
 	  vm.modelRowDblClick = function modelRowDblClick(formM) {
-	    scope.goToFormM(formM)
+	    scope.goToFormM(formM.number)
 	  }
 
 	  /**
@@ -1974,7 +1969,7 @@
 	   * @type {[]}
 	   */
 	  vm.formMs = []
-	  FormM.getNoLcAttached().$promise.then(function(data) {
+	  FormM.getNoLcAttached().$promise.then(function (data) {
 	    updateFormMs(data)
 	  })
 
@@ -1990,7 +1985,7 @@
 	   * @param {string} linkUrl - the url (href) of the link clicked by user
 	   */
 	  function getFormMCollectionOnNavigation(linkUrl) {
-	    $http.get(linkUrl).then(function(response) {
+	    $http.get(linkUrl).then(function (response) {
 	      updateFormMs(response.data)
 	    })
 	  }
@@ -2001,7 +1996,7 @@
 	   */
 	  vm.searchedFormMResult = null
 
-	  scope.$watch(function getNewFormM() {return vm.searchedFormMResult}, function(searchedFormMResult) {
+	  scope.$watch(function getNewFormM() {return vm.searchedFormMResult}, function (searchedFormMResult) {
 	    if (searchedFormMResult) updateFormMs(searchedFormMResult)
 	  })
 	}
@@ -2044,7 +2039,7 @@
 
 	    FormM.getPaginated({number: mf}).$promise.then(function(data) {
 	      if (data.count === 1) {
-	        deferred.resolve({detailed: data.results[0]})
+	        deferred.resolve({number: data.results[0].number})
 
 	      } else UploadFormM.query({mf: mf}).$promise.then(searchFormMSuccess, searchFormMError)
 

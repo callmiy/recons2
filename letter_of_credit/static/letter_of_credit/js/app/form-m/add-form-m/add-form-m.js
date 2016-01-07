@@ -32,7 +32,7 @@ function formMStateConfig($stateProvider) {
     .state('form_m.add', {
       kanmiiTitle: 'Add form M',
 
-      params: {detailedFormM: null, showSummary: null},
+      params: {showSummary: null, formM: null},
 
       views: {
         addFormM: {
@@ -66,38 +66,40 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   formMAttributesVerboseNames) {
   var vm = this
 
-  vm.detailedFormM = angular.copy($stateParams.detailedFormM)
-  $stateParams.detailedFormM = null
+  vm.detailedFormM = {}
+
+  function initFormMCb(formM, detailedFormM) {
+    $stateParams.formM = null
+    vm.formM = formM
+    vm.detailedFormM = detailedFormM
+
+    if (detailedFormM) {
+      vm.fieldIsEditable = {
+        number: false,
+        currency: false,
+        applicant: false,
+        date_received: false,
+        amount: false
+      }
+    }
+
+    $scope.updateAddFormMTitle(detailedFormM)
+    formMSavedSuccessMessage()
+  }
 
   initialize()
-  function initialize(form) {
-    formMObject.init(vm.detailedFormM, function (formM) {
-      vm.formM = formM
+  function initialize(form, formMNumber) {
+    vm.fieldIsEditable = {
+      number: true,
+      currency: true,
+      applicant: true,
+      date_received: true,
+      amount: true
+    }
 
-      if (vm.formM.number) {
-        $scope.updateAddFormMTitle(formM)
-        vm.fieldIsEditable = {
-          number: false,
-          currency: false,
-          applicant: false,
-          date_received: false,
-          amount: false
-        }
-
-      } else {
-        $scope.updateAddFormMTitle()
-        vm.fieldIsEditable = {
-          number: true,
-          currency: true,
-          applicant: true,
-          date_received: true,
-          amount: true
-        }
-      }
-    })
+    formMObject.init(formMNumber || $stateParams.formM, initFormMCb)
 
     vm.searchFormM = {}
-    formMSavedSuccessMessage()
 
     if (form) {
       form.$setPristine()
@@ -187,9 +189,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     initialize()
 
     SearchDetailedOrUploadedFormMService.searchWithModal().then(function (data) {
-      if (data.detailed) {
-        vm.detailedFormM = data.detailed
-        initialize()
+      if (data.number) {
+        initialize(null, data.number)
 
       } else {
         var formM = data.uploaded

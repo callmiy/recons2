@@ -25,7 +25,7 @@ function SearchDetailedOrUploadedFormMService(UploadFormM, xhrErrorDisplay, Moda
 
     FormM.getPaginated({number: mf}).$promise.then(function(data) {
       if (data.count === 1) {
-        deferred.resolve({detailed: data.results[0]})
+        deferred.resolve({number: data.results[0].number})
 
       } else UploadFormM.query({mf: mf}).$promise.then(searchFormMSuccess, searchFormMError)
 

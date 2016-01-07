@@ -8,8 +8,7 @@ var app = angular.module('form-m-bids', [
   'ui.router',
   'lc-bid-request',
   'rootApp',
-  'kanmii-URI',
-  'form-m-service'
+  'kanmii-URI'
 ])
 
 app.config(rootCommons.interpolateProviderConfig)
@@ -43,11 +42,9 @@ BidRequestController.$inject = [
   'underscore',
   'formatDate',
   '$timeout',
-  '$q',
-  'FormM'
+  '$q'
 ]
-function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, underscore, formatDate, $timeout, $q,
-  FormM) {
+function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, underscore, formatDate, $timeout, $q) {
   var vm = this;
 
   initialize()
@@ -82,12 +79,7 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, unde
    * @param {{}} bid - the bid object at the row that was double clicked
    */
   vm.rowDblClickCb = function rowDblClickCb(bid) {
-    FormM.getPaginated({number: bid.form_m_number}).$promise.then(function (data) {
-      var results = data.results
-      if (results.length && results.length === 1) {
-        $scope.goToFormM(results[0])
-      }
-    })
+    $scope.goToFormM(bid.form_m_number)
   }
 
   /**

@@ -108,9 +108,9 @@ function FormMController($state, $scope) {
     $scope.tabs.addFormM.title = formM ? 'Details of "' + formM.number + '"' : addFormMTitle
   }
 
-  $scope.goToFormM = function goToFormM(formM) {
+  $scope.goToFormM = function goToFormM(formMNumber) {
     addFormMGoTo = false
-    $state.transitionTo('form_m.add', {detailedFormM: formM})
+    $state.transitionTo('form_m.add', {formM: formMNumber})
     $scope.tabs.addFormM.active = true
   }
 }

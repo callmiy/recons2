@@ -28,7 +28,7 @@ formMObject.$inject = [
 ]
 
 function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDialog, formatDate, xhrErrorDisplay,
-                     underscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
+  underscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
   function Factory() {
     var self = this
     self.datePickerFormat = 'dd-MMM-yyyy'
@@ -76,7 +76,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
       })
     }
 
-    self.init = function init(detailedFormM, cb) {
+    self.init = function init(formMNumber, cb) {
       setInitialProperties()
       function setInitialProperties() {
         /*
@@ -172,26 +172,38 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         self.lc_number = null
       }
 
-      if (detailedFormM) {
-        self.date_received = new Date(detailedFormM.date_received)
-        self.number = detailedFormM.number
-        self.applicant = detailedFormM.applicant_data
-        self.currency = detailedFormM.currency_data
-        self.amount = Number(detailedFormM.amount)
-        self.goods_description = detailedFormM.goods_description
-        self.form_m_issues = detailedFormM.form_m_issues
-        self.url = detailedFormM.url
-        self.ct_id = detailedFormM.ct_id
-        self.ct_url = detailedFormM.ct_url
-        self._id = detailedFormM.id
-        self.lc_number = detailedFormM.lc_number
-        setBids()
-        setIssues()
-        setCovers()
-        setComments(self._id)
+      var formM
+
+      if (formMNumber) {
+        FormM.getPaginated({number: formMNumber}).$promise.then(function (data) {
+          if (data.count) {
+            formM = data.results[0]
+            self.date_received = new Date(formM.date_received)
+            self.number = formM.number
+            self.applicant = formM.applicant_data
+            self.currency = formM.currency_data
+            self.amount = Number(formM.amount)
+            self.goods_description = formM.goods_description
+            self.form_m_issues = formM.form_m_issues
+            self.url = formM.url
+            self.ct_id = formM.ct_id
+            self.ct_url = formM.ct_url
+            self._id = formM.id
+            self.lc_number = formM.lc_number
+
+            setBids()
+            setIssues()
+            setCovers()
+            setComments(self._id)
+          }
+
+          cb(self, formM)
+        })
+
+      } else {
+        cb(self)
       }
 
-      cb(self)
     }
 
     self.formatIssueText = function formatIssueText(text) {return text.replace(/:ISSUE$/i, '')}
@@ -283,20 +295,14 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
       }
 
       if (formM.bid.amount && formM.bid.goods_description) {
-        formMToSave.goods_description = formM.bid.goods_description
+        formMToSave.goods_description = self.goods_description = formM.bid.goods_description
         formMToSave.bid = {amount: Number(formM.bid.amount), maturity: formatDate(formM.bid.maturity)}
-        // In case user changed goods_description via bid directive
-        self.goods_description = formM.bid.goods_description
-        formM.goods_description = formM.bid.goods_description
       }
 
       if (formM.selectedIssues.length) formMToSave.issues = formM.selectedIssues
 
       if (!underscore.isEmpty(formM.cover)) {
-        formMToSave.cover = {
-          amount: formM.cover.amount,
-          cover_type: formM.cover.cover_type[0]
-        }
+        formMToSave.cover = {amount: formM.cover.amount, cover_type: formM.cover.cover_type[0]}
       }
 
       var deferred = $q.defer()
@@ -305,13 +311,9 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
 
       else {
         //if we did not edit the main form M i.e detailedFormM = formM, then there is no need for database update
-        //we store some attributes of formM that we care about in formMToSave because this will now become detailed
-        //form M when we return from server.
         if (underscore.all(self.compareFormMs(detailedFormM, formM))) {
           formMToSave.do_not_update = 'do_not_update'
-          formMToSave.applicant_data = formM.applicant
-          formMToSave.currency_data = formM.currency
-          formMToSave.url = formM.url
+          formMToSave.url = formM.url //needed for bid, cover, issues and comments
         }
 
         formMToSave.id = detailedFormM.id
@@ -322,11 +324,11 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         var summary = self.createFormMMessage() + self.createIssuesMessage(data.new_issues)
 
         if (formMToSave.bid) {
-          summary += '\n\nBid Amount     : ' + data.currency_data.code + ' ' + $filter('number')(formMToSave.bid.amount, 2)
+          summary += '\n\nBid Amount     : ' + formM.currency.code + ' ' + $filter('number')(formMToSave.bid.amount, 2)
         }
 
         delete data.new_issues
-        deferred.resolve({detailedFormM: data, showSummary: summary})
+        deferred.resolve({showSummary: summary, formM: data.number})
       }
 
       function formMSavedError(xhr) {

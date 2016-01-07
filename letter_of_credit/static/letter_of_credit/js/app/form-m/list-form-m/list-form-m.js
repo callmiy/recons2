@@ -45,7 +45,7 @@ function FormMListController(FormM, scope, formMModelManager, $http) {
   vm.modelManager = formMModelManager
 
   vm.modelRowDblClick = function modelRowDblClick(formM) {
-    scope.goToFormM(formM)
+    scope.goToFormM(formM.number)
   }
 
   /**
@@ -71,7 +71,7 @@ function FormMListController(FormM, scope, formMModelManager, $http) {
    * @type {[]}
    */
   vm.formMs = []
-  FormM.getNoLcAttached().$promise.then(function(data) {
+  FormM.getNoLcAttached().$promise.then(function (data) {
     updateFormMs(data)
   })
 
@@ -87,7 +87,7 @@ function FormMListController(FormM, scope, formMModelManager, $http) {
    * @param {string} linkUrl - the url (href) of the link clicked by user
    */
   function getFormMCollectionOnNavigation(linkUrl) {
-    $http.get(linkUrl).then(function(response) {
+    $http.get(linkUrl).then(function (response) {
       updateFormMs(response.data)
     })
   }
@@ -98,7 +98,7 @@ function FormMListController(FormM, scope, formMModelManager, $http) {
    */
   vm.searchedFormMResult = null
 
-  scope.$watch(function getNewFormM() {return vm.searchedFormMResult}, function(searchedFormMResult) {
+  scope.$watch(function getNewFormM() {return vm.searchedFormMResult}, function (searchedFormMResult) {
     if (searchedFormMResult) updateFormMs(searchedFormMResult)
   })
 }
