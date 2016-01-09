@@ -16,10 +16,13 @@ class LcBidRequestPagination(pagination.PageNumberPagination):
 class LcBidRequestFilter(django_filters.FilterSet):
     pending = django_filters.MethodFilter()
     mf = django_filters.CharFilter(lookup_type='icontains', name='mf__number')
+    applicant = django_filters.CharFilter(name='mf__applicant__id')
+    amount = django_filters.CharFilter(name='amount')
+    lc_number = django_filters.CharFilter(name='mf__lc__lc_number', lookup_type='icontains')
 
     class Meta:
         model = LcBidRequest
-        fields = ('pending',)
+        fields = ('pending', 'mf', 'applicant', 'amount', 'lc_number',)
 
     def filter_pending(self, qs, param):
         if not param:

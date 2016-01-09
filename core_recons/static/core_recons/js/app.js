@@ -153,6 +153,14 @@ function controlHasFeedback() {
   }
 }
 
+app.factory('toISODate', toISODate)
+toISODate.$inject = ['moment']
+function toISODate(moment){
+  return function (dtObj) {
+    return dtObj ? moment(dtObj).format('YYYY-MM-DD') : null
+  }
+}
+
 require('./commons/toggle-dim-element')
 require('./customer/customer.js')
 require('./lc-bid-request/lc-bid-request.js')

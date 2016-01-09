@@ -10,11 +10,11 @@ from datetime import datetime
 class DownloadBidsView(View):
     def get(self, request):
         bid_ids = request.GET.getlist('bid_ids')
+        file_name = '%s.xlsx' % datetime.now().strftime('fx-request-%Y-%m-%d-%H-%S-%f')
+        wb = Workbook()
+        sheet = wb.active
 
         if bid_ids:
-            file_name = '%s.xlsx' % datetime.now().strftime('fx-request-%Y-%m-%d-%H-%S-%f')
-            wb = Workbook()
-            sheet = wb.active
             row = 2
             row_index = 1
 

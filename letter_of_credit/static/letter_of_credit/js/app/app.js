@@ -47,7 +47,7 @@
 	"use strict";
 
 	__webpack_require__(1)
-	__webpack_require__(23)
+	__webpack_require__(25)
 
 	var rootCommons = __webpack_require__(7)
 
@@ -77,7 +77,7 @@
 
 	      kanmiiTitle: 'Home',
 
-	      template: __webpack_require__(26)
+	      template: __webpack_require__(28)
 	    })
 	}
 
@@ -92,10 +92,10 @@
 
 	__webpack_require__(2)
 	__webpack_require__(11)
-	__webpack_require__(14)
 	__webpack_require__(16)
-	__webpack_require__(17)
+	__webpack_require__(18)
 	__webpack_require__(19)
+	__webpack_require__(21)
 
 	var app = angular.module('form-m',
 	  ['rootApp',
@@ -116,7 +116,7 @@
 
 	      kanmiiTitle: 'Form M',
 
-	      template: __webpack_require__(22),
+	      template: __webpack_require__(24),
 
 	      controller: 'FormMController as formMHome'
 	    })
@@ -1227,11 +1227,12 @@
 	  'confirmationDialog',
 	  'formMObject',
 	  'resetForm2',
-	  'moment'
+	  'moment',
+	  'toISODate'
 	]
 
 	function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnderscore, LcBidRequest, xhrErrorDisplay,
-	  confirmationDialog, formMObject, resetForm2, moment) {
+	  confirmationDialog, formMObject, resetForm2, moment, toISODate) {
 	  var vm = this
 	  vm.formM = formMObject
 	  var title = 'New Bid Request'
@@ -1306,10 +1307,6 @@
 
 	  function toHumanDate(dtObj) {
 	    return dtObj ? moment(dtObj).format('DD-MMM-YYYY') : null
-	  }
-
-	  function toISODate(dtObj) {
-	    return dtObj ? moment(dtObj).format('YYYY-MM-DD') : null
 	  }
 
 	  vm.onBidDblClick = function onBidDblClick(bid, $index, form) {
@@ -1568,16 +1565,15 @@
 
 	/*jshint camelcase:false*/
 
-	var rootCommons = __webpack_require__(7)
+	__webpack_require__(12)
 
 	var app = angular.module('form-m-bids', [
 	  'ui.router',
 	  'lc-bid-request',
 	  'rootApp',
-	  'kanmii-URI'
+	  'kanmii-URI',
+	  'search-bids'
 	])
-
-	app.config(rootCommons.interpolateProviderConfig)
 
 	app.config(bidURLConfig)
 	bidURLConfig.$inject = ['$stateProvider']
@@ -1590,7 +1586,7 @@
 
 	      views: {
 	        bids: {
-	          template: __webpack_require__(12),
+	          template: __webpack_require__(14),
 
 	          controller: 'BidRequestController as bidHome'
 	        }
@@ -1615,16 +1611,7 @@
 
 	  initialize()
 	  function initialize() {
-	    vm.newBid = null
-
-	    /**
-	     * When the search-bid directive returns, the result is propagated into this model
-	     * @type {null|object}
-	     */
-	    vm.searchedBidResult = null
-
 	    vm.selectedBids = {}
-
 	    vm.selectedDownloadedBids = {}
 
 	    /**
@@ -1635,9 +1622,12 @@
 	     */
 	    vm.bidRequests = []
 	    vm.paginationHooks = {}
-	    LcBidRequest.pending().$promise.then(function (data) {
-	      updateBids(data)
-	    })
+
+	    if (!arguments.length) {
+	      LcBidRequest.pending().$promise.then(function (data) {
+	        updateBids(data)
+	      })
+	    }
 	  }
 
 	  /**
@@ -1652,7 +1642,9 @@
 	   * The table caption for the 'model-table' directive
 	   * @type {string}
 	   */
-	  vm.tableCaption = 'Pending Bids'
+	  var tableCaptionPending = 'Bids (Pending only)'
+	  var tableCaptionAll = 'Bids'
+	  vm.tableCaption = tableCaptionPending
 
 	  /**
 	   * Will be invoked when any of the pager links is clicked in other to get the bids at the pager url
@@ -1663,6 +1655,11 @@
 	    $http.get(linkUrl).then(function (response) {
 	      updateBids(response.data)
 	    })
+	  }
+
+	  vm.onBidsSearched = function onBidsSearched(result) {
+	    initialize(false)
+	    updateBids(result)
 	  }
 
 	  $scope.$watch(function searchedBidResult() {return vm.searchedBidResult},
@@ -1680,6 +1677,8 @@
 	    vm.bidRequests = data.results
 
 	    vm.paginationHooks = {next: data.next, previous: data.previous, count: data.count}
+
+	    vm.tableCaption = data.all ? tableCaptionAll : tableCaptionPending
 	  }
 
 	  var url = kanmiiUri(urls.lcBidRequestDownloadUrl)
@@ -1691,8 +1690,10 @@
 	        if (selection === true) search.push(bidId)
 	      })
 
-	      return url.search({bid_ids: search}).toString()
+	      return search.length ? url.search({bid_ids: search}).toString() : null
 	    }
+
+	    return null
 	  }
 
 	  vm.downloadBtnDisabled = function downloadBtnDisabled() {
@@ -1747,7 +1748,9 @@
 	  }
 
 	  vm.refreshPage = function refreshPage() {
-	    $timeout(function () {initialize()}, 3000)
+	    if (!vm.downloadBtnDisabled()) {
+	      $timeout(function () {initialize()}, 3000)
+	    }
 	  }
 
 	  function getBidFromId(bidId) {
@@ -1760,20 +1763,126 @@
 	  }
 	}
 
-	__webpack_require__(13)
+	__webpack_require__(15)
 
 
 /***/ },
 /* 12 */
-/***/ function(module, exports) {
-
-	module.exports = "<div class=\"form-m-home-view\"><div class=\"action-buttons\" style=\"text-align: right;margin-bottom: 30px;\"><button class=\"btn btn-info\" ng-click=\"bidHome.searchBids()\">Search Bids</button> <a class=\"btn btn-success\" ng-href=\"{$bidHome.downloadUrl()$}\" ng-disabled=\"bidHome.downloadBtnDisabled()\" ng-click=\"bidHome.refreshPage()\">Download</a> <button type=\"button\" name=\"bid-home-mark-as-requested-btn\" class=\"btn btn-success\" ng-click=\"bidHome.markRequested()\" ng-disabled=\"bidHome.markRequestedBtnDisabled()\">Mark as requested</button></div><div display-pending-bid=\"\" pending-bids=\"bidHome.bidRequests\" pager-object=\"bidHome.paginationHooks\" update-collection=\"bidHome.getBidsOnNavigation(linkUrl)\" pagination-size=\"20\" selected-bids=\"bidHome.selectedBids\" on-selected-bids-changed=\"bidHome.onSelectedBidsChanged(newSelections)\" on-row-dbl-click=\"bidHome.rowDblClickCb(bid)\"></div></div>";
-
-/***/ },
-/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+
+	/*jshint camelcase:false*/
+
+	var app = angular.module('search-bids', [
+	  'customer',
+	  'lc-bid-request',
+	  'rootApp'
+	])
+
+	app.directive('searchBids', searchBidsDirective)
+
+	searchBidsDirective.$inject = []
+
+	function searchBidsDirective() {
+	  return {
+	    restrict: 'AE',
+	    template: __webpack_require__(13),
+	    scope: true,
+	    bindToController: {
+	      onBidsSearched: '&'
+	    },
+	    controller: 'searchBidsController as searchBids'
+	  }
+	}
+
+	app.controller('searchBidsController', searchBidsController)
+	searchBidsController.$inject = [
+	  'LcBidRequest',
+	  'underscore',
+	  'getTypeAheadCustomer',
+	  'getTypeAheadCurrency',
+	  'resetForm2',
+	  'toISODate'
+	]
+	function searchBidsController(LcBidRequest, underscore, getTypeAheadCustomer, getTypeAheadCurrency, resetForm2,
+	  toISODate) {
+	  var vm = this //jshint -W040
+
+	  init()
+	  function init() {
+	    vm.searchParams = {
+	      pending: true
+	    }
+	  }
+
+	  vm.toggleShow = function toggleShow(form) {
+	    vm.showForm = !vm.showForm
+
+	    if (!vm.showForm) vm.clearForm(form)
+	  }
+
+	  vm.validators = {
+	    applicant: {
+	      test: function () {
+	        return underscore.isObject(vm.searchParams.applicant)
+	      }
+	    },
+
+	    currency: {
+	      test: function () {
+	        return underscore.isObject(vm.searchParams.currency)
+	      }
+	    }
+	  }
+	  vm.getCurrency = getTypeAheadCurrency
+	  vm.getApplicant = getTypeAheadCustomer
+	  vm.datePickerFormat = 'dd-MMM-yyyy'
+	  vm.datePickerIsOpen = false
+	  vm.openDatePicker = function openDatePicker() {
+	    vm.datePickerIsOpen = true
+	  }
+
+	  vm.clearForm = function clearForm(form) {
+	    resetForm2(form)
+	    init()
+	  }
+
+	  vm.searchBids = function searchBids(searchParams) {
+	    var params = angular.copy(searchParams)
+	    params.applicant = params.applicant ? /\d+$/.exec(params.applicant.url)[0] : null
+	    params.currency = params.currency ? params.currency.code : null
+	    params.created_at = params.created_at ? toISODate(params.created_at) : null
+
+	    if (!params.pending) delete params.pending
+
+	    LcBidRequest.getPaginated(params).$promise.then(function (data) {
+	      data.all = !params.pending
+	      vm.onBidsSearched({searchResult: data})
+	    })
+	  }
+	}
+
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	module.exports = "<div class=\"search-bids-directive\"><div class=\"search-bid-toggle-show\"><div ng-click=\"searchBids.toggleShow(searchBidsForm)\" class=\"form-m-add-on-toggle clearfix\"><span class=\"form-m-add-on-show-helper\" ng-if=\"searchBids.showForm\"></span><div class=\"form-m-add-on-show-icon form-m-bid-add-on-show-icon\"><span ng-class=\"['glyphicon', {'glyphicon-chevron-down': !searchBids.showForm, 'glyphicon-chevron-up': searchBids.showForm}]\"></span> Search Bids</div></div></div><form class=\"form-horizontal\" name=\"searchBidsForm\" role=\"form\" autocomplete=\"off\" ng-show=\"searchBids.showForm\" ng-submit=\"searchBids.searchBids(searchBids.searchParams)\"><div class=\"form-group form-m-group\" control-has-feedback=\"\"><label for=\"form-m-number\" class=\"control-label col-sm-3\">Form M Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"formMNumber\" ng-model=\"searchBids.searchParams.mf\" id=\"form-m-number\" to-upper=\"\" ng-pattern=\"/(?:mf)?\\d{3,}/i\" maxlength=\"13\"></div></div><div class=\"form-group applicant-group\" control-has-feedback=\"\"><label for=\"applicant\" class=\"control-label col-sm-3\">Applicant</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"applicant\" ng-model=\"searchBids.searchParams.applicant\" id=\"applicant\" ng-minlength=\"3\" ng-pattern=\"searchBids.validators.applicant\" typeahead-min-length=\"3\" uib-typeahead=\"applicant as applicant.name for applicant in searchBids.getApplicant($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group currency-group\" control-has-feedback=\"\"><label for=\"currency\" class=\"control-label col-sm-3\">Currency</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"currency\" ng-model=\"searchBids.searchParams.currency\" id=\"currency\" maxlength=\"3\" ng-pattern=\"searchBids.validators.currency\" autocomplete=\"off\" uib-typeahead=\"currency as currency.code for currency in searchBids.getCurrency($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group amount-group\" control-has-feedback=\"\"><label for=\"amount\" class=\"control-label col-sm-3\">Amount</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"amount\" ng-model=\"searchBids.searchParams.amount\" id=\"amount\" number-format=\"\"></div></div><div class=\"form-group created-date-group\" control-has-feedback=\"\" feedback-after=\".input-group-addon\"><label for=\"created-at\" class=\"control-label col-sm-3\">Creation At</label><div class=\"col-sm-9\"><div class=\"input-group\"><input type=\"text\" class=\"form-control\" name=\"createdAt\" ng-model=\"searchBids.searchParams.created_at\" id=\"created-at\" uib-datepicker-popup=\"{$searchBids.datePickerFormat$}\" is-open=\"searchBids.datePickerIsOpen\"> <span class=\"input-group-addon\" ng-click=\"searchBids.openDatePicker($event)\"><i class=\"glyphicon glyphicon-calendar\"></i></span></div></div></div><div class=\"form-group lc-number-group\"><label for=\"lc-number\" class=\"control-label col-sm-3\">LC Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"lcNumber\" ng-model=\"searchBids.searchParams.lc_number\" id=\"lc-number\" to-upper=\"\" maxlength=\"16\"></div></div><div class=\"form-group pending-group\"><label for=\"pending\" class=\"control-label col-sm-3\">Pending</label><div class=\"col-sm-9\"><input type=\"checkbox\" name=\"pending\" ng-model=\"searchBids.searchParams.pending\" id=\"pending\"></div></div><div class=\"form-group submit-group\"><div class=\"col-sm-9 col-sm-offset-3\"><div class=\"clearfix\"><div class=\"pull-left\"><input type=\"submit\" class=\"btn btn-info\" value=\"Search Bids\" ng-disabled=\"searchBidsForm.$invalid\"></div><div class=\"pull-right\" style=\"text-align: right\"><input type=\"button\" class=\"btn btn-warning\" value=\"Clear All\" ng-click=\"searchBids.clearForm(searchBidsForm)\"></div></div></div></div></form></div>";
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	module.exports = "<div class=\"list-bid-view\"><div class=\"row\" style=\"margin-bottom: 30px; margin-top: 10px\"><div class=\"col-sm-6\"><div search-bids=\"\" on-bids-searched=\"bidHome.onBidsSearched(searchResult)\"></div></div><div class=\"col-sm-6\"><div class=\"action-buttons\" style=\"text-align: right;\"><a class=\"btn btn-success\" ng-href=\"{$bidHome.downloadUrl()$}\" ng-disabled=\"bidHome.downloadBtnDisabled()\" ng-click=\"bidHome.refreshPage()\">Download</a> <button type=\"button\" name=\"bid-home-mark-as-requested-btn\" class=\"btn btn-success\" ng-click=\"bidHome.markRequested()\" ng-disabled=\"bidHome.markRequestedBtnDisabled()\">Mark as requested</button></div></div></div><div display-pending-bid=\"\" pending-bids=\"bidHome.bidRequests\" pager-object=\"bidHome.paginationHooks\" update-collection=\"bidHome.getBidsOnNavigation(linkUrl)\" pagination-size=\"20\" selected-bids=\"bidHome.selectedBids\" on-selected-bids-changed=\"bidHome.onSelectedBidsChanged(newSelections)\" on-row-dbl-click=\"bidHome.rowDblClickCb(bid)\" table-caption=\"bidHome.tableCaption\"></div></div>";
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	/*jshint camelcase:false*/
 
 	var lcAppCommons = __webpack_require__(5)
 
@@ -1801,7 +1910,9 @@
 
 	      paginationSize: '=',
 
-	      selectedBids: '='
+	      selectedBids: '=',
+
+	      tableCaption: '='
 	    },
 
 	    controller: 'displayPendingBidDirectiveCtrl as bidTable'
@@ -1855,7 +1966,7 @@
 	  })
 
 	  function deselectAllBids() {
-	    vm.bids.forEach(function(bid) {
+	    vm.bids.forEach(function (bid) {
 	      bid.highlighted = false
 	    })
 	  }
@@ -1866,7 +1977,7 @@
 	      deselectAllBids()
 
 	      //only highlight a row if no row is checked and the row model is not downloaded previously
-	      model.highlighted = !kanmiiUnderscore.any(vm.bids, function(bid) {
+	      model.highlighted = !kanmiiUnderscore.any(vm.bids, function (bid) {
 	        return bid.checked
 	      })
 	    }
@@ -1881,7 +1992,7 @@
 
 	    if (selectedBids && !kanmiiUnderscore.isEmpty(selectedBids)) {
 
-	      kanmiiUnderscore.each(selectedBids, function(checked, id) {
+	      kanmiiUnderscore.each(selectedBids, function (checked, id) {
 
 	        for (var bidIndex = 0; bidIndex < vm.bids.length; bidIndex++) {
 	          var bid = vm.bids[bidIndex]
@@ -1892,7 +2003,7 @@
 
 	      })
 
-	      vm.toggleAll = kanmiiUnderscore.all(vm.bids, function(bid) {
+	      vm.toggleAll = kanmiiUnderscore.all(vm.bids, function (bid) {
 	        return bid.checked === true
 	      })
 	    }
@@ -1901,15 +2012,15 @@
 	  vm.toggleAll = false
 
 	  vm.toggleAllClicked = function toggleAllClicked() {
-	    vm.bids.forEach(function(bid) {
-	      vm.selectedBids[bid.id] = vm.toggleAll
+	    vm.bids.forEach(function (bid) {
+	      vm.selectedBids[bid.id] = !bid.requested_at && vm.toggleAll
 	    })
 	  }
 	}
 
 
 /***/ },
-/* 14 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict"
@@ -1938,7 +2049,7 @@
 
 	      views: {
 	        'listFormM': {
-	          template: __webpack_require__(15),
+	          template: __webpack_require__(17),
 
 	          controller: 'FormMListController as formMList'
 	        }
@@ -2019,13 +2130,13 @@
 
 
 /***/ },
-/* 15 */
+/* 17 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"manage-form-m-tab-content\"><div class=\"action-buttons pull-right\"><button class=\"btn btn-info\" search-form-m=\"\" search-form-m-result=\"formMList.searchedFormMResult\">Search Form M</button></div><div model-table=\"\" model-collection=\"formMList.formMs\" table-model-manager=\"::formMList.modelManager\" table-caption=\"::formMList.tableCaption\" pagination-size=\"20\" update-collection=\"formMList.getFormMCollectionOnNavigation(linkUrl)\" pager-object=\"formMList.paginationHooks\" on-row-dbl-click-callback=\"formMList.modelRowDblClick(rowModel)\"></div></div>";
 
 /***/ },
-/* 16 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2137,7 +2248,7 @@
 
 
 /***/ },
-/* 17 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2156,7 +2267,7 @@
 	        .css({cursor: 'pointer'})
 	        .bind('click', function() {
 	                ModalService.showModal({
-	                  template: __webpack_require__(18),
+	                  template: __webpack_require__(20),
 
 	                  controller: 'SearchFormMModalCtrl as searchFormMModal'
 
@@ -2252,20 +2363,20 @@
 
 
 /***/ },
-/* 18 */
+/* 20 */
 /***/ function(module, exports) {
 
 	module.exports = "<div id=\"search-form-m-root-container\" class=\"search-form-m-root-container\"><form novalidate=\"\" class=\"form-horizontal\" autocomplete=\"off\" ng-submit=\"searchFormMModal.submitSearchParams(searchFormMModal.searchParams)\" name=\"searchFormMModalForm\"><fieldset class=\"search-form-m-container\" style=\"position: relative; padding: 7px;\"><div class=\"form-group form-m-number-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"form-m-number\">Form M Number</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" maxlength=\"13\" id=\"form-m-number\" min=\"0\" ng-pattern=\"/(?:mf)?\\d{4,11}/i\" ng-model=\"searchFormMModal.searchParams.number\"></div></div><div class=\"form-group applicant-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"applicant\">Applicant</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" type=\"text\" min=\"3\" id=\"applicant\" ng-model=\"searchFormMModal.searchParams.applicant\" typeahead-min-length=\"3\" uib-typeahead=\"applicant as applicant.name for applicant in searchFormMModal.getApplicant($viewValue)\"></div></div><div class=\"form-group currency-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"currency\">Currency</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" id=\"currency\" maxlength=\"3\" ng-model=\"searchFormMModal.searchParams.currency\" uib-typeahead=\"currency as currency.code for currency in searchFormMModal.getCurrency($viewValue)\" typeahead-min-length=\"2\"></div></div><div class=\"form-group amount-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"amount\">Amount</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" id=\"amount\" min=\"0\" ng-model=\"searchFormMModal.searchParams.amount\" number-format=\"\" ng-pattern=\"/^\\d[\\d,]*(?:\\.\\d*)?$/\"></div></div></fieldset><div class=\"form-m-lc-issue-container\"><span ng-click=\"searchFormMModal.toggleShowLcIssueContainer()\" class=\"form-m-lc-issue-toggle-show\"><span ng-class=\"['glyphicon', {'glyphicon-chevron-down': !searchFormMModal.showLcIssueContainer, 'glyphicon-chevron-up': searchFormMModal.showLcIssueContainer}]\"></span> {$searchFormMModal.searchLcIssuesTitle$}</span><div class=\"form-m-search-lc-issue\" ng-show=\"searchFormMModal.showLcIssueContainer\"><lc-issue lc-issue-show=\"searchFormMModal.showLcIssueContainer\" lc-issues-selected=\"searchFormMModal.selectedLcIssues\"></lc-issue></div></div><div class=\"row search-form-m-form-control\"><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: left\"><span class=\"btn btn-default\" ng-click=\"searchFormMModal.reset(searchFormMModalForm)\">Reset</span></div><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: center\"><button type=\"submit\" class=\"btn btn-info\" ng-disabled=\"searchFormMModalForm.$invalid\">Search Form M</button></div><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: right\"><span class=\"btn btn-default\" ng-click=\"searchFormMModal.close()\">Close</span></div></div></form></div>";
 
 /***/ },
-/* 19 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict"
 
 	/*jshint camelcase:false*/
 
-	__webpack_require__(20)
+	__webpack_require__(22)
 
 	var rootCommons = __webpack_require__(7)
 
@@ -2288,7 +2399,7 @@
 
 	      views: {
 	        'uploadFormM': {
-	          template: __webpack_require__(21),
+	          template: __webpack_require__(23),
 
 	          controller: 'UploadFormMController as uploadFormM'
 	        }
@@ -2419,7 +2530,7 @@
 
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2532,19 +2643,19 @@
 
 
 /***/ },
-/* 21 */
+/* 23 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"upload-form-m-tab-content\" ng-keypress=\"uploadFormM.dismissIndicatorEvent($event)\"><form class=\"upload-form-m-form\" role=\"form\" name=\"uploadFormMForm\" ng-submit=\"uploadFormM.uploadFormM(uploadFormM.uploadFormMText, uploadFormMForm)\"><div class=\"form-group upload-form-m-text-group\"><pre ng-class=\"['upload-form-m-indicator', {'error-indicator': uploadFormM.indicateError}]\" ng-show=\"uploadFormM.formMShowIndicator\">{$uploadFormM.uploadIndicationText$}\r\n        <span class=\"dismiss\" data-toggle=\"tooltip\" title=\"Dismiss\" ng-click=\"uploadFormM.dismissIndicator()\">x</span>\r\n      </pre><label for=\"upload-form-m\" class=\"control-label\">{$uploadFormM.datePrompt$}</label> <textarea name=\"upload-form-m\" id=\"upload-form-m\" required=\"\" ng-model=\"uploadFormM.uploadFormMText\" ng-class=\"['form-control', 'upload-form-m', {'form-m-is-uploading':uploadFormM.formMIsUploading}]\" ng-readonly=\"uploadFormM.formMIsUploading\"></textarea></div><div class=\"upload-form-m-submit\" style=\"text-align: center\"><button type=\"submit\" class=\"btn btn-success\" ng-disabled=\"uploadFormMForm.$invalid || uploadFormM.formMIsUploading\">Upload</button></div></form></div>";
 
 /***/ },
-/* 22 */
+/* 24 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-m-home-view\"><div uib-tabset=\"\"><div uib-tab=\"\" ng-repeat=\"(key, tab) in tabs\" heading=\"{$tab.title$}\" active=\"tab.active\" select=\"tab.select()\"><div class=\"\" ui-view=\"{$tab.viewName$}\"></div></div></div></div>";
 
 /***/ },
-/* 23 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2598,12 +2709,12 @@
 	}
 
 
-	__webpack_require__(24)
-	__webpack_require__(25)
+	__webpack_require__(26)
+	__webpack_require__(27)
 
 
 /***/ },
-/* 24 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2807,7 +2918,7 @@
 
 
 /***/ },
-/* 25 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2936,7 +3047,7 @@
 
 
 /***/ },
-/* 26 */
+/* 28 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-m-home-view\"><div class=\"form-m-home-action-buttons btn-group-vertical\" role=\"group\"><a class=\"btn btn-info form-m-home-action-button\" ui-sref=\"lc\">Letter of credit</a> <a class=\"btn btn-info form-m-home-action-button\" ui-sref=\"form_m\">Form M</a></div></div>";

@@ -29,11 +29,12 @@ LcBidDirectiveController.$inject = [
   'confirmationDialog',
   'formMObject',
   'resetForm2',
-  'moment'
+  'moment',
+  'toISODate'
 ]
 
 function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnderscore, LcBidRequest, xhrErrorDisplay,
-  confirmationDialog, formMObject, resetForm2, moment) {
+  confirmationDialog, formMObject, resetForm2, moment, toISODate) {
   var vm = this
   vm.formM = formMObject
   var title = 'New Bid Request'
@@ -108,10 +109,6 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
 
   function toHumanDate(dtObj) {
     return dtObj ? moment(dtObj).format('DD-MMM-YYYY') : null
-  }
-
-  function toISODate(dtObj) {
-    return dtObj ? moment(dtObj).format('YYYY-MM-DD') : null
   }
 
   vm.onBidDblClick = function onBidDblClick(bid, $index, form) {

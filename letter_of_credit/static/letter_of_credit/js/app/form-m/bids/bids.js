@@ -2,16 +2,15 @@
 
 /*jshint camelcase:false*/
 
-var rootCommons = require('commons')
+require('./search-bids/search-bids.js')
 
 var app = angular.module('form-m-bids', [
   'ui.router',
   'lc-bid-request',
   'rootApp',
-  'kanmii-URI'
+  'kanmii-URI',
+  'search-bids'
 ])
-
-app.config(rootCommons.interpolateProviderConfig)
 
 app.config(bidURLConfig)
 bidURLConfig.$inject = ['$stateProvider']
@@ -49,16 +48,7 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, unde
 
   initialize()
   function initialize() {
-    vm.newBid = null
-
-    /**
-     * When the search-bid directive returns, the result is propagated into this model
-     * @type {null|object}
-     */
-    vm.searchedBidResult = null
-
     vm.selectedBids = {}
-
     vm.selectedDownloadedBids = {}
 
     /**
@@ -69,9 +59,12 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, unde
      */
     vm.bidRequests = []
     vm.paginationHooks = {}
-    LcBidRequest.pending().$promise.then(function (data) {
-      updateBids(data)
-    })
+
+    if (!arguments.length) {
+      LcBidRequest.pending().$promise.then(function (data) {
+        updateBids(data)
+      })
+    }
   }
 
   /**
@@ -86,7 +79,9 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, unde
    * The table caption for the 'model-table' directive
    * @type {string}
    */
-  vm.tableCaption = 'Pending Bids'
+  var tableCaptionPending = 'Bids (Pending only)'
+  var tableCaptionAll = 'Bids'
+  vm.tableCaption = tableCaptionPending
 
   /**
    * Will be invoked when any of the pager links is clicked in other to get the bids at the pager url
@@ -97,6 +92,11 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, unde
     $http.get(linkUrl).then(function (response) {
       updateBids(response.data)
     })
+  }
+
+  vm.onBidsSearched = function onBidsSearched(result) {
+    initialize(false)
+    updateBids(result)
   }
 
   $scope.$watch(function searchedBidResult() {return vm.searchedBidResult},
@@ -114,6 +114,8 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, unde
     vm.bidRequests = data.results
 
     vm.paginationHooks = {next: data.next, previous: data.previous, count: data.count}
+
+    vm.tableCaption = data.all ? tableCaptionAll : tableCaptionPending
   }
 
   var url = kanmiiUri(urls.lcBidRequestDownloadUrl)
@@ -125,8 +127,10 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, unde
         if (selection === true) search.push(bidId)
       })
 
-      return url.search({bid_ids: search}).toString()
+      return search.length ? url.search({bid_ids: search}).toString() : null
     }
+
+    return null
   }
 
   vm.downloadBtnDisabled = function downloadBtnDisabled() {
@@ -181,7 +185,9 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, unde
   }
 
   vm.refreshPage = function refreshPage() {
-    $timeout(function () {initialize()}, 3000)
+    if (!vm.downloadBtnDisabled()) {
+      $timeout(function () {initialize()}, 3000)
+    }
   }
 
   function getBidFromId(bidId) {
