@@ -29,10 +29,11 @@ class FormMFilter(django_filters.FilterSet):
     currency = django_filters.CharFilter(name='currency__code', lookup_type='iexact')
     lc_not_attached = django_filters.MethodFilter()
     filter = django_filters.MethodFilter()
+    amount = django_filters.MethodFilter()
 
     class Meta:
         model = FormM
-        fields = ('number', 'applicant', 'currency', 'filter', 'lc_not_attached')
+        fields = ('number', 'applicant', 'currency', 'filter', 'lc_not_attached', 'amount',)
 
     def filter_lc_not_attached(self, qs, param):
         if not param:
@@ -47,6 +48,15 @@ class FormMFilter(django_filters.FilterSet):
             return qs
 
         return qs.filter(Q(number__icontains=param) | Q(applicant__name__icontains=param))
+
+    def filter_amount(self, qs, param):
+        if not param:
+            return qs
+
+        try:
+            return qs.filter(amount=param.strip().replace(',', ''))
+        except ValueError:
+            return qs
 
 
 class FormIssueBidCoverUtil:

@@ -51,9 +51,12 @@ function clearFormField() {
   /**
    * this is a hack required to clear form controls where ng-model is a complex object and the control did not validate.
    */
-  return function (form, field) {
-    form[field].$$lastCommittedViewValue = ''
-    form[field].$rollbackViewValue()
+  return function (form, fieldName) {
+    var field = form[fieldName]
+    field.$$lastCommittedViewValue = ''
+    field.$rollbackViewValue()
+    field.$setPristine()
+    field.$setUntouched()
   }
 }
 
@@ -88,15 +91,65 @@ app.factory('formFieldIsValid', formFieldIsValid)
 function formFieldIsValid() {
   /**
    * A function whose return value is used to evaluate whether a form control element has error or success
-   * @param {string} form the name of the form
-   * @param {string} name the name of a form control
+   * @param {string} formName the name of the form
+   * @param {string} formControl the name of a form control
    * @param {string|null} validity the type of validity to check for, 'ok' means valid while undefined means invalid
    * @returns {boolean}
    */
 
-  return function ($scope, form, name, validity) {
-    var field = $scope[form][name]
+  return function ($scope, formName, formControl, validity) {
+    var field = $scope[formName][formControl]
     return field.$dirty && field[validity === 'ok' ? '$valid' : '$invalid']
+  }
+}
+
+app.directive('controlHasFeedback', controlHasFeedback)
+
+function controlHasFeedback() {
+  return {
+    restrict: 'A',
+    link: function (scope, element, attributes) {
+      element.addClass('has-feedback')
+      var $input = element.find(attributes.controlSelector || '.form-control')
+      var $beforeFeedback = element.find(attributes.feedbackAfter)
+      var $fieldBack = $('<i class="form-control-feedback glyphicon"></i>')
+
+      if ($beforeFeedback.size()) {
+        $fieldBack.insertAfter($beforeFeedback)
+
+        if ($beforeFeedback.is('.input-group-addon')) $fieldBack.css('right', -2)
+
+      } else {
+        $fieldBack.insertAfter($input)
+      }
+
+      var $form = element.closest('[ng-form]')
+      if (!$form.size()) $form = element.closest('form')
+
+      var field = scope[$form.attr('name')][$input.prop('name')]
+
+      scope.$watch(function () {return field.$modelValue}, function () {
+        if (field.$dirty) {
+          if (field.$valid) {
+            element.removeClass('has-error').addClass('has-success')
+            $fieldBack.removeClass('glyphicon-remove').addClass('glyphicon-ok')
+
+          } else {
+            element.removeClass('has-success').addClass('has-error')
+            $fieldBack.removeClass('glyphicon-ok').addClass('glyphicon-remove')
+          }
+
+          $fieldBack.show()
+        }
+      })
+
+      scope.$watch(function () {return field.$pristine}, function (pristine) {
+        if (pristine) {
+          element.removeClass('has-success has-error')
+          $fieldBack.removeClass('glyphicon-ok glyphicon-remove').hide()
+        }
+      })
+    }
   }
 }
 

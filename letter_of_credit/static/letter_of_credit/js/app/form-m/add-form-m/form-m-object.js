@@ -34,7 +34,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
     self.datePickerFormat = 'dd-MMM-yyyy'
     var confirmationTitleLength = 40
 
-    function setBids() {
+    self.setBids = function setBids() {
       LcBidRequest.getPaginated({mf: self.number}).$promise.then(function (data) {
 
         if (data.count) {
@@ -191,7 +191,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
             self._id = formM.id
             self.lc_number = formM.lc_number
 
-            setBids()
+            self.setBids()
             setIssues()
             setCovers()
             setComments(self._id)
@@ -336,6 +336,11 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
       }
 
       return deferred.promise
+    }
+
+    self.editFormM = function editFormM(formM) {
+      formM.id = self._id
+      return FormM.put(formM).$promise
     }
 
     /**

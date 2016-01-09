@@ -2,7 +2,7 @@ import json
 
 from rest_framework import generics, pagination
 import django_filters
-from letter_of_credit.models import LcBidRequest
+from letter_of_credit.models import LcBidRequest, FormM
 from letter_of_credit.serializers import LcBidRequestSerializer
 import logging
 
@@ -37,8 +37,8 @@ class LcBidRequestListCreateAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         logger.info(
-            'Creating new letter of credit bid request with incoming data = \n%s',
-            json.dumps(request.data, indent=4)
+                'Creating new letter of credit bid request with incoming data = \n%s',
+                json.dumps(request.data, indent=4)
         )
         return super(LcBidRequestListCreateAPIView, self).create(request, *args, **kwargs)
 
@@ -48,8 +48,13 @@ class LcBidRequestUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LcBidRequestSerializer
 
     def update(self, request, *args, **kwargs):
-        logger.info(
-            'Updating letter of credit bid request with incoming data = \n%s',
-            json.dumps(request.data, indent=4)
-        )
+        logger.info('Updating bid request with incoming data = \n%s', json.dumps(request.data, indent=4))
+
+        if request.data.get('update_goods_description'):
+            form_m = FormM.objects.get(number=request.data['form_m_number'])
+            logger.info(
+                    """Updating bid request: related form M good's description will be updated from:\n"%s" """ %
+                    form_m.goods_description)
+            form_m.goods_description = request.data['goods_description']
+            form_m.save()
         return super(LcBidRequestUpdateAPIView, self).update(request, *args, **kwargs)

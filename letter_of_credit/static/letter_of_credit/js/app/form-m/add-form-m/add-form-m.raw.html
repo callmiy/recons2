@@ -33,7 +33,7 @@
             </div>
           </div>
 
-          <div class="form-group form-m-number-group">
+          <div class="form-group form-m-number-group" control-has-feedback>
             <label class="control-label col-sm-3" for="form-m-number">Form M Number</label>
 
             <div class="col-sm-9">
@@ -45,14 +45,14 @@
                 </span>
 
                 <input class="form-control" maxlength="13" id="form-m-number" required
-                       name="formMNumber" autocomplete="off"
+                       name="formMNumber"
                        to-upper ng-pattern="/mf\d{11}/i" ng-readonly="!addFormMState.fieldIsEditable.number"
                        ng-model="addFormMState.formM.number"/>
               </div>
             </div>
           </div>
 
-          <div class="form-group applicant-group">
+          <div class="form-group applicant-group" control-has-feedback feedback-after=".input-group-addon">
             <label class="control-label col-sm-3" for="applicant">Applicant</label>
 
             <div class="col-sm-9">
@@ -80,7 +80,7 @@
             </div>
           </div>
 
-          <div class="form-group currency-group">
+          <div class="form-group currency-group" control-has-feedback>
             <label class="control-label col-sm-3" for="currency">Currency</label>
 
             <div class="col-sm-9">
@@ -102,7 +102,7 @@
             </div>
           </div>
 
-          <div class="form-group amount-group">
+          <div class="form-group amount-group" control-has-feedback>
             <label class="control-label col-sm-3" for="amount">Amount</label>
 
             <div class="col-sm-9">
@@ -120,7 +120,7 @@
             </div>
           </div>
 
-          <div class="form-group received-date-group">
+          <div class="form-group received-date-group" control-has-feedback feedback-after=".input-group-addon">
             <label class="control-label col-sm-3" for="received-date">Date Received</label>
 
             <div class="col-sm-9">

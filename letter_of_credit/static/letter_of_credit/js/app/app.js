@@ -467,7 +467,7 @@
 	    self.datePickerFormat = 'dd-MMM-yyyy'
 	    var confirmationTitleLength = 40
 
-	    function setBids() {
+	    self.setBids = function setBids() {
 	      LcBidRequest.getPaginated({mf: self.number}).$promise.then(function (data) {
 
 	        if (data.count) {
@@ -624,7 +624,7 @@
 	            self._id = formM.id
 	            self.lc_number = formM.lc_number
 
-	            setBids()
+	            self.setBids()
 	            setIssues()
 	            setCovers()
 	            setComments(self._id)
@@ -769,6 +769,11 @@
 	      }
 
 	      return deferred.promise
+	    }
+
+	    self.editFormM = function editFormM(formM) {
+	      formM.id = self._id
+	      return FormM.put(formM).$promise
 	    }
 
 	    /**
@@ -1244,7 +1249,10 @@
 	    vm.bidToEdit = null
 	    formMObject.bid = {}
 
-	    if (form) resetForm2(form)
+	    if (form) {
+	      var bidFormCtrlNames = ['bidMaturityDate', 'bidAmount', 'bidGoodsDescription']
+	      resetForm2(form, [{form: form, elements: bidFormCtrlNames}])
+	    }
 	  }
 
 	  vm.openDatePicker = function openDatePicker(prop) {
@@ -1304,7 +1312,8 @@
 	    return dtObj ? moment(dtObj).format('YYYY-MM-DD') : null
 	  }
 
-	  vm.onBidDblClick = function onBidDblClick(bid, $index) {
+	  vm.onBidDblClick = function onBidDblClick(bid, $index, form) {
+	    form.$setPristine()
 	    vm.formM.showEditBid = true
 	    vm.formM.showBidForm = false
 	    vm.toggleShow()
@@ -1316,8 +1325,8 @@
 	  vm.trashBid = function trashBid(bid, $index) {
 	    if (formMObject.showBidForm || formMObject.showEditBid) return
 
-	    var text = '\n\nApplicant: ' + bid.applicant +
-	      '\nForm M: ' + bid.form_m_number +
+	    var text = '\n\nApplicant:  ' + bid.applicant +
+	      '\nForm M:     ' + bid.form_m_number +
 	      '\nBid Amount: ' + bid.currency + ' ' + $filter('number')(bid.amount, 2)
 
 	    var mf = '"' + bid.form_m_number + '"'
@@ -1343,41 +1352,41 @@
 	    }
 	  }
 
-	  function createEditBidMessage(){
+	  function createEditBidMessage(bidIsNotModified) {
 	    var text = '\n\nForm M:           ' + vm.bidToEdit.form_m_number
 	    var ccy = formMObject.currency.code
 
-	    if (vm.bidToEdit.amount !== formMObject.bid.amount) {
+	    if (!bidIsNotModified.amount) {
 	      text += '\nBid Amount' +
 	        '\n  before edit:    ' + ccy + $filter('number')(vm.bidToEdit.amount, 2) +
 	        '\n  after edit:     ' + ccy + $filter('number')(formMObject.bid.amount, 2)
 	    }
 
-	    if (vm.bidToEdit.goods_description !== formMObject.bid.goods_description) {
+	    if (!bidIsNotModified.goods_description) {
 	      text += '\nGoods description' +
 	        '\n  before edit:    ' + vm.bidToEdit.goods_description +
 	        '\n  after edit:     ' + formMObject.bid.goods_description
 	    }
 
-	    if (!angular.equals(vm.bidToEdit.maturity, formMObject.bid.maturity)) {
+	    if (!bidIsNotModified.maturity) {
 	      text += '\nMaturity' +
 	        '\n  before edit:    ' + toHumanDate(vm.bidToEdit.maturity) +
 	        '\n  after edit:     ' + toHumanDate(formMObject.bid.maturity)
 	    }
 
-	    if (!angular.equals(vm.bidToEdit.created_at, formMObject.bid.created_at)) {
+	    if (!bidIsNotModified.created_at) {
 	      text += '\nDate created' +
 	        '\n  before edit:    ' + toHumanDate(vm.bidToEdit.created_at) +
 	        '\n  after edit:     ' + toHumanDate(formMObject.bid.created_at)
 	    }
 
-	    if (!angular.equals(vm.bidToEdit.requested_at, formMObject.bid.requested_at)) {
+	    if (!bidIsNotModified.requested_at) {
 	      text += '\nDate requested' +
 	        '\n  before edit:    ' + toHumanDate(vm.bidToEdit.requested_at) +
 	        '\n  after edit:     ' + toHumanDate(formMObject.bid.requested_at)
 	    }
 
-	    if (vm.bidToEdit.downloaded !== formMObject.bid.downloaded) {
+	    if (!bidIsNotModified.downloaded) {
 	      text += '\nDownloaded' +
 	        '\n  before edit:    ' + vm.bidToEdit.downloaded +
 	        '\n  after edit:     ' + vm.formM.bid.downloaded
@@ -1388,7 +1397,8 @@
 
 	  vm.editBid = function editBid() {
 	    var title = 'Edit bid "' + vm.bidToEdit.form_m_number + '"'
-	    var text = createEditBidMessage()
+	    var bidIsNotModified = bidNotModified()
+	    var text = createEditBidMessage(bidIsNotModified)
 
 
 	    confirmationDialog.showDialog({
@@ -1402,6 +1412,11 @@
 	    function doEdit() {
 	      var bid = angular.copy(vm.bidToEdit)
 
+	      if (!bidIsNotModified.goods_description) {
+	        bid.update_goods_description = true
+	        formMObject.goods_description = formMObject.bid.goods_description
+	      }
+
 	      kanmiiUnderscore.each(formMObject.bid, function (val, key) {
 	        if (key === 'created_at' || key === 'requested_at' || key === 'maturity') val = toISODate(val)
 	        bid[key] = val
@@ -1409,8 +1424,9 @@
 
 	      LcBidRequest.put(bid).$promise.then(function () {
 	        confirmationDialog.showDialog({title: title, text: 'Edit successful: ' + text, infoOnly: true})
-	        formMObject.existingBids.splice(bid.$index, 1, bid)
 	        init()
+	        formMObject.setBids()
+
 	      }, function (xhr) {
 	        xhrErrorDisplay(xhr)
 	      })
@@ -2239,7 +2255,7 @@
 /* 18 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"search-form-m-root-container\" class=\"search-form-m-root-container\"><form novalidate=\"\" class=\"form-horizontal\" ng-submit=\"searchFormMModal.submitSearchParams(searchFormMModal.searchParams)\" name=\"searchFormMModalForm\"><fieldset class=\"search-form-m-container\" style=\"position: relative; padding: 7px;\"><div class=\"form-group form-m-number-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"form-m-number\">Form M Number</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" maxlength=\"13\" id=\"form-m-number\" min=\"0\" ng-pattern=\"/(?:mf)?\\d{4,11}/i\" ng-model=\"searchFormMModal.searchParams.number\"></div></div><div class=\"form-group applicant-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"applicant\">Applicant</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" type=\"text\" min=\"3\" id=\"applicant\" ng-model=\"searchFormMModal.searchParams.applicant\" typeahead-min-length=\"3\" uib-typeahead=\"applicant as applicant.name for applicant in searchFormMModal.getApplicant($viewValue)\"></div></div><div class=\"form-group currency-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"currency\">Currency</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" id=\"currency\" maxlength=\"3\" ng-model=\"searchFormMModal.searchParams.currency\" uib-typeahead=\"currency as currency.code for currency in searchFormMModal.getCurrency($viewValue)\" typeahead-min-length=\"2\"></div></div><div class=\"form-group amount-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"amount\">Amount</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" id=\"amount\" min=\"0\" ng-model=\"searchFormMModal.searchParams.amount\" number-format=\"\" ng-pattern=\"/^\\d[\\d,]*(?:\\.\\d*)?$/\"></div></div></fieldset><div class=\"form-m-lc-issue-container\"><span ng-click=\"searchFormMModal.toggleShowLcIssueContainer()\" class=\"form-m-lc-issue-toggle-show\"><span ng-class=\"['glyphicon', {'glyphicon-chevron-down': !searchFormMModal.showLcIssueContainer, 'glyphicon-chevron-up': searchFormMModal.showLcIssueContainer}]\"></span> {$searchFormMModal.searchLcIssuesTitle$}</span><div class=\"form-m-search-lc-issue\" ng-show=\"searchFormMModal.showLcIssueContainer\"><lc-issue lc-issue-show=\"searchFormMModal.showLcIssueContainer\" lc-issues-selected=\"searchFormMModal.selectedLcIssues\"></lc-issue></div></div><div class=\"row search-form-m-form-control\"><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: left\"><span class=\"btn btn-default\" ng-click=\"searchFormMModal.reset(searchFormMModalForm)\">Reset</span></div><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: center\"><button type=\"submit\" class=\"btn btn-info\" ng-disabled=\"searchFormMModalForm.$invalid\">Search Form M</button></div><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: right\"><span class=\"btn btn-default\" ng-click=\"searchFormMModal.close()\">Close</span></div></div></form></div>";
+	module.exports = "<div id=\"search-form-m-root-container\" class=\"search-form-m-root-container\"><form novalidate=\"\" class=\"form-horizontal\" autocomplete=\"off\" ng-submit=\"searchFormMModal.submitSearchParams(searchFormMModal.searchParams)\" name=\"searchFormMModalForm\"><fieldset class=\"search-form-m-container\" style=\"position: relative; padding: 7px;\"><div class=\"form-group form-m-number-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"form-m-number\">Form M Number</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" maxlength=\"13\" id=\"form-m-number\" min=\"0\" ng-pattern=\"/(?:mf)?\\d{4,11}/i\" ng-model=\"searchFormMModal.searchParams.number\"></div></div><div class=\"form-group applicant-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"applicant\">Applicant</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" type=\"text\" min=\"3\" id=\"applicant\" ng-model=\"searchFormMModal.searchParams.applicant\" typeahead-min-length=\"3\" uib-typeahead=\"applicant as applicant.name for applicant in searchFormMModal.getApplicant($viewValue)\"></div></div><div class=\"form-group currency-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"currency\">Currency</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" id=\"currency\" maxlength=\"3\" ng-model=\"searchFormMModal.searchParams.currency\" uib-typeahead=\"currency as currency.code for currency in searchFormMModal.getCurrency($viewValue)\" typeahead-min-length=\"2\"></div></div><div class=\"form-group amount-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"amount\">Amount</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" id=\"amount\" min=\"0\" ng-model=\"searchFormMModal.searchParams.amount\" number-format=\"\" ng-pattern=\"/^\\d[\\d,]*(?:\\.\\d*)?$/\"></div></div></fieldset><div class=\"form-m-lc-issue-container\"><span ng-click=\"searchFormMModal.toggleShowLcIssueContainer()\" class=\"form-m-lc-issue-toggle-show\"><span ng-class=\"['glyphicon', {'glyphicon-chevron-down': !searchFormMModal.showLcIssueContainer, 'glyphicon-chevron-up': searchFormMModal.showLcIssueContainer}]\"></span> {$searchFormMModal.searchLcIssuesTitle$}</span><div class=\"form-m-search-lc-issue\" ng-show=\"searchFormMModal.showLcIssueContainer\"><lc-issue lc-issue-show=\"searchFormMModal.showLcIssueContainer\" lc-issues-selected=\"searchFormMModal.selectedLcIssues\"></lc-issue></div></div><div class=\"row search-form-m-form-control\"><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: left\"><span class=\"btn btn-default\" ng-click=\"searchFormMModal.reset(searchFormMModalForm)\">Reset</span></div><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: center\"><button type=\"submit\" class=\"btn btn-info\" ng-disabled=\"searchFormMModalForm.$invalid\">Search Form M</button></div><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: right\"><span class=\"btn btn-default\" ng-click=\"searchFormMModal.close()\">Close</span></div></div></form></div>";
 
 /***/ },
 /* 19 */

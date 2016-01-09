@@ -16,8 +16,7 @@
   </div>
 
   <fieldset ng-form name="bidForm" ng-show="lcBid.formM.showBidForm">
-    <div
-      ng-class="['form-group', 'has-feedback', 'bid-goods-description', {'has-error': lcBid.isValid('bidGoodsDescription'), 'has-success': lcBid.isValid('bidGoodsDescription', 'ok')}]">
+    <div class="form-group bid-goods-description" control-has-feedback>
 
       <label class="control-label col-sm-3" for="goods-description">Goods Description</label>
 
@@ -26,21 +25,16 @@
                ng-required="lcBid.formM.showBidForm" to-upper
                ng-model="lcBid.formM.bid.goods_description"/>
 
-        <i
-          ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': lcBid.isValid('bidGoodsDescription'), 'glyphicon-ok': lcBid.isValid('bidGoodsDescription', 'ok')}]"
-          ng-if="lcBid.isValid('bidGoodsDescription') || lcBid.isValid('bidGoodsDescription', 'ok')"
-          data-form-control-icon-for="bidGoodsDescription"></i>
-
         <div ng-messages="bidForm.bidGoodsDescription.$error" role="alert">
           <div ng-if="lcBid.isValid('bidGoodsDescription')">
             <div ng-messages-include="form-error-messages"></div>
           </div>
         </div>
+
       </div>
     </div>
 
-    <div
-      ng-class="['form-group', 'has-feedback', 'bid-amount-group', {'has-error': lcBid.isValid('bidAmount'), 'has-success': lcBid.isValid('bidAmount', 'ok')}]">
+    <div class="form-group bid-amount-group" control-has-feedback>
 
       <label class="control-label col-sm-3" for="bid-amount">Amount</label>
 
@@ -49,22 +43,16 @@
                ng-model-options="{getterSetter: true, updateOn: 'blur'}"
                ng-required="lcBid.formM.showBidForm"/>
 
-        <i
-          ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': lcBid.isValid('bidAmount'), 'glyphicon-ok': lcBid.isValid('bidAmount', 'ok')}]"
-          ng-if="lcBid.isValid('bidAmount') || lcBid.isValid('bidAmount', 'ok')"
-          data-form-control-icon-for="bidAmount">
-        </i>
-
         <div ng-messages="bidForm.bidAmount.$error" role="alert">
           <div ng-if="lcBid.isValid('bidAmount')">
             <div ng-messages-include="form-error-messages"></div>
           </div>
         </div>
+
       </div>
     </div>
 
-    <div
-      ng-class="['form-group', 'has-feedback', 'bid-maturity-date-group', {'has-error': lcBid.isValid('bidMaturityDate'), 'has-success': lcBid.isValid('bidMaturityDate', 'ok')}]">
+    <div class="form-group bid-maturity-date-group" control-has-feedback feedback-after=".input-group-addon">
 
       <label class="control-label col-sm-3" for="bid-maturity-date">Maturity Date</label>
 
@@ -78,12 +66,6 @@
             <span class="input-group-addon" ng-click="lcBid.openDatePicker('bidMaturityDate')">
               <i class=" glyphicon glyphicon-calendar"></i>
             </span>
-
-          <i
-            ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': lcBid.isValid('bidMaturityDate'), 'glyphicon-ok': lcBid.isValid('bidMaturityDate', 'ok')}]"
-            ng-if="lcBid.isValid('bidMaturityDate') || lcBid.isValid('bidMaturityDate', 'ok')"
-            data-form-control-icon-for="bidMaturityDate">
-          </i>
         </div>
 
         <div ng-messages="bidForm.bidMaturityDate.$error" role="alert">
@@ -95,8 +77,7 @@
     </div>
 
     <div ng-if="lcBid.formM.showEditBid">
-      <div
-        ng-class="['form-group', 'has-feedback', 'bid-created-date-group', {'has-error': lcBid.isValid('bidCreatedDate'), 'has-success': lcBid.isValid('bidCreatedDate', 'ok')}]">
+      <div class="form-group bid-created-date-group" control-has-feedback feedback-after=".input-group-addon">
 
         <label class="control-label col-sm-3" for="bid-created-date">Date Created</label>
 
@@ -111,12 +92,6 @@
             <span class="input-group-addon" ng-click="lcBid.openDatePicker('bidCreatedDate')">
               <i class=" glyphicon glyphicon-calendar"></i>
             </span>
-
-            <i
-              ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': lcBid.isValid('bidCreatedDate'), 'glyphicon-ok': lcBid.isValid('bidCreatedDate', 'ok')}]"
-              ng-if="lcBid.isValid('bidCreatedDate') || lcBid.isValid('bidCreatedDate', 'ok')"
-              data-form-control-icon-for="bidCreatedDate">
-            </i>
           </div>
 
           <div ng-messages="bidForm.bidCreatedDate.$error" role="alert">
@@ -127,8 +102,7 @@
         </div>
       </div>
 
-      <div
-        ng-class="['form-group', 'has-feedback', 'bid-requested-date-group', {'has-error': lcBid.isValid('bidRequestedDate'), 'has-success': lcBid.isValid('bidRequestedDate', 'ok')}]">
+      <div class="form-group bid-requested-date-group" control-has-feedback feedback-after=".input-group-addon">
 
         <label class="control-label col-sm-3" for="bid-requested-date">Date Requested</label>
 
@@ -142,12 +116,6 @@
             <span class="input-group-addon" ng-click="lcBid.openDatePicker('bidRequestedDate')">
               <i class=" glyphicon glyphicon-calendar"></i>
             </span>
-
-            <i
-              ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': lcBid.isValid('bidRequestedDate'), 'glyphicon-ok': lcBid.isValid('bidRequestedDate', 'ok')}]"
-              ng-if="lcBid.isValid('bidRequestedDate') || lcBid.isValid('bidRequestedDate', 'ok')"
-              data-form-control-icon-for="bidRequestedDate">
-            </i>
           </div>
 
           <div ng-messages="bidForm.bidRequestedDate.$error" role="alert">
@@ -155,11 +123,11 @@
               <div ng-messages-include="form-error-messages"></div>
             </div>
           </div>
+
         </div>
       </div>
 
-      <div
-        ng-class="['form-group', 'has-feedback', 'bid-downloaded-group', {'has-error': lcBid.isValid('bidDownloaded'), 'has-success': lcBid.isValid('bidDownloaded', 'ok')}]">
+      <div class="form-group bid-downloaded-group" control-has-feedback control-selector="#bid-downloaded">
 
         <label class="control-label col-sm-3" for="bid-downloaded">Downloaded</label>
 
@@ -167,17 +135,12 @@
           <input type="checkbox" id="bid-downloaded" name="bidDownloaded"
                  ng-model="lcBid.formM.bid.downloaded" ng-disabled="!lcBid.formM.showEditBid"/>
 
-          <i
-            ng-class="['form-control-feedback', 'glyphicon', {'glyphicon-remove': lcBid.isValid('bidDownloaded'), 'glyphicon-ok': lcBid.isValid('bidDownloaded', 'ok')}]"
-            ng-if="lcBid.isValid('bidDownloaded') || lcBid.isValid('bidDownloaded', 'ok')"
-            data-form-control-icon-for="bidDownloaded">
-          </i>
-
           <div ng-messages="bidForm.bidDownloaded.$error" role="alert">
             <div ng-if="lcBid.isValid('bidRequestedDate')">
               <div ng-messages-include="form-error-messages"></div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -208,7 +171,7 @@
       </thead>
 
       <tbody>
-        <tr ng-repeat="bid in lcBid.formM.existingBids" ng-dblclick="lcBid.onBidDblClick(bid, $index)"
+        <tr ng-repeat="bid in lcBid.formM.existingBids" ng-dblclick="lcBid.onBidDblClick(bid, $index, bidForm)"
             style="cursor:pointer;">
           <td style="width: 66px;">{$$index + 1$}</td>
 
@@ -220,12 +183,12 @@
             {$::bid.amount|number:2$}
           </td>
 
-          <td ng-dblclick="lcBid.onBidDblClick(bid)">
+          <td>
             {$::bid.requested_at|date:'dd-MMM-yyyy'$}
           </td>
 
-          <td ng-click="lcBid.trashBid(bid, $index)">
-            <span class="glyphicon glyphicon-trash"></span>
+          <td>
+            <span class="glyphicon glyphicon-trash" ng-click="lcBid.trashBid(bid, $index)"></span>
           </td>
         </tr>
       </tbody>
