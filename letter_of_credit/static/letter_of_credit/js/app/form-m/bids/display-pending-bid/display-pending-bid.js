@@ -28,9 +28,7 @@ function displayPendingBidDirective() {
 
       paginationSize: '=',
 
-      selectedBids: '=',
-
-      tableCaption: '='
+      selectedBids: '='
     },
 
     controller: 'displayPendingBidDirectiveCtrl as bidTable'
@@ -51,7 +49,7 @@ function displayPendingBidDirectiveCtrl(pagerNavSetUpLinks, scope, kanmiiUndersc
   vm.selectedBids = {}
 
   function setUpLinks(next, prev, count) {
-
+    vm.count = count
     var numLinks = Math.ceil(count / vm.paginationSize)
 
     var linkProperties = pagerNavSetUpLinks(next, prev, numLinks)

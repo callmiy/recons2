@@ -4,7 +4,6 @@
 
 var app = angular.module('form-m-comment', [
   'rootApp',
-  'kanmii-underscore',
   'comment-service'
 ])
 
@@ -26,15 +25,14 @@ app.controller('FormMCommentDirectiveController', FormMCommentDirectiveControlle
 FormMCommentDirectiveController.$inject = [
   '$scope',
   'formFieldIsValid',
-  'kanmiiUnderscore',
-  'xhrErrorDisplay',
+  'underscore',
   'confirmationDialog',
   'formMObject',
   'resetForm2'
 ]
 
-function FormMCommentDirectiveController($scope, formFieldIsValid, kanmiiUnderscore, xhrErrorDisplay,
-  confirmationDialog, formMObject, resetForm2) {
+function FormMCommentDirectiveController($scope, formFieldIsValid, underscore, confirmationDialog, formMObject,
+  resetForm2) {
   var vm = this
   vm.formM = formMObject
   var title = 'Add comment'
@@ -61,7 +59,7 @@ function FormMCommentDirectiveController($scope, formFieldIsValid, kanmiiUndersc
   }
 
   vm.editCommentInvalid = function editCommentInvalid(form) {
-    if (kanmiiUnderscore.isEmpty(vm.commentToEdit) || form.$invalid) return true
+    if (underscore.isEmpty(vm.commentToEdit) || form.$invalid) return true
 
     return vm.commentToEdit.text === formMObject.commentText
   }

@@ -1,52 +1,79 @@
-{% extends 'core_recons/recons-base.html' %}
 {% load i18n %}
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Trade App login</title>
+  <link rel="stylesheet" href="{% static 'core_recons/css/compiled.min.css' %}">
 
-{% block recons_app_login %}
-{% if form.errors and not form.non_field_errors %}
-<p class="errornote">
-{% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
-</p>
-{% endif %}
+  <style>
+    form {
+      margin: 200px 300px;
+      border: 1px solid #E4DFDF;
+      padding: 15px;
+      border-radius: 5px;
+    }
+  </style>
 
-{% if form.non_field_errors %}
-{% for error in form.non_field_errors %}
-<p class="errornote">
-    {{ error }}
-</p>
-{% endfor %}
-{% endif %}
+  <script src="{% static 'core_recons/js/initial/compiled.min.js' %}"></script>
+</head>
+<body>
+  <div class="container-fluid">
+    {% block recons_app_login %}
 
-<form class="form-horizontal" action="{% url 'django.contrib.auth.views.login' %}" method="post" id="login-form">{% csrf_token %} <input type="hidden" name="next" value="{{ next }}" />
-  <div class="form-group">
-    <label for="{{ form.username.id_for_label }}" class="control-label col-md-2">
-      {{ form.username.label }}
-    </label>
-    <div class="col-md-10">{{ form.username }}</div>
-    {{ form.username.errors }}
-  </div>
-  <div class="form-group">
-    <label for="{{ form.password.id_for_label }}" class="control-label col-md-2">
-      {{ form.password.label }}
-    </label>
-    <div class="col-md-10">{{ form.password }}</div>
-    {{ form.password.errors }}
-  </div>
-  {% url 'admin_password_reset' as password_reset_url %}
-  {% if password_reset_url %}
-  <div class="password-reset-link">
-    <a href="{{ password_reset_url }}">{% trans 'Forgotten your password or username?' %}</a>
-  </div>
-  {% endif %}
-  <div class="form-group">
-    <div class="col-md-10 col-md-offset-2">
-      <input type="submit" value="{% trans 'Log in' %}" />
-    </div>
-  </div>
-</form>
-{% endblock recons_app_login %}
+      <form class="form-horizontal" action="{% url 'django.contrib.auth.views.login' %}" method="post"
+            id="login-form">{% csrf_token %} <input type="hidden" name="next" value="{{ next }}"/>
 
-{% block page_js %}
-  <script type="text/javascript">
-    document.getElementById('id_username').focus()
-  </script>
-{% endblock page_js %}
+        {% if form.errors and not form.non_field_errors %}
+          <p class="errornote">
+            {% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}
+              {% trans "Please correct the errors below." %}{% endif %}
+          </p>
+        {% endif %}
+
+        {% if form.non_field_errors %}
+          {% for error in form.non_field_errors %}
+            <p class="errornote">
+              {{ error }}
+            </p>
+          {% endfor %}
+        {% endif %}
+
+        <div class="form-group">
+          <label for="{{ form.username.id_for_label }}" class="control-label col-md-2">
+            {{ form.username.label }}
+          </label>
+          <div class="col-md-10">{{ form.username }}</div>
+          {{ form.username.errors }}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.password.id_for_label }}" class="control-label col-md-2">
+            {{ form.password.label }}
+          </label>
+          <div class="col-md-10">{{ form.password }}</div>
+          {{ form.password.errors }}
+        </div>
+        {% url 'admin_password_reset' as password_reset_url %}
+        {% if password_reset_url %}
+          <div class="password-reset-link">
+            <a href="{{ password_reset_url }}">{% trans 'Forgotten your password or username?' %}</a>
+          </div>
+        {% endif %}
+        <div class="form-group">
+          <div class="col-md-10 col-md-offset-2">
+            <input type="submit" value="{% trans 'Log in' %}"/>
+          </div>
+        </div>
+      </form>
+    {% endblock recons_app_login %}
+  </div>
+
+  {% block page_js %}
+    <script type="text/javascript">
+      document.getElementById('id_username').focus()
+    </script>
+  {% endblock page_js %}
+
+</body>
+</html>

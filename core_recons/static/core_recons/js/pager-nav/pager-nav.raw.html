@@ -1,0 +1,28 @@
+<nav id="pager-nav">
+  <ul class="pagination" style="margin: 0;">
+    <li ng-class="['previous', {disabled: !pageNav.prevPageLink}]">
+      <a ng-href="{$pageNav.prevPageLink$}" aria-label="Previous" class="pager-nav-link">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+
+    <li ng-repeat="link in pageNav.linkUrls"
+        ng-class="{active: (pageNav.currentLink == ($index + 1))}">
+      <a ng-href="{$link$}"
+         ng-class="['pager-nav-link', {active: (pageNav.currentLink == ($index + 1))}]">
+        {$($index + 1)$}
+      </a>
+    </li>
+
+    <li ng-class="['next', {disabled: !pageNav.nextPageLink}]">
+      <a ng-href="{$pageNav.nextPageLink$}" aria-label="Next" class="pager-nav-link">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+
+  <span
+    style="display: inline-block; position: relative; margin-left: 10px; top: -10px; font-weight: bold; color: #00F;">
+    Items {$pageNav.startRowIndex$} - {$pageNav.endRowIndex$} of {$pageNav.count$}
+  </span>
+</nav>

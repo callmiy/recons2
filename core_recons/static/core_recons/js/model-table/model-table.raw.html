@@ -24,7 +24,16 @@
     </tbody>
   </table>
 
-  <pager-nav prev-page-link="modelTable.prevPageLink" link-urls="modelTable.linkUrls"
-             current-pager-link="modelTable.currentLink" next-page-link="modelTable.nextPageLink"
-             target-clicked-callback="modelTable.onUpdateCollection(linkUrl)"/>
+  <div pager-nav
+       count="modelTable.count"
+       start-row-index="modelTable.rowIndexOffset + 1"
+       end-row-index="modelTable.rowIndexOffset + modelTable.modelCollection.length"
+       prev-page-link="modelTable.prevPageLink"
+       link-urls="modelTable.linkUrls"
+       current-pager-link="modelTable.currentLink"
+       next-page-link="modelTable.nextPageLink"
+       target-clicked-callback="modelTable.onUpdateCollection(linkUrl)"
+  >
+
+  </div>
 </div>

@@ -4,7 +4,7 @@
     angular.module('rootApp').value('formMCoverTypes', JSON.parse('{{ form_m_cover_types | escapejs }}' || '[]'));
   </script>{% block page_js_up %}<script>
       angular.module('rootApp').value('urls', JSON.parse('{{ urls | escapejs }}' || '{}'));
-    </script>{% endblock page_js_up %}</head><body>{% block main_nav_top %} {% include 'core_recons/top-nav.html' %} {% endblock main_nav_top %}<div class="container-fluid">{% block recons_app_login %}{% endblock recons_app_login %} {% if not user.is_anonymous %} {% block page_content %} {% include 'core_recons/main-menu-tree.html' %} {% endblock page_content %} {% endif %}</div><script>
+    </script>{% endblock page_js_up %}</head><body>{% block main_nav_top %} {% include 'core_recons/top-nav.html' %} {% endblock main_nav_top %}<div class="container-fluid">{% if not user.is_anonymous %} {% block page_content %} {% include 'core_recons/main-menu-tree.html' %} {% endblock page_content %} {% endif %}</div><script>
     $(function(){
       $.datepicker.setDefaults({dateFormat: "dd-mm-yy"});
       $("input[class*=show-date-picker]").datepicker();

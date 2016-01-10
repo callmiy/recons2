@@ -1,7 +1,7 @@
 <div class="display-pending-bid-root-container">
 
   <table class="table table-striped table-condensed table-bordered">
-    <caption>{$bidTable.tableCaption$}</caption>
+    <caption>Bids</caption>
 
     <thead>
       <tr>
@@ -47,8 +47,16 @@
     </tbody>
   </table>
 
-  <pager-nav prev-page-link="bidTable.prevPageLink" link-urls="bidTable.linkUrls"
-             pagination-size="bidTable.paginationSize"
-             current-pager-link="bidTable.currentLink" next-page-link="bidTable.nextPageLink"
-             target-clicked-callback="bidTable.onUpdateCollection(linkUrl)"/>
+  <div pager-nav
+       count="bidTable.count"
+       start-row-index="1 + bidTable.rowIndexOffset"
+       end-row-index="bidTable.rowIndexOffset + bidTable.bids.length"
+       prev-page-link="bidTable.prevPageLink"
+       link-urls="bidTable.linkUrls"
+       pagination-size="bidTable.paginationSize"
+       current-pager-link="bidTable.currentLink"
+       next-page-link="bidTable.nextPageLink"
+       target-clicked-callback="bidTable.onUpdateCollection(linkUrl)">
+
+  </div>
 </div>

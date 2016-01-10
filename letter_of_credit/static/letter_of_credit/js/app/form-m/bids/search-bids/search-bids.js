@@ -40,7 +40,7 @@ function searchBidsController(LcBidRequest, underscore, getTypeAheadCustomer, ge
   init()
   function init() {
     vm.searchParams = {
-      pending: true
+      pending: false
     }
   }
 
@@ -65,7 +65,6 @@ function searchBidsController(LcBidRequest, underscore, getTypeAheadCustomer, ge
   }
   vm.getCurrency = getTypeAheadCurrency
   vm.getApplicant = getTypeAheadCustomer
-  vm.datePickerFormat = 'dd-MMM-yyyy'
   vm.datePickerIsOpen = false
   vm.openDatePicker = function openDatePicker() {
     vm.datePickerIsOpen = true
@@ -85,7 +84,6 @@ function searchBidsController(LcBidRequest, underscore, getTypeAheadCustomer, ge
     if (!params.pending) delete params.pending
 
     LcBidRequest.getPaginated(params).$promise.then(function (data) {
-      data.all = !params.pending
       vm.onBidsSearched({searchResult: data})
     })
   }

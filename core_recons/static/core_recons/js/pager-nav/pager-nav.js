@@ -4,9 +4,9 @@ var app = angular.module('pager-nav', ['kanmii-URI'])
 app.directive('pagerNav', pagerNav)
 function pagerNav() {
   return {
-    link: function(scope, element, attributes, self) {
+    link: function (scope, element, attributes, self) {
       element.on({
-        'click': function(evt) {
+        'click': function (evt) {
           evt.preventDefault()
 
           var $target = $(evt.target)
@@ -46,7 +46,13 @@ function pagerNav() {
       /**
        * @param {null|String} The url of the 'next' link
        */
-      nextPageLink: '='
+      nextPageLink: '=',
+
+      count: '=',
+
+      startRowIndex: '=',
+
+      endRowIndex: '='
     },
 
     controller: 'PagerNavCtrl as pageNav',
@@ -83,16 +89,16 @@ function pagerNavSetUpLinks(kanmiiUri) {
 
     linkProperties.linkUrls = []
 
-    if (!numLinks || numLinks === 1) return linkProperties //there is absolutely no need to render navigational links
+    if (!numLinks || numLinks === 1) return linkProperties //there is absolutely no need to render navigational links.
 
-    //NOW there are at least 2 links
-    //url for fetching data will be in the format: http:host/pathname[?other optional queries][&page=integer]
+    //NOW there are at least 2 links.
+    //url for fetching data will be in the format: http://host/pathname[?other optional queries][&page=integer]
 
     var uri, query, uriWithoutQuery, i
 
     //if we are on link 1,
     //prev = null (cos we can not go back - there is no position zero)
-    //next = url above with query 'page=2'
+    //next = url in the comment above with query 'page=2'.
     if (!prev) {
       uri = kanmiiUri(next)
       query = uri.search(true)

@@ -165,7 +165,7 @@
 	  }
 
 	  var bidsTab = {
-	    title: 'Pending Bids',
+	    title: 'Bids',
 	    active: false,
 	    viewName: 'bids',
 	    select: function () {
@@ -1461,7 +1461,6 @@
 
 	var app = angular.module('form-m-comment', [
 	  'rootApp',
-	  'kanmii-underscore',
 	  'comment-service'
 	])
 
@@ -1483,15 +1482,14 @@
 	FormMCommentDirectiveController.$inject = [
 	  '$scope',
 	  'formFieldIsValid',
-	  'kanmiiUnderscore',
-	  'xhrErrorDisplay',
+	  'underscore',
 	  'confirmationDialog',
 	  'formMObject',
 	  'resetForm2'
 	]
 
-	function FormMCommentDirectiveController($scope, formFieldIsValid, kanmiiUnderscore, xhrErrorDisplay,
-	  confirmationDialog, formMObject, resetForm2) {
+	function FormMCommentDirectiveController($scope, formFieldIsValid, underscore, confirmationDialog, formMObject,
+	  resetForm2) {
 	  var vm = this
 	  vm.formM = formMObject
 	  var title = 'Add comment'
@@ -1518,7 +1516,7 @@
 	  }
 
 	  vm.editCommentInvalid = function editCommentInvalid(form) {
-	    if (kanmiiUnderscore.isEmpty(vm.commentToEdit) || form.$invalid) return true
+	    if (underscore.isEmpty(vm.commentToEdit) || form.$invalid) return true
 
 	    return vm.commentToEdit.text === formMObject.commentText
 	  }
@@ -1639,14 +1637,6 @@
 	  }
 
 	  /**
-	   * The table caption for the 'model-table' directive
-	   * @type {string}
-	   */
-	  var tableCaptionPending = 'Bids (Pending only)'
-	  var tableCaptionAll = 'Bids'
-	  vm.tableCaption = tableCaptionPending
-
-	  /**
 	   * Will be invoked when any of the pager links is clicked in other to get the bids at the pager url
 	   * @type {getBidsOnNavigation}
 	   */
@@ -1675,10 +1665,7 @@
 	   */
 	  function updateBids(data) {
 	    vm.bidRequests = data.results
-
 	    vm.paginationHooks = {next: data.next, previous: data.previous, count: data.count}
-
-	    vm.tableCaption = data.all ? tableCaptionAll : tableCaptionPending
 	  }
 
 	  var url = kanmiiUri(urls.lcBidRequestDownloadUrl)
@@ -1812,7 +1799,7 @@
 	  init()
 	  function init() {
 	    vm.searchParams = {
-	      pending: true
+	      pending: false
 	    }
 	  }
 
@@ -1837,7 +1824,6 @@
 	  }
 	  vm.getCurrency = getTypeAheadCurrency
 	  vm.getApplicant = getTypeAheadCustomer
-	  vm.datePickerFormat = 'dd-MMM-yyyy'
 	  vm.datePickerIsOpen = false
 	  vm.openDatePicker = function openDatePicker() {
 	    vm.datePickerIsOpen = true
@@ -1857,7 +1843,6 @@
 	    if (!params.pending) delete params.pending
 
 	    LcBidRequest.getPaginated(params).$promise.then(function (data) {
-	      data.all = !params.pending
 	      vm.onBidsSearched({searchResult: data})
 	    })
 	  }
@@ -1868,7 +1853,7 @@
 /* 13 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"search-bids-directive\"><div class=\"search-bid-toggle-show\"><div ng-click=\"searchBids.toggleShow(searchBidsForm)\" class=\"form-m-add-on-toggle clearfix\"><span class=\"form-m-add-on-show-helper\" ng-if=\"searchBids.showForm\"></span><div class=\"form-m-add-on-show-icon form-m-bid-add-on-show-icon\"><span ng-class=\"['glyphicon', {'glyphicon-chevron-down': !searchBids.showForm, 'glyphicon-chevron-up': searchBids.showForm}]\"></span> Search Bids</div></div></div><form class=\"form-horizontal\" name=\"searchBidsForm\" role=\"form\" autocomplete=\"off\" ng-show=\"searchBids.showForm\" ng-submit=\"searchBids.searchBids(searchBids.searchParams)\"><div class=\"form-group form-m-group\" control-has-feedback=\"\"><label for=\"form-m-number\" class=\"control-label col-sm-3\">Form M Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"formMNumber\" ng-model=\"searchBids.searchParams.mf\" id=\"form-m-number\" to-upper=\"\" ng-pattern=\"/(?:mf)?\\d{3,}/i\" maxlength=\"13\"></div></div><div class=\"form-group applicant-group\" control-has-feedback=\"\"><label for=\"applicant\" class=\"control-label col-sm-3\">Applicant</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"applicant\" ng-model=\"searchBids.searchParams.applicant\" id=\"applicant\" ng-minlength=\"3\" ng-pattern=\"searchBids.validators.applicant\" typeahead-min-length=\"3\" uib-typeahead=\"applicant as applicant.name for applicant in searchBids.getApplicant($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group currency-group\" control-has-feedback=\"\"><label for=\"currency\" class=\"control-label col-sm-3\">Currency</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"currency\" ng-model=\"searchBids.searchParams.currency\" id=\"currency\" maxlength=\"3\" ng-pattern=\"searchBids.validators.currency\" autocomplete=\"off\" uib-typeahead=\"currency as currency.code for currency in searchBids.getCurrency($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group amount-group\" control-has-feedback=\"\"><label for=\"amount\" class=\"control-label col-sm-3\">Amount</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"amount\" ng-model=\"searchBids.searchParams.amount\" id=\"amount\" number-format=\"\"></div></div><div class=\"form-group created-date-group\" control-has-feedback=\"\" feedback-after=\".input-group-addon\"><label for=\"created-at\" class=\"control-label col-sm-3\">Creation At</label><div class=\"col-sm-9\"><div class=\"input-group\"><input type=\"text\" class=\"form-control\" name=\"createdAt\" ng-model=\"searchBids.searchParams.created_at\" id=\"created-at\" uib-datepicker-popup=\"{$searchBids.datePickerFormat$}\" is-open=\"searchBids.datePickerIsOpen\"> <span class=\"input-group-addon\" ng-click=\"searchBids.openDatePicker($event)\"><i class=\"glyphicon glyphicon-calendar\"></i></span></div></div></div><div class=\"form-group lc-number-group\"><label for=\"lc-number\" class=\"control-label col-sm-3\">LC Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"lcNumber\" ng-model=\"searchBids.searchParams.lc_number\" id=\"lc-number\" to-upper=\"\" maxlength=\"16\"></div></div><div class=\"form-group pending-group\"><label for=\"pending\" class=\"control-label col-sm-3\">Pending</label><div class=\"col-sm-9\"><input type=\"checkbox\" name=\"pending\" ng-model=\"searchBids.searchParams.pending\" id=\"pending\"></div></div><div class=\"form-group submit-group\"><div class=\"col-sm-9 col-sm-offset-3\"><div class=\"clearfix\"><div class=\"pull-left\"><input type=\"submit\" class=\"btn btn-info\" value=\"Search Bids\" ng-disabled=\"searchBidsForm.$invalid\"></div><div class=\"pull-right\" style=\"text-align: right\"><input type=\"button\" class=\"btn btn-warning\" value=\"Clear All\" ng-click=\"searchBids.clearForm(searchBidsForm)\"></div></div></div></div></form></div>";
+	module.exports = "<div class=\"search-bids-directive\"><div class=\"search-bid-toggle-show\"><div ng-click=\"searchBids.toggleShow(searchBidsForm)\" class=\"form-m-add-on-toggle clearfix\"><span class=\"form-m-add-on-show-helper\" ng-if=\"searchBids.showForm\"></span><div class=\"form-m-add-on-show-icon form-m-bid-add-on-show-icon\"><span ng-class=\"['glyphicon', {'glyphicon-chevron-down': !searchBids.showForm, 'glyphicon-chevron-up': searchBids.showForm}]\"></span> Search Bids</div></div></div><form class=\"form-horizontal\" name=\"searchBidsForm\" role=\"form\" autocomplete=\"off\" ng-show=\"searchBids.showForm\" ng-submit=\"searchBids.searchBids(searchBids.searchParams)\"><div class=\"form-group form-m-group\" control-has-feedback=\"\"><label for=\"form-m-number\" class=\"control-label col-sm-3\">Form M Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"formMNumber\" ng-model=\"searchBids.searchParams.mf\" id=\"form-m-number\" to-upper=\"\" ng-pattern=\"/(?:mf)?\\d{3,}/i\" maxlength=\"13\"></div></div><div class=\"form-group applicant-group\" control-has-feedback=\"\"><label for=\"applicant\" class=\"control-label col-sm-3\">Applicant</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"applicant\" ng-model=\"searchBids.searchParams.applicant\" id=\"applicant\" ng-minlength=\"3\" ng-pattern=\"searchBids.validators.applicant\" typeahead-min-length=\"3\" uib-typeahead=\"applicant as applicant.name for applicant in searchBids.getApplicant($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group currency-group\" control-has-feedback=\"\"><label for=\"currency\" class=\"control-label col-sm-3\">Currency</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"currency\" ng-model=\"searchBids.searchParams.currency\" id=\"currency\" maxlength=\"3\" ng-pattern=\"searchBids.validators.currency\" autocomplete=\"off\" uib-typeahead=\"currency as currency.code for currency in searchBids.getCurrency($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group amount-group\" control-has-feedback=\"\"><label for=\"amount\" class=\"control-label col-sm-3\">Amount</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"amount\" ng-model=\"searchBids.searchParams.amount\" id=\"amount\" number-format=\"\"></div></div><div class=\"form-group created-date-group\" control-has-feedback=\"\" feedback-after=\".input-group-addon\"><label for=\"created-at\" class=\"control-label col-sm-3\">Created At</label><div class=\"col-sm-9\"><div class=\"input-group\"><input type=\"text\" class=\"form-control\" name=\"createdAt\" ng-model=\"searchBids.searchParams.created_at\" id=\"created-at\" uib-datepicker-popup=\"dd-MMM-yyyy\" is-open=\"searchBids.datePickerIsOpen\"> <span class=\"input-group-addon\" ng-click=\"searchBids.openDatePicker($event)\"><i class=\"glyphicon glyphicon-calendar\"></i></span></div></div></div><div class=\"form-group lc-number-group\"><label for=\"lc-number\" class=\"control-label col-sm-3\">LC Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"lcNumber\" ng-model=\"searchBids.searchParams.lc_number\" id=\"lc-number\" to-upper=\"\" maxlength=\"16\"></div></div><div class=\"form-group pending-group\"><label for=\"pending\" class=\"control-label col-sm-3\">Pending</label><div class=\"col-sm-9\"><input type=\"checkbox\" name=\"pending\" ng-model=\"searchBids.searchParams.pending\" id=\"pending\"></div></div><div class=\"form-group submit-group\"><div class=\"col-sm-9 col-sm-offset-3\"><div class=\"clearfix\"><div class=\"pull-left\"><input type=\"submit\" class=\"btn btn-info\" value=\"Search Bids\" ng-disabled=\"searchBidsForm.$invalid\"></div><div class=\"pull-right\" style=\"text-align: right\"><input type=\"button\" class=\"btn btn-warning\" value=\"Clear All\" ng-click=\"searchBids.clearForm(searchBidsForm)\"></div></div></div></div></form></div>";
 
 /***/ },
 /* 14 */
@@ -1910,9 +1895,7 @@
 
 	      paginationSize: '=',
 
-	      selectedBids: '=',
-
-	      tableCaption: '='
+	      selectedBids: '='
 	    },
 
 	    controller: 'displayPendingBidDirectiveCtrl as bidTable'
@@ -1933,7 +1916,7 @@
 	  vm.selectedBids = {}
 
 	  function setUpLinks(next, prev, count) {
-
+	    vm.count = count
 	    var numLinks = Math.ceil(count / vm.paginationSize)
 
 	    var linkProperties = pagerNavSetUpLinks(next, prev, numLinks)

@@ -76,14 +76,6 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, unde
   }
 
   /**
-   * The table caption for the 'model-table' directive
-   * @type {string}
-   */
-  var tableCaptionPending = 'Bids (Pending only)'
-  var tableCaptionAll = 'Bids'
-  vm.tableCaption = tableCaptionPending
-
-  /**
    * Will be invoked when any of the pager links is clicked in other to get the bids at the pager url
    * @type {getBidsOnNavigation}
    */
@@ -112,10 +104,7 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, unde
    */
   function updateBids(data) {
     vm.bidRequests = data.results
-
     vm.paginationHooks = {next: data.next, previous: data.previous, count: data.count}
-
-    vm.tableCaption = data.all ? tableCaptionAll : tableCaptionPending
   }
 
   var url = kanmiiUri(urls.lcBidRequestDownloadUrl)

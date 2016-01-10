@@ -1,8 +1,6 @@
 "use strict";
 
-var app = angular.module('model-table', ['toggle-bg-color', 'kanmii-underscore', 'pager-nav'])
-
-app.config(require('commons').interpolateProviderConfig)
+var app = angular.module('model-table', ['rootApp', 'toggle-bg-color', 'pager-nav'])
 
 app.directive('modelTable', modelTableDirective)
 function modelTableDirective() {
@@ -84,8 +82,8 @@ function modelTableDirective() {
 }
 
 app.controller('ModelTableDirectiveCtrl', ModelTableDirectiveCtrl)
-ModelTableDirectiveCtrl.$inject = ['$scope', 'pagerNavSetUpLinks', 'kanmiiUnderscore']
-function ModelTableDirectiveCtrl(scope, pagerNavSetUpLinks, kanmiiUnderscore) {
+ModelTableDirectiveCtrl.$inject = ['$scope', 'pagerNavSetUpLinks', 'underscore']
+function ModelTableDirectiveCtrl(scope, pagerNavSetUpLinks, underscore) {
   var vm = this
   vm.orderProp = '-created_at'
 
@@ -97,6 +95,7 @@ function ModelTableDirectiveCtrl(scope, pagerNavSetUpLinks, kanmiiUnderscore) {
 
     vm.nextPageLink = next
     vm.prevPageLink = prev
+    vm.count = count
 
     vm.linkUrls = linkProperties.linkUrls
     vm.currentLink = linkProperties.currentLink
@@ -111,13 +110,12 @@ function ModelTableDirectiveCtrl(scope, pagerNavSetUpLinks, kanmiiUnderscore) {
     vm.rowIndexOffset = (vm.currentLink - 1) * vm.paginationSize
   }
 
-  vm.onUpdateCollection = onUpdateCollection
-  function onUpdateCollection(linkUrl) {
+  vm.onUpdateCollection = function onUpdateCollection(linkUrl) {
     vm.updateCollection({linkUrl: linkUrl})
   }
 
   scope.$watch(function getPager() {return vm.pager}, function updatedPager(pager) {
-    if (pager && !kanmiiUnderscore.isEmpty(pager)) {
+    if (pager && !underscore.isEmpty(pager)) {
       setUpLinks(pager.next, pager.previous, pager.count)
     }
   })

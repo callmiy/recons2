@@ -77,7 +77,7 @@ function FormMController($state, $scope) {
   }
 
   var bidsTab = {
-    title: 'Pending Bids',
+    title: 'Bids',
     active: false,
     viewName: 'bids',
     select: function () {

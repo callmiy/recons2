@@ -27,8 +27,6 @@
   {% block main_nav_top %} {% include 'core_recons/top-nav.html' %} {% endblock main_nav_top %}
 
   <div class="container-fluid">
-    {% block recons_app_login %}{% endblock recons_app_login %}
-
     {% if not user.is_anonymous %}
       {% block page_content %}
         {% include 'core_recons/main-menu-tree.html' %}
