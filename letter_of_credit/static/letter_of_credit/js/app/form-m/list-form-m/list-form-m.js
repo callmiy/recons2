@@ -1,18 +1,14 @@
 "use strict"
 
-var rootCommons = require('commons')
-
 var app = angular.module('list-form-m',
   ['rootApp',
    'ui.router',
    'form-m-service',
-   'form-m-search',
+   'search-form-m',
    'model-table',
    'customer',
    'add-form-m'
   ])
-
-app.config(rootCommons.interpolateProviderConfig)
 
 app.config(formMListURLConfig)
 formMListURLConfig.$inject = ['$stateProvider']
@@ -57,6 +53,8 @@ function FormMListController(FormM, scope, formMModelManager, $http) {
 
     vm.paginationHooks = {next: data.next, previous: data.previous, count: data.count}
   }
+
+  vm.updateFormMs = updateFormMs
 
   /**
    * The object containing the hooks for paging through the form Ms collection

@@ -26,6 +26,8 @@ class FormMListPagination(pagination.PageNumberPagination):
 class FormMFilter(django_filters.FilterSet):
     number = django_filters.CharFilter(lookup_type='icontains')
     applicant = django_filters.CharFilter(name='applicant__name', lookup_type='icontains')
+    applicant_id = django_filters.CharFilter(name='applicant__id',)
+    lc_number = django_filters.CharFilter(name='lc__lc_number', lookup_type='icontains',)
     currency = django_filters.CharFilter(name='currency__code', lookup_type='iexact')
     lc_not_attached = django_filters.MethodFilter()
     filter = django_filters.MethodFilter()

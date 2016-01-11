@@ -1853,7 +1853,7 @@
 /* 13 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"search-bids-directive\"><div class=\"search-bid-toggle-show\"><div ng-click=\"searchBids.toggleShow(searchBidsForm)\" class=\"form-m-add-on-toggle clearfix\"><span class=\"form-m-add-on-show-helper\" ng-if=\"searchBids.showForm\"></span><div class=\"form-m-add-on-show-icon form-m-bid-add-on-show-icon\"><span ng-class=\"['glyphicon', {'glyphicon-chevron-down': !searchBids.showForm, 'glyphicon-chevron-up': searchBids.showForm}]\"></span> Search Bids</div></div></div><form class=\"form-horizontal\" name=\"searchBidsForm\" role=\"form\" autocomplete=\"off\" ng-show=\"searchBids.showForm\" ng-submit=\"searchBids.searchBids(searchBids.searchParams)\"><div class=\"form-group form-m-group\" control-has-feedback=\"\"><label for=\"form-m-number\" class=\"control-label col-sm-3\">Form M Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"formMNumber\" ng-model=\"searchBids.searchParams.mf\" id=\"form-m-number\" to-upper=\"\" ng-pattern=\"/(?:mf)?\\d{3,}/i\" maxlength=\"13\"></div></div><div class=\"form-group applicant-group\" control-has-feedback=\"\"><label for=\"applicant\" class=\"control-label col-sm-3\">Applicant</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"applicant\" ng-model=\"searchBids.searchParams.applicant\" id=\"applicant\" ng-minlength=\"3\" ng-pattern=\"searchBids.validators.applicant\" typeahead-min-length=\"3\" uib-typeahead=\"applicant as applicant.name for applicant in searchBids.getApplicant($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group currency-group\" control-has-feedback=\"\"><label for=\"currency\" class=\"control-label col-sm-3\">Currency</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"currency\" ng-model=\"searchBids.searchParams.currency\" id=\"currency\" maxlength=\"3\" ng-pattern=\"searchBids.validators.currency\" autocomplete=\"off\" uib-typeahead=\"currency as currency.code for currency in searchBids.getCurrency($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group amount-group\" control-has-feedback=\"\"><label for=\"amount\" class=\"control-label col-sm-3\">Amount</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"amount\" ng-model=\"searchBids.searchParams.amount\" id=\"amount\" number-format=\"\"></div></div><div class=\"form-group created-date-group\" control-has-feedback=\"\" feedback-after=\".input-group-addon\"><label for=\"created-at\" class=\"control-label col-sm-3\">Created At</label><div class=\"col-sm-9\"><div class=\"input-group\"><input type=\"text\" class=\"form-control\" name=\"createdAt\" ng-model=\"searchBids.searchParams.created_at\" id=\"created-at\" uib-datepicker-popup=\"dd-MMM-yyyy\" is-open=\"searchBids.datePickerIsOpen\"> <span class=\"input-group-addon\" ng-click=\"searchBids.openDatePicker($event)\"><i class=\"glyphicon glyphicon-calendar\"></i></span></div></div></div><div class=\"form-group lc-number-group\"><label for=\"lc-number\" class=\"control-label col-sm-3\">LC Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"lcNumber\" ng-model=\"searchBids.searchParams.lc_number\" id=\"lc-number\" to-upper=\"\" maxlength=\"16\"></div></div><div class=\"form-group pending-group\"><label for=\"pending\" class=\"control-label col-sm-3\">Pending</label><div class=\"col-sm-9\"><input type=\"checkbox\" name=\"pending\" ng-model=\"searchBids.searchParams.pending\" id=\"pending\"></div></div><div class=\"form-group submit-group\"><div class=\"col-sm-9 col-sm-offset-3\"><div class=\"clearfix\"><div class=\"pull-left\"><input type=\"submit\" class=\"btn btn-info\" value=\"Search Bids\" ng-disabled=\"searchBidsForm.$invalid\"></div><div class=\"pull-right\" style=\"text-align: right\"><input type=\"button\" class=\"btn btn-warning\" value=\"Clear All\" ng-click=\"searchBids.clearForm(searchBidsForm)\"></div></div></div></div></form></div>";
+	module.exports = "<div class=\"search-bids-directive\"><div class=\"search-bid-toggle-show\"><div ng-click=\"searchBids.toggleShow(searchBidsForm)\" class=\"form-m-add-on-toggle clearfix\"><span class=\"form-m-add-on-show-helper\" ng-if=\"searchBids.showForm\"></span><div class=\"form-m-add-on-show-icon form-m-bid-add-on-show-icon\"><span ng-class=\"['glyphicon', {'glyphicon-chevron-down': !searchBids.showForm, 'glyphicon-chevron-up': searchBids.showForm}]\"></span> Search Bids</div></div></div><form class=\"form-horizontal\" name=\"searchBidsForm\" role=\"form\" autocomplete=\"off\" ng-show=\"searchBids.showForm\" ng-submit=\"searchBids.searchBids(searchBids.searchParams)\"><div class=\"form-group form-m-group\" control-has-feedback=\"\"><label for=\"form-m-number\" class=\"control-label col-sm-3\">Form M Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"formMNumber\" ng-model=\"searchBids.searchParams.mf\" id=\"form-m-number\" to-upper=\"\" ng-pattern=\"/(?:mf)?\\d{3,}/i\" maxlength=\"13\"></div></div><div class=\"form-group applicant-group\" control-has-feedback=\"\"><label for=\"applicant\" class=\"control-label col-sm-3\">Applicant</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"applicant\" ng-model=\"searchBids.searchParams.applicant\" id=\"applicant\" ng-minlength=\"3\" ng-pattern=\"searchBids.validators.applicant\" typeahead-min-length=\"3\" uib-typeahead=\"applicant as applicant.name for applicant in searchBids.getApplicant($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group currency-group\" control-has-feedback=\"\"><label for=\"currency\" class=\"control-label col-sm-3\">Currency</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"currency\" ng-model=\"searchBids.searchParams.currency\" id=\"currency\" maxlength=\"3\" ng-pattern=\"searchBids.validators.currency\" autocomplete=\"off\" uib-typeahead=\"currency as currency.code for currency in searchBids.getCurrency($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group amount-group\" control-has-feedback=\"\"><label for=\"amount\" class=\"control-label col-sm-3\">Amount</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"amount\" ng-model=\"searchBids.searchParams.amount\" id=\"amount\" number-format=\"\"></div></div><div class=\"form-group created-date-group\" control-has-feedback=\"\" feedback-after=\".input-group-addon\"><label for=\"created-at\" class=\"control-label col-sm-3\">Created At</label><div class=\"col-sm-9\"><div class=\"input-group\"><input type=\"text\" class=\"form-control\" name=\"createdAt\" ng-model=\"searchBids.searchParams.created_at\" id=\"created-at\" uib-datepicker-popup=\"dd-MMM-yyyy\" is-open=\"searchBids.datePickerIsOpen\"> <span class=\"input-group-addon\" ng-click=\"searchBids.openDatePicker($event)\"><i class=\"glyphicon glyphicon-calendar\"></i></span></div></div></div><div class=\"form-group lc-number-group\"><label for=\"lc-number\" class=\"control-label col-sm-3\">LC Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"lcNumber\" ng-model=\"searchBids.searchParams.lc_number\" id=\"lc-number\" to-upper=\"\" maxlength=\"16\"></div></div><div class=\"form-group pending-group\"><label for=\"pending\" class=\"control-label col-sm-3\">Pending only</label><div class=\"col-sm-9\"><input type=\"checkbox\" name=\"pending\" ng-model=\"searchBids.searchParams.pending\" id=\"pending\"></div></div><div class=\"form-group submit-group\"><div class=\"col-sm-9 col-sm-offset-3\"><div class=\"clearfix\"><div class=\"pull-left\"><input type=\"submit\" class=\"btn btn-info\" value=\"Search Bids\" ng-disabled=\"searchBidsForm.$invalid\"></div><div class=\"pull-right\" style=\"text-align: right\"><input type=\"button\" class=\"btn btn-warning\" value=\"Clear All\" ng-click=\"searchBids.clearForm(searchBidsForm)\"></div></div></div></div></form></div>";
 
 /***/ },
 /* 14 */
@@ -2008,19 +2008,15 @@
 
 	"use strict"
 
-	var rootCommons = __webpack_require__(7)
-
 	var app = angular.module('list-form-m',
 	  ['rootApp',
 	   'ui.router',
 	   'form-m-service',
-	   'form-m-search',
+	   'search-form-m',
 	   'model-table',
 	   'customer',
 	   'add-form-m'
 	  ])
-
-	app.config(rootCommons.interpolateProviderConfig)
 
 	app.config(formMListURLConfig)
 	formMListURLConfig.$inject = ['$stateProvider']
@@ -2065,6 +2061,8 @@
 
 	    vm.paginationHooks = {next: data.next, previous: data.previous, count: data.count}
 	  }
+
+	  vm.updateFormMs = updateFormMs
 
 	  /**
 	   * The object containing the hooks for paging through the form Ms collection
@@ -2116,7 +2114,7 @@
 /* 17 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"manage-form-m-tab-content\"><div class=\"action-buttons pull-right\"><button class=\"btn btn-info\" search-form-m=\"\" search-form-m-result=\"formMList.searchedFormMResult\">Search Form M</button></div><div model-table=\"\" model-collection=\"formMList.formMs\" table-model-manager=\"::formMList.modelManager\" table-caption=\"::formMList.tableCaption\" pagination-size=\"20\" update-collection=\"formMList.getFormMCollectionOnNavigation(linkUrl)\" pager-object=\"formMList.paginationHooks\" on-row-dbl-click-callback=\"formMList.modelRowDblClick(rowModel)\"></div></div>";
+	module.exports = "<div class=\"manage-form-m-tab-content\"><div class=\"row\" style=\"margin-bottom: 30px; margin-top: 10px\"><div class=\"col-sm-6\"><div search-mf=\"\" on-mf-search=\"formMList.updateFormMs(searchResult)\"></div></div></div><div model-table=\"\" model-collection=\"formMList.formMs\" table-model-manager=\"::formMList.modelManager\" table-caption=\"::formMList.tableCaption\" pagination-size=\"20\" update-collection=\"formMList.getFormMCollectionOnNavigation(linkUrl)\" pager-object=\"formMList.paginationHooks\" on-row-dbl-click-callback=\"formMList.modelRowDblClick(rowModel)\"></div></div>";
 
 /***/ },
 /* 18 */
@@ -2235,113 +2233,94 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+
 	/*jshint camelcase:false*/
 
-	var app = angular.module('form-m-search', ['kanmii-underscore'])
+	var app = angular.module('search-form-m', [
+	  'customer',
+	  'form-m-service',
+	  'rootApp'
+	])
 
-	app.directive('searchFormM', searchFormMDirective)
-	searchFormMDirective.$inject = ['ModalService', 'kanmiiUnderscore']
-	function searchFormMDirective(ModalService, kanmiiUnderscore) {
+	app.directive('searchMf', searchMfDirective)
+
+	searchMfDirective.$inject = []
+
+	  function searchMfDirective() {
 	  return {
-	    restrict: 'A',
+	    restrict: 'AE',
+	    template: __webpack_require__(20),
+	    scope: true,
+	    bindToController: {
+	      onMfSearch: '&'
+	    },
+	    controller: 'searchFormMController as searchMf'
+	  }
+	}
 
-	    link: function(scope, elm, attributes, self) {
-	      elm
-	        .css({cursor: 'pointer'})
-	        .bind('click', function() {
-	                ModalService.showModal({
-	                  template: __webpack_require__(20),
+	app.controller('searchFormMController', searchFormMController)
+	searchFormMController.$inject = [
+	  'FormM',
+	  'underscore',
+	  'getTypeAheadCustomer',
+	  'getTypeAheadCurrency',
+	  'resetForm2',
+	  'toISODate'
+	]
+	function searchFormMController(FormM, underscore, getTypeAheadCustomer, getTypeAheadCurrency, resetForm2,
+	  toISODate) {
+	  var vm = this //jshint -W040
 
-	                  controller: 'SearchFormMModalCtrl as searchFormMModal'
+	  init()
+	  function init() {
+	    vm.searchParams = {
+	      cancelled: false
+	    }
+	  }
 
-	                }).then(function(modal) {
-	                  modal.element.dialog({
-	                    dialogClass: 'no-close',
-	                    modal: true,
-	                    minWidth: 600,
-	                    minHeight: 450,
-	                    title: 'Search Form M'
-	                  })
+	  vm.toggleShow = function toggleShow(form) {
+	    vm.showForm = !vm.showForm
 
-	                  modal.close.then(function(submittedSearchParams) {
-	                    if (submittedSearchParams && angular.isObject(submittedSearchParams) && !kanmiiUnderscore.isEmpty(submittedSearchParams)) {
-	                      self.searchFormM(submittedSearchParams)
-	                    }
-	                  })
-	                })
-	              })
+	    if (!vm.showForm) vm.clearForm(form)
+	  }
+
+	  vm.validators = {
+	    applicantObj: {
+	      test: function () {
+	        return underscore.isObject(vm.searchParams.applicantObj)
+	      }
 	    },
 
-	    controller: 'SearchFormMDirectiveCtrl as searchFormM',
-
-	    scope: {},
-
-	    bindToController: {
-	      searchFormMResult: '='
+	    currency: {
+	      test: function () {
+	        return underscore.isObject(vm.searchParams.currency)
+	      }
 	    }
 	  }
-	}
-
-	app.controller('SearchFormMDirectiveCtrl', SearchFormMDirectiveCtrl)
-	SearchFormMDirectiveCtrl.$inject = ['FormM', 'xhrErrorDisplay']
-	function SearchFormMDirectiveCtrl(FormM, xhrErrorDisplay) {
-	  var vm = this
-
-	  vm.searchFormM = searchFormM
-	  function searchFormM(submittedSearchParams) {
-	    var searchParams = angular.copy(submittedSearchParams)
-
-	    if (searchParams.applicant) searchParams.applicant = searchParams.applicant.name
-	    if (searchParams.currency) searchParams.currency = searchParams.currency.code
-
-	    FormM.getPaginated(searchParams).$promise.then(searchFormMSuccess, searchFormMError)
-
-	    function searchFormMSuccess(data) {
-	      vm.searchFormMResult = data
-	    }
-
-	    function searchFormMError(xhr) {
-	      xhrErrorDisplay(xhr)
-	    }
-	  }
-	}
-
-	app.controller('SearchFormMModalCtrl', SearchFormMModalCtrl)
-	SearchFormMModalCtrl.$inject = ['close', 'resetForm', '$element', 'getTypeAheadCustomer', 'getTypeAheadCurrency']
-	function SearchFormMModalCtrl(close, resetForm, element, getTypeAheadCustomer, getTypeAheadCurrency) {
-	  var vm = this
-
-	  initForm()
-	  function initForm() {
-	    vm.searchParams = {}
-	    vm.showLcIssueContainer = false
-	    vm.searchLcIssuesTitle = 'Search By Letter Of Credit Issues'
-	    vm.selectedLcIssues = {}
-	  }
-
-	  vm.toggleShowLcIssueContainer = toggleShowLcIssueContainer
-	  function toggleShowLcIssueContainer() {
-	    vm.showLcIssueContainer = !vm.showLcIssueContainer
-
-	    vm.searchLcIssuesTitle = !vm.showLcIssueContainer ? 'Search By Letter Of Credit Issues' : 'Dismiss'
-	  }
-
-	  vm.close = close
-
-	  vm.reset = reset
-	  function reset(form) {
-	    resetForm(form, element, '.form-control', initForm)
-	    form.$invalid = false
-	    form.$error = {}
-	  }
-
-	  vm.submitSearchParams = submitSearchParams
-	  function submitSearchParams(searchParams) {
-	    close(searchParams)
-	  }
-
-	  vm.getApplicant = getTypeAheadCustomer
 	  vm.getCurrency = getTypeAheadCurrency
+	  vm.getApplicant = getTypeAheadCustomer
+	  vm.datePickerIsOpen = false
+	  vm.openDatePicker = function openDatePicker() {
+	    vm.datePickerIsOpen = true
+	  }
+
+	  vm.clearForm = function clearForm(form) {
+	    resetForm2(form)
+	    init()
+	  }
+
+	  vm.searchMf = function searchMf(searchParams) {
+	    var params = angular.copy(searchParams)
+	    params.applicant_id = params.applicantObj ? /\d+$/.exec(params.applicantObj.url)[0] : null
+	    params.currency = params.currency ? params.currency.code : null
+	    params.created_at = params.created_at ? toISODate(params.created_at) : null
+
+	    if (!params.cancelled) delete params.cancelled
+
+	    FormM.getPaginated(params).$promise.then(function (data) {
+	      vm.onMfSearch({searchResult: data})
+	    })
+	  }
 	}
 
 
@@ -2349,7 +2328,7 @@
 /* 20 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"search-form-m-root-container\" class=\"search-form-m-root-container\"><form novalidate=\"\" class=\"form-horizontal\" autocomplete=\"off\" ng-submit=\"searchFormMModal.submitSearchParams(searchFormMModal.searchParams)\" name=\"searchFormMModalForm\"><fieldset class=\"search-form-m-container\" style=\"position: relative; padding: 7px;\"><div class=\"form-group form-m-number-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"form-m-number\">Form M Number</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" maxlength=\"13\" id=\"form-m-number\" min=\"0\" ng-pattern=\"/(?:mf)?\\d{4,11}/i\" ng-model=\"searchFormMModal.searchParams.number\"></div></div><div class=\"form-group applicant-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"applicant\">Applicant</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" type=\"text\" min=\"3\" id=\"applicant\" ng-model=\"searchFormMModal.searchParams.applicant\" typeahead-min-length=\"3\" uib-typeahead=\"applicant as applicant.name for applicant in searchFormMModal.getApplicant($viewValue)\"></div></div><div class=\"form-group currency-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"currency\">Currency</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" id=\"currency\" maxlength=\"3\" ng-model=\"searchFormMModal.searchParams.currency\" uib-typeahead=\"currency as currency.code for currency in searchFormMModal.getCurrency($viewValue)\" typeahead-min-length=\"2\"></div></div><div class=\"form-group amount-group\"><label class=\"control-label col-md-4 col-lg-4 col-sm-4\" for=\"amount\">Amount</label><div class=\"col-md-8 col-lg-8 col-sm-8\"><input class=\"form-control\" id=\"amount\" min=\"0\" ng-model=\"searchFormMModal.searchParams.amount\" number-format=\"\" ng-pattern=\"/^\\d[\\d,]*(?:\\.\\d*)?$/\"></div></div></fieldset><div class=\"form-m-lc-issue-container\"><span ng-click=\"searchFormMModal.toggleShowLcIssueContainer()\" class=\"form-m-lc-issue-toggle-show\"><span ng-class=\"['glyphicon', {'glyphicon-chevron-down': !searchFormMModal.showLcIssueContainer, 'glyphicon-chevron-up': searchFormMModal.showLcIssueContainer}]\"></span> {$searchFormMModal.searchLcIssuesTitle$}</span><div class=\"form-m-search-lc-issue\" ng-show=\"searchFormMModal.showLcIssueContainer\"><lc-issue lc-issue-show=\"searchFormMModal.showLcIssueContainer\" lc-issues-selected=\"searchFormMModal.selectedLcIssues\"></lc-issue></div></div><div class=\"row search-form-m-form-control\"><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: left\"><span class=\"btn btn-default\" ng-click=\"searchFormMModal.reset(searchFormMModalForm)\">Reset</span></div><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: center\"><button type=\"submit\" class=\"btn btn-info\" ng-disabled=\"searchFormMModalForm.$invalid\">Search Form M</button></div><div class=\"col-md-4 col-lg-4 col-sm-4\" style=\"text-align: right\"><span class=\"btn btn-default\" ng-click=\"searchFormMModal.close()\">Close</span></div></div></form></div>";
+	module.exports = "<div class=\"search-mf-directive\"><div class=\"search-mf-toggle-show\"><div ng-click=\"searchMf.toggleShow(searchMfForm)\" class=\"form-m-add-on-toggle clearfix\"><span class=\"form-m-add-on-show-helper\" ng-if=\"searchMf.showForm\"></span><div class=\"form-m-add-on-show-icon\"><span ng-class=\"['glyphicon', {'glyphicon-chevron-down': !searchMf.showForm, 'glyphicon-chevron-up': searchMf.showForm}]\"></span> Search Form M</div></div></div><form class=\"form-horizontal\" name=\"searchMfForm\" role=\"form\" autocomplete=\"off\" ng-show=\"searchMf.showForm\" ng-submit=\"searchMf.searchMf(searchMf.searchParams)\"><div class=\"form-group form-m-number-group\" control-has-feedback=\"\"><label for=\"form-m-number\" class=\"control-label col-sm-3\">Form M Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"formMNumber\" ng-model=\"searchMf.searchParams.number\" id=\"form-m-number\" to-upper=\"\" ng-pattern=\"/(?:mf)?\\d{3,}/i\" maxlength=\"13\"></div></div><div class=\"form-group applicant-group\" control-has-feedback=\"\"><label for=\"applicant\" class=\"control-label col-sm-3\">Applicant</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"applicant\" ng-model=\"searchMf.searchParams.applicantObj\" id=\"applicant\" ng-minlength=\"3\" ng-pattern=\"searchMf.validators.applicantObj\" typeahead-min-length=\"3\" uib-typeahead=\"applicant as applicant.name for applicant in searchMf.getApplicant($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group currency-group\" control-has-feedback=\"\"><label for=\"currency\" class=\"control-label col-sm-3\">Currency</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"currency\" ng-model=\"searchMf.searchParams.currency\" id=\"currency\" maxlength=\"3\" ng-pattern=\"searchMf.validators.currency\" autocomplete=\"off\" uib-typeahead=\"currency as currency.code for currency in searchMf.getCurrency($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group amount-group\" control-has-feedback=\"\"><label for=\"amount\" class=\"control-label col-sm-3\">Amount</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"amount\" ng-model=\"searchMf.searchParams.amount\" id=\"amount\" number-format=\"\"></div></div><div class=\"form-group created-date-group\" control-has-feedback=\"\" feedback-after=\".input-group-addon\"><label for=\"created-at\" class=\"control-label col-sm-3\">Created At</label><div class=\"col-sm-9\"><div class=\"input-group\"><input type=\"text\" class=\"form-control\" name=\"createdAt\" ng-model=\"searchMf.searchParams.created_at\" id=\"created-at\" uib-datepicker-popup=\"dd-MMM-yyyy\" is-open=\"searchMf.datePickerIsOpen\"> <span class=\"input-group-addon\" ng-click=\"searchMf.openDatePicker($event)\"><i class=\"glyphicon glyphicon-calendar\"></i></span></div></div></div><div class=\"form-group lc-number-group\"><label for=\"lc-number\" class=\"control-label col-sm-3\">LC Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"lcNumber\" ng-model=\"searchMf.searchParams.lc_number\" id=\"lc-number\" to-upper=\"\" maxlength=\"16\"></div></div><div class=\"form-group cancelled-group\"><label for=\"cancelled\" class=\"control-label col-sm-3\">Include cancelled</label><div class=\"col-sm-9\"><input type=\"checkbox\" name=\"cancelled\" ng-model=\"searchMf.searchParams.cancelled\" id=\"cancelled\"></div></div><div class=\"form-group submit-group\"><div class=\"col-sm-9 col-sm-offset-3\"><div class=\"clearfix\"><div class=\"pull-left\"><input type=\"submit\" class=\"btn btn-info\" value=\"Search Form M\" ng-disabled=\"searchMfForm.$invalid\"></div><div class=\"pull-right\" style=\"text-align: right\"><input type=\"button\" class=\"btn btn-warning\" value=\"Clear All\" ng-click=\"searchMf.clearForm(searchMfForm)\"></div></div></div></div></form></div>";
 
 /***/ },
 /* 21 */

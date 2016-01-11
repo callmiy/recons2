@@ -6,7 +6,7 @@ require('./add-form-m/add-form-m.js')
 require('./bids/bids.js')
 require('./list-form-m/list-form-m.js')
 require('./search-detailed-or-uploaded-form-m/search-detailed-or-uploaded-form-m.js')
-require('./search-form-m')
+require('./search-form-m/search-form-m.js')
 require('./upload-form-m/upload-form-m.js')
 
 var app = angular.module('form-m',
