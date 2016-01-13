@@ -66,9 +66,12 @@
                 <input class="form-control" type="text" ng-minlength="3" id="applicant" name="applicant" required
                        ng-model="addFormMState.formM.applicant" autocomplete="off"
                        ng-pattern="addFormMState.validators.applicant"
-                       ng-readonly="!addFormMState.fieldIsEditable.applicant" typeahead-min-length="3"
+                       ng-readonly="!addFormMState.fieldIsEditable.applicant"
+                       typeahead-min-length="3"
+                       typeahead-select-on-exact="true"
+                       typeahead-select-on-blur="true"
                        uib-typeahead="applicant as applicant.name for applicant in addFormMState.getApplicant($viewValue)"
-                       typeahead-select-on-blur="true" typeahead-select-on-exact="true"
+                       validate-complex-object
                 />
 
                 <span class="input-group-addon" ng-show="addFormMState.fieldIsEditable.applicant">
@@ -92,11 +95,13 @@
                 </span>
 
                 <input class="form-control" id="currency" maxlength="3" name="currency" required
-                       ng-pattern="addFormMState.validators.currency" autocomplete="off"
+                       autocomplete="off"
                        ng-model="addFormMState.formM.currency"
                        ng-readonly="!addFormMState.fieldIsEditable.currency"
+                       typeahead-select-on-blur="true"
+                       typeahead-select-on-exact="true"
                        uib-typeahead="currency as currency.code for currency in addFormMState.getCurrency($viewValue)"
-                       typeahead-select-on-blur="true" typeahead-select-on-exact="true"
+                       validate-complex-object
                 />
               </div>
             </div>
@@ -142,6 +147,22 @@
                   <i class=" glyphicon glyphicon-calendar"></i>
                 </span>
               </div>
+            </div>
+          </div>
+
+          <div class="form-group lc-ref-group" control-has-feedback
+               ng-if="!addFormMState.formM.lc_number && addFormMState.formM.number">
+            <label class="control-label col-sm-3" for="lc-ref">Lc Ref</label>
+
+            <div class="col-sm-9">
+              <input class="form-control" id="lc-ref" name="lcRef" maxlength="16"
+                     ng-model="addFormMState.formM.lcRef"
+                     typeahead-min-length="13"
+                     typeahead-select-on-blur="true"
+                     typeahead-select-on-exact="true"
+                     uib-typeahead="lc as lc.lc_number for lc in addFormMState.getLc($viewValue)"
+                     validate-complex-object
+              />
             </div>
           </div>
 

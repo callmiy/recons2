@@ -155,9 +155,24 @@ function controlHasFeedback() {
 
 app.factory('toISODate', toISODate)
 toISODate.$inject = ['moment']
-function toISODate(moment){
+function toISODate(moment) {
   return function (dtObj) {
     return dtObj ? moment(dtObj).format('YYYY-MM-DD') : null
+  }
+}
+
+app.directive('validateComplexObject', validateComplexObjectField)
+validateComplexObjectField.$inject = ['underscore']
+function validateComplexObjectField(underscore) {
+  return {
+    restrict: 'A',
+    require: 'ngModel',
+    link: function ($scope, elm, attributes, ctrl) {
+      ctrl.$validators.complexObjectModel = function () {
+        var val = ctrl.$modelValue
+        return underscore.isObject(val) && !underscore.isEmpty(val)
+      }
+    }
   }
 }
 

@@ -23,10 +23,19 @@ class LetterOfCreditRegisterFilter(django_filters.FilterSet):
     lc_number = django_filters.CharFilter(lookup_type='icontains')
     applicant = django_filters.CharFilter(name='applicant', lookup_type='icontains')
     mf = django_filters.CharFilter(lookup_type='istartswith')
+    form_m_not_attached = django_filters.MethodFilter()
 
     class Meta:
         model = LCRegister
         fields = ('lc_number', 'applicant', 'mf',)
+
+    def filter_form_m_not_attached(self, qs, param):
+        if not param:
+            return qs
+
+        param = True if param == 'true' else False
+
+        return qs.filter(lc__isnull=param)
 
 
 class LetterOfCreditRegisterListCreateAPIView(generics.ListCreateAPIView):

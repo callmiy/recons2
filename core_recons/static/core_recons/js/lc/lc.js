@@ -20,6 +20,25 @@ function LetterOfCredit($resource, urls) {
   )
 }
 
+app.factory('getTypeAheadLetterOfCredit', getTypeAheadLetterOfCredit)
+getTypeAheadLetterOfCredit.$inject = ['LetterOfCredit', '$q']
+function getTypeAheadLetterOfCredit(LetterOfCredit, $q) {
+
+  function getLetterOfCredit(query) {
+    var deferred = $q.defer()
+    LetterOfCredit.getPaginated(query).$promise.then(function (data) {
+      deferred.resolve(data.results)
+
+    }, function (xhr) {
+      deferred.reject(xhr)
+    })
+
+    return deferred.promise
+  }
+
+  return getLetterOfCredit
+}
+
 app.factory('LcModelManager', LcModelManager)
 LcModelManager.$inject = ['$filter']
 function LcModelManager($filter) {

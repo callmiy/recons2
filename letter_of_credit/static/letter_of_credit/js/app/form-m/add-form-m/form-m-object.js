@@ -299,6 +299,8 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         formMToSave.bid = {amount: Number(formM.bid.amount), maturity: formatDate(formM.bid.maturity)}
       }
 
+      if(formM.lcRef) formMToSave.lc = formM.lcRef.url
+
       if (formM.selectedIssues.length) formMToSave.issues = formM.selectedIssues
 
       if (!underscore.isEmpty(formM.cover)) {

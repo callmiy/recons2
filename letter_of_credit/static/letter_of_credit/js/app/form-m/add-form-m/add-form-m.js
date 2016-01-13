@@ -20,7 +20,8 @@ var app = angular.module('add-form-m', [
   'form-m-comment',
   'lc-bid-request',
   'confirmation-dialog',
-  'add-form-m-form-m-object'
+  'add-form-m-form-m-object',
+  'lc-service'
 ])
 
 app.config(formMStateConfig)
@@ -58,15 +59,17 @@ AddFormMStateController.$inject = [
   '$scope',
   'confirmationDialog',
   'formMObject',
-  'formMAttributesVerboseNames'
+  'formMAttributesVerboseNames',
+  'getTypeAheadLetterOfCredit'
 ]
 
 function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
-  underscore, xhrErrorDisplay, $stateParams, resetForm2, $state, $scope, confirmationDialog, formMObject,
-  formMAttributesVerboseNames) {
+                                 underscore, xhrErrorDisplay, $stateParams, resetForm2, $state, $scope, confirmationDialog, formMObject,
+                                 formMAttributesVerboseNames, getTypeAheadLetterOfCredit) {
   var vm = this
 
   vm.detailedFormM = {}
+  vm.formM = {}
 
   function initFormMCb(formM, detailedFormM) {
     $stateParams.formM = null
@@ -98,7 +101,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
 
     formMObject.init(formMNumber || $stateParams.formM, initFormMCb)
-
+    vm.formM.lcRef = null
     vm.searchFormM = {}
 
     if (form) {
@@ -122,20 +125,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   vm.enableFieldEdit = function enableFieldEdit(field) {
     vm.fieldIsEditable[field] = vm.detailedFormM ? !vm.fieldIsEditable[field] : true
-  }
-
-  vm.validators = {
-    applicant: {
-      test: function () {
-        return underscore.isObject(vm.formM.applicant)
-      }
-    },
-
-    currency: {
-      test: function () {
-        return underscore.isObject(vm.formM.currency)
-      }
-    }
   }
 
   vm.disableSubmitBtn = function disableSubmitBtn() {
@@ -166,16 +155,16 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   vm.reset = function reset(addFormMForm) {
     vm.detailedFormM = null
+    var elements = ['applicant', 'currency'].concat($scope.newFormMForm.lcRef ? ['lcRef'] : [])
 
-    resetForm2(addFormMForm, [
-      {
-        form: $scope.newFormMForm, elements: ['applicant', 'currency']
-      }
-    ])
+    resetForm2(addFormMForm, [{form: $scope.newFormMForm, elements: elements}])
 
     initialize()
   }
 
+  vm.getLc = function (lcRef) {
+    return getTypeAheadLetterOfCredit({lc_number: lcRef})
+  }
   vm.getApplicant = getTypeAheadCustomer
   vm.getCurrency = getTypeAheadCurrency
   vm.datePickerFormat = 'dd-MMM-yyyy'

@@ -84,7 +84,7 @@ app.directive('validateIssues', function validateIssues() {
   return {
     restrict: 'A',
     require: 'ngModel',
-    link: function ($scope, elm, atts, ctrl) {
+    link: function ($scope, elm, attributes, ctrl) {
       var vm = $scope.lcIssue
       ctrl.$validators.issues = function () {
         return !vm.formM.showIssueForm || Boolean(vm.formM.selectedIssues.length)

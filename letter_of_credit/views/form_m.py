@@ -95,7 +95,6 @@ class FormIssueBidCoverUtil:
 
         logger.info('%s form M issues successfully created:\n%s', self.log_prefix,
                     json.dumps(serializer.data, indent=4))
-        return serializer.data
 
     def create_cover(self, cover):
         logger.info('%s creating form M cover with data\n%s', self.log_prefix, cover)
@@ -135,7 +134,7 @@ class FormMListCreateAPIView(generics.ListCreateAPIView):
             util.create_cover(incoming_data['cover'])
 
         if 'issues' in incoming_data:
-            form_m_data['new_issues'] = util.create_issues(incoming_data['issues'])
+            util.create_issues(incoming_data['issues'])
 
         logger.info('%s Form m successfully created. Data will be sent to client:\n%s', self.log_prefix,
                     json.dumps(form_m_data, indent=4))
