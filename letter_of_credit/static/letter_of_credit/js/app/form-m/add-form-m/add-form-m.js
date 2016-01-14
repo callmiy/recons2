@@ -21,7 +21,8 @@ var app = angular.module('add-form-m', [
   'lc-bid-request',
   'confirmation-dialog',
   'add-form-m-form-m-object',
-  'lc-service'
+  'lc-service',
+  'complex-object-validator'
 ])
 
 app.config(formMStateConfig)
@@ -64,11 +65,9 @@ AddFormMStateController.$inject = [
 ]
 
 function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
-                                 underscore, xhrErrorDisplay, $stateParams, resetForm2, $state, $scope, confirmationDialog, formMObject,
-                                 formMAttributesVerboseNames, getTypeAheadLetterOfCredit) {
+  underscore, xhrErrorDisplay, $stateParams, resetForm2, $state, $scope, confirmationDialog, formMObject,
+  formMAttributesVerboseNames, getTypeAheadLetterOfCredit) {
   var vm = this
-
-  vm.detailedFormM = {}
   vm.formM = {}
 
   function initFormMCb(formM, detailedFormM) {
@@ -82,7 +81,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
         currency: false,
         applicant: false,
         date_received: false,
-        amount: false
+        amount: false,
+        lcRef: false
       }
     }
 
@@ -92,23 +92,31 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   initialize()
   function initialize(form, formMNumber) {
+    if (form) {
+      var elements = ['applicant', 'currency'].concat($scope.newFormMForm.lcRef ? ['lcRef'] : [])
+
+      resetForm2(form, [{form: $scope.newFormMForm, elements: elements}])
+
+      form.$setPristine()
+      form.$setUntouched()
+    }
+
+    vm.detailedFormM = null
     vm.fieldIsEditable = {
       number: true,
       currency: true,
       applicant: true,
       date_received: true,
-      amount: true
+      amount: true,
+      lcRef: true
     }
 
     formMObject.init(formMNumber || $stateParams.formM, initFormMCb)
     vm.formM.lcRef = null
     vm.searchFormM = {}
-
-    if (form) {
-      form.$setPristine()
-      form.$setUntouched()
-    }
   }
+
+  vm.reset = initialize
 
   function formMSavedSuccessMessage() {
     var summary = $stateParams.showSummary
@@ -147,19 +155,11 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     if (underscore.all(compared)) {
       if (formMObject.bid.goods_description && formMObject.bid.amount) return false
       if (!underscore.isEmpty(vm.formM.cover)) return false
+      if (underscore.isObject(vm.formM.lcRef)) return false
       return !vm.formM.selectedIssues.length
     }
 
     return false
-  }
-
-  vm.reset = function reset(addFormMForm) {
-    vm.detailedFormM = null
-    var elements = ['applicant', 'currency'].concat($scope.newFormMForm.lcRef ? ['lcRef'] : [])
-
-    resetForm2(addFormMForm, [{form: $scope.newFormMForm, elements: elements}])
-
-    initialize()
   }
 
   vm.getLc = function (lcRef) {

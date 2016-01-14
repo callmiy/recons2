@@ -28,7 +28,7 @@ class LetterOfCreditSerializer(serializers.HyperlinkedModelSerializer):
             'ccy_obj',
             'date_started',
             'date_released',
-            'id',
+            'pk',
             'ti_mf',
             # </editor-fold>
         )

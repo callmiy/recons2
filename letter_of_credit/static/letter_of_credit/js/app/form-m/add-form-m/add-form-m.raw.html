@@ -155,14 +155,23 @@
             <label class="control-label col-sm-3" for="lc-ref">Lc Ref</label>
 
             <div class="col-sm-9">
-              <input class="form-control" id="lc-ref" name="lcRef" maxlength="16"
-                     ng-model="addFormMState.formM.lcRef"
-                     typeahead-min-length="13"
-                     typeahead-select-on-blur="true"
-                     typeahead-select-on-exact="true"
-                     uib-typeahead="lc as lc.lc_number for lc in addFormMState.getLc($viewValue)"
-                     validate-complex-object
-              />
+              <div class="input-group">
+                <span class="input-group-addon" style="cursor:pointer;"
+                      ng-click="addFormMState.enableFieldEdit('lcRef')">
+                  <i
+                    ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.lcRef, 'glyphicon-eye-open': addFormMState.fieldIsEditable.lcRef}]"></i>
+                </span>
+
+                <input class="form-control" id="lc-ref" name="lcRef"
+                       ng-model="addFormMState.formM.lcRef"
+                       ng-readonly="!addFormMState.fieldIsEditable.lcRef"
+                       typeahead-min-length="13"
+                       typeahead-select-on-blur="true"
+                       typeahead-select-on-exact="true"
+                       uib-typeahead="lc as lc.lc_number for lc in addFormMState.getLc($viewValue)"
+                       validate-complex-object
+                />
+              </div>
             </div>
           </div>
 

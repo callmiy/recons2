@@ -23,9 +23,22 @@ class FormMCoverSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
+class FormMLcRelatedField(serializers.RelatedField):
+    def to_internal_value(self, data):
+        lc = LCRegister.objects.filter(pk=data)
+        if lc.exists():
+            return lc[0]
+        else:
+            return None
+
+    def to_representation(self, value):
+        return value and value.lc_number or None
+
+
 class FormMSerializer(serializers.HyperlinkedModelSerializer):
     applicant_data = CustomerSerializer(required=False, read_only=True)
     currency_data = CurrencySerializer(required=False, read_only=True)
+    lc = FormMLcRelatedField(queryset=LCRegister.objects.all(), required=False)
 
     class Meta:
         model = FormM
@@ -40,7 +53,7 @@ class FormMSerializer(serializers.HyperlinkedModelSerializer):
             'date_received',
             'url',
             'goods_description',
-            'lc_number',
+            'lc',
             'ct_id',
             'ct_url',
         )

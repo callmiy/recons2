@@ -161,20 +161,6 @@ function toISODate(moment) {
   }
 }
 
-app.directive('validateComplexObject', validateComplexObjectField)
-validateComplexObjectField.$inject = ['underscore']
-function validateComplexObjectField(underscore) {
-  return {
-    restrict: 'A',
-    require: 'ngModel',
-    link: function ($scope, elm, attributes, ctrl) {
-      ctrl.$validators.complexObjectModel = function () {
-        var val = ctrl.$modelValue
-        return underscore.isObject(val) && !underscore.isEmpty(val)
-      }
-    }
-  }
-}
 
 require('./commons/toggle-dim-element')
 require('./customer/customer.js')
@@ -194,3 +180,4 @@ require('./model-table/model-table.js')
 require('./commons/commons.services.js')
 require('./search-lc')
 require('./confirmation-dialog/confirmation-dialog.js')
+require('./complex-object-validator/complex-object-validator.js')

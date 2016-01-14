@@ -5,7 +5,8 @@
 var app = angular.module('search-form-m', [
   'customer',
   'form-m-service',
-  'rootApp'
+  'rootApp',
+  'complex-object-validator'
 ])
 
 app.directive('searchMf', searchMfDirective)

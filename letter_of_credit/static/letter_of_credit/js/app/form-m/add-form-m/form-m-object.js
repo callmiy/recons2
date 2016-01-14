@@ -189,7 +189,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
             self.ct_id = formM.ct_id
             self.ct_url = formM.ct_url
             self._id = formM.id
-            self.lc_number = formM.lc_number
+            self.lc_number = formM.lc
 
             self.setBids()
             setIssues()
@@ -294,12 +294,14 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         goods_description: formM.goods_description
       }
 
+      if(underscore.isObject(formM.lcRef) && formM.lcRef.id) formMToSave.lc = formM.lcRef.id
+
       if (formM.bid.amount && formM.bid.goods_description) {
         formMToSave.goods_description = self.goods_description = formM.bid.goods_description
         formMToSave.bid = {amount: Number(formM.bid.amount), maturity: formatDate(formM.bid.maturity)}
       }
 
-      if(formM.lcRef) formMToSave.lc = formM.lcRef.url
+      //if (formM.lcRef) formMToSave.lc = formM.lcRef.pk
 
       if (formM.selectedIssues.length) formMToSave.issues = formM.selectedIssues
 
