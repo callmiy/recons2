@@ -28,7 +28,7 @@ formMObject.$inject = [
 ]
 
 function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDialog, formatDate, xhrErrorDisplay,
-  underscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
+                     underscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
   function Factory() {
     var self = this
     self.datePickerFormat = 'dd-MMM-yyyy'
@@ -294,7 +294,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         goods_description: formM.goods_description
       }
 
-      if(underscore.isObject(formM.lcRef) && formM.lcRef.id) formMToSave.lc = formM.lcRef.id
+      if (underscore.isObject(formM.lcRef) && formM.lcRef.id) formMToSave.lc = formM.lcRef.lc_number
 
       if (formM.bid.amount && formM.bid.goods_description) {
         formMToSave.goods_description = self.goods_description = formM.bid.goods_description
@@ -316,7 +316,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
       else {
         //if we did not edit the main form M i.e detailedFormM = formM, then there is no need for database update
         if (underscore.all(self.compareFormMs(detailedFormM, formM))) {
-          formMToSave.do_not_update = 'do_not_update'
+          if (!formM.lcRef.lc_number) formMToSave.do_not_update = 'do_not_update'
           formMToSave.url = formM.url //needed for bid, cover, issues and comments
         }
 

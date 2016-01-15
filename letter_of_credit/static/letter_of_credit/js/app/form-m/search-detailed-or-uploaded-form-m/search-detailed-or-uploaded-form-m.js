@@ -2,7 +2,6 @@
 /*jshint camelcase:false*/
 
 var app = angular.module('search-detailed-or-uploaded-form-m', [
-  'kanmii-underscore',
   'upload-form-m-service',
   'toggle-dim-element',
   'form-m-service'
@@ -13,15 +12,15 @@ SearchDetailedOrUploadedFormMService.$inject = [
   'UploadFormM',
   'xhrErrorDisplay',
   'ModalService',
-  'kanmiiUnderscore',
+  'underscore',
   '$q',
   'FormM'
 ]
-function SearchDetailedOrUploadedFormMService(UploadFormM, xhrErrorDisplay, ModalService, kanmiiUnderscore, $q, FormM) {
+function SearchDetailedOrUploadedFormMService(UploadFormM, xhrErrorDisplay, ModalService, underscore, $q, FormM) {
 
   function searchFormM(submittedSearchParams) {
     var deferred = $q.defer()
-    var mf = submittedSearchParams.mf
+    var mf = submittedSearchParams.mf.trim()
 
     FormM.getPaginated({number: mf}).$promise.then(function(data) {
       if (data.count === 1) {
@@ -68,7 +67,7 @@ function SearchDetailedOrUploadedFormMService(UploadFormM, xhrErrorDisplay, Moda
         })
 
         modal.close.then(function(submittedSearchParams) {
-          if (submittedSearchParams && angular.isObject(submittedSearchParams) && !kanmiiUnderscore.isEmpty(submittedSearchParams)) {
+          if (submittedSearchParams && angular.isObject(submittedSearchParams) && !underscore.isEmpty(submittedSearchParams)) {
             deferred.resolve(searchFormM(submittedSearchParams))
           }
         })

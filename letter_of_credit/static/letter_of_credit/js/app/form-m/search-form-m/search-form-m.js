@@ -37,6 +37,7 @@ searchFormMController.$inject = [
 function searchFormMController(FormM, underscore, getTypeAheadCustomer, getTypeAheadCurrency, resetForm2,
   toISODate) {
   var vm = this //jshint -W040
+  vm.showForm = true
 
   init()
   function init() {

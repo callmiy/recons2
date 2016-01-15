@@ -68,7 +68,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   underscore, xhrErrorDisplay, $stateParams, resetForm2, $state, $scope, confirmationDialog, formMObject,
   formMAttributesVerboseNames, getTypeAheadLetterOfCredit) {
   var vm = this
-  vm.formM = {}
 
   function initFormMCb(formM, detailedFormM) {
     $stateParams.formM = null
@@ -92,6 +91,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   initialize()
   function initialize(form, formMNumber) {
+    vm.formM = {}
+
     if (form) {
       var elements = ['applicant', 'currency'].concat($scope.newFormMForm.lcRef ? ['lcRef'] : [])
 
@@ -163,7 +164,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   }
 
   vm.getLc = function (lcRef) {
-    return getTypeAheadLetterOfCredit({lc_number: lcRef})
+    return getTypeAheadLetterOfCredit({lc_number: lcRef.trim(), mf: vm.formM.number})
   }
   vm.getApplicant = getTypeAheadCustomer
   vm.getCurrency = getTypeAheadCurrency

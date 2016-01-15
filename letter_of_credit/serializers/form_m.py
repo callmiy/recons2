@@ -25,7 +25,10 @@ class FormMCoverSerializer(serializers.HyperlinkedModelSerializer):
 
 class FormMLcRelatedField(serializers.RelatedField):
     def to_internal_value(self, data):
-        lc = LCRegister.objects.filter(pk=data)
+        if not data:
+            return None
+
+        lc = LCRegister.objects.filter(lc_number=data)
         if lc.exists():
             return lc[0]
         else:

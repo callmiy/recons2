@@ -278,7 +278,6 @@
 	  underscore, xhrErrorDisplay, $stateParams, resetForm2, $state, $scope, confirmationDialog, formMObject,
 	  formMAttributesVerboseNames, getTypeAheadLetterOfCredit) {
 	  var vm = this
-	  vm.formM = {}
 
 	  function initFormMCb(formM, detailedFormM) {
 	    $stateParams.formM = null
@@ -302,6 +301,8 @@
 
 	  initialize()
 	  function initialize(form, formMNumber) {
+	    vm.formM = {}
+
 	    if (form) {
 	      var elements = ['applicant', 'currency'].concat($scope.newFormMForm.lcRef ? ['lcRef'] : [])
 
@@ -373,7 +374,7 @@
 	  }
 
 	  vm.getLc = function (lcRef) {
-	    return getTypeAheadLetterOfCredit({lc_number: lcRef})
+	    return getTypeAheadLetterOfCredit({lc_number: lcRef.trim(), mf: vm.formM.number})
 	  }
 	  vm.getApplicant = getTypeAheadCustomer
 	  vm.getCurrency = getTypeAheadCurrency
@@ -450,7 +451,7 @@
 	]
 
 	function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDialog, formatDate, xhrErrorDisplay,
-	  underscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
+	                     underscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
 	  function Factory() {
 	    var self = this
 	    self.datePickerFormat = 'dd-MMM-yyyy'
@@ -716,7 +717,7 @@
 	        goods_description: formM.goods_description
 	      }
 
-	      if(underscore.isObject(formM.lcRef) && formM.lcRef.id) formMToSave.lc = formM.lcRef.id
+	      if (underscore.isObject(formM.lcRef) && formM.lcRef.id) formMToSave.lc = formM.lcRef.lc_number
 
 	      if (formM.bid.amount && formM.bid.goods_description) {
 	        formMToSave.goods_description = self.goods_description = formM.bid.goods_description
@@ -738,7 +739,7 @@
 	      else {
 	        //if we did not edit the main form M i.e detailedFormM = formM, then there is no need for database update
 	        if (underscore.all(self.compareFormMs(detailedFormM, formM))) {
-	          formMToSave.do_not_update = 'do_not_update'
+	          if (!formM.lcRef.lc_number) formMToSave.do_not_update = 'do_not_update'
 	          formMToSave.url = formM.url //needed for bid, cover, issues and comments
 	        }
 
@@ -1788,6 +1789,7 @@
 	function searchBidsController(LcBidRequest, underscore, getTypeAheadCustomer, getTypeAheadCurrency, resetForm2,
 	  toISODate) {
 	  var vm = this //jshint -W040
+	  vm.showForm = true
 
 	  init()
 	  function init() {
@@ -2117,7 +2119,6 @@
 	/*jshint camelcase:false*/
 
 	var app = angular.module('search-detailed-or-uploaded-form-m', [
-	  'kanmii-underscore',
 	  'upload-form-m-service',
 	  'toggle-dim-element',
 	  'form-m-service'
@@ -2128,15 +2129,15 @@
 	  'UploadFormM',
 	  'xhrErrorDisplay',
 	  'ModalService',
-	  'kanmiiUnderscore',
+	  'underscore',
 	  '$q',
 	  'FormM'
 	]
-	function SearchDetailedOrUploadedFormMService(UploadFormM, xhrErrorDisplay, ModalService, kanmiiUnderscore, $q, FormM) {
+	function SearchDetailedOrUploadedFormMService(UploadFormM, xhrErrorDisplay, ModalService, underscore, $q, FormM) {
 
 	  function searchFormM(submittedSearchParams) {
 	    var deferred = $q.defer()
-	    var mf = submittedSearchParams.mf
+	    var mf = submittedSearchParams.mf.trim()
 
 	    FormM.getPaginated({number: mf}).$promise.then(function(data) {
 	      if (data.count === 1) {
@@ -2183,7 +2184,7 @@
 	        })
 
 	        modal.close.then(function(submittedSearchParams) {
-	          if (submittedSearchParams && angular.isObject(submittedSearchParams) && !kanmiiUnderscore.isEmpty(submittedSearchParams)) {
+	          if (submittedSearchParams && angular.isObject(submittedSearchParams) && !underscore.isEmpty(submittedSearchParams)) {
 	            deferred.resolve(searchFormM(submittedSearchParams))
 	          }
 	        })
@@ -2264,6 +2265,7 @@
 	function searchFormMController(FormM, underscore, getTypeAheadCustomer, getTypeAheadCurrency, resetForm2,
 	  toISODate) {
 	  var vm = this //jshint -W040
+	  vm.showForm = true
 
 	  init()
 	  function init() {
