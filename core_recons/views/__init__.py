@@ -5,6 +5,7 @@ from letter_of_credit.models import FormMCover
 from .update_model_date import UpdateModelDate
 from .content_type import ContentTypeListCreateAPIView, ContentTypeRetrieveUpdateDestroyAPIView
 from .comment import CommentListCreateAPIView, CommentRetrieveUpdateDestroyAPIView
+from .fx_deal import FxDealListCreateAPIView, FxDealRetrieveUpdateDestroyAPIView
 
 
 class CoreAppsView(View):
@@ -24,6 +25,7 @@ class CoreAppsView(View):
             'letterOfCreditStatusesAPIUrl': reverse('lcstatus-list'),
             'formMCoverAPIUrl': reverse('formmcover-list'),
             'commentAPIUrl': reverse('comment-list'),
+            'fxDealAPIUrl': reverse('fxdeal-list'),
         })
 
     @staticmethod

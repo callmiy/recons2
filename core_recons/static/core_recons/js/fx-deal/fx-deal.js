@@ -2,11 +2,11 @@
 
 /*jshint camelcase:false*/
 
-var app = angular.module('comment-service', ['rootApp'])
+var app = angular.module('fx-deal-service', ['rootApp'])
 
-app.factory('Comment', Comment)
-Comment.$inject = ['$resource', 'urls']
-function Comment($resource, urls) { //-W098
+app.factory('FxDeal', FxDeal)
+FxDeal.$inject = ['$resource', 'urls']
+function FxDeal($resource, urls) {
   var url = appendToUrl(urls.commentAPIUrl, ':id');
   return $resource(url, {id: '@id'}, {
       'put': {

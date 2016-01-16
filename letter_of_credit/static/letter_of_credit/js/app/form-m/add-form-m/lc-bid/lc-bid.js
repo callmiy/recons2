@@ -111,7 +111,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
     return dtObj ? moment(dtObj).format('DD-MMM-YYYY') : null
   }
 
-  vm.onBidDblClick = function onBidDblClick(bid, $index, form) {
+  vm.onEditBid = function onEditBid(bid, $index, form) {
     form.$setPristine()
     vm.formM.showEditBid = true
     vm.formM.showBidForm = false

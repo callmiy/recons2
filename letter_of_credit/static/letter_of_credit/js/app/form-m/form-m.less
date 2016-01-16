@@ -1,5 +1,20 @@
 .form-m-home-view {
+  .control-icon {
+    cursor: pointer;
+    border: 1px solid #B1B1B1;
+    padding: 4px;
+    border-radius: 5px;
 
+    &:hover {
+      border-color: #22B134;
+      background-color: #62BB6D;
+      color: #FFF;
+    }
+
+    &:not(last-child) {
+      margin-right: 5px;
+    }
+  }
 }
 
 @import url('./list-form-m/list-form-m.less');
@@ -7,4 +22,4 @@
 @import url('./upload-form-m/upload-form-m.less');
 @import url('./bids/display-pending-bid/display-pending-bid');
 @import url('./bids/search-bids/search-bids.less');
-@import url('./search-form-m1/search-form-m.less');
+@import url('./search-form-m/search-form-m.less');

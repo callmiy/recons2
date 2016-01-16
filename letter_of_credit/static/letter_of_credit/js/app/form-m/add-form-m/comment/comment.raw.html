@@ -89,11 +89,15 @@
           </td>
 
           <td>
-            <span style="margin-right: 10px;;" ng-click="formMComment.viewComment(comment)"
-                  class="glyphicon glyphicon-new-window" data-toggle="tooltip" title="View comment"></span>
+            <span class="glyphicon glyphicon-new-window control-icon"
+                  ng-click="formMComment.viewComment(comment)"
+                  data-toggle="tooltip"
+                  title="View comment"></span>
 
-            <span data-toggle="tooltip" title="Close comment"
-                  ng-click="formMComment.formM.closeComment(comment, $index)" class="glyphicon glyphicon-remove"></span>
+            <span class="glyphicon glyphicon-remove control-icon"
+                  data-toggle="tooltip"
+                  title="Close comment"
+                  ng-click="formMComment.formM.closeComment(comment, $index)"></span>
           </td>
         </tr>
       </tbody>
