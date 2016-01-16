@@ -26,8 +26,8 @@ class FormMListPagination(pagination.PageNumberPagination):
 class FormMFilter(django_filters.FilterSet):
     number = django_filters.CharFilter(lookup_type='icontains')
     applicant = django_filters.CharFilter(name='applicant__name', lookup_type='icontains')
-    applicant_id = django_filters.CharFilter(name='applicant__id',)
-    lc_number = django_filters.CharFilter(name='lc__lc_number', lookup_type='icontains',)
+    applicant_id = django_filters.CharFilter(name='applicant__id', )
+    lc_number = django_filters.CharFilter(name='lc__lc_number', lookup_type='icontains', )
     currency = django_filters.CharFilter(name='currency__code', lookup_type='iexact')
     lc_not_attached = django_filters.MethodFilter()
     filter = django_filters.MethodFilter()
@@ -92,9 +92,10 @@ class FormIssueBidCoverUtil:
         serializer = LCIssueConcreteSerializer(data=data, context={'request': self.request}, many=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        results = serializer.data
 
-        logger.info('%s form M issues successfully created:\n%s', self.log_prefix,
-                    json.dumps(serializer.data, indent=4))
+        logger.info('%s form M issues successfully created:\n%s', self.log_prefix, json.dumps(results, indent=4))
+        return results
 
     def create_cover(self, cover):
         logger.info('%s creating form M cover with data\n%s', self.log_prefix, cover)
@@ -134,7 +135,7 @@ class FormMListCreateAPIView(generics.ListCreateAPIView):
             util.create_cover(incoming_data['cover'])
 
         if 'issues' in incoming_data:
-            util.create_issues(incoming_data['issues'])
+            form_m_data['new_issues'] = util.create_issues(incoming_data['issues'])
 
         logger.info('%s Form m successfully created. Data will be sent to client:\n%s', self.log_prefix,
                     json.dumps(form_m_data, indent=4))

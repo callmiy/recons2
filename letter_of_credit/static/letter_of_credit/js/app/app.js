@@ -282,6 +282,7 @@
 	  function initFormMCb(formM, detailedFormM) {
 	    $stateParams.formM = null
 	    vm.formM = formM
+	    vm.formM.lcRef = {lc_number: null}
 	    vm.detailedFormM = detailedFormM
 
 	    if (detailedFormM) {
@@ -301,7 +302,6 @@
 
 	  initialize()
 	  function initialize(form, formMNumber) {
-	    vm.formM = {}
 
 	    if (form) {
 	      var elements = ['applicant', 'currency'].concat($scope.newFormMForm.lcRef ? ['lcRef'] : [])
@@ -323,7 +323,7 @@
 	    }
 
 	    formMObject.init(formMNumber || $stateParams.formM, initFormMCb)
-	    vm.formM.lcRef = null
+
 	    vm.searchFormM = {}
 	  }
 
@@ -366,7 +366,7 @@
 	    if (underscore.all(compared)) {
 	      if (formMObject.bid.goods_description && formMObject.bid.amount) return false
 	      if (!underscore.isEmpty(vm.formM.cover)) return false
-	      if (underscore.isObject(vm.formM.lcRef)) return false
+	      if (vm.formM.lcRef.lc_number) return false
 	      return !vm.formM.selectedIssues.length
 	    }
 
@@ -451,7 +451,7 @@
 	]
 
 	function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDialog, formatDate, xhrErrorDisplay,
-	                     underscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
+	  underscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
 	  function Factory() {
 	    var self = this
 	    self.datePickerFormat = 'dd-MMM-yyyy'
@@ -717,7 +717,7 @@
 	        goods_description: formM.goods_description
 	      }
 
-	      if (underscore.isObject(formM.lcRef) && formM.lcRef.id) formMToSave.lc = formM.lcRef.lc_number
+	      if (formM.lcRef.lc_number) formMToSave.lc = formM.lcRef.lc_number
 
 	      if (formM.bid.amount && formM.bid.goods_description) {
 	        formMToSave.goods_description = self.goods_description = formM.bid.goods_description
@@ -771,35 +771,27 @@
 	    }
 
 	    /**
-	     * Compare certain attributes of two form Ms and returns an object with the attribute as key and equalities of the
-	     * values of the attributes in the two form Ms as values.
+	     * Compare attributes of pristine form M (form M obtained from server un-edited) and another form and returns an
+	     * object with the attribute as key and equalities of the values of the attributes in the two form Ms as values.
 	     *
-	     * @param {{}} formM - first form M to compare. If this is null, then there is no point doing comparison
+	     * @param {{}} pristineFormM - form M obtained from server un-edited. If this is null, then there is no point doing
+	     *   comparison
 	     * @param {null|{}} otherFormM - optional second form M to compare. If this is not given, then we compare first
 	     *   form M with self
 	     * @returns {{}} - an object of form Ms attributes' values equalities
 	     */
-	    self.compareFormMs = function compareFormMs(formM, otherFormM) {
-	      if (!formM) return false
+	    self.compareFormMs = function compareFormMs(pristineFormM, otherFormM) {
+	      if (!pristineFormM) return {all: false}
 
-	      if (otherFormM) {
-	        return {
-	          number: otherFormM.number && angular.equals(otherFormM.number, formM.number),
-	          date_received: angular.equals(otherFormM.date_received, new Date(formM.date_received)),
-	          amount: otherFormM.amount && angular.equals(otherFormM.amount, Number(formM.amount)),
-	          currency: otherFormM.currency && (otherFormM.currency.code === formM.currency_data.code),
-	          applicant: otherFormM.applicant && (otherFormM.applicant.name === formM.applicant_data.name),
-	          goods_description: otherFormM.goods_description === formM.goods_description
-	        }
-	      }
+	      var formM = otherFormM ? otherFormM : self
 
 	      return {
-	        number: self.number && angular.equals(self.number, formM.number),
-	        date_received: angular.equals(self.date_received, new Date(formM.date_received)),
-	        amount: self.amount && angular.equals(self.amount, Number(formM.amount)),
-	        currency: self.currency && (self.currency.code === formM.currency_data.code),
-	        applicant: self.applicant && (self.applicant.name === formM.applicant_data.name),
-	        goods_description: self.goods_description === formM.goods_description
+	        number: formM.number && formM.number === pristineFormM.number,
+	        date_received: angular.equals(formM.date_received, new Date(pristineFormM.date_received)),
+	        amount: self.amount && formM.amount === Number(pristineFormM.amount),
+	        currency: formM.currency && (formM.currency.code === pristineFormM.currency_data.code),
+	        applicant: formM.applicant && (formM.applicant.name === pristineFormM.applicant_data.name),
+	        goods_description: formM.goods_description === pristineFormM.goods_description
 	      }
 	    }
 
@@ -1144,6 +1136,7 @@
 	  function init(form) {
 	    vm.title = title
 	    vm.coverTypes = null
+	    formMObject.cover = {}
 
 	    if (form) {
 	      form.$setPristine()

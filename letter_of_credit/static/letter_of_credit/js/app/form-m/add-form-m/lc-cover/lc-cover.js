@@ -42,6 +42,7 @@ function LcCoverDirectiveController($scope, formMCoverTypes, $filter, formFieldI
   function init(form) {
     vm.title = title
     vm.coverTypes = null
+    formMObject.cover = {}
 
     if (form) {
       form.$setPristine()

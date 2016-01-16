@@ -72,6 +72,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   function initFormMCb(formM, detailedFormM) {
     $stateParams.formM = null
     vm.formM = formM
+    vm.formM.lcRef = {lc_number: null}
     vm.detailedFormM = detailedFormM
 
     if (detailedFormM) {
@@ -91,7 +92,6 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   initialize()
   function initialize(form, formMNumber) {
-    vm.formM = {}
 
     if (form) {
       var elements = ['applicant', 'currency'].concat($scope.newFormMForm.lcRef ? ['lcRef'] : [])
@@ -113,7 +113,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     }
 
     formMObject.init(formMNumber || $stateParams.formM, initFormMCb)
-    vm.formM.lcRef = null
+
     vm.searchFormM = {}
   }
 
@@ -156,7 +156,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     if (underscore.all(compared)) {
       if (formMObject.bid.goods_description && formMObject.bid.amount) return false
       if (!underscore.isEmpty(vm.formM.cover)) return false
-      if (underscore.isObject(vm.formM.lcRef)) return false
+      if (vm.formM.lcRef.lc_number) return false
       return !vm.formM.selectedIssues.length
     }
 
