@@ -112,7 +112,6 @@ app.controller('ViewBidDetailModalCtrl', ViewBidDetailModalCtrl)
 ViewBidDetailModalCtrl.$inject = ['config', 'close']
 
 function ViewBidDetailModalCtrl(config, close) {
-  this.style = require('./view-bid-details.min.css')
   this.bid = config.bid
   this.close = close
 }

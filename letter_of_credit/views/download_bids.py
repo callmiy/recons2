@@ -9,15 +9,19 @@ from datetime import datetime
 
 class DownloadBidsView(View):
     def get(self, request):
-        bid_ids = request.GET.getlist('bid_ids')
-        file_name = '%s.xlsx' % datetime.now().strftime('fx-request-%Y-%m-%d-%H-%S-%f')
         wb = Workbook()
         sheet = wb.active
 
+        bid_ids = request.GET.getlist('bid_ids')
+        mark_as_downloaded = False
         if bid_ids:
-            row = 2
-            row_index = 1
+            file_name = '%s.xlsx' % datetime.now().strftime('fx-request-%Y-%m-%d-%H-%S-%f')
+            mark_as_downloaded = True
+        else:
+            file_name = '%s.xlsx' % datetime.now().strftime('all-bids-%Y-%m-%d-%H-%S-%f')
+            bid_ids = LcBidRequest.objects.values_list('pk', flat=True)
 
+        if bid_ids:
             font = Font(bold=True)
 
             sheet.cell(row=1, column=1, value='S/N').font = font
@@ -29,6 +33,14 @@ class DownloadBidsView(View):
             sheet.cell(row=1, column=7, value='MF NO').font = font
             sheet.cell(row=1, column=8, value='LC REF.').font = font
             sheet.cell(row=1, column=9, value='MATURITY DATE').font = font
+
+            if not mark_as_downloaded:
+                sheet.cell(row=1, column=10, value='TOTAL ALLOCATION').font = font
+                sheet.cell(row=1, column=11, value='UNALLOCATED').font = font
+                sheet.cell(row=1, column=12, value='DATE SENT TO TREASURY').font = font
+
+            row = 2
+            row_index = 1
 
             for bid in LcBidRequest.objects.filter(pk__in=bid_ids):
                 mf = bid.mf
@@ -51,13 +63,19 @@ class DownloadBidsView(View):
                 sheet.cell(row=row, column=8, value=mf.lc_number() or 'NEW LC')
                 maturity = 'CASH BACKED'
                 if bid.maturity:
-                    maturity = bid.maturity.strftime('%d-%b-%Y')
+                    maturity = mark_as_downloaded and bid.maturity.strftime('%d-%b-%Y') or bid.maturity
                 sheet.cell(row=row, column=9, value=maturity)
+
+                if not mark_as_downloaded:
+                    total_allocation = sum([allocation['amount_allocated'] for allocation in bid.allocations()])
+                    sheet.cell(row=row, column=10, value=total_allocation)
+                    sheet.cell(row=row, column=11, value=(bid.amount - total_allocation))
+                    sheet.cell(row=row, column=12, value=bid.requested_at)
 
                 row += 1
                 row_index += 1
 
-                if not bid.downloaded:
+                if mark_as_downloaded and not bid.downloaded:
                     bid.downloaded = True
                     bid.save()
 

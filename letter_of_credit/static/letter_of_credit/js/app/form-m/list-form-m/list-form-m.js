@@ -77,7 +77,7 @@ function FormMListController(FormM, scope, formMModelManager, $http) {
    * The table caption for the 'model-table' directive
    * @type {string}
    */
-  vm.tableCaption = 'Form M (LC Not Established)'
+  vm.tableCaption = 'Form M'
 
   vm.getFormMCollectionOnNavigation = getFormMCollectionOnNavigation
   /**

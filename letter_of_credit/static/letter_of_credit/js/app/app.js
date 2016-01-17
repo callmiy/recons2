@@ -1323,12 +1323,13 @@
 	    copyBidForEdit()
 	  }
 
-	  vm.trashBid = function trashBid(bid, $index) {
-	    if (formMObject.showBidForm || formMObject.showEditBid) return
+	  vm.trashBid = function trashBid(bid) {
+	    init()
 
-	    var text = '\n\nApplicant:  ' + bid.applicant +
-	      '\nForm M:     ' + bid.form_m_number +
-	      '\nBid Amount: ' + bid.currency + ' ' + $filter('number')(bid.amount, 2)
+	    var text = '\n' +
+	      '\nApplicant  : ' + bid.applicant +
+	      '\nForm M     : ' + bid.form_m_number +
+	      '\nBid Amount : ' + bid.currency + ' ' + $filter('number')(bid.amount, 2)
 
 	    var mf = '"' + bid.form_m_number + '"'
 
@@ -1349,7 +1350,7 @@
 	        infoOnly: true
 	      })
 
-	      vm.formM.existingBids.splice($index, 1)
+	      formMObject.setBids()
 	    }
 	  }
 
@@ -2129,7 +2130,7 @@
 	   * The table caption for the 'model-table' directive
 	   * @type {string}
 	   */
-	  vm.tableCaption = 'Form M (LC Not Established)'
+	  vm.tableCaption = 'Form M'
 
 	  vm.getFormMCollectionOnNavigation = getFormMCollectionOnNavigation
 	  /**

@@ -1,5 +1,3 @@
-<style type="text/css">{$::bidDetail.style$}</style>
-
 <div class="view-bid-detail-container">
   <form style="padding: 5px 50px 0; border: 1px solid #CECBCB; border-radius: 5px; margin-bottom: 20px;"
         class="form-horizontal" role="form">
@@ -45,7 +43,7 @@
       <label for="maturity" class="control-label col-sm-3">Maturity</label>
       <div class="col-sm-9">
         <input type="text" class="form-control" id="maturity" disabled
-               ng-value="bidDetail.bid.maturity"
+               ng-value="bidDetail.bid.maturity|date:'dd-MMM-yyyy'"
         >
       </div>
     </div>
@@ -89,15 +87,15 @@
 
         <tr>
           <td colspan="3" class="td-number">Total</td>
-          <td class="td-number">{$::bidDetail.bid.total_allocation|number:2$}</td>
+          <td class="td-number"><b>{$::bidDetail.bid.total_allocation|number:2$}</b></td>
           <td></td>
-          <td class="td-number">{$::bidDetail.bid.total_utilization|number:2$}</td>
+          <td class="td-number"><b>{$::bidDetail.bid.total_utilization|number:2$}</b></td>
           <td></td>
         </tr>
 
         <tr>
           <td colspan="4" class="td-number">Unallocated</td>
-          <td class="td-number">{$::bidDetail.bid.unallocated|number:2$}</td>
+          <td class="td-number"><b>{$::bidDetail.bid.unallocated|number:2$}</b></td>
           <td colspan="2"></td>
         </tr>
       </tbody>

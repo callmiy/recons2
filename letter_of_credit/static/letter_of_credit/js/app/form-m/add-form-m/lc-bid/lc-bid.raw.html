@@ -185,7 +185,7 @@
         </tr>
       </thead>
 
-      <tbody>
+      <tbody class="existing-bids-table-body">
         <tr ng-repeat="bid in lcBid.formM.existingBids">
           <td style="text-align: right;">
             {$$index + 1$}
@@ -234,7 +234,7 @@
             <span class="glyphicon glyphicon-trash  control-icon"
                   data-toggle="tooltip"
                   data-placement="bottom" title="Trash bid"
-                  ng-click="lcBid.trashBid(bid, $index)"></span>
+                  ng-click="lcBid.trashBid(bid)"></span>
           </td>
         </tr>
       </tbody>

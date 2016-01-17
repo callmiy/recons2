@@ -125,12 +125,13 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     copyBidForEdit()
   }
 
-  vm.trashBid = function trashBid(bid, $index) {
-    if (formMObject.showBidForm || formMObject.showEditBid) return
+  vm.trashBid = function trashBid(bid) {
+    init()
 
-    var text = '\n\nApplicant:  ' + bid.applicant +
-      '\nForm M:     ' + bid.form_m_number +
-      '\nBid Amount: ' + bid.currency + ' ' + $filter('number')(bid.amount, 2)
+    var text = '\n' +
+      '\nApplicant  : ' + bid.applicant +
+      '\nForm M     : ' + bid.form_m_number +
+      '\nBid Amount : ' + bid.currency + ' ' + $filter('number')(bid.amount, 2)
 
     var mf = '"' + bid.form_m_number + '"'
 
@@ -151,7 +152,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
         infoOnly: true
       })
 
-      vm.formM.existingBids.splice($index, 1)
+      formMObject.setBids()
     }
   }
 
