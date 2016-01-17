@@ -52,19 +52,6 @@ function searchFormMController(FormM, underscore, getTypeAheadCustomer, getTypeA
     if (!vm.showForm) vm.clearForm(form)
   }
 
-  vm.validators = {
-    applicantObj: {
-      test: function () {
-        return underscore.isObject(vm.searchParams.applicantObj)
-      }
-    },
-
-    currency: {
-      test: function () {
-        return underscore.isObject(vm.searchParams.currency)
-      }
-    }
-  }
   vm.getCurrency = getTypeAheadCurrency
   vm.getApplicant = getTypeAheadCustomer
   vm.datePickerIsOpen = false

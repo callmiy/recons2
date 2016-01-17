@@ -2,7 +2,7 @@
 
 /*jshint camelcase:false*/
 
-var app = angular.module('lc-bid', [])
+var app = angular.module('lc-bid', ['add-fx-allocation'])
 
 app.directive('lcBid', lcBidDirective)
 
@@ -23,7 +23,7 @@ LcBidDirectiveController.$inject = [
   '$scope',
   '$filter',
   'formFieldIsValid',
-  'kanmiiUnderscore',
+  'underscore',
   'LcBidRequest',
   'xhrErrorDisplay',
   'confirmationDialog',
@@ -33,11 +33,12 @@ LcBidDirectiveController.$inject = [
   'toISODate'
 ]
 
-function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnderscore, LcBidRequest, xhrErrorDisplay,
+function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore, LcBidRequest, xhrErrorDisplay,
   confirmationDialog, formMObject, resetForm2, moment, toISODate) {
   var vm = this
   vm.formM = formMObject
   var title = 'New Bid Request'
+
 
   init()
   function init(form) {
@@ -51,6 +52,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
     vm.formM.showEditBid = false
     vm.bidToEdit = null
     formMObject.bid = {}
+    vm.showAllocateFx = false
 
     if (form) {
       var bidFormCtrlNames = ['bidMaturityDate', 'bidAmount', 'bidGoodsDescription']
@@ -59,7 +61,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
   }
 
   vm.openDatePicker = function openDatePicker(prop) {
-    kanmiiUnderscore.each(vm.datePickerIsOpen, function (val, key) {
+    underscore.each(vm.datePickerIsOpen, function (val, key) {
       vm.datePickerIsOpen[key] = prop === key
     })
   }
@@ -81,6 +83,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
 
     if (!vm.formM.showBidForm) init(form)
     else {
+      vm.showAllocateFx = false
       vm.title = 'Dismiss'
       formMObject.bid.goods_description = formMObject.goods_description
       vm.formM.bid.amount = !vm.formM.existingBids.length ? formMObject.amount : null
@@ -88,11 +91,11 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
   }
 
   vm.editBidInvalid = function editBidInvalid(form) {
-    if (kanmiiUnderscore.isEmpty(vm.bidToEdit)) return true
+    if (underscore.isEmpty(vm.bidToEdit)) return true
 
     if (form.$invalid) return true
 
-    return kanmiiUnderscore.all(bidNotModified())
+    return underscore.all(bidNotModified())
   }
 
   function copyBidForEdit() {
@@ -216,7 +219,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
         formMObject.goods_description = formMObject.bid.goods_description
       }
 
-      kanmiiUnderscore.each(formMObject.bid, function (val, key) {
+      underscore.each(formMObject.bid, function (val, key) {
         if (key === 'created_at' || key === 'requested_at' || key === 'maturity') val = toISODate(val)
         bid[key] = val
       })
@@ -230,6 +233,40 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnder
         xhrErrorDisplay(xhr)
       })
     }
+  }
+
+  vm.allocateFx = function allocateFx(bid) {
+    vm.formM.showBidForm = false
+    vm.title = title
+
+    vm.initialBidProps = {
+      currency: formMObject.currency,
+      content_type: bid.ct_url,
+      object_id: bid.id
+    }
+    vm.allocationTitle = 'bid amount: ' + $filter('number')(bid.amount, 2)
+    vm.showAllocateFx = true
+  }
+
+  vm.onFxAllocated = function onFxAllocated(result) {
+    function getAmount(val) {
+      return result.currency_data.code + ' ' + $filter('number')(val, 2)
+    }
+
+    var text = '' +
+      '\nDeal number     : ' + result.deal_number +
+      '\nDeal date       : ' + $filter('date')(result.allocated_on, 'dd-MMM-yyyy') +
+      '\nAmount allocated: ' + getAmount(result.amount_allocated) +
+      '\nAmount utilized : ' + getAmount(result.amount_utilized) +
+      '\nDate utilized   : ' + $filter('date')(result.utilized_on, 'dd-MMM-yyyy')
+
+    confirmationDialog.showDialog({title: 'Allocation success', text: text, infoOnly: true})
+    init()
+    formMObject.setBids()
+  }
+
+  vm.dismissShowAllocateFxForm = function dismissShowAllocateFxForm() {
+    vm.showAllocateFx = false
   }
 
   function bidNotModified() {

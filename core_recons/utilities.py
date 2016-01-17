@@ -12,9 +12,17 @@ def admin_url(cls):
     return '/admin/%s/' % str(getattr(cls, '_meta')).replace('.', '/')
 
 
+def get_content_type(instance):
+    return ContentType.objects.get_for_model(instance)
+
+
 def get_content_type_id(instance):
-    return ContentType.objects.get_for_model(instance).pk
+    return get_content_type(instance).pk
 
 
 def get_content_type_url(instance):
-    return reverse('contenttype-detail', kwargs={'pk': ContentType.objects.get_for_model(instance).pk})
+    return reverse('contenttype-detail', kwargs={'pk': get_content_type(instance).pk})
+
+
+def get_generic_related_model_class_str(instance):
+    return str(instance.object_instance._meta.model)

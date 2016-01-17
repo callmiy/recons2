@@ -15,4 +15,5 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
             'deleted_at',
             'object_id',
             'text',
+            'related_model_class_str',
         )

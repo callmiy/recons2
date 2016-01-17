@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from core_recons.utilities import get_generic_related_model_class_str
 
 
 class Comment(models.Model):
@@ -21,6 +22,9 @@ class Comment(models.Model):
 
     def short_comment(self):
         return self.text[:30]
+
+    def related_model_class_str(self):
+        return get_generic_related_model_class_str(self)
 
 
 class CommentHistory(models.Model):

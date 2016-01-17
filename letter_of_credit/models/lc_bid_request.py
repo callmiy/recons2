@@ -1,4 +1,7 @@
 from django.db import models
+
+from core_recons.models import FxDeal
+from core_recons.utilities import get_content_type_id, get_content_type_url
 from .form_m import FormM
 
 
@@ -30,3 +33,12 @@ class LcBidRequest(models.Model):
 
     def currency(self):
         return self.mf.currency
+
+    def ct_id(self):
+        return get_content_type_id(self)
+
+    def ct_url(self):
+        return get_content_type_url(self)
+
+    def allocations(self):
+        return FxDeal.get_allocations_basic(self)

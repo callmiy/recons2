@@ -38,10 +38,7 @@ class CommentListCreateAPIView(generics.ListCreateAPIView):
         incoming_data = request.data
         logger.info('%s with incoming data = \n%s', log_prefix, json.dumps(incoming_data, indent=4))
         response = super(CommentListCreateAPIView, self).create(request, *args, **kwargs)
-        data = response.data
-        comment = Comment.objects.get(id=data['id'])
-        data['model_class'] = str(comment.object_instance._meta.model)
-        logger.info('%s comment created successfully, result is:\n%s', log_prefix, json.dumps(data, indent=4))
+        logger.info('%s comment created successfully, result is:\n%s', log_prefix, json.dumps(response.data, indent=4))
         return response
 
 
@@ -53,4 +50,6 @@ class CommentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
         log_prefix = 'Update comment:'
         incoming_data = request.data
         logger.info('%s with incoming data = \n%s', log_prefix, json.dumps(incoming_data, indent=4))
-        return super(CommentRetrieveUpdateDestroyAPIView, self).update(request, *args, **kwargs)
+        response = super(CommentRetrieveUpdateDestroyAPIView, self).update(request, *args, **kwargs)
+        logger.info('%s comment updated successfully, result is:\n%s', log_prefix, json.dumps(response.data, indent=4))
+        return response

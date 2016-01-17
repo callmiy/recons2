@@ -41,7 +41,21 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
           var results = data.results
 
           if (results.length) {
-            self.existingBids = results
+            results.forEach(function (bid) {
+              var total_allocation = 0
+              var total_utilization = 0
+
+              underscore.each(bid.allocations, function (allocation) {
+                total_allocation += allocation.amount_allocated
+                total_utilization += allocation.amount_utilized
+              })
+
+              bid.total_allocation = total_allocation
+              bid.total_utilization = total_utilization
+              bid.unallocated = bid.amount - total_allocation
+
+              self.existingBids.push(bid)
+            })
           }
         }
 
@@ -300,8 +314,6 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         formMToSave.goods_description = self.goods_description = formM.bid.goods_description
         formMToSave.bid = {amount: Number(formM.bid.amount), maturity: formatDate(formM.bid.maturity)}
       }
-
-      //if (formM.lcRef) formMToSave.lc = formM.lcRef.pk
 
       if (formM.selectedIssues.length) formMToSave.issues = formM.selectedIssues
 

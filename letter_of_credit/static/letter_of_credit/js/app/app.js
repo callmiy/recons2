@@ -464,7 +464,21 @@
 	          var results = data.results
 
 	          if (results.length) {
-	            self.existingBids = results
+	            results.forEach(function (bid) {
+	              var total_allocation = 0
+	              var total_utilization = 0
+
+	              underscore.each(bid.allocations, function (allocation) {
+	                total_allocation += allocation.amount_allocated
+	                total_utilization += allocation.amount_utilized
+	              })
+
+	              bid.total_allocation = total_allocation
+	              bid.total_utilization = total_utilization
+	              bid.unallocated = bid.amount - total_allocation
+
+	              self.existingBids.push(bid)
+	            })
 	          }
 	        }
 
@@ -723,8 +737,6 @@
 	        formMToSave.goods_description = self.goods_description = formM.bid.goods_description
 	        formMToSave.bid = {amount: Number(formM.bid.amount), maturity: formatDate(formM.bid.maturity)}
 	      }
-
-	      //if (formM.lcRef) formMToSave.lc = formM.lcRef.pk
 
 	      if (formM.selectedIssues.length) formMToSave.issues = formM.selectedIssues
 
@@ -1187,7 +1199,7 @@
 
 	/*jshint camelcase:false*/
 
-	var app = angular.module('lc-bid', [])
+	var app = angular.module('lc-bid', ['add-fx-allocation'])
 
 	app.directive('lcBid', lcBidDirective)
 
@@ -1208,7 +1220,7 @@
 	  '$scope',
 	  '$filter',
 	  'formFieldIsValid',
-	  'kanmiiUnderscore',
+	  'underscore',
 	  'LcBidRequest',
 	  'xhrErrorDisplay',
 	  'confirmationDialog',
@@ -1218,11 +1230,12 @@
 	  'toISODate'
 	]
 
-	function LcBidDirectiveController($scope, $filter, formFieldIsValid, kanmiiUnderscore, LcBidRequest, xhrErrorDisplay,
+	function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore, LcBidRequest, xhrErrorDisplay,
 	  confirmationDialog, formMObject, resetForm2, moment, toISODate) {
 	  var vm = this
 	  vm.formM = formMObject
 	  var title = 'New Bid Request'
+
 
 	  init()
 	  function init(form) {
@@ -1236,6 +1249,7 @@
 	    vm.formM.showEditBid = false
 	    vm.bidToEdit = null
 	    formMObject.bid = {}
+	    vm.showAllocateFx = false
 
 	    if (form) {
 	      var bidFormCtrlNames = ['bidMaturityDate', 'bidAmount', 'bidGoodsDescription']
@@ -1244,7 +1258,7 @@
 	  }
 
 	  vm.openDatePicker = function openDatePicker(prop) {
-	    kanmiiUnderscore.each(vm.datePickerIsOpen, function (val, key) {
+	    underscore.each(vm.datePickerIsOpen, function (val, key) {
 	      vm.datePickerIsOpen[key] = prop === key
 	    })
 	  }
@@ -1266,6 +1280,7 @@
 
 	    if (!vm.formM.showBidForm) init(form)
 	    else {
+	      vm.showAllocateFx = false
 	      vm.title = 'Dismiss'
 	      formMObject.bid.goods_description = formMObject.goods_description
 	      vm.formM.bid.amount = !vm.formM.existingBids.length ? formMObject.amount : null
@@ -1273,11 +1288,11 @@
 	  }
 
 	  vm.editBidInvalid = function editBidInvalid(form) {
-	    if (kanmiiUnderscore.isEmpty(vm.bidToEdit)) return true
+	    if (underscore.isEmpty(vm.bidToEdit)) return true
 
 	    if (form.$invalid) return true
 
-	    return kanmiiUnderscore.all(bidNotModified())
+	    return underscore.all(bidNotModified())
 	  }
 
 	  function copyBidForEdit() {
@@ -1401,7 +1416,7 @@
 	        formMObject.goods_description = formMObject.bid.goods_description
 	      }
 
-	      kanmiiUnderscore.each(formMObject.bid, function (val, key) {
+	      underscore.each(formMObject.bid, function (val, key) {
 	        if (key === 'created_at' || key === 'requested_at' || key === 'maturity') val = toISODate(val)
 	        bid[key] = val
 	      })
@@ -1415,6 +1430,40 @@
 	        xhrErrorDisplay(xhr)
 	      })
 	    }
+	  }
+
+	  vm.allocateFx = function allocateFx(bid) {
+	    vm.formM.showBidForm = false
+	    vm.title = title
+
+	    vm.initialBidProps = {
+	      currency: formMObject.currency,
+	      content_type: bid.ct_url,
+	      object_id: bid.id
+	    }
+	    vm.allocationTitle = 'bid amount: ' + $filter('number')(bid.amount, 2)
+	    vm.showAllocateFx = true
+	  }
+
+	  vm.onFxAllocated = function onFxAllocated(result) {
+	    function getAmount(val) {
+	      return result.currency_data.code + ' ' + $filter('number')(val, 2)
+	    }
+
+	    var text = '' +
+	      '\nDeal number     : ' + result.deal_number +
+	      '\nDeal date       : ' + $filter('date')(result.allocated_on, 'dd-MMM-yyyy') +
+	      '\nAmount allocated: ' + getAmount(result.amount_allocated) +
+	      '\nAmount utilized : ' + getAmount(result.amount_utilized) +
+	      '\nDate utilized   : ' + $filter('date')(result.utilized_on, 'dd-MMM-yyyy')
+
+	    confirmationDialog.showDialog({title: 'Allocation success', text: text, infoOnly: true})
+	    init()
+	    formMObject.setBids()
+	  }
+
+	  vm.dismissShowAllocateFxForm = function dismissShowAllocateFxForm() {
+	    vm.showAllocateFx = false
 	  }
 
 	  function bidNotModified() {
@@ -2273,19 +2322,6 @@
 	    if (!vm.showForm) vm.clearForm(form)
 	  }
 
-	  vm.validators = {
-	    applicantObj: {
-	      test: function () {
-	        return underscore.isObject(vm.searchParams.applicantObj)
-	      }
-	    },
-
-	    currency: {
-	      test: function () {
-	        return underscore.isObject(vm.searchParams.currency)
-	      }
-	    }
-	  }
 	  vm.getCurrency = getTypeAheadCurrency
 	  vm.getApplicant = getTypeAheadCustomer
 	  vm.datePickerIsOpen = false
@@ -2317,7 +2353,7 @@
 /* 20 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"search-mf-directive\"><div class=\"search-mf-toggle-show\"><div ng-click=\"searchMf.toggleShow(searchMfForm)\" class=\"form-m-add-on-toggle clearfix\"><span class=\"form-m-add-on-show-helper\" ng-if=\"searchMf.showForm\"></span><div class=\"form-m-add-on-show-icon\"><span ng-class=\"['glyphicon', {'glyphicon-chevron-down': !searchMf.showForm, 'glyphicon-chevron-up': searchMf.showForm}]\"></span> Search Form M</div></div></div><form class=\"form-horizontal\" name=\"searchMfForm\" role=\"form\" autocomplete=\"off\" ng-show=\"searchMf.showForm\" ng-submit=\"searchMf.searchMf(searchMf.searchParams)\"><div class=\"form-group form-m-number-group\" control-has-feedback=\"\"><label for=\"form-m-number\" class=\"control-label col-sm-3\">Form M Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"formMNumber\" ng-model=\"searchMf.searchParams.number\" id=\"form-m-number\" to-upper=\"\" ng-pattern=\"/(?:mf)?\\d{3,}/i\" maxlength=\"13\"></div></div><div class=\"form-group applicant-group\" control-has-feedback=\"\"><label for=\"applicant\" class=\"control-label col-sm-3\">Applicant</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"applicant\" ng-model=\"searchMf.searchParams.applicantObj\" id=\"applicant\" ng-minlength=\"3\" ng-pattern=\"searchMf.validators.applicantObj\" typeahead-min-length=\"3\" uib-typeahead=\"applicant as applicant.name for applicant in searchMf.getApplicant($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group currency-group\" control-has-feedback=\"\"><label for=\"currency\" class=\"control-label col-sm-3\">Currency</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"currency\" ng-model=\"searchMf.searchParams.currency\" id=\"currency\" maxlength=\"3\" ng-pattern=\"searchMf.validators.currency\" autocomplete=\"off\" uib-typeahead=\"currency as currency.code for currency in searchMf.getCurrency($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group amount-group\" control-has-feedback=\"\"><label for=\"amount\" class=\"control-label col-sm-3\">Amount</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"amount\" ng-model=\"searchMf.searchParams.amount\" id=\"amount\" number-format=\"\"></div></div><div class=\"form-group created-date-group\" control-has-feedback=\"\" feedback-after=\".input-group-addon\"><label for=\"created-at\" class=\"control-label col-sm-3\">Created At</label><div class=\"col-sm-9\"><div class=\"input-group\"><input type=\"text\" class=\"form-control\" name=\"createdAt\" ng-model=\"searchMf.searchParams.created_at\" id=\"created-at\" uib-datepicker-popup=\"dd-MMM-yyyy\" is-open=\"searchMf.datePickerIsOpen\"> <span class=\"input-group-addon\" ng-click=\"searchMf.openDatePicker($event)\"><i class=\"glyphicon glyphicon-calendar\"></i></span></div></div></div><div class=\"form-group lc-number-group\"><label for=\"lc-number\" class=\"control-label col-sm-3\">LC Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"lcNumber\" ng-model=\"searchMf.searchParams.lc_number\" id=\"lc-number\" to-upper=\"\" maxlength=\"16\"></div></div><div class=\"form-group cancelled-group\"><label for=\"cancelled\" class=\"control-label col-sm-3\">Include cancelled</label><div class=\"col-sm-9\"><input type=\"checkbox\" name=\"cancelled\" ng-model=\"searchMf.searchParams.cancelled\" id=\"cancelled\"></div></div><div class=\"form-group submit-group\"><div class=\"col-sm-9 col-sm-offset-3\"><div class=\"clearfix\"><div class=\"pull-left\"><input type=\"submit\" class=\"btn btn-info\" value=\"Search Form M\" ng-disabled=\"searchMfForm.$invalid\"></div><div class=\"pull-right\" style=\"text-align: right\"><input type=\"button\" class=\"btn btn-warning\" value=\"Clear All\" ng-click=\"searchMf.clearForm(searchMfForm)\"></div></div></div></div></form></div>";
+	module.exports = "<div class=\"search-mf-directive\"><div class=\"search-mf-toggle-show\"><div ng-click=\"searchMf.toggleShow(searchMfForm)\" class=\"form-m-add-on-toggle clearfix\"><span class=\"form-m-add-on-show-helper\" ng-if=\"searchMf.showForm\"></span><div class=\"form-m-add-on-show-icon\"><span ng-class=\"['glyphicon', {'glyphicon-chevron-down': !searchMf.showForm, 'glyphicon-chevron-up': searchMf.showForm}]\"></span> Search Form M</div></div></div><form class=\"form-horizontal\" name=\"searchMfForm\" role=\"form\" autocomplete=\"off\" ng-show=\"searchMf.showForm\" ng-submit=\"searchMf.searchMf(searchMf.searchParams)\"><div class=\"form-group form-m-number-group\" control-has-feedback=\"\"><label for=\"form-m-number\" class=\"control-label col-sm-3\">Form M Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"formMNumber\" ng-model=\"searchMf.searchParams.number\" id=\"form-m-number\" to-upper=\"\" ng-pattern=\"/(?:mf)?\\d{3,}/i\" maxlength=\"13\"></div></div><div class=\"form-group applicant-group\" control-has-feedback=\"\"><label for=\"applicant\" class=\"control-label col-sm-3\">Applicant</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"applicant\" ng-model=\"searchMf.searchParams.applicantObj\" id=\"applicant\" ng-minlength=\"3\" autocomplete=\"off\" typeahead-min-length=\"3\" uib-typeahead=\"applicant as applicant.name for applicant in searchMf.getApplicant($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group currency-group\" control-has-feedback=\"\"><label for=\"currency\" class=\"control-label col-sm-3\">Currency</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"currency\" ng-model=\"searchMf.searchParams.currency\" id=\"currency\" maxlength=\"3\" autocomplete=\"off\" uib-typeahead=\"currency as currency.code for currency in searchMf.getCurrency($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group amount-group\" control-has-feedback=\"\"><label for=\"amount\" class=\"control-label col-sm-3\">Amount</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"amount\" ng-model=\"searchMf.searchParams.amount\" id=\"amount\" number-format=\"\"></div></div><div class=\"form-group created-date-group\" control-has-feedback=\"\" feedback-after=\".input-group-addon\"><label for=\"created-at\" class=\"control-label col-sm-3\">Created At</label><div class=\"col-sm-9\"><div class=\"input-group\"><input type=\"text\" class=\"form-control\" name=\"createdAt\" ng-model=\"searchMf.searchParams.created_at\" id=\"created-at\" uib-datepicker-popup=\"dd-MMM-yyyy\" is-open=\"searchMf.datePickerIsOpen\"> <span class=\"input-group-addon\" ng-click=\"searchMf.openDatePicker($event)\"><i class=\"glyphicon glyphicon-calendar\"></i></span></div></div></div><div class=\"form-group lc-number-group\"><label for=\"lc-number\" class=\"control-label col-sm-3\">LC Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"lcNumber\" ng-model=\"searchMf.searchParams.lc_number\" id=\"lc-number\" to-upper=\"\" maxlength=\"16\"></div></div><div class=\"form-group cancelled-group\"><label for=\"cancelled\" class=\"control-label col-sm-3\">Include cancelled</label><div class=\"col-sm-9\"><input type=\"checkbox\" name=\"cancelled\" ng-model=\"searchMf.searchParams.cancelled\" id=\"cancelled\"></div></div><div class=\"form-group submit-group\"><div class=\"col-sm-9 col-sm-offset-3\"><div class=\"clearfix\"><div class=\"pull-left\"><input type=\"submit\" class=\"btn btn-info\" value=\"Search Form M\" ng-disabled=\"searchMfForm.$invalid\"></div><div class=\"pull-right\" style=\"text-align: right\"><input type=\"button\" class=\"btn btn-warning\" value=\"Clear All\" ng-click=\"searchMf.clearForm(searchMfForm)\"></div></div></div></div></form></div>";
 
 /***/ },
 /* 21 */

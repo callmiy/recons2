@@ -28,13 +28,6 @@ class FxDealFilter(django_filters.FilterSet):
         return qs
 
 
-def update_object_instance(serialization_response):
-    data = serialization_response.data
-    deal = FxDeal.objects.get(id=data['id'])
-    data['model_class'] = str(deal.object_instance._meta.model)
-    return data
-
-
 class FxDealListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = FxDealSerializer
     queryset = FxDeal.objects.all()
@@ -45,8 +38,7 @@ class FxDealListCreateAPIView(generics.ListCreateAPIView):
         incoming_data = request.data
         logger.info('%s with incoming data = \n%s', log_prefix, json.dumps(incoming_data, indent=4))
         response = super(FxDealListCreateAPIView, self).create(request, *args, **kwargs)
-        logger.info('%s fx deal created successfully, result is:\n%s', log_prefix,
-                    json.dumps(update_object_instance(response), indent=4))
+        logger.info('%s fx deal created successfully, result is:\n%s', log_prefix, json.dumps(response.data, indent=4))
         return response
 
 
@@ -59,6 +51,5 @@ class FxDealRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
         incoming_data = request.data
         logger.info('%s with incoming data = \n%s', log_prefix, json.dumps(incoming_data, indent=4))
         response = super(FxDealRetrieveUpdateDestroyAPIView, self).update(request, *args, **kwargs)
-        logger.info('%s fx deal updated successfully, result is:\n%s', log_prefix,
-                    json.dumps(update_object_instance(response), indent=4))
+        logger.info('%s fx deal updated successfully, result is:\n%s', log_prefix, json.dumps(response.data, indent=4))
         return response

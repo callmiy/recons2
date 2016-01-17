@@ -1,17 +1,17 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-
+from core_recons.utilities import get_generic_related_model_class_str, get_content_type
 from adhocmodels.models import Currency
 
 
 class FxDeal(models.Model):
+    deal_number = models.CharField('Deal Number', max_length=50)
     currency = models.ForeignKey(Currency, verbose_name='Currency')
     amount_allocated = models.DecimalField('Amount Allocated', max_digits=12, decimal_places=2)
-    amount_utilized = models.DecimalField('Amount Utilized', max_digits=12, decimal_places=2, null=True, blank=True)
     allocated_on = models.DateField('Date Allocated')
+    amount_utilized = models.DecimalField('Amount Utilized', max_digits=12, decimal_places=2, null=True, blank=True)
     utilized_on = models.DateField('Date Utilized', null=True, blank=True)
-    deal_number = models.CharField('Deal Number', max_length=50)
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     object_instance = GenericForeignKey('content_type', 'object_id')
@@ -39,3 +39,27 @@ class FxDeal(models.Model):
             raise ValueError(
                     "Both amount utilized and date utilized must be specified together, but you only specified one")
         super(FxDeal, self).save(*args, **kwargs)
+
+    def currency_data(self):
+        return self.currency
+
+    def related_model_class_str(self):
+        return get_generic_related_model_class_str(self)
+
+    @classmethod
+    def get_allocations_for(cls, instance):
+        return cls.objects.filter(content_type=get_content_type(instance), object_id=instance.id)
+
+    @classmethod
+    def get_allocations_basic(cls, instance):
+        allocations = []
+        for allocation in cls.get_allocations_for(instance):
+            allocations.append({
+                'deal_number': allocation.deal_number,
+                'currency': allocation.currency.code,
+                'amount_allocated': allocation.amount_allocated,
+                'allocated_on': allocation.allocated_on,
+                'amount_utilized': allocation.amount_utilized,
+                'utilized_on': allocation.utilized_on,
+            })
+        return allocations
