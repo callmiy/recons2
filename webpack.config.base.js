@@ -36,7 +36,8 @@ var webpackBaseConfig = {
 
   module: {
     loaders: [
-      {test: /\.html$/, loader: 'html'}
+      {test: /\.html$/, loader: 'html'},
+      {test: /\.css$/, loader: 'html'}
     ]
   },
 

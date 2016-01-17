@@ -73,16 +73,14 @@ app.value('bidAttributesVerboseNames', {mf: 'form m', amount: 'amount'})
 
 app.factory('ViewBidDetail', ViewBidDetail)
 
-ViewBidDetail.$inject = ['ModalService', '$q']
+ViewBidDetail.$inject = ['ModalService', '$filter']
 
-function ViewBidDetail(ModalService, $q) {
+function ViewBidDetail(ModalService, $filter) {
 
   function BidDetail() {
     this.showDialog = showDialog
 
     function showDialog(config) {
-      var deferred = $q.defer()
-
       ModalService.showModal({
         template: require('./view-bid-detail.html'),
         inputs: {config: config},
@@ -90,19 +88,19 @@ function ViewBidDetail(ModalService, $q) {
       }).then(modalHandler)
 
       function modalHandler(modal) {
+        var bid = modal.controller.bid
+        var title = 'Bid Detail: ' + bid.form_m_number + ' ' + bid.currency + ' ' + $filter('number')(bid.amount, 2)
+
         modal.element.dialog({
           modal: true,
           dialogClass: 'no-close',
-          minWidth: 500,
-          title: config.title,
+          minWidth: 720,
+          height: 500,
+          title: title,
 
-          close: function () {modal.controller.close(false)}
+          close: function () {modal.controller.close()}
         })
-
-        if (!config.infoOnly) modal.close.then(function (answer) {deferred.resolve(answer)})
       }
-
-      return deferred.promise
     }
   }
 
@@ -114,7 +112,7 @@ app.controller('ViewBidDetailModalCtrl', ViewBidDetailModalCtrl)
 ViewBidDetailModalCtrl.$inject = ['config', 'close']
 
 function ViewBidDetailModalCtrl(config, close) {
-  this.text = config.text
-  this.infoOnly = config.infoOnly
+  this.style = require('./view-bid-details.min.css')
+  this.bid = config.bid
   this.close = close
 }

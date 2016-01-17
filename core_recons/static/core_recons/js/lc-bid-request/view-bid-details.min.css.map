@@ -1,0 +1,1 @@
+{"version":3,"sources":["core_recons/static/core_recons/js/lc-bid-request/view-bid-details.less"],"names":[],"mappings":"AAAA,mDAEI,iBAAA","file":"core_recons/static/core_recons/js/lc-bid-request/view-bid-details.min.css","sourcesContent":[".view-bid-detail-container {\r\n  .form-control[disabled] {\r\n    background-color: initial;\r\n  }\r\n}\r\n"],"sourceRoot":"/source/"}

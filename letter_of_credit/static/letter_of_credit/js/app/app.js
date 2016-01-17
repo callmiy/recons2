@@ -458,6 +458,7 @@
 	    var confirmationTitleLength = 40
 
 	    self.setBids = function setBids() {
+	      self.existingBids = []
 	      LcBidRequest.getPaginated({mf: self.number}).$promise.then(function (data) {
 
 	        if (data.count) {
@@ -1199,7 +1200,7 @@
 
 	/*jshint camelcase:false*/
 
-	var app = angular.module('lc-bid', ['add-fx-allocation'])
+	var app = angular.module('lc-bid', ['add-fx-allocation', 'lc-bid-request'])
 
 	app.directive('lcBid', lcBidDirective)
 
@@ -1227,11 +1228,12 @@
 	  'formMObject',
 	  'resetForm2',
 	  'moment',
-	  'toISODate'
+	  'toISODate',
+	  'ViewBidDetail'
 	]
 
 	function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore, LcBidRequest, xhrErrorDisplay,
-	  confirmationDialog, formMObject, resetForm2, moment, toISODate) {
+	  confirmationDialog, formMObject, resetForm2, moment, toISODate, ViewBidDetail) {
 	  var vm = this
 	  vm.formM = formMObject
 	  var title = 'New Bid Request'
@@ -1430,6 +1432,11 @@
 	        xhrErrorDisplay(xhr)
 	      })
 	    }
+	  }
+
+	  vm.viewBidDetail = function (bid) {
+	    init()
+	    ViewBidDetail.showDialog({bid: bid})
 	  }
 
 	  vm.allocateFx = function allocateFx(bid) {

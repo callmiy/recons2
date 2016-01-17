@@ -2,7 +2,7 @@
 
 /*jshint camelcase:false*/
 
-var app = angular.module('lc-bid', ['add-fx-allocation'])
+var app = angular.module('lc-bid', ['add-fx-allocation', 'lc-bid-request'])
 
 app.directive('lcBid', lcBidDirective)
 
@@ -30,11 +30,12 @@ LcBidDirectiveController.$inject = [
   'formMObject',
   'resetForm2',
   'moment',
-  'toISODate'
+  'toISODate',
+  'ViewBidDetail'
 ]
 
 function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore, LcBidRequest, xhrErrorDisplay,
-  confirmationDialog, formMObject, resetForm2, moment, toISODate) {
+  confirmationDialog, formMObject, resetForm2, moment, toISODate, ViewBidDetail) {
   var vm = this
   vm.formM = formMObject
   var title = 'New Bid Request'
@@ -233,6 +234,11 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
         xhrErrorDisplay(xhr)
       })
     }
+  }
+
+  vm.viewBidDetail = function (bid) {
+    init()
+    ViewBidDetail.showDialog({bid: bid})
   }
 
   vm.allocateFx = function allocateFx(bid) {

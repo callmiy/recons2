@@ -1,0 +1,106 @@
+<style type="text/css">{$::bidDetail.style$}</style>
+
+<div class="view-bid-detail-container">
+  <form style="padding: 5px 50px 0; border: 1px solid #CECBCB; border-radius: 5px; margin-bottom: 20px;"
+        class="form-horizontal" role="form">
+    <div class="form-group bid-detail-form-m-group">
+      <label for="bid-detail-form-m-number" class="control-label col-sm-3">Form M number</label>
+      <div class="col-sm-9">
+        <input type="text" class="form-control" id="bid-detail-form-m-number" disabled
+               ng-value="bidDetail.bid.form_m_number">
+      </div>
+    </div>
+
+    <div class="form-group bid-detail-applicant-group">
+      <label for="bid-detail-applicant" class="control-label col-sm-3">Applicant</label>
+      <div class="col-sm-9">
+        <input type="text" class="form-control" id="bid-detail-applicant" disabled
+               ng-value="bidDetail.bid.applicant">
+      </div>
+    </div>
+
+    <div class="form-group bid-detail-amount-group">
+      <label for="bid-detail-amount-group" class="control-label col-sm-3">Bid Amount</label>
+      <div class="col-sm-9">
+        <div class="input-group">
+          <span class="input-group-addon">{$::bidDetail.bid.currency$}</span>
+
+          <input type="text" class="form-control" id="bid-detail-amount-group" disabled
+                 number-format
+                 ng-value="bidDetail.bid.amount|number:2"
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group bid-detail-requested-at-group">
+      <label for="bid-detail-requested-at" class="control-label col-sm-3">Date sent to treasury</label>
+      <div class="col-sm-9">
+        <input type="text" class="form-control" id="bid-detail-requested-at" disabled
+               ng-value="bidDetail.bid.requested_at|date:'dd-MMM-yyyy'">
+      </div>
+    </div>
+
+    <div class="form-group maturity-group">
+      <label for="maturity" class="control-label col-sm-3">Maturity</label>
+      <div class="col-sm-9">
+        <input type="text" class="form-control" id="maturity" disabled
+               ng-value="bidDetail.bid.maturity"
+        >
+      </div>
+    </div>
+
+    <div class="form-group goods-description-group">
+      <label for="goods-description" class="control-label col-sm-3">Goods</label>
+      <div class="col-sm-9">
+        <input type="text" class="form-control" id="goods-description" disabled
+               ng-value="bidDetail.bid.goods_description"
+        >
+      </div>
+    </div>
+  </form>
+
+  <div class="bid-detail-allocation-container">
+    <table class="table table-responsive table-striped table-bordered">
+      <caption>FX allocation and utilization</caption>
+
+      <thead>
+        <tr>
+          <th>S/N</th>
+          <th>Deal Number</th>
+          <th>Ccy</th>
+          <th>Allocated</th>
+          <th>Date Allocated</th>
+          <th>Utilization</th>
+          <th>Date Utilized</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr ng-repeat="allocation in bidDetail.bid.allocations">
+          <td class="td-number">{$::$index + 1$}</td>
+          <td class="td-number">{$::allocation.deal_number$}</td>
+          <td class="td-center">{$::allocation.currency$}</td>
+          <td class="td-number">{$allocation.amount_allocated|number:2$}</td>
+          <td class="td-center">{$::allocation.allocated_on|date:'dd-MMM-yyyy'$}</td>
+          <td class="td-number">{$::allocation.amount_utilized|number:2$}</td>
+          <td class="td-center">{$::allocation.utilized_on|date:'dd-MMM-yyyy'$}</td>
+        </tr>
+
+        <tr>
+          <td colspan="3" class="td-number">Total</td>
+          <td class="td-number">{$::bidDetail.bid.total_allocation|number:2$}</td>
+          <td></td>
+          <td class="td-number">{$::bidDetail.bid.total_utilization|number:2$}</td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td colspan="4" class="td-number">Unallocated</td>
+          <td class="td-number">{$::bidDetail.bid.unallocated|number:2$}</td>
+          <td colspan="2"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

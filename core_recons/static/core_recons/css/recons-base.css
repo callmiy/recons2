@@ -169,3 +169,9 @@ form.align-vertical .submit-row {
 .model-table-display-root-container table > tbody > tr.model-table-display-selected > td {
   color: white;
 }
+.td-number {
+  text-align: right;
+}
+.td-center {
+  text-align: center;
+}

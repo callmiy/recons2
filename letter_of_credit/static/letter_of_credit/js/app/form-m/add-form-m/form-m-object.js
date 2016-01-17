@@ -35,6 +35,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
     var confirmationTitleLength = 40
 
     self.setBids = function setBids() {
+      self.existingBids = []
       LcBidRequest.getPaginated({mf: self.number}).$promise.then(function (data) {
 
         if (data.count) {
