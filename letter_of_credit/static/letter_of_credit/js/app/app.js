@@ -96,6 +96,7 @@
 	__webpack_require__(18)
 	__webpack_require__(19)
 	__webpack_require__(21)
+	__webpack_require__(29)
 
 	var app = angular.module('form-m',
 	  ['rootApp',
@@ -221,7 +222,8 @@
 	  'confirmation-dialog',
 	  'add-form-m-form-m-object',
 	  'lc-service',
-	  'complex-object-validator'
+	  'complex-object-validator',
+	  'display-uploaded-form-m'
 	])
 
 	app.config(formMStateConfig)
@@ -260,12 +262,13 @@
 	  'confirmationDialog',
 	  'formMObject',
 	  'formMAttributesVerboseNames',
-	  'getTypeAheadLetterOfCredit'
+	  'getTypeAheadLetterOfCredit',
+	  'DisplayUploadedFormMModal'
 	]
 
 	function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
 	  underscore, xhrErrorDisplay, $stateParams, resetForm2, $state, $scope, confirmationDialog, formMObject,
-	  formMAttributesVerboseNames, getTypeAheadLetterOfCredit) {
+	  formMAttributesVerboseNames, getTypeAheadLetterOfCredit, DisplayUploadedFormMModal) {
 	  var vm = this
 
 	  function initFormMCb(formM, detailedFormM) {
@@ -382,14 +385,17 @@
 	        initialize(null, data.number)
 
 	      } else {
-	        var formM = data.uploaded
-	        vm.searchFormM = formM
-	        vm.formM.number = formM.mf
-	        vm.formM.amount = formM.cost_freight
-	        vm.formM.goods_description = formM.goods_description
+	        DisplayUploadedFormMModal.display(data.singleWinFormMs).then(function (formM) {
+	          if (formM) {
+	            vm.searchFormM = formM
+	            vm.formM.number = formM.mf
+	            vm.formM.amount = formM.cost_freight
+	            vm.formM.goods_description = formM.goods_description
 
-	        getTypeAheadCurrency(formM.ccy).then(function (ccy) {
-	          vm.formM.currency = ccy[0]
+	            getTypeAheadCurrency(formM.ccy).then(function (ccy) {
+	              vm.formM.currency = ccy[0]
+	            })
+	          }
 	        })
 	      }
 	    })
@@ -2178,7 +2184,7 @@
 	    var deferred = $q.defer()
 	    var mf = submittedSearchParams.mf.trim()
 
-	    FormM.getPaginated({number: mf}).$promise.then(function(data) {
+	    FormM.getPaginated({number: mf}).$promise.then(function (data) {
 	      if (data.count === 1) {
 	        deferred.resolve({number: data.results[0].number})
 
@@ -2187,7 +2193,7 @@
 	    }, searchFormMError)
 
 	    function searchFormMSuccess(data) {
-	      if (data.length === 1) deferred.resolve({uploaded: data[0]})
+	      deferred.resolve({singleWinFormMs: data})
 	    }
 
 	    function searchFormMError(xhr) {
@@ -2210,19 +2216,19 @@
 	          'form-m/search-detailed-or-uploaded-form-m/search-detailed-or-uploaded-form-m-modal.html'),
 
 	        controller: 'SearchDetailedOrUploadedFormMServiceModalCtrl as searchUploadedFormMModal'
-	      }).then(function(modal) {
+	      }).then(function (modal) {
 	        modal.element.dialog({
 	          dialogClass: 'no-close',
 	          modal: true,
 	          minWidth: 500,
 	          title: 'Search Form M',
 
-	          close: function() {
+	          close: function () {
 	            modal.controller.close()
 	          }
 	        })
 
-	        modal.close.then(function(submittedSearchParams) {
+	        modal.close.then(function (submittedSearchParams) {
 	          if (submittedSearchParams && angular.isObject(submittedSearchParams) && !underscore.isEmpty(submittedSearchParams)) {
 	            deferred.resolve(searchFormM(submittedSearchParams))
 	          }
@@ -3035,6 +3041,80 @@
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-m-home-view\"><div class=\"form-m-home-action-buttons btn-group-vertical\" role=\"group\"><a class=\"btn btn-info form-m-home-action-button\" ui-sref=\"lc\">Letter of credit</a> <a class=\"btn btn-info form-m-home-action-button\" ui-sref=\"form_m\">Form M</a></div></div>";
+
+/***/ },
+/* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	/*jshint camelcase:false*/
+
+	var app = angular.module('display-uploaded-form-m', [
+	  'rootApp',
+	  'model-table',
+	  'upload-form-m-service'
+	])
+
+	app.factory('DisplayUploadedFormMModal', DisplayUploadedFormMModal)
+	DisplayUploadedFormMModal.$inject = ['$q', 'ModalService']
+	function DisplayUploadedFormMModal($q, ModalService) {
+	  function DisplayService() {
+	    this.display = display
+
+	    function display(forMData) {
+	      var deferred = $q.defer()
+
+	      ModalService.showModal({
+	        template: __webpack_require__(30),
+	        controller: 'DisplayUploadedFormMModalCtrl as displayUploadedFormMModal',
+	        inputs: {forMData: forMData}
+	      }).then(function (modal) {
+	        var ctrl = modal.controller
+
+	        modal.element.dialog({
+	          dialogClass: 'no-close',
+	          modal: true,
+	          minWidth: 750,
+	          title: ctrl.tableCaption,
+
+	          close: function () {
+	            ctrl.close()
+	          }
+	        })
+
+	        modal.close.then(function (formM) {
+	          deferred.resolve(formM)
+	        })
+	      })
+
+	      return deferred.promise
+	    }
+	  }
+
+	  return new DisplayService()
+	}
+
+	app.controller('DisplayUploadedFormMModalCtrl', DisplayUploadedFormMModalCtrl)
+	DisplayUploadedFormMModalCtrl.$inject = [
+	  'close',
+	  'forMData',
+	  'uploadedFormMModelManager'
+	]
+	function DisplayUploadedFormMModalCtrl(close, forMData, uploadedFormMModelManager) {
+	  var vm = this
+
+	  vm.forMData = forMData
+	  vm.tableCaption = 'Single Window Forms M'
+	  vm.modelManager = uploadedFormMModelManager
+	  vm.close = close
+	}
+
+
+/***/ },
+/* 30 */
+/***/ function(module, exports) {
+
+	module.exports = "<div class=\"display-uploaded-form-m-modal-root\"><div model-table=\"\" model-collection=\"displayUploadedFormMModal.forMData\" table-model-manager=\"::displayUploadedFormMModal.modelManager\" table-caption=\"::displayUploadedFormMModal.tableCaption\" on-row-dbl-click-callback=\"displayUploadedFormMModal.close(rowModel)\" show-pagination=\"false\"></div></div>";
 
 /***/ }
 /******/ ]);

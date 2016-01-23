@@ -73,6 +73,11 @@ function modelTableDirective() {
        */
       pager: '=pagerObject',
 
+      /**
+       * Whether or not to show pagination - defaults to true
+       */
+      showPagination: '=',
+
       onDblClick: '&onRowDblClickCallback'
     },
 

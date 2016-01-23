@@ -22,7 +22,8 @@ var app = angular.module('add-form-m', [
   'confirmation-dialog',
   'add-form-m-form-m-object',
   'lc-service',
-  'complex-object-validator'
+  'complex-object-validator',
+  'display-uploaded-form-m'
 ])
 
 app.config(formMStateConfig)
@@ -61,12 +62,13 @@ AddFormMStateController.$inject = [
   'confirmationDialog',
   'formMObject',
   'formMAttributesVerboseNames',
-  'getTypeAheadLetterOfCredit'
+  'getTypeAheadLetterOfCredit',
+  'DisplayUploadedFormMModal'
 ]
 
 function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
   underscore, xhrErrorDisplay, $stateParams, resetForm2, $state, $scope, confirmationDialog, formMObject,
-  formMAttributesVerboseNames, getTypeAheadLetterOfCredit) {
+  formMAttributesVerboseNames, getTypeAheadLetterOfCredit, DisplayUploadedFormMModal) {
   var vm = this
 
   function initFormMCb(formM, detailedFormM) {
@@ -183,14 +185,17 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
         initialize(null, data.number)
 
       } else {
-        var formM = data.uploaded
-        vm.searchFormM = formM
-        vm.formM.number = formM.mf
-        vm.formM.amount = formM.cost_freight
-        vm.formM.goods_description = formM.goods_description
+        DisplayUploadedFormMModal.display(data.singleWinFormMs).then(function (formM) {
+          if (formM) {
+            vm.searchFormM = formM
+            vm.formM.number = formM.mf
+            vm.formM.amount = formM.cost_freight
+            vm.formM.goods_description = formM.goods_description
 
-        getTypeAheadCurrency(formM.ccy).then(function (ccy) {
-          vm.formM.currency = ccy[0]
+            getTypeAheadCurrency(formM.ccy).then(function (ccy) {
+              vm.formM.currency = ccy[0]
+            })
+          }
         })
       }
     })

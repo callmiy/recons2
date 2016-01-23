@@ -17,19 +17,37 @@
                 </span>
 
                 <input class="form-control" type="text" min="4" id="form-m" disabled
-                       placeholder="double click icon to search form M in single window"
-                       ng-model="addFormMState.searchFormM.mf"/>
+                       placeholder="double click icon to search form M"/>
               </div>
             </div>
           </div>
 
-          <div class="form-group form-m-owner-group" ng-show="addFormMState.searchFormM.applicant">
-            <label class="control-label col-sm-3" for="form-m-owner">Owner</label>
+          <div class="single-window-form-m-container" ng-if="addFormMState.searchFormM.applicant">
+            <div class="form-group form-m-owner-group">
+              <label class="control-label col-sm-3" for="form-m-owner">Owner</label>
 
-            <div class="col-sm-9">
-              <input class="form-control" id="form-m-owner" name="form-m-owner" disabled
-                     autocomplete="off"
-                     ng-model="addFormMState.searchFormM.applicant"/>
+              <div class="col-sm-9">
+                <input class="form-control" id="form-m-owner" name="form-m-owner" disabled
+                       ng-model="addFormMState.searchFormM.applicant"/>
+              </div>
+            </div>
+
+            <div class="form-group form-m-validity-type-group">
+              <label class="control-label col-sm-3" for="form-m-validity-type">Validity Type</label>
+
+              <div class="col-sm-9">
+                <input class="form-control" id="form-m-validity-type" name="validityType" disabled
+                       ng-model="addFormMState.searchFormM.validity_type"/>
+              </div>
+            </div>
+
+            <div class="form-group form-m-status-group">
+              <label class="control-label col-sm-3" for="form-m-status">Status</label>
+
+              <div class="col-sm-9">
+                <input class="form-control" id="form-m-status" name="singleWinFormMStatus" disabled
+                       ng-model="addFormMState.searchFormM.status"/>
+              </div>
             </div>
           </div>
 

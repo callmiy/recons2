@@ -24,7 +24,7 @@
     </tbody>
   </table>
 
-  <div pager-nav
+  <div pager-nav ng-if="modelTable.showPagination !== false"
        count="modelTable.count"
        start-row-index="modelTable.rowIndexOffset + 1"
        end-row-index="modelTable.rowIndexOffset + modelTable.modelCollection.length"
@@ -32,8 +32,7 @@
        link-urls="modelTable.linkUrls"
        current-pager-link="modelTable.currentLink"
        next-page-link="modelTable.nextPageLink"
-       target-clicked-callback="modelTable.onUpdateCollection(linkUrl)"
-  >
+       target-clicked-callback="modelTable.onUpdateCollection(linkUrl)">
 
   </div>
 </div>

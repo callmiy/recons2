@@ -22,7 +22,7 @@ function SearchDetailedOrUploadedFormMService(UploadFormM, xhrErrorDisplay, Moda
     var deferred = $q.defer()
     var mf = submittedSearchParams.mf.trim()
 
-    FormM.getPaginated({number: mf}).$promise.then(function(data) {
+    FormM.getPaginated({number: mf}).$promise.then(function (data) {
       if (data.count === 1) {
         deferred.resolve({number: data.results[0].number})
 
@@ -31,7 +31,7 @@ function SearchDetailedOrUploadedFormMService(UploadFormM, xhrErrorDisplay, Moda
     }, searchFormMError)
 
     function searchFormMSuccess(data) {
-      if (data.length === 1) deferred.resolve({uploaded: data[0]})
+      deferred.resolve({singleWinFormMs: data})
     }
 
     function searchFormMError(xhr) {
@@ -54,19 +54,19 @@ function SearchDetailedOrUploadedFormMService(UploadFormM, xhrErrorDisplay, Moda
           'form-m/search-detailed-or-uploaded-form-m/search-detailed-or-uploaded-form-m-modal.html'),
 
         controller: 'SearchDetailedOrUploadedFormMServiceModalCtrl as searchUploadedFormMModal'
-      }).then(function(modal) {
+      }).then(function (modal) {
         modal.element.dialog({
           dialogClass: 'no-close',
           modal: true,
           minWidth: 500,
           title: 'Search Form M',
 
-          close: function() {
+          close: function () {
             modal.controller.close()
           }
         })
 
-        modal.close.then(function(submittedSearchParams) {
+        modal.close.then(function (submittedSearchParams) {
           if (submittedSearchParams && angular.isObject(submittedSearchParams) && !underscore.isEmpty(submittedSearchParams)) {
             deferred.resolve(searchFormM(submittedSearchParams))
           }
