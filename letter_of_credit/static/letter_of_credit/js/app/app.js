@@ -174,18 +174,7 @@
 	    }
 	  }
 
-	  var uploadFormMTab = {
-	    title: 'Upload Form M',
-	    active: false,
-	    viewName: 'uploadFormM',
-	    select: function () {
-	      $scope.updateAddFormMTitle()
-	      $state.go('form_m.upload')
-	    }
-	  }
-
 	  $scope.tabs = {
-	    uploadFormM: uploadFormMTab,
 	    listFormM: listFormMTab,
 	    addFormM: addFormMTab,
 	    bids: bidsTab,

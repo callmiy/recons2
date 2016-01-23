@@ -12,18 +12,18 @@ class UploadedFormM(models.Model):
     validity_type = models.CharField('Validity Type', max_length=100, null=True, blank=True)
     status = models.CharField('Status', max_length=20, null=True, blank=True)
     submitted_at = models.DateField('Date Submitted')
-    validated_at = models.DateField('Date Validated', null=True, blank=True)
     uploaded_at = models.DateField(auto_now_add=True)
 
     class Meta:
         db_table = 'uploaded_form_m'
         app_label = 'letter_of_credit'
+        unique_together = ('ba', 'mf', 'ccy', 'validity_type', 'status',)
 
     def __unicode__(self):
         return '[%s | %s%s | %s]' % (
             self.mf,
             self.ccy,
-            self.fob_formatted(),
+            self.cost_freight_formatted(),
             self.applicant
         )
 

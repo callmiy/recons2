@@ -32,9 +32,9 @@ class UploadedFormMListCreateAPIView(generics.ListCreateAPIView):
 
     def create_with_likely_duplicates(self, request, *args, **kwargs):
         logger.info(
-            '%s data likely contains form Ms that had been uploaded previously - will be deleted from incoming '
-            'data',
-            self.log_prefix
+                '%s data likely contains form Ms that had been uploaded previously - will be deleted from incoming '
+                'data',
+                self.log_prefix
         )
 
         duplicate_count = 0
@@ -44,20 +44,20 @@ class UploadedFormMListCreateAPIView(generics.ListCreateAPIView):
             if UploadedFormM.objects.filter(mf=datum['mf']).exists():
                 duplicate_count += 1
                 logger.info(
-                    '%s form M uploaded previously, will be deleted from incoming data:\n%r',
-                    self.log_prefix,
-                    json.dumps(datum, indent=4)
+                        '%s form M uploaded previously, will be deleted from incoming data:\n%r',
+                        self.log_prefix,
+                        json.dumps(datum, indent=4)
                 )
             else:
                 fresh_data_list.append(datum)
 
         logger.info(
-            '%s number of previously uploaded form Ms deleted from incoming data - %d', self.log_prefix,
-            duplicate_count)
+                '%s number of previously uploaded form Ms deleted from incoming data - %d', self.log_prefix,
+                duplicate_count)
 
         logger.info(
-            '%s incoming data has been cleaned - actual creation will be done with data: \n%r', self.log_prefix,
-            fresh_data_list)
+                '%s incoming data has been cleaned - actual creation will be done with data: \n%r', self.log_prefix,
+                fresh_data_list)
 
         serializer = self.get_serializer(data=fresh_data_list, many=True)
         serializer.is_valid(raise_exception=True)
@@ -92,13 +92,15 @@ class UploadedFormMUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 class UploadFromSingleWindowView(View):
     def get(self, request):
-        return render(request, 'letter_of_credit/uploaded-form-m/uploaded-form-m.html',)
+        return render(request, 'letter_of_credit/uploaded-form-m/uploaded-form-m.html', )
 
     def post(self, request):
         text = request.POST['upload-lc-register'].strip()
 
         if text:
             for row in json.loads(text):
-                if not UploadedFormM.objects.filter(mf=row['mf']).exists():
+                if not UploadedFormM.objects.filter(
+                        mf=row['mf'], ba=row['ba'], ccy=row['ccy'],
+                        validity_type=row['validity_type'], status=row['status']).exists():
                     UploadedFormM.objects.create(**row)
         return redirect(admin_url(UploadedFormM))

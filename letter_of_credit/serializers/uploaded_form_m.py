@@ -7,7 +7,8 @@ class UploadedFormMSerializer(serializers.HyperlinkedModelSerializer):
         model = UploadedFormM
         field = (
             'ba',
-            'mf', 'ccy',
+            'mf',
+            'ccy',
             'fob',
             'cost_freight',
             'goods_description',
