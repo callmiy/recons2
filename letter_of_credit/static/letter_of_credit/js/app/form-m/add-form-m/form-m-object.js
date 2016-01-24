@@ -34,7 +34,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
     self.datePickerFormat = 'dd-MMM-yyyy'
     var confirmationTitleLength = 40
 
-    self.setBids = function setBids() {
+    self.setBids = function setBids(cb) {
       self.existingBids = []
       LcBidRequest.getPaginated({mf: self.number}).$promise.then(function (data) {
 
@@ -57,6 +57,8 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
 
               self.existingBids.push(bid)
             })
+
+            if (cb) cb(self.existingBids)
           }
         }
 

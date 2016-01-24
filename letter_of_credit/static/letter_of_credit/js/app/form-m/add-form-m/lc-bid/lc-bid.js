@@ -39,7 +39,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
   var vm = this
   vm.formM = formMObject
   var title = 'New Bid Request'
-
+  vm.selectedBids = {}
 
   init()
   function init(form) {
@@ -115,19 +115,35 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     return dtObj ? moment(dtObj).format('DD-MMM-YYYY') : null
   }
 
-  vm.onEditBid = function onEditBid(bid, $index, form) {
+  function getSelectedBids(selections) {
+    var index, result = []
+
+    for (index in selections) {
+      if (selections[index]) {
+        var bid = getBidFromId(index)
+        if (bid) result.push(bid)
+      }
+    }
+
+    return result
+  }
+
+  vm.onEditBid = function onEditBid(selectedBids, form) {
+    var bids = getSelectedBids(selectedBids)
+    if (bids.length !== 1) return
     form.$setPristine()
     vm.formM.showEditBid = true
     vm.formM.showBidForm = false
     vm.toggleShow()
-    vm.bidToEdit = angular.copy(bid)
-    vm.bidToEdit.$index = $index
+    vm.bidToEdit = angular.copy(bids[0])
     copyBidForEdit()
   }
 
-  vm.trashBid = function trashBid(bid) {
+  vm.trashBid = function trashBid(selectedBids) {
+    var bids = getSelectedBids(selectedBids)
+    if (bids.length !== 1) return
     init()
-
+    var bid = bids[0]
     var text = '\n' +
       '\nApplicant  : ' + bid.applicant +
       '\nForm M     : ' + bid.form_m_number +
@@ -151,8 +167,8 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
         title: 'Bid for ' + mf + ' deleted successfully',
         infoOnly: true
       })
-
       formMObject.setBids()
+      vm.selectedBids = {}
     }
   }
 
@@ -229,7 +245,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
       LcBidRequest.put(bid).$promise.then(function () {
         confirmationDialog.showDialog({title: title, text: 'Edit successful: ' + text, infoOnly: true})
         init()
-        formMObject.setBids()
+        formMObject.setBids(bidsNewlySetCb)
 
       }, function (xhr) {
         xhrErrorDisplay(xhr)
@@ -237,12 +253,17 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     }
   }
 
-  vm.viewBidDetail = function (bid) {
+  vm.viewBidDetail = function (selectedBids) {
+    var bids = getSelectedBids(selectedBids)
+    if (bids.length !== 1) return
     init()
-    ViewBidDetail.showDialog({bid: bid})
+    ViewBidDetail.showDialog({bid: bids[0]})
   }
 
-  vm.allocateFx = function allocateFx(bid) {
+  vm.allocateFx = function allocateFx(selectedBids) {
+    var bids = getSelectedBids(selectedBids)
+    if (bids.length !== 1) return
+    var bid = bids[0]
     vm.formM.showBidForm = false
     vm.title = title
 
@@ -269,7 +290,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
 
     confirmationDialog.showDialog({title: 'Allocation success', text: text, infoOnly: true})
     init()
-    formMObject.setBids()
+    formMObject.setBids(bidsNewlySetCb)
   }
 
   vm.dismissShowAllocateFxForm = function dismissShowAllocateFxForm() {
@@ -287,11 +308,43 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     }
   }
 
+  function getBidFromId(id) {
+    for (var bidIndex = 0; bidIndex < vm.formM.existingBids.length; bidIndex++) {
+      var bid = vm.formM.existingBids[bidIndex]
+
+      if (bid.id === +id) return bid
+    }
+
+    return null
+  }
+
+  function checkBids(selectedBids) {
+    vm.selectedBidsLen = 0
+
+    underscore.each(selectedBids, function (checked, id) {
+      if (checked) ++vm.selectedBidsLen
+
+      var bid = getBidFromId(id)
+      if (bid) bid.checked = checked
+
+    })
+
+    if (formMObject.existingBids.length && !vm.selectedBidsLen) init()
+  }
+
+  function bidsNewlySetCb() {
+    checkBids(vm.selectedBids)
+  }
+
   $scope.$watch(function () {return formMObject}, function onFormMObjectChanged(formM) {
     formMObject.bidForm = $scope.bidForm
 
     if (formM) {
       if (!formM.amount || !formM.number) init(formMObject.bidForm)
     }
+  }, true)
+
+  $scope.$watch(function getSelectedBids() {return vm.selectedBids}, function updatedSelectedBids(selectedBids) {
+    if (selectedBids) checkBids(selectedBids)
   }, true)
 }

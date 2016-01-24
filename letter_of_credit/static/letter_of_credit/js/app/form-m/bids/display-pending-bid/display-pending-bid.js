@@ -40,10 +40,10 @@ app.controller('displayPendingBidDirectiveCtrl', displayPendingBidDirectiveCtrl)
 displayPendingBidDirectiveCtrl.$inject = [
   'pagerNavSetUpLinks',
   '$scope',
-  'kanmiiUnderscore'
+  'underscore'
 ]
 
-function displayPendingBidDirectiveCtrl(pagerNavSetUpLinks, scope, kanmiiUnderscore) {
+function displayPendingBidDirectiveCtrl(pagerNavSetUpLinks, scope, underscore) {
   var vm = this //jshint -W040
 
   vm.selectedBids = {}
@@ -76,7 +76,7 @@ function displayPendingBidDirectiveCtrl(pagerNavSetUpLinks, scope, kanmiiUndersc
   }
 
   scope.$watch(function getPager() {return vm.pager}, function updatedPager(pager) {
-    if (pager && !kanmiiUnderscore.isEmpty(pager)) {
+    if (pager && !underscore.isEmpty(pager)) {
       setUpLinks(pager.next, pager.previous, pager.count)
     }
   })
@@ -93,7 +93,7 @@ function displayPendingBidDirectiveCtrl(pagerNavSetUpLinks, scope, kanmiiUndersc
       deselectAllBids()
 
       //only highlight a row if no row is checked and the row model is not downloaded previously
-      model.highlighted = !kanmiiUnderscore.any(vm.bids, function (bid) {
+      model.highlighted = !underscore.any(vm.bids, function (bid) {
         return bid.checked
       })
     }
@@ -106,9 +106,9 @@ function displayPendingBidDirectiveCtrl(pagerNavSetUpLinks, scope, kanmiiUndersc
   scope.$watch(function getSelectedBids() {return vm.selectedBids}, function updatedSelectedBids(selectedBids) {
     vm.onSelectedBidsChanged({newSelections: selectedBids})
 
-    if (selectedBids && !kanmiiUnderscore.isEmpty(selectedBids)) {
+    if (selectedBids && !underscore.isEmpty(selectedBids)) {
 
-      kanmiiUnderscore.each(selectedBids, function (checked, id) {
+      underscore.each(selectedBids, function (checked, id) {
 
         for (var bidIndex = 0; bidIndex < vm.bids.length; bidIndex++) {
           var bid = vm.bids[bidIndex]
@@ -119,7 +119,7 @@ function displayPendingBidDirectiveCtrl(pagerNavSetUpLinks, scope, kanmiiUndersc
 
       })
 
-      vm.toggleAll = kanmiiUnderscore.all(vm.bids, function (bid) {
+      vm.toggleAll = underscore.all(vm.bids, function (bid) {
         return bid.checked === true
       })
     }

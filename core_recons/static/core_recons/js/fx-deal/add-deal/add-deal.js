@@ -47,7 +47,7 @@ function addFxAllocationController(underscore, getTypeAheadCurrency, resetForm2,
       amount_allocated: initialDealProps.amount_allocated ? initialDealProps.amount_allocated : null,
       allocated_on: new Date(),
       amount_utilized: initialDealProps.amount_utilized ? initialDealProps.amount_utilized : null,
-      utilized_on: null,
+      utilized_on: new Date(),
       content_type: initialDealProps.content_type,
       object_id: initialDealProps.object_id
     }
