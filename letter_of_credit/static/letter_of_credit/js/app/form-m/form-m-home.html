@@ -1,1 +1,1 @@
-<div class="form-m-home-view"><div uib-tabset=""><div uib-tab="" ng-repeat="(key, tab) in tabs" heading="{$tab.title$}" active="tab.active" select="tab.select()"><div class="" ui-view="{$tab.viewName$}"></div></div></div></div>
+<div class="form-m-home-view"><div uib-tabset=""><div uib-tab="" ng-repeat="(key, tab) in tabs" heading="{$tab.title$}" active="tab.active" select="tab.select()" ng-attr-class="{$tab.className$}"><div class="" ui-view="{$tab.viewName$}"></div></div></div></div>

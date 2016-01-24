@@ -47,7 +47,7 @@
 	"use strict";
 
 	__webpack_require__(1)
-	__webpack_require__(25)
+	__webpack_require__(27)
 
 	var rootCommons = __webpack_require__(7)
 
@@ -77,7 +77,7 @@
 
 	      kanmiiTitle: 'Home',
 
-	      template: __webpack_require__(28)
+	      template: __webpack_require__(30)
 	    })
 	}
 
@@ -96,7 +96,7 @@
 	__webpack_require__(18)
 	__webpack_require__(19)
 	__webpack_require__(21)
-	__webpack_require__(29)
+	__webpack_require__(24)
 
 	var app = angular.module('form-m',
 	  ['rootApp',
@@ -117,7 +117,7 @@
 
 	      kanmiiTitle: 'Form M',
 
-	      template: __webpack_require__(24),
+	      template: __webpack_require__(26),
 
 	      controller: 'FormMController as formMHome'
 	    })
@@ -128,6 +128,7 @@
 	function FormMController($state, $scope) {
 
 	  var listFormMTab = {
+	    className: 'list-form-m-tab-ctrl',
 	    title: 'List Form M',
 	    viewName: 'listFormM',
 	    select: function () {
@@ -146,6 +147,7 @@
 	   */
 	  var addFormMGoTo = true
 	  var addFormMTab = {
+	    className: 'add-form-tab-ctrl',
 	    title: addFormMTitle,
 	    active: true,
 	    viewName: 'addFormM',
@@ -166,6 +168,7 @@
 	  }
 
 	  var bidsTab = {
+	    className: 'bid-list-tab-ctrl',
 	    title: 'Bids',
 	    active: false,
 	    viewName: 'bids',
@@ -2640,12 +2643,86 @@
 
 /***/ },
 /* 24 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "<div class=\"form-m-home-view\"><div uib-tabset=\"\"><div uib-tab=\"\" ng-repeat=\"(key, tab) in tabs\" heading=\"{$tab.title$}\" active=\"tab.active\" select=\"tab.select()\"><div class=\"\" ui-view=\"{$tab.viewName$}\"></div></div></div></div>";
+	"use strict";
+	/*jshint camelcase:false*/
+
+	var app = angular.module('display-uploaded-form-m', [
+	  'rootApp',
+	  'model-table',
+	  'upload-form-m-service'
+	])
+
+	app.factory('DisplayUploadedFormMModal', DisplayUploadedFormMModal)
+	DisplayUploadedFormMModal.$inject = ['$q', 'ModalService']
+	function DisplayUploadedFormMModal($q, ModalService) {
+	  function DisplayService() {
+	    this.display = display
+
+	    function display(forMData) {
+	      var deferred = $q.defer()
+
+	      ModalService.showModal({
+	        template: __webpack_require__(25),
+	        controller: 'DisplayUploadedFormMModalCtrl as displayUploadedFormMModal',
+	        inputs: {forMData: forMData}
+	      }).then(function (modal) {
+	        var ctrl = modal.controller
+
+	        modal.element.dialog({
+	          dialogClass: 'no-close',
+	          modal: true,
+	          minWidth: 750,
+	          title: ctrl.tableCaption,
+
+	          close: function () {
+	            ctrl.close()
+	          }
+	        })
+
+	        modal.close.then(function (formM) {
+	          deferred.resolve(formM)
+	        })
+	      })
+
+	      return deferred.promise
+	    }
+	  }
+
+	  return new DisplayService()
+	}
+
+	app.controller('DisplayUploadedFormMModalCtrl', DisplayUploadedFormMModalCtrl)
+	DisplayUploadedFormMModalCtrl.$inject = [
+	  'close',
+	  'forMData',
+	  'uploadedFormMModelManager'
+	]
+	function DisplayUploadedFormMModalCtrl(close, forMData, uploadedFormMModelManager) {
+	  var vm = this
+
+	  vm.forMData = forMData
+	  vm.tableCaption = 'Single Window Forms M'
+	  vm.modelManager = uploadedFormMModelManager
+	  vm.close = close
+	}
+
 
 /***/ },
 /* 25 */
+/***/ function(module, exports) {
+
+	module.exports = "<div class=\"display-uploaded-form-m-modal-root\"><div model-table=\"\" model-collection=\"displayUploadedFormMModal.forMData\" table-model-manager=\"::displayUploadedFormMModal.modelManager\" table-caption=\"::displayUploadedFormMModal.tableCaption\" on-row-dbl-click-callback=\"displayUploadedFormMModal.close(rowModel)\" show-pagination=\"false\"></div></div>";
+
+/***/ },
+/* 26 */
+/***/ function(module, exports) {
+
+	module.exports = "<div class=\"form-m-home-view\"><div uib-tabset=\"\"><div uib-tab=\"\" ng-repeat=\"(key, tab) in tabs\" heading=\"{$tab.title$}\" active=\"tab.active\" select=\"tab.select()\" ng-attr-class=\"{$tab.className$}\"><div class=\"\" ui-view=\"{$tab.viewName$}\"></div></div></div></div>";
+
+/***/ },
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2699,12 +2776,12 @@
 	}
 
 
-	__webpack_require__(26)
-	__webpack_require__(27)
+	__webpack_require__(28)
+	__webpack_require__(29)
 
 
 /***/ },
-/* 26 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2908,7 +2985,7 @@
 
 
 /***/ },
-/* 27 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -3037,84 +3114,10 @@
 
 
 /***/ },
-/* 28 */
-/***/ function(module, exports) {
-
-	module.exports = "<div class=\"form-m-home-view\"><div class=\"form-m-home-action-buttons btn-group-vertical\" role=\"group\"><a class=\"btn btn-info form-m-home-action-button\" ui-sref=\"lc\">Letter of credit</a> <a class=\"btn btn-info form-m-home-action-button\" ui-sref=\"form_m\">Form M</a></div></div>";
-
-/***/ },
-/* 29 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	/*jshint camelcase:false*/
-
-	var app = angular.module('display-uploaded-form-m', [
-	  'rootApp',
-	  'model-table',
-	  'upload-form-m-service'
-	])
-
-	app.factory('DisplayUploadedFormMModal', DisplayUploadedFormMModal)
-	DisplayUploadedFormMModal.$inject = ['$q', 'ModalService']
-	function DisplayUploadedFormMModal($q, ModalService) {
-	  function DisplayService() {
-	    this.display = display
-
-	    function display(forMData) {
-	      var deferred = $q.defer()
-
-	      ModalService.showModal({
-	        template: __webpack_require__(30),
-	        controller: 'DisplayUploadedFormMModalCtrl as displayUploadedFormMModal',
-	        inputs: {forMData: forMData}
-	      }).then(function (modal) {
-	        var ctrl = modal.controller
-
-	        modal.element.dialog({
-	          dialogClass: 'no-close',
-	          modal: true,
-	          minWidth: 750,
-	          title: ctrl.tableCaption,
-
-	          close: function () {
-	            ctrl.close()
-	          }
-	        })
-
-	        modal.close.then(function (formM) {
-	          deferred.resolve(formM)
-	        })
-	      })
-
-	      return deferred.promise
-	    }
-	  }
-
-	  return new DisplayService()
-	}
-
-	app.controller('DisplayUploadedFormMModalCtrl', DisplayUploadedFormMModalCtrl)
-	DisplayUploadedFormMModalCtrl.$inject = [
-	  'close',
-	  'forMData',
-	  'uploadedFormMModelManager'
-	]
-	function DisplayUploadedFormMModalCtrl(close, forMData, uploadedFormMModelManager) {
-	  var vm = this
-
-	  vm.forMData = forMData
-	  vm.tableCaption = 'Single Window Forms M'
-	  vm.modelManager = uploadedFormMModelManager
-	  vm.close = close
-	}
-
-
-/***/ },
 /* 30 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"display-uploaded-form-m-modal-root\"><div model-table=\"\" model-collection=\"displayUploadedFormMModal.forMData\" table-model-manager=\"::displayUploadedFormMModal.modelManager\" table-caption=\"::displayUploadedFormMModal.tableCaption\" on-row-dbl-click-callback=\"displayUploadedFormMModal.close(rowModel)\" show-pagination=\"false\"></div></div>";
+	module.exports = "<div class=\"form-m-home-view\"><div class=\"form-m-home-action-buttons btn-group-vertical\" role=\"group\"><a class=\"btn btn-info form-m-home-action-button\" ui-sref=\"lc\">Letter of credit</a> <a class=\"btn btn-info form-m-home-action-button\" ui-sref=\"form_m\">Form M</a></div></div>";
 
 /***/ }
 /******/ ]);

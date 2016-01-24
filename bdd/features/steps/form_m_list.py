@@ -42,8 +42,6 @@ def step_impl(context):
     :type context behave.runner.Context
     """
     context.browser.visit(context.config.server_url + '/letter-of-credit/app/home#/form-m')
-    # We pre-select and store the tab links so it is easy to visit links from other features and steps
-    context.browser.tab_links = context.browser.find_by_css('ul.nav-tabs>li>a')
     context.active_tab_css_selector = '.nav-tabs>.active'
 
 
@@ -52,7 +50,7 @@ def step_impl(context):
     """
     :type context behave.runner.Context
     """
-    context.browser.tab_links[1].click()
+    context.browser.find_by_css('.list-form-m-tab-ctrl>a').first.click()
 
 
 @then('I see "{num_rows}" rows of form Ms, each displaying few details about each form M')
@@ -75,5 +73,5 @@ def step_impl(context, num_links):
     :type num_links str
     """
     num_links = int(num_links)
-    pager_links = context.browser.find_by_css('.pager-nav-link')
-    nt.eq_(len(pager_links), num_links, 'There should be %d pager links' % num_links)
+    pager_links = len(context.browser.find_by_css('.pager-nav-link'))
+    nt.eq_(pager_links, num_links, 'There should be %d pager links but got %d' % (num_links, pager_links))

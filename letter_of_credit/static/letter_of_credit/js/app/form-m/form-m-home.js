@@ -40,6 +40,7 @@ FormMController.$inject = ['$state', '$scope']
 function FormMController($state, $scope) {
 
   var listFormMTab = {
+    className: 'list-form-m-tab-ctrl',
     title: 'List Form M',
     viewName: 'listFormM',
     select: function () {
@@ -58,6 +59,7 @@ function FormMController($state, $scope) {
    */
   var addFormMGoTo = true
   var addFormMTab = {
+    className: 'add-form-tab-ctrl',
     title: addFormMTitle,
     active: true,
     viewName: 'addFormM',
@@ -78,6 +80,7 @@ function FormMController($state, $scope) {
   }
 
   var bidsTab = {
+    className: 'bid-list-tab-ctrl',
     title: 'Bids',
     active: false,
     viewName: 'bids',
