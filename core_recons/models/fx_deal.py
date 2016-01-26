@@ -3,6 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from core_recons.utilities import get_generic_related_model_class_str, get_content_type
 from adhocmodels.models import Currency
+# from letter_of_credit.models.lc_bid_request import LcBidRequest
 
 
 class FxDeal(models.Model):
@@ -63,3 +64,14 @@ class FxDeal(models.Model):
                 'utilized_on': allocation.utilized_on,
             })
         return allocations
+
+# class LcBidRequestFxDealManager(models.Manager):
+#     def get_queryset(self):
+#         return super(LcBidRequestFxDealManager, self).get_queryset().filter(content_type=get_content_type(LcBidRequest))
+#
+#
+# class LcBidRequestFxDeal(FxDeal):
+#     objects = LcBidRequestFxDealManager()
+#
+#     class Meta:
+#         proxy = True

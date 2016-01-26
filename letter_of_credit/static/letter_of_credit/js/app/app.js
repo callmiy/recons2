@@ -1233,7 +1233,7 @@
 	]
 
 	function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore, LcBidRequest, xhrErrorDisplay,
-	  confirmationDialog, formMObject, resetForm2, moment, toISODate, ViewBidDetail) {
+	                                  confirmationDialog, formMObject, resetForm2, moment, toISODate, ViewBidDetail) {
 	  var vm = this
 	  vm.formM = formMObject
 	  var title = 'New Bid Request'
@@ -1534,15 +1534,19 @@
 	    checkBids(vm.selectedBids)
 	  }
 
-	  $scope.$watch(function () {return formMObject}, function onFormMObjectChanged(formM) {
+	  $scope.$watch(function getFormMObject() {return formMObject}, function onFormMObjectChanged(formM) {
 	    formMObject.bidForm = $scope.bidForm
 
 	    if (formM) {
-	      if (!formM.amount || !formM.number) init(formMObject.bidForm)
+	      if (!formM.amount || !formM.number) {
+	        init(formMObject.bidForm)
+	        vm.selectedBids = {}
+	        vm.selectedBidsLen = 0
+	      }
 	    }
 	  }, true)
 
-	  $scope.$watch(function getSelectedBids() {return vm.selectedBids}, function updatedSelectedBids(selectedBids) {
+	  $scope.$watch(function getSelectedBids() {return vm.selectedBids}, function onSelectedBidsChanged(selectedBids) {
 	    if (selectedBids) checkBids(selectedBids)
 	  }, true)
 	}
