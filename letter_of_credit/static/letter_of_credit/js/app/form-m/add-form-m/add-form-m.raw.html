@@ -27,7 +27,7 @@
               <label class="control-label col-sm-3" for="form-m-owner">Owner</label>
 
               <div class="col-sm-9">
-                <input class="form-control" id="form-m-owner" name="form-m-owner" disabled
+                <input type="text" class="form-control" id="form-m-owner" name="form-m-owner" disabled
                        ng-model="addFormMState.searchFormM.applicant"/>
               </div>
             </div>
@@ -36,7 +36,7 @@
               <label class="control-label col-sm-3" for="form-m-validity-type">Validity Type</label>
 
               <div class="col-sm-9">
-                <input class="form-control" id="form-m-validity-type" name="validityType" disabled
+                <input type="text" class="form-control" id="form-m-validity-type" name="validityType" disabled
                        ng-model="addFormMState.searchFormM.validity_type"/>
               </div>
             </div>
@@ -45,7 +45,7 @@
               <label class="control-label col-sm-3" for="form-m-status">Status</label>
 
               <div class="col-sm-9">
-                <input class="form-control" id="form-m-status" name="singleWinFormMStatus" disabled
+                <input type="text" class="form-control" id="form-m-status" name="singleWinFormMStatus" disabled
                        ng-model="addFormMState.searchFormM.status"/>
               </div>
             </div>
@@ -62,7 +62,7 @@
                     ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.number, 'glyphicon-eye-open': addFormMState.fieldIsEditable.number}]"></i>
                 </span>
 
-                <input class="form-control" maxlength="13" id="form-m-number" required
+                <input type="text" class="form-control" maxlength="13" id="form-m-number" required
                        name="formMNumber"
                        to-upper ng-pattern="/mf\d{11}/i" ng-readonly="!addFormMState.fieldIsEditable.number"
                        ng-model="addFormMState.formM.number"/>
@@ -112,7 +112,7 @@
                     ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.currency, 'glyphicon-eye-open': addFormMState.fieldIsEditable.currency}]"></i>
                 </span>
 
-                <input class="form-control" id="currency" maxlength="3" name="currency" required
+                <input type="text" class="form-control" id="currency" maxlength="3" name="currency" required
                        autocomplete="off"
                        ng-model="addFormMState.formM.currency"
                        ng-readonly="!addFormMState.fieldIsEditable.currency"
@@ -136,7 +136,8 @@
                     ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.amount, 'glyphicon-eye-open': addFormMState.fieldIsEditable.amount}]"></i>
                 </span>
 
-                <input class="form-control" id="amount" name="amount" required ng-model="addFormMState.formM.amount"
+                <input type="text" class="form-control" id="amount" name="amount" required
+                       ng-model="addFormMState.formM.amount"
                        number-format
                        ng-readonly="!addFormMState.fieldIsEditable.amount"/>
               </div>
@@ -154,7 +155,7 @@
                     ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.date_received, 'glyphicon-eye-open': addFormMState.fieldIsEditable.date_received}]"></i>
                 </span>
 
-                <input class="form-control" id="received-date" required name="receivedDate"
+                <input type="text" class="form-control" id="received-date" required name="receivedDate"
                        ng-model="addFormMState.formM.date_received"
                        ng-readonly="!addFormMState.fieldIsEditable.date_received"
                        uib-datepicker-popup="{$addFormMState.formM.datePickerFormat$}"
@@ -180,7 +181,7 @@
                     ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.lcRef, 'glyphicon-eye-open': addFormMState.fieldIsEditable.lcRef}]"></i>
                 </span>
 
-                <input class="form-control" id="lc-ref" name="lcRef"
+                <input type="text" class="form-control" id="lc-ref" name="lcRef"
                        ng-model="addFormMState.formM.lcRef"
                        ng-readonly="!addFormMState.fieldIsEditable.lcRef"
                        typeahead-min-length="13"
@@ -197,7 +198,8 @@
             <label class="control-label col-sm-3" for="lc-number">LC Number</label>
 
             <div class="col-sm-9">
-              <input class="form-control" id="lc-number" name="lcNumber" ng-model="addFormMState.formM.lc_number"
+              <input type="text" class="form-control" id="lc-number" name="lcNumber"
+                     ng-model="addFormMState.formM.lc_number"
                      disabled/>
             </div>
           </div>

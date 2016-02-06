@@ -21,7 +21,8 @@
       <label class="control-label col-sm-3" for="goods-description">Goods Description</label>
 
       <div class="col-sm-9">
-        <input class="form-control" id="goods-description" name="bidGoodsDescription" required ng-minlength="3"
+        <input type="text" class="form-control" id="goods-description" name="bidGoodsDescription" required
+               ng-minlength="3"
                ng-required="lcBid.formM.showBidForm" to-upper
                ng-model="lcBid.formM.bid.goods_description"/>
 
@@ -39,7 +40,7 @@
       <label class="control-label col-sm-3" for="bid-amount">Amount</label>
 
       <div class="col-sm-9">
-        <input class="form-control" id="bid-amount" name="bidAmount" ng-model="lcBid.amountGetterSetter"
+        <input type="text" class="form-control" id="bid-amount" name="bidAmount" ng-model="lcBid.amountGetterSetter"
                ng-model-options="{getterSetter: true, updateOn: 'blur'}"
                ng-required="lcBid.formM.showBidForm"/>
 
@@ -58,7 +59,7 @@
 
       <div class="col-sm-9">
         <div class="input-group">
-          <input class="form-control" id="bid-maturity-date" name="bidMaturityDate"
+          <input type="text" class="form-control" id="bid-maturity-date" name="bidMaturityDate"
                  ng-model="lcBid.formM.bid.maturity"
                  uib-datepicker-popup="{$lcBid.formM.datePickerFormat$}"
                  is-open="lcBid.datePickerIsOpen.bidMaturityDate"
@@ -85,7 +86,7 @@
 
         <div class="col-sm-9">
           <div class="input-group">
-            <input class="form-control" id="bid-created-date" name="bidCreatedDate"
+            <input type="text" class="form-control" id="bid-created-date" name="bidCreatedDate"
                    ng-model="lcBid.formM.bid.created_at"
                    ng-disabled="!lcBid.formM.showEditBid" ng-required="lcBid.formM.showEditBid"
                    uib-datepicker-popup="{$lcBid.formM.datePickerFormat$}"
@@ -110,7 +111,7 @@
 
         <div class="col-sm-9">
           <div class="input-group">
-            <input class="form-control" id="bid-requested-date" name="bidRequestedDate"
+            <input type="text" class="form-control" id="bid-requested-date" name="bidRequestedDate"
                    ng-model="lcBid.formM.bid.requested_at" ng-disabled="!lcBid.formM.showEditBid"
                    uib-datepicker-popup="{$lcBid.formM.datePickerFormat$}"
                    is-open="lcBid.datePickerIsOpen.bidRequestedDate"/>
