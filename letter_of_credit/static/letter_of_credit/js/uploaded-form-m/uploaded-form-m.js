@@ -21,26 +21,30 @@ $(function () {
     var reportHeaderBeginText = 'FORM M PROCESSED ON CBN WINDOW',
         toUpload              = []
 
-    Papa.parse($idUpload.val().replace(reportHeaderBeginText, '').trim(), {
+    Papa.parse($idUpload.val().replace(reportHeaderBeginText, '').trim().replace(/"/g, ''), {
       delimiter: '\t',
       header: true,
       step: function (row) {
         var data = row.data[0]
 
-        toUpload.push(
-          {
-            ba: data['BA NUM'].trim(),
-            mf: data['MF NUM'].trim(),
-            ccy: data.CURRENCY.trim(),
-            fob: parseNumber(data.FOB),
-            applicant: data['APPLICANT NAME'].trim(),
-            submitted_at: parseDate(data['DATE SUBMITTED']),
-            goods_description: data.DESCS.trim(),
-            cost_freight: parseNumber(data['COST AND FREIGHT']),
-            validity_type: data['VALIDITY TYPE'].trim(),
-            status: data.STAX.trim()
-          }
-        )
+        try {
+          toUpload.push(
+            {
+              ba: data['BA NUM'].trim(),
+              mf: data['MF NUM'].trim(),
+              ccy: data.CURRENCY.trim(),
+              fob: parseNumber(data.FOB),
+              applicant: data['APPLICANT NAME'].trim(),
+              submitted_at: parseDate(data['DATE SUBMITTED']),
+              goods_description: data.DESCS.trim(),
+              cost_freight: parseNumber(data['COST AND FREIGHT']),
+              validity_type: data['VALIDITY TYPE'].trim(),
+              status: data.STAX.trim()
+            }
+          )
+        } catch (e) {
+          window.alert("Error parsing data\n" + e.message)
+        }
 
       }
     })
