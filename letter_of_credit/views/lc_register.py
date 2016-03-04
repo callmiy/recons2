@@ -74,7 +74,8 @@ class LCRegisterUploadView(View):
         "LC NUMBER": "lc_number",
         "EXPIRY DATE": "expiry_date",
         'ADVISING BANK': 'advising_bank',
-        'APPLICANT REF': 'mf'
+        'APPLICANT REF': 'mf',
+        'CUSTOMER ACCOUNT NUMBER': 'acct_numb',
     }
 
     def get(self, request):

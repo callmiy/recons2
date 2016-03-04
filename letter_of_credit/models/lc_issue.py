@@ -1,5 +1,8 @@
 from django.db import models
 from letter_of_credit.models.form_m import FormM
+import re
+
+ISSUE_TEXT_RE = re.compile(':ISSUE', re.IGNORECASE)
 
 
 class LCIssue(models.Model):
@@ -15,9 +18,7 @@ class LCIssue(models.Model):
         return self.text
 
     def save(self, *args, **kwargs):
-        self.text = self.text.strip().upper()
-        if not self.text.endswith(':ISSUE'):
-            self.text = '%s:ISSUE' % self.text
+        self.text = '%s:ISSUE' % ISSUE_TEXT_RE.sub('', self.text)
         super(LCIssue, self).save(*args, **kwargs)
 
 

@@ -33,11 +33,12 @@ class DownloadBidsView(View):
             sheet.cell(row=1, column=7, value='MF NO').font = font
             sheet.cell(row=1, column=8, value='LC REF.').font = font
             sheet.cell(row=1, column=9, value='MATURITY DATE').font = font
+            sheet.cell(row=1, column=10, value='ESTB. DATE').font = font
 
             if not mark_as_downloaded:
-                sheet.cell(row=1, column=10, value='TOTAL ALLOCATION').font = font
-                sheet.cell(row=1, column=11, value='UNALLOCATED').font = font
-                sheet.cell(row=1, column=12, value='DATE SENT TO TREASURY').font = font
+                sheet.cell(row=1, column=11, value='TOTAL ALLOCATION').font = font
+                sheet.cell(row=1, column=12, value='UNALLOCATED').font = font
+                sheet.cell(row=1, column=13, value='DATE SENT TO TREASURY').font = font
 
             row = 2
             row_index = 1
@@ -57,10 +58,19 @@ class DownloadBidsView(View):
 
                 if acct_numbers_qs:
                     acct = acct_numbers_qs[0].nuban
+
                 sheet.cell(row=row, column=6, value=acct)
+                lc_number = 'NEW LC'
+                estb_date = ''
+                lc = mf.lc
+
+                if lc:
+                    lc_number = lc.lc_number
+                    estb_date = lc.estb_date.strftime('%Y-%m-%d')
 
                 sheet.cell(row=row, column=7, value=mf.number)
-                sheet.cell(row=row, column=8, value=mf.lc_number() or 'NEW LC')
+                sheet.cell(row=row, column=8, value=lc_number)
+                sheet.cell(row=row, column=10, value=estb_date)
                 maturity = 'CASH BACKED'
                 if bid.maturity:
                     maturity = mark_as_downloaded and bid.maturity.strftime('%d-%b-%Y') or bid.maturity
@@ -68,9 +78,9 @@ class DownloadBidsView(View):
 
                 if not mark_as_downloaded:
                     total_allocation = sum([allocation['amount_allocated'] for allocation in bid.allocations()])
-                    sheet.cell(row=row, column=10, value=total_allocation)
-                    sheet.cell(row=row, column=11, value=(bid.amount - total_allocation))
-                    sheet.cell(row=row, column=12, value=bid.requested_at)
+                    sheet.cell(row=row, column=11, value=total_allocation)
+                    sheet.cell(row=row, column=12, value=(bid.amount - total_allocation))
+                    sheet.cell(row=row, column=13, value=bid.requested_at)
 
                 row += 1
                 row_index += 1
