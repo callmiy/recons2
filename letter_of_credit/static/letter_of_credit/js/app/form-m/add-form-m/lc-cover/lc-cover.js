@@ -1,18 +1,20 @@
+/*jshint camelcase:false*/
+
 "use strict";
 
-var app = angular.module('lc-cover', [
+var app = angular.module( 'lc-cover', [
   'rootApp',
   'add-form-m-form-m-object'
-])
+] )
 
-app.directive('lcCover', lcIssueDirective)
+app.directive( 'lcCover', lcIssueDirective )
 
 lcIssueDirective.$inject = []
 
 function lcIssueDirective() {
   return {
     restrict: 'A',
-    templateUrl: require('lcAppCommons').buildUrl('form-m/add-form-m/lc-cover/lc-cover.html'),
+    templateUrl: require( 'lcAppCommons' ).buildUrl( 'form-m/add-form-m/lc-cover/lc-cover.html' ),
     scope: true,
     bindToController: {
       formM: '=mfContext',
@@ -23,7 +25,7 @@ function lcIssueDirective() {
   }
 }
 
-app.controller('LcCoverDirectiveController', LcCoverDirectiveController)
+app.controller( 'LcCoverDirectiveController', LcCoverDirectiveController )
 
 LcCoverDirectiveController.$inject = [
   '$scope',
@@ -44,28 +46,33 @@ function LcCoverDirectiveController($scope, formMCoverTypes, $filter, formFieldI
     vm.coverTypes = null
     formMObject.cover = {}
 
-    if (form) {
+    if ( form ) {
       form.$setPristine()
       form.$setUntouched()
     }
   }
 
   vm.isValid = function isValid(name, validity) {
-    return formFieldIsValid($scope, 'coverForm', name, validity)
+    return formFieldIsValid( $scope, 'coverForm', name, validity )
   }
 
   vm.amountGetterSetter = function (val) {
-    if (arguments.length) {
-      if (!/[\d,\.]+/.test(val)) formMObject.cover.amount = null
-      else formMObject.cover.amount = Number(val.replace(/,/g, ''))
-    } else return formMObject.cover.amount ? $filter('number')(formMObject.cover.amount, 2) : ''
+    if ( arguments.length ) {
+      if ( !/[\d,\.]+/.test( val ) ) formMObject.cover.amount = null
+      else formMObject.cover.amount = Number( val.replace( /,/g, '' ) )
+    } else return formMObject.cover.amount ? $filter( 'number' )( formMObject.cover.amount, 2 ) : ''
   }
 
   vm.toggleShow = function toggleShow(form) {
+    if ( vm.formM.deleted_at ) {
+      formMObject.showCoverForm = false
+      return
+    }
+
     formMObject.showCoverForm = vm.formM.amount && vm.formM.number && !formMObject.showCoverForm
 
-    if (!formMObject.showCoverForm) {
-      init(form)
+    if ( !formMObject.showCoverForm ) {
+      init( form )
     }
     else {
       vm.title = 'Dismiss'
@@ -74,12 +81,12 @@ function LcCoverDirectiveController($scope, formMCoverTypes, $filter, formFieldI
     }
   }
 
-  $scope.$watch(function getFormM() {return vm.formM}, function (formM) {
+  $scope.$watch( function getFormM() {return vm.formM}, function (formM) {
     formMObject.coverForm = $scope.coverForm
-    if (formM) {
-      if (!formM.amount || !formM.number) {
-        init(formMObject.coverForm)
+    if ( formM ) {
+      if ( !formM.amount || !formM.number ) {
+        init( formMObject.coverForm )
       }
     }
-  }, true)
+  }, true )
 }

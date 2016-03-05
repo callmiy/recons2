@@ -205,13 +205,13 @@
 
 	/*jshint camelcase:false*/
 
-	__webpack_require__(3)
-	__webpack_require__(4)
-	__webpack_require__(8)
-	__webpack_require__(9)
-	__webpack_require__(10)
+	__webpack_require__( 3 )
+	__webpack_require__( 4 )
+	__webpack_require__( 8 )
+	__webpack_require__( 9 )
+	__webpack_require__( 10 )
 
-	var app = angular.module('add-form-m', [
+	var app = angular.module( 'add-form-m', [
 	  'ui.router',
 	  'rootApp',
 	  'customer',
@@ -227,30 +227,30 @@
 	  'lc-service',
 	  'complex-object-validator',
 	  'display-uploaded-form-m'
-	])
+	] )
 
-	app.config(formMStateConfig)
+	app.config( formMStateConfig )
 
 	formMStateConfig.$inject = ['$stateProvider']
 
 	function formMStateConfig($stateProvider) {
 	  $stateProvider
-	    .state('form_m.add', {
+	    .state( 'form_m.add', {
 	      kanmiiTitle: 'Add form M',
 
-	      params: {showSummary: null, formM: null},
+	      params: { showSummary: null, formM: null },
 
 	      views: {
 	        addFormM: {
-	          templateUrl: __webpack_require__(5).buildUrl('form-m/add-form-m/add-form-m.html'),
+	          templateUrl: __webpack_require__( 5 ).buildUrl( 'form-m/add-form-m/add-form-m.html' ),
 
 	          controller: 'AddFormMStateController as addFormMState'
 	        }
 	      }
-	    })
+	    } )
 	}
 
-	app.controller('AddFormMStateController', AddFormMStateController)
+	app.controller( 'AddFormMStateController', AddFormMStateController )
 
 	AddFormMStateController.$inject = [
 	  'getTypeAheadCustomer',
@@ -266,7 +266,7 @@
 	  'formMObject',
 	  'formMAttributesVerboseNames',
 	  'getTypeAheadLetterOfCredit',
-	  'DisplayUploadedFormMModal'
+	  'DisplayUploadedFormMModal',
 	]
 
 	function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
@@ -277,10 +277,10 @@
 	  function initFormMCb(formM, detailedFormM) {
 	    $stateParams.formM = null
 	    vm.formM = formM
-	    vm.formM.lcRef = {lc_number: null}
+	    vm.formM.lcRef = { lc_number: null }
 	    vm.detailedFormM = detailedFormM
 
-	    if (detailedFormM) {
+	    if ( detailedFormM ) {
 	      vm.fieldIsEditable = {
 	        number: false,
 	        currency: false,
@@ -291,18 +291,16 @@
 	      }
 	    }
 
-	    $scope.updateAddFormMTitle(detailedFormM)
+	    $scope.updateAddFormMTitle( detailedFormM )
 	    formMSavedSuccessMessage()
 	  }
 
 	  initialize()
 	  function initialize(form, formMNumber) {
 
-	    if (form) {
-	      var elements = ['applicant', 'currency'].concat($scope.newFormMForm.lcRef ? ['lcRef'] : [])
-
-	      resetForm2(form, [{form: $scope.newFormMForm, elements: elements}])
-
+	    if ( form ) {
+	      var elements = ['applicant', 'currency'].concat( $scope.newFormMForm.lcRef ? ['lcRef'] : [] )
+	      resetForm2( form, [{ form: $scope.newFormMForm, elements: elements }] )
 	      form.$setPristine()
 	      form.$setUntouched()
 	    }
@@ -316,10 +314,9 @@
 	      amount: true,
 	      lcRef: true
 	    }
-
-	    formMObject.init(formMNumber || $stateParams.formM, initFormMCb)
-
+	    formMObject.init( formMNumber || $stateParams.formM, initFormMCb )
 	    vm.searchFormM = {}
+	    vm.action = '';
 	  }
 
 	  vm.reset = initialize
@@ -328,12 +325,12 @@
 	    var summary = $stateParams.showSummary
 	    $stateParams.showSummary = null
 
-	    if (summary) {
-	      confirmationDialog.showDialog({
+	    if ( summary ) {
+	      confirmationDialog.showDialog( {
 	        title: '"' + vm.formM.number + '" successfully saved',
 	        text: summary,
 	        infoOnly: true
-	      })
+	      } )
 	    }
 	  }
 
@@ -342,26 +339,26 @@
 	  }
 
 	  vm.disableSubmitBtn = function disableSubmitBtn() {
-	    if ($scope.newFormMForm.$invalid) return true
+	    if ( $scope.newFormMForm.$invalid ) return true
 
-	    if (underscore.has(vm.formM.coverForm, '$invalid') && vm.formM.coverForm.$invalid) return true
+	    if ( underscore.has( vm.formM.coverForm, '$invalid' ) && vm.formM.coverForm.$invalid ) return true
 
-	    if (underscore.has(vm.formM.bidForm, '$invalid') && vm.formM.bidForm.$invalid) return true
+	    if ( underscore.has( vm.formM.bidForm, '$invalid' ) && vm.formM.bidForm.$invalid ) return true
 
-	    if (underscore.has(vm.formM.issuesForm, '$invalid') && vm.formM.issuesForm.$invalid) return true
+	    if ( underscore.has( vm.formM.issuesForm, '$invalid' ) && vm.formM.issuesForm.$invalid ) return true
 
-	    if (underscore.has(vm.formM.commentForm, '$invalid') && vm.formM.commentForm.$invalid) return true
+	    if ( underscore.has( vm.formM.commentForm, '$invalid' ) && vm.formM.commentForm.$invalid ) return true
 
-	    if (formMObject.showEditBid || formMObject.showCommentForm) return true
+	    if ( formMObject.showEditBid || formMObject.showCommentForm ) return true
 
-	    var compared = formMObject.compareFormMs(vm.detailedFormM)
+	    var compared = formMObject.compareFormMs( vm.detailedFormM )
 
-	    if (!compared) return false
+	    if ( !compared ) return false
 
-	    if (underscore.all(compared)) {
-	      if (formMObject.bid.goods_description && formMObject.bid.amount) return false
-	      if (!underscore.isEmpty(vm.formM.cover)) return false
-	      if (vm.formM.lcRef.lc_number) return false
+	    if ( underscore.all( compared ) ) {
+	      if ( formMObject.bid.goods_description && formMObject.bid.amount ) return false
+	      if ( !underscore.isEmpty( vm.formM.cover ) ) return false
+	      if ( vm.formM.lcRef.lc_number ) return false
 	      return !vm.formM.selectedIssues.length
 	    }
 
@@ -369,7 +366,7 @@
 	  }
 
 	  vm.getLc = function (lcRef) {
-	    return getTypeAheadLetterOfCredit({lc_number: lcRef.trim(), mf: vm.formM.number})
+	    return getTypeAheadLetterOfCredit( { lc_number: lcRef.trim(), mf: vm.formM.number } )
 	  }
 	  vm.getApplicant = getTypeAheadCustomer
 	  vm.getCurrency = getTypeAheadCurrency
@@ -383,34 +380,74 @@
 	    vm.detailedFormM = null
 	    initialize()
 
-	    SearchDetailedOrUploadedFormMService.searchWithModal().then(function (data) {
-	      if (data.number) {
-	        initialize(null, data.number)
+	    SearchDetailedOrUploadedFormMService.searchWithModal().then( function (data) {
+	      if ( data.number ) {
+	        initialize( null, data.number )
 
 	      } else {
-	        DisplayUploadedFormMModal.display(data.singleWinFormMs).then(function (formM) {
-	          if (formM) {
+	        DisplayUploadedFormMModal.display( data.singleWinFormMs ).then( function (formM) {
+	          if ( formM ) {
 	            vm.searchFormM = formM
 	            vm.formM.number = formM.mf
 	            vm.formM.amount = formM.cost_freight
 	            vm.formM.goods_description = formM.goods_description
 
-	            getTypeAheadCurrency(formM.ccy).then(function (ccy) {
+	            getTypeAheadCurrency( formM.ccy ).then( function (ccy) {
 	              vm.formM.currency = ccy[0]
-	            })
+	            } )
 	          }
-	        })
+	        } )
 	      }
-	    })
+	    } )
 	  }
 
-	  vm.submit = function submit(formM) {
-	    formMObject.saveFormM(formM, vm.detailedFormM).then(function saveFormMSuccess(data) {
-	      $state.go('form_m.add', data)
+	  function saveFormMError(xhr) { xhrErrorDisplay( xhr, formMAttributesVerboseNames ) }
 
-	    }, function saveFormMError(xhr) {
-	      xhrErrorDisplay(xhr, formMAttributesVerboseNames)
-	    })
+	  vm.submit = function submit(formM) {
+	    formMObject.saveFormM( formM, vm.detailedFormM ).then( function saveFormMSuccess(data) {
+	      $state.go( 'form_m.add', data )
+
+	    }, saveFormMError )
+	  }
+
+	  vm.doAction = function doAction(action, formM) {
+
+	    switch (action) {
+	      case 'cancel':
+	      case 'reinstate':
+	        cancelOrReinstate( formM, action )
+	        break
+
+	      default:
+	        console.log( 'default' )
+	    }
+	  }
+
+	  /**
+	   * Cancel for reinstate a form M
+	   * @param {{}} formM - the form M to cancel or reinstate
+	   * @param {string} action - the action to take, whether cancel or reinstate - defaults to cancel
+	   */
+	  function cancelOrReinstate(formM, action) {
+	    var title = 'Cancel Form M "' + formM.number + '"'
+	    var text = 'Are you sure you want to cancel "' + formM.number + '"?'
+	    var deletedAt = new Date()
+
+	    if ( action === 'reinstate' ) {
+	      title = 'Reinstate Form M "' + formM.number + '"'
+	      text = 'Are you sure you want to reinstate "' + formM.number + '"?'
+	      deletedAt = null
+	    }
+
+	    confirmationDialog.showDialog( { title: title, text: text, } ).then( function (answer) {
+	      if ( answer ) {
+	        formM.deleted_at = deletedAt
+	        formMObject.saveFormM( formM, vm.detailedFormM ).then( function saveFormMSuccess(data) {
+	          $state.go( 'form_m.add', { formM: data.formM } )
+
+	        }, saveFormMError )
+	      }
+	    } )
 	  }
 	}
 
@@ -423,15 +460,15 @@
 
 	/*jshint camelcase:false*/
 
-	var app = angular.module('add-form-m-form-m-object', [
+	var app = angular.module( 'add-form-m-form-m-object', [
 	  'rootApp',
 	  'lc-issue-service',
 	  'lc-cover-service',
 	  'form-m-service',
 	  'comment-service'
-	])
+	] )
 
-	app.factory('formMObject', formMObject)
+	app.factory( 'formMObject', formMObject )
 
 	formMObject.$inject = [
 	  'LcBidRequest',
@@ -457,65 +494,66 @@
 
 	    self.setBids = function setBids(cb) {
 	      self.existingBids = []
-	      LcBidRequest.getPaginated({mf: self.number}).$promise.then(function (data) {
+	      LcBidRequest.getPaginated( { mf: self.number } ).$promise.then( function (data) {
 
-	        if (data.count) {
+	        if ( data.count ) {
 	          var results = data.results
 
-	          if (results.length) {
-	            results.forEach(function (bid) {
+	          if ( results.length ) {
+	            results.forEach( function (bid) {
 	              var total_allocation = 0
 	              var total_utilization = 0
 
-	              underscore.each(bid.allocations, function (allocation) {
+	              underscore.each( bid.allocations, function (allocation) {
 	                total_allocation += allocation.amount_allocated
 	                total_utilization += allocation.amount_utilized
-	              })
+	              } )
 
 	              bid.total_allocation = total_allocation
 	              bid.total_utilization = total_utilization
 	              bid.unallocated = bid.amount - total_allocation
 
-	              self.existingBids.push(bid)
-	            })
+	              self.existingBids.push( bid )
+	            } )
 
-	            if (cb) cb(self.existingBids)
+	            if ( cb ) cb( self.existingBids )
 	          }
 	        }
 
 	      }, function (xhr) {
-	        console.log('xhr = ', xhr)
-	      })
+	        console.log( 'xhr = ', xhr )
+	      } )
 	    }
 
 	    function setComments(id) {
-	      Comment.query({ct: self.ct_id, pk: id, not_deleted: true}).$promise.then(function (data) {
+	      Comment.query( { ct: self.ct_id, pk: id, not_deleted: true } ).$promise.then( function (data) {
 	        self.comments = data
 
 	      }, function (xhr) {
-	        console.log('xhr = ', xhr)
-	      })
+	        console.log( 'xhr = ', xhr )
+	      } )
 	    }
 
 	    function setIssues() {
-	      LCIssueConcrete.query({form_m_number: self.number}).$promise.then(function (data) {
-	        data.forEach(function (issue) {
-	          if (!issue.closed_at) self.nonClosedIssues.push(issue)
-	          else self.closedIssues.push(issue)
-	        })
-	      })
+	      LCIssueConcrete.query( { form_m_number: self.number } ).$promise.then( function (data) {
+	        data.forEach( function (issue) {
+	          if ( !issue.closed_at ) self.nonClosedIssues.push( issue )
+	          else self.closedIssues.push( issue )
+	        } )
+	      } )
 	    }
 
 	    function setCovers() {
-	      FormMCover.query({form_m_number: self.number}).$promise.then(function (data) {
+	      FormMCover.query( { form_m_number: self.number } ).$promise.then( function (data) {
 	        self.covers = data
 	      }, function (xhr) {
-	        console.log(xhr)
-	      })
+	        console.log( xhr )
+	      } )
 	    }
 
 	    self.init = function init(formMNumber, cb) {
 	      setInitialProperties()
+
 	      function setInitialProperties() {
 	        /*
 	         *@param {angular.form.model} will hold data for bid we wish to create or edit
@@ -608,19 +646,20 @@
 	        self.ct_id = null
 	        self._id = null
 	        self.lc_number = null
+	        self.deleted_at = null
 	      }
 
 	      var formM
 
-	      if (formMNumber) {
-	        FormM.getPaginated({number: formMNumber}).$promise.then(function (data) {
-	          if (data.count) {
+	      if ( formMNumber ) {
+	        FormM.getPaginated( { number: formMNumber } ).$promise.then( function (data) {
+	          if ( data.count ) {
 	            formM = data.results[0]
-	            self.date_received = new Date(formM.date_received)
+	            self.date_received = new Date( formM.date_received )
 	            self.number = formM.number
 	            self.applicant = formM.applicant_data
 	            self.currency = formM.currency_data
-	            self.amount = Number(formM.amount)
+	            self.amount = Number( formM.amount )
 	            self.goods_description = formM.goods_description
 	            self.form_m_issues = formM.form_m_issues
 	            self.url = formM.url
@@ -628,61 +667,62 @@
 	            self.ct_url = formM.ct_url
 	            self._id = formM.id
 	            self.lc_number = formM.lc
+	            self.deleted_at = formM.deleted_at
 
 	            self.setBids()
 	            setIssues()
 	            setCovers()
-	            setComments(self._id)
+	            setComments( self._id )
 	          }
 
-	          cb(self, formM)
-	        })
+	          cb( self, formM )
+	        } )
 
 	      } else {
-	        cb(self)
+	        cb( self )
 	      }
 
 	    }
 
-	    self.formatIssueText = function formatIssueText(text) {return text.replace(/:ISSUE$/i, '')}
+	    self.formatIssueText = function formatIssueText(text) {return text.replace( /:ISSUE$/i, '' )}
 
 	    self.closeIssue = function closeIssue(issue, $index) {
-	      var text = 'Sure you want to close issue:\n"' + self.formatIssueText(issue.issue_text) + '"?'
-	      confirmationDialog.showDialog({title: 'Close issue', text: text}).then(function (answer) {
-	        if (answer) {
-	          issue.closed_at = formatDate(new Date())
-	          LCIssueConcrete.put(issue).$promise.then(issueClosedSuccess, issueClosedError)
+	      var text = 'Sure you want to close issue:\n"' + self.formatIssueText( issue.issue_text ) + '"?'
+	      confirmationDialog.showDialog( { title: 'Close issue', text: text } ).then( function (answer) {
+	        if ( answer ) {
+	          issue.closed_at = formatDate( new Date() )
+	          LCIssueConcrete.put( issue ).$promise.then( issueClosedSuccess, issueClosedError )
 	        }
-	      })
+	      } )
 
 	      function issueClosedSuccess() {
-	        var text = 'Issue closed successfully:\n' + self.formatIssueText(issue.issue_text)
-	        confirmationDialog.showDialog({title: 'Close issue', text: text, infoOnly: true})
-	        self.nonClosedIssues.splice($index, 1)
-	        self.closedIssues.push(issue)
+	        var text = 'Issue closed successfully:\n' + self.formatIssueText( issue.issue_text )
+	        confirmationDialog.showDialog( { title: 'Close issue', text: text, infoOnly: true } )
+	        self.nonClosedIssues.splice( $index, 1 )
+	        self.closedIssues.push( issue )
 	      }
 
-	      function issueClosedError(xhr) {xhrErrorDisplay(xhr)}
+	      function issueClosedError(xhr) {xhrErrorDisplay( xhr )}
 	    }
 
 	    self.createIssuesMessage = function createIssuesMessage(issues) {
-	      issues = self.nonClosedIssues.concat((issues && issues.length) ? issues : [])
+	      issues = self.nonClosedIssues.concat( (issues && issues.length) ? issues : [] )
 
-	      if (!issues.length) return ''
+	      if ( !issues.length ) return ''
 
 	      var issuesText = '\n\n\nPlease note the following issues which must be regularized before the LC ' +
 	        'request can be treated:\n'
 
-	      underscore.each(issues, function (issue, index) {
+	      underscore.each( issues, function (issue, index) {
 	        ++index
-	        issuesText += ('(' + index + ') ' + self.formatIssueText(issue.issue_text) + '\n')
-	      })
+	        issuesText += ('(' + index + ') ' + self.formatIssueText( issue.issue_text ) + '\n')
+	      } )
 
 	      return issuesText
 	    }
 
 	    self.createFormMMessage = function createFormMMessage() {
-	      var amount = $filter('number')(self.amount, 2)
+	      var amount = $filter( 'number' )( self.amount, 2 )
 	      var ref = self.lc_number ? self.lc_number + '/' : ''
 	      var header = self.applicant.name + ' - ' + ref + self.number + ' - ' + self.currency.code + ' ' + amount
 	      return header + '\n\nForm M Number : ' + self.number + '\n' +
@@ -692,11 +732,11 @@
 	    }
 
 	    self.showSummary = function showSummary() {
-	      confirmationDialog.showDialog({
+	      confirmationDialog.showDialog( {
 	        title: self.number,
 	        text: self.createFormMMessage() + self.createIssuesMessage(),
 	        infoOnly: true
-	      })
+	      } )
 	    }
 
 	    /**
@@ -708,71 +748,72 @@
 	    self.getFreshIssues = function getFreshIssues(text) {
 	      var _ids = []
 
-	      self.selectedIssues.forEach(function (issue) {
-	        _ids.push(issue.id)
-	      })
+	      self.selectedIssues.forEach( function (issue) {
+	        _ids.push( issue.id )
+	      } )
 
 	      var x = []
-	      var URL_REGEXP = new RegExp(".+/(\\d+)$")
+	      var URL_REGEXP = new RegExp( ".+/(\\d+)$" )
 
-	      x.concat(self.nonClosedIssues).concat(self.closedIssues).forEach(function (issue) {
-	        _ids.push(URL_REGEXP.exec(issue.issue)[1])
-	      })
+	      x.concat( self.nonClosedIssues ).concat( self.closedIssues ).forEach( function (issue) {
+	        _ids.push( URL_REGEXP.exec( issue.issue )[1] )
+	      } )
 
-	      return getTypeAheadLCIssue({text: text, exclude_issue_ids: _ids.join(',')})
+	      return getTypeAheadLCIssue( { text: text, exclude_issue_ids: _ids.join( ',' ) } )
 	    }
 
 	    self.saveFormM = function saveFormM(formM, detailedFormM) {
 	      var formMToSave = {
 	        applicant: formM.applicant.url,
 	        currency: formM.currency.url,
-	        date_received: formatDate(formM.date_received),
+	        date_received: formatDate( formM.date_received ),
+	        deleted_at: formatDate( formM.deleted_at ),
 	        amount: formM.amount,
 	        number: formM.number,
 	        goods_description: formM.goods_description
 	      }
 
-	      if (formM.lcRef.lc_number) formMToSave.lc = formM.lcRef.lc_number
+	      if ( formM.lcRef.lc_number ) formMToSave.lc = formM.lcRef.lc_number
 
-	      if (formM.bid.amount && formM.bid.goods_description) {
+	      if ( formM.bid.amount && formM.bid.goods_description ) {
 	        formMToSave.goods_description = self.goods_description = formM.bid.goods_description
-	        formMToSave.bid = {amount: Number(formM.bid.amount), maturity: formatDate(formM.bid.maturity)}
+	        formMToSave.bid = { amount: Number( formM.bid.amount ), maturity: formatDate( formM.bid.maturity ) }
 	      }
 
-	      if (formM.selectedIssues.length) formMToSave.issues = formM.selectedIssues
+	      if ( formM.selectedIssues.length ) formMToSave.issues = formM.selectedIssues
 
-	      if (!underscore.isEmpty(formM.cover)) {
-	        formMToSave.cover = {amount: formM.cover.amount, cover_type: formM.cover.cover_type[0]}
+	      if ( !underscore.isEmpty( formM.cover ) ) {
+	        formMToSave.cover = { amount: formM.cover.amount, cover_type: formM.cover.cover_type[0] }
 	      }
 
 	      var deferred = $q.defer()
 
-	      if (!detailedFormM) new FormM(formMToSave).$save(formMSavedSuccess, formMSavedError)
+	      if ( !detailedFormM ) new FormM( formMToSave ).$save( formMSavedSuccess, formMSavedError )
 
 	      else {
 	        //if we did not edit the main form M i.e detailedFormM = formM, then there is no need for database update
-	        if (underscore.all(self.compareFormMs(detailedFormM, formM))) {
-	          if (!formM.lcRef.lc_number) formMToSave.do_not_update = 'do_not_update'
+	        if ( underscore.all( self.compareFormMs( detailedFormM, formM ) ) ) {
+	          if ( !formM.lcRef.lc_number ) formMToSave.do_not_update = 'do_not_update'
 	          formMToSave.url = formM.url //needed for bid, cover, issues and comments
 	        }
 
 	        formMToSave.id = detailedFormM.id
-	        new FormM(formMToSave).$put(formMSavedSuccess, formMSavedError)
+	        new FormM( formMToSave ).$put( formMSavedSuccess, formMSavedError )
 	      }
 
 	      function formMSavedSuccess(data) {
-	        var summary = self.createFormMMessage() + self.createIssuesMessage(data.new_issues)
+	        var summary = self.createFormMMessage() + self.createIssuesMessage( data.new_issues )
 
-	        if (formMToSave.bid) {
-	          summary += '\n\nBid Amount     : ' + formM.currency.code + ' ' + $filter('number')(formMToSave.bid.amount, 2)
+	        if ( formMToSave.bid ) {
+	          summary += '\n\nBid Amount     : ' + formM.currency.code + ' ' + $filter( 'number' )( formMToSave.bid.amount, 2 )
 	        }
 
 	        delete data.new_issues
-	        deferred.resolve({showSummary: summary, formM: data.number})
+	        deferred.resolve( { showSummary: summary, formM: data.number } )
 	      }
 
 	      function formMSavedError(xhr) {
-	        deferred.reject(xhr)
+	        deferred.reject( xhr )
 	      }
 
 	      return deferred.promise
@@ -780,7 +821,7 @@
 
 	    self.editFormM = function editFormM(formM) {
 	      formM.id = self._id
-	      return FormM.put(formM).$promise
+	      return FormM.put( formM ).$promise
 	    }
 
 	    /**
@@ -794,39 +835,40 @@
 	     * @returns {{}} - an object of form Ms attributes' values equalities
 	     */
 	    self.compareFormMs = function compareFormMs(pristineFormM, otherFormM) {
-	      if (!pristineFormM) return {all: false}
+	      if ( !pristineFormM ) return { all: false }
 
 	      var formM = otherFormM ? otherFormM : self
 
 	      return {
 	        number: formM.number && formM.number === pristineFormM.number,
-	        date_received: angular.equals(formM.date_received, new Date(pristineFormM.date_received)),
-	        amount: self.amount && formM.amount === Number(pristineFormM.amount),
+	        date_received: angular.equals( formM.date_received, new Date( pristineFormM.date_received ) ),
+	        amount: self.amount && formM.amount === Number( pristineFormM.amount ),
 	        currency: formM.currency && (formM.currency.code === pristineFormM.currency_data.code),
 	        applicant: formM.applicant && (formM.applicant.name === pristineFormM.applicant_data.name),
-	        goods_description: formM.goods_description === pristineFormM.goods_description
+	        goods_description: formM.goods_description === pristineFormM.goods_description,
+	        deleted_at: formM.deleted_at === pristineFormM.deleted_at,
 	      }
 	    }
 
 	    self.addComment = function addComment(text) {
 	      var deferred = $q.defer()
 
-	      Comment.save({content_type: self.ct_url, object_id: self._id, text: text})
-	        .$promise.then(function commentFormMSaveSuccess(data) {
+	      Comment.save( { content_type: self.ct_url, object_id: self._id, text: text } )
+	        .$promise.then( function commentFormMSaveSuccess(data) {
 	        var text = data.text
 
-	        confirmationDialog.showDialog({
-	          title: 'Comment successfully created "' + text.slice(0, confirmationTitleLength) + '"',
+	        confirmationDialog.showDialog( {
+	          title: 'Comment successfully created "' + text.slice( 0, confirmationTitleLength ) + '"',
 	          text: text,
 	          infoOnly: true
-	        })
+	        } )
 
-	        self.comments.push(data)
-	        deferred.resolve(data)
+	        self.comments.push( data )
+	        deferred.resolve( data )
 
 	      }, function (xhr) {
-	        xhrErrorDisplay(xhr)
-	      })
+	        xhrErrorDisplay( xhr )
+	      } )
 
 	      return deferred.promise
 	    }
@@ -835,35 +877,35 @@
 	      var deferred = $q.defer()
 	      var text = comment.text
 
-	      confirmationDialog.showDialog({
-	        title: 'Close comment "' + text.slice(0, confirmationTitleLength) + '"',
+	      confirmationDialog.showDialog( {
+	        title: 'Close comment "' + text.slice( 0, confirmationTitleLength ) + '"',
 	        text: 'Sure you want to close comment:\n===============================\n' + text
-	      }).then(function (answer) {
-	        if (answer) {
+	      } ).then( function (answer) {
+	        if ( answer ) {
 	          comment.deleted_at = (new Date()).toJSON()
 
-	          Comment.put(comment).$promise.then(function formMCommentCloseSuccess(data) {
-	            confirmationDialog.showDialog({
-	              title: 'Comment successfully closed "' + text.slice(0, confirmationTitleLength) + '"',
+	          Comment.put( comment ).$promise.then( function formMCommentCloseSuccess(data) {
+	            confirmationDialog.showDialog( {
+	              title: 'Comment successfully closed "' + text.slice( 0, confirmationTitleLength ) + '"',
 	              text: text,
 	              infoOnly: true
-	            })
+	            } )
 
-	            deferred.resolve(data)
+	            deferred.resolve( data )
 	            var comments = []
 
-	            self.comments.forEach(function (comment) {
-	              if (comment.id === data.id) return
-	              comments.push(comment)
-	            })
+	            self.comments.forEach( function (comment) {
+	              if ( comment.id === data.id ) return
+	              comments.push( comment )
+	            } )
 
 	            self.comments = comments
 
 	          }, function (xhr) {
-	            xhrErrorDisplay(xhr)
-	          })
+	            xhrErrorDisplay( xhr )
+	          } )
 	        }
-	      })
+	      } )
 
 	      return deferred.promise
 	    }
@@ -871,26 +913,26 @@
 	    self.editComment = function editComment(text, comment) {
 	      var deferred = $q.defer()
 
-	      confirmationDialog.showDialog({
-	        title: 'Edit comment "' + comment.text.slice(0, confirmationTitleLength) + '"',
+	      confirmationDialog.showDialog( {
+	        title: 'Edit comment "' + comment.text.slice( 0, confirmationTitleLength ) + '"',
 	        text: 'Are you sure you want to edit comment:\n======================================\n' + comment.text
 
-	      }).then(function (answer) {
-	        if (answer) {
+	      } ).then( function (answer) {
+	        if ( answer ) {
 	          comment.text = text
 
-	          Comment.put(comment).$promise.then(function formMCommentEditedSuccess(data) {
-	            confirmationDialog.showDialog({
-	              title: 'Comment successfully changed "' + text.slice(0, confirmationTitleLength) + '"',
+	          Comment.put( comment ).$promise.then( function formMCommentEditedSuccess(data) {
+	            confirmationDialog.showDialog( {
+	              title: 'Comment successfully changed "' + text.slice( 0, confirmationTitleLength ) + '"',
 	              text: text,
 	              infoOnly: true
-	            })
+	            } )
 
-	            deferred.resolve(data)
-	            var comments = angular.copy(self.comments)
+	            deferred.resolve( data )
+	            var comments = angular.copy( self.comments )
 
-	            for (var index = 0, len = comments.length; index < len; index++) {
-	              if (data.id === comments[index].id) {
+	            for ( var index = 0, len = comments.length; index < len; index++ ) {
+	              if ( data.id === comments[index].id ) {
 	                comments[index] = data
 	                break
 	              }
@@ -899,10 +941,10 @@
 	            self.comments = comments
 
 	          }, function (xhr) {
-	            xhrErrorDisplay(xhr)
-	          })
+	            xhrErrorDisplay( xhr )
+	          } )
 	        }
-	      })
+	      } )
 
 	      return deferred.promise
 	    }
@@ -920,19 +962,19 @@
 
 	/*jshint camelcase:false*/
 
-	var app = angular.module('lc-issue', [
+	var app = angular.module( 'lc-issue', [
 	  'rootApp',
 	  'add-form-m-form-m-object'
-	])
+	] )
 
-	app.directive('lcIssue', lcIssueDirective)
+	app.directive( 'lcIssue', lcIssueDirective )
 
 	lcIssueDirective.$inject = []
 
 	function lcIssueDirective() {
 	  return {
 	    restrict: 'A',
-	    templateUrl: __webpack_require__(5).buildUrl('form-m/add-form-m/lc-issue/lc-issue.html'),
+	    templateUrl: __webpack_require__( 5 ).buildUrl( 'form-m/add-form-m/lc-issue/lc-issue.html' ),
 	    scope: true,
 	    bindToController: {
 	      onIssuesChanged: '&'
@@ -941,7 +983,7 @@
 	  }
 	}
 
-	app.controller('LcIssueDirectiveController', LcIssueDirectiveController)
+	app.controller( 'LcIssueDirectiveController', LcIssueDirectiveController )
 
 	LcIssueDirectiveController.$inject = [
 	  '$scope',
@@ -961,55 +1003,60 @@
 	    formMObject.selectedIssues = []
 	    formMObject.issue = null
 
-	    if (form) resetForm2(form, [
-	      {form: form, elements: ['issue']}
-	    ])
+	    if ( form ) resetForm2( form, [
+	      { form: form, elements: ['issue'] }
+	    ] )
 	  }
 
 	  vm.issueSelected = function issueSelected($item, $model) {
-	    formMObject.selectedIssues.push($model)
+	    formMObject.selectedIssues.push( $model )
 	    formMObject.issue = null
-	    clearFormField($scope.issuesForm, 'issue')
+	    clearFormField( $scope.issuesForm, 'issue' )
 	  }
 
 	  vm.deleteIssue = function deleteIssue(index) {
-	    vm.formM.selectedIssues.splice(index, 1)
+	    vm.formM.selectedIssues.splice( index, 1 )
 	  }
 
 	  vm.toggleShow = function toggleShow(form) {
+	    if ( vm.formM.deleted_at ) {
+	      formMObject.showIssueForm = false
+	      return
+	    }
+
 	    formMObject.showIssueForm = vm.formM.amount && vm.formM.number && !formMObject.showIssueForm
 
-	    if (!formMObject.showIssueForm) init(form)
+	    if ( !formMObject.showIssueForm ) init( form )
 	    else vm.title = 'Dismiss'
 	  }
 
-	  $scope.$watch(function getFormM() {return vm.formM}, function (formM) {
+	  $scope.$watch( function getFormM() {return vm.formM}, function (formM) {
 	    vm.formM.issuesForm = $scope.issuesForm
 
-	    if (formM) {
-	      if (!formM.amount || !formM.number) {
-	        init(formMObject.issueForm)
+	    if ( formM ) {
+	      if ( !formM.amount || !formM.number ) {
+	        init( formMObject.issueForm )
 	      }
 	    }
-	  }, true)
+	  }, true )
 
-	  $scope.$watch(function getShowContainer() {return formMObject.showIssueForm}, function onUpdateShowContainer() {
+	  $scope.$watch( function getShowContainer() {return formMObject.showIssueForm}, function onUpdateShowContainer() {
 	    $scope.issuesForm.issue.$validate()
-	  })
+	  } )
 	}
 
-	app.directive('validateIssues', function validateIssues() {
+	app.directive( 'validateIssues', function validateIssues() {
 	  return {
 	    restrict: 'A',
 	    require: 'ngModel',
 	    link: function ($scope, elm, attributes, ctrl) {
 	      var vm = $scope.lcIssue
 	      ctrl.$validators.issues = function () {
-	        return !vm.formM.showIssueForm || Boolean(vm.formM.selectedIssues.length)
+	        return !vm.formM.showIssueForm || Boolean( vm.formM.selectedIssues.length )
 	      }
 	    }
 	  }
-	})
+	} )
 
 
 /***/ },
@@ -1105,21 +1152,23 @@
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/*jshint camelcase:false*/
+
 	"use strict";
 
-	var app = angular.module('lc-cover', [
+	var app = angular.module( 'lc-cover', [
 	  'rootApp',
 	  'add-form-m-form-m-object'
-	])
+	] )
 
-	app.directive('lcCover', lcIssueDirective)
+	app.directive( 'lcCover', lcIssueDirective )
 
 	lcIssueDirective.$inject = []
 
 	function lcIssueDirective() {
 	  return {
 	    restrict: 'A',
-	    templateUrl: __webpack_require__(5).buildUrl('form-m/add-form-m/lc-cover/lc-cover.html'),
+	    templateUrl: __webpack_require__( 5 ).buildUrl( 'form-m/add-form-m/lc-cover/lc-cover.html' ),
 	    scope: true,
 	    bindToController: {
 	      formM: '=mfContext',
@@ -1130,7 +1179,7 @@
 	  }
 	}
 
-	app.controller('LcCoverDirectiveController', LcCoverDirectiveController)
+	app.controller( 'LcCoverDirectiveController', LcCoverDirectiveController )
 
 	LcCoverDirectiveController.$inject = [
 	  '$scope',
@@ -1151,28 +1200,33 @@
 	    vm.coverTypes = null
 	    formMObject.cover = {}
 
-	    if (form) {
+	    if ( form ) {
 	      form.$setPristine()
 	      form.$setUntouched()
 	    }
 	  }
 
 	  vm.isValid = function isValid(name, validity) {
-	    return formFieldIsValid($scope, 'coverForm', name, validity)
+	    return formFieldIsValid( $scope, 'coverForm', name, validity )
 	  }
 
 	  vm.amountGetterSetter = function (val) {
-	    if (arguments.length) {
-	      if (!/[\d,\.]+/.test(val)) formMObject.cover.amount = null
-	      else formMObject.cover.amount = Number(val.replace(/,/g, ''))
-	    } else return formMObject.cover.amount ? $filter('number')(formMObject.cover.amount, 2) : ''
+	    if ( arguments.length ) {
+	      if ( !/[\d,\.]+/.test( val ) ) formMObject.cover.amount = null
+	      else formMObject.cover.amount = Number( val.replace( /,/g, '' ) )
+	    } else return formMObject.cover.amount ? $filter( 'number' )( formMObject.cover.amount, 2 ) : ''
 	  }
 
 	  vm.toggleShow = function toggleShow(form) {
+	    if ( vm.formM.deleted_at ) {
+	      formMObject.showCoverForm = false
+	      return
+	    }
+
 	    formMObject.showCoverForm = vm.formM.amount && vm.formM.number && !formMObject.showCoverForm
 
-	    if (!formMObject.showCoverForm) {
-	      init(form)
+	    if ( !formMObject.showCoverForm ) {
+	      init( form )
 	    }
 	    else {
 	      vm.title = 'Dismiss'
@@ -1181,14 +1235,14 @@
 	    }
 	  }
 
-	  $scope.$watch(function getFormM() {return vm.formM}, function (formM) {
+	  $scope.$watch( function getFormM() {return vm.formM}, function (formM) {
 	    formMObject.coverForm = $scope.coverForm
-	    if (formM) {
-	      if (!formM.amount || !formM.number) {
-	        init(formMObject.coverForm)
+	    if ( formM ) {
+	      if ( !formM.amount || !formM.number ) {
+	        init( formMObject.coverForm )
 	      }
 	    }
-	  }, true)
+	  }, true )
 	}
 
 
@@ -1200,22 +1254,22 @@
 
 	/*jshint camelcase:false*/
 
-	var app = angular.module('lc-bid', ['add-fx-allocation', 'lc-bid-request'])
+	var app = angular.module( 'lc-bid', ['add-fx-allocation', 'lc-bid-request'] )
 
-	app.directive('lcBid', lcBidDirective)
+	app.directive( 'lcBid', lcBidDirective )
 
 	lcBidDirective.$inject = []
 
 	function lcBidDirective() {
 	  return {
 	    restrict: 'A',
-	    templateUrl: __webpack_require__(5).buildUrl('form-m/add-form-m/lc-bid/lc-bid.html'),
+	    templateUrl: __webpack_require__( 5 ).buildUrl( 'form-m/add-form-m/lc-bid/lc-bid.html' ),
 	    scope: true,
 	    controller: 'LcBidDirectiveController as lcBid'
 	  }
 	}
 
-	app.controller('LcBidDirectiveController', LcBidDirectiveController)
+	app.controller( 'LcBidDirectiveController', LcBidDirectiveController )
 
 	LcBidDirectiveController.$inject = [
 	  '$scope',
@@ -1233,7 +1287,7 @@
 	]
 
 	function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore, LcBidRequest, xhrErrorDisplay,
-	                                  confirmationDialog, formMObject, resetForm2, moment, toISODate, ViewBidDetail) {
+	  confirmationDialog, formMObject, resetForm2, moment, toISODate, ViewBidDetail) {
 	  var vm = this
 	  vm.formM = formMObject
 	  var title = 'New Bid Request'
@@ -1253,34 +1307,39 @@
 	    formMObject.bid = {}
 	    vm.showAllocateFx = false
 
-	    if (form) {
+	    if ( form ) {
 	      var bidFormCtrlNames = ['bidMaturityDate', 'bidAmount', 'bidGoodsDescription']
-	      resetForm2(form, [{form: form, elements: bidFormCtrlNames}])
+	      resetForm2( form, [{ form: form, elements: bidFormCtrlNames }] )
 	    }
 	  }
 
 	  vm.openDatePicker = function openDatePicker(prop) {
-	    underscore.each(vm.datePickerIsOpen, function (val, key) {
+	    underscore.each( vm.datePickerIsOpen, function (val, key) {
 	      vm.datePickerIsOpen[key] = prop === key
-	    })
+	    } )
 	  }
 
 	  vm.isValid = function (name, validity) {
-	    return formFieldIsValid($scope, 'bidForm', name, validity)
+	    return formFieldIsValid( $scope, 'bidForm', name, validity )
 	  }
 
 	  vm.amountGetterSetter = function (val) {
-	    if (arguments.length) {
-	      if (!/[\d,\.]+/.test(val)) vm.formM.bid.amount = null
-	      else vm.formM.bid.amount = Number(val.replace(/,/g, ''))
+	    if ( arguments.length ) {
+	      if ( !/[\d,\.]+/.test( val ) ) vm.formM.bid.amount = null
+	      else vm.formM.bid.amount = Number( val.replace( /,/g, '' ) )
 
-	    } else return vm.formM.bid.amount ? $filter('number')(vm.formM.bid.amount, 2) : null
+	    } else return vm.formM.bid.amount ? $filter( 'number' )( vm.formM.bid.amount, 2 ) : null
 	  }
 
 	  vm.toggleShow = function toggleShow(form) {
+	    if ( vm.formM.deleted_at ) {
+	      vm.formM.showBidForm = false
+	      return
+	    }
+
 	    vm.formM.showBidForm = vm.formM.amount && vm.formM.number && !vm.formM.showBidForm
 
-	    if (!vm.formM.showBidForm) init(form)
+	    if ( !vm.formM.showBidForm ) init( form )
 	    else {
 	      vm.showAllocateFx = false
 	      vm.title = 'Dismiss'
@@ -1290,36 +1349,36 @@
 	  }
 
 	  vm.editBidInvalid = function editBidInvalid(form) {
-	    if (underscore.isEmpty(vm.bidToEdit)) return true
+	    if ( underscore.isEmpty( vm.bidToEdit ) ) return true
 
-	    if (form.$invalid) return true
+	    if ( form.$invalid ) return true
 
-	    return underscore.all(bidNotModified())
+	    return underscore.all( bidNotModified() )
 	  }
 
 	  function copyBidForEdit() {
-	    vm.bidToEdit.amount = Number(vm.bidToEdit.amount)
+	    vm.bidToEdit.amount = Number( vm.bidToEdit.amount )
 	    vm.formM.bid.amount = vm.bidToEdit.amount
 	    vm.formM.bid.downloaded = vm.bidToEdit.downloaded
-	    vm.bidToEdit.created_at = new Date(vm.bidToEdit.created_at)
+	    vm.bidToEdit.created_at = new Date( vm.bidToEdit.created_at )
 	    vm.formM.bid.created_at = vm.bidToEdit.created_at
-	    vm.bidToEdit.requested_at = vm.bidToEdit.requested_at ? new Date(vm.bidToEdit.requested_at) : null
+	    vm.bidToEdit.requested_at = vm.bidToEdit.requested_at ? new Date( vm.bidToEdit.requested_at ) : null
 	    vm.formM.bid.requested_at = vm.bidToEdit.requested_at
-	    vm.bidToEdit.maturity = vm.bidToEdit.maturity ? new Date(vm.bidToEdit.maturity) : null
+	    vm.bidToEdit.maturity = vm.bidToEdit.maturity ? new Date( vm.bidToEdit.maturity ) : null
 	    vm.formM.bid.maturity = vm.bidToEdit.maturity
 	  }
 
 	  function toHumanDate(dtObj) {
-	    return dtObj ? moment(dtObj).format('DD-MMM-YYYY') : null
+	    return dtObj ? moment( dtObj ).format( 'DD-MMM-YYYY' ) : null
 	  }
 
 	  function getSelectedBids(selections) {
 	    var index, result = []
 
-	    for (index in selections) {
-	      if (selections[index]) {
-	        var bid = getBidFromId(index)
-	        if (bid) result.push(bid)
+	    for ( index in selections ) {
+	      if ( selections[index] ) {
+	        var bid = getBidFromId( index )
+	        if ( bid ) result.push( bid )
 	      }
 	    }
 
@@ -1327,44 +1386,44 @@
 	  }
 
 	  vm.onEditBid = function onEditBid(selectedBids, form) {
-	    var bids = getSelectedBids(selectedBids)
-	    if (bids.length !== 1) return
+	    var bids = getSelectedBids( selectedBids )
+	    if ( bids.length !== 1 ) return
 	    form.$setPristine()
 	    vm.formM.showEditBid = true
 	    vm.formM.showBidForm = false
 	    vm.toggleShow()
-	    vm.bidToEdit = angular.copy(bids[0])
+	    vm.bidToEdit = angular.copy( bids[0] )
 	    copyBidForEdit()
 	  }
 
 	  vm.trashBid = function trashBid(selectedBids) {
-	    var bids = getSelectedBids(selectedBids)
-	    if (bids.length !== 1) return
+	    var bids = getSelectedBids( selectedBids )
+	    if ( bids.length !== 1 ) return
 	    init()
 	    var bid = bids[0]
 	    var text = '\n' +
 	      '\nApplicant  : ' + bid.applicant +
 	      '\nForm M     : ' + bid.form_m_number +
-	      '\nBid Amount : ' + bid.currency + ' ' + $filter('number')(bid.amount, 2)
+	      '\nBid Amount : ' + bid.currency + ' ' + $filter( 'number' )( bid.amount, 2 )
 
 	    var mf = '"' + bid.form_m_number + '"'
 
-	    confirmationDialog.showDialog({
+	    confirmationDialog.showDialog( {
 	      text: 'Sure you want to delete bid:' + text, title: 'Delete bid for ' + mf
-	    }).then(function (answer) {
-	      if (answer) {
-	        LcBidRequest.delete(bid).$promise.then(bidDeleteSuccess, function bidDeleteFailure(xhr) {
-	          xhrErrorDisplay(xhr)
-	        })
+	    } ).then( function (answer) {
+	      if ( answer ) {
+	        LcBidRequest.delete( bid ).$promise.then( bidDeleteSuccess, function bidDeleteFailure(xhr) {
+	          xhrErrorDisplay( xhr )
+	        } )
 	      }
-	    })
+	    } )
 
 	    function bidDeleteSuccess() {
-	      confirmationDialog.showDialog({
+	      confirmationDialog.showDialog( {
 	        text: 'Bid delete successfully:' + text,
 	        title: 'Bid for ' + mf + ' deleted successfully',
 	        infoOnly: true
-	      })
+	      } )
 	      formMObject.setBids()
 	      vm.selectedBids = {}
 	    }
@@ -1374,37 +1433,37 @@
 	    var text = '\n\nForm M:           ' + vm.bidToEdit.form_m_number
 	    var ccy = formMObject.currency.code
 
-	    if (!bidIsNotModified.amount) {
+	    if ( !bidIsNotModified.amount ) {
 	      text += '\nBid Amount' +
-	        '\n  before edit:    ' + ccy + $filter('number')(vm.bidToEdit.amount, 2) +
-	        '\n  after edit:     ' + ccy + $filter('number')(formMObject.bid.amount, 2)
+	        '\n  before edit:    ' + ccy + $filter( 'number' )( vm.bidToEdit.amount, 2 ) +
+	        '\n  after edit:     ' + ccy + $filter( 'number' )( formMObject.bid.amount, 2 )
 	    }
 
-	    if (!bidIsNotModified.goods_description) {
+	    if ( !bidIsNotModified.goods_description ) {
 	      text += '\nGoods description' +
 	        '\n  before edit:    ' + vm.bidToEdit.goods_description +
 	        '\n  after edit:     ' + formMObject.bid.goods_description
 	    }
 
-	    if (!bidIsNotModified.maturity) {
+	    if ( !bidIsNotModified.maturity ) {
 	      text += '\nMaturity' +
-	        '\n  before edit:    ' + toHumanDate(vm.bidToEdit.maturity) +
-	        '\n  after edit:     ' + toHumanDate(formMObject.bid.maturity)
+	        '\n  before edit:    ' + toHumanDate( vm.bidToEdit.maturity ) +
+	        '\n  after edit:     ' + toHumanDate( formMObject.bid.maturity )
 	    }
 
-	    if (!bidIsNotModified.created_at) {
+	    if ( !bidIsNotModified.created_at ) {
 	      text += '\nDate created' +
-	        '\n  before edit:    ' + toHumanDate(vm.bidToEdit.created_at) +
-	        '\n  after edit:     ' + toHumanDate(formMObject.bid.created_at)
+	        '\n  before edit:    ' + toHumanDate( vm.bidToEdit.created_at ) +
+	        '\n  after edit:     ' + toHumanDate( formMObject.bid.created_at )
 	    }
 
-	    if (!bidIsNotModified.requested_at) {
+	    if ( !bidIsNotModified.requested_at ) {
 	      text += '\nDate requested' +
-	        '\n  before edit:    ' + toHumanDate(vm.bidToEdit.requested_at) +
-	        '\n  after edit:     ' + toHumanDate(formMObject.bid.requested_at)
+	        '\n  before edit:    ' + toHumanDate( vm.bidToEdit.requested_at ) +
+	        '\n  after edit:     ' + toHumanDate( formMObject.bid.requested_at )
 	    }
 
-	    if (!bidIsNotModified.downloaded) {
+	    if ( !bidIsNotModified.downloaded ) {
 	      text += '\nDownloaded' +
 	        '\n  before edit:    ' + vm.bidToEdit.downloaded +
 	        '\n  after edit:     ' + vm.formM.bid.downloaded
@@ -1416,51 +1475,51 @@
 	  vm.editBid = function editBid() {
 	    var title = 'Edit bid "' + vm.bidToEdit.form_m_number + '"'
 	    var bidIsNotModified = bidNotModified()
-	    var text = createEditBidMessage(bidIsNotModified)
+	    var text = createEditBidMessage( bidIsNotModified )
 
 
-	    confirmationDialog.showDialog({
+	    confirmationDialog.showDialog( {
 	      title: title,
 	      text: 'Are you sure you want to edit Bid:' + text
-	    }).then(function (answer) {
-	      if (answer) doEdit()
+	    } ).then( function (answer) {
+	      if ( answer ) doEdit()
 	      else copyBidForEdit()
-	    })
+	    } )
 
 	    function doEdit() {
-	      var bid = angular.copy(vm.bidToEdit)
+	      var bid = angular.copy( vm.bidToEdit )
 
-	      if (!bidIsNotModified.goods_description) {
+	      if ( !bidIsNotModified.goods_description ) {
 	        bid.update_goods_description = true
 	        formMObject.goods_description = formMObject.bid.goods_description
 	      }
 
-	      underscore.each(formMObject.bid, function (val, key) {
-	        if (key === 'created_at' || key === 'requested_at' || key === 'maturity') val = toISODate(val)
+	      underscore.each( formMObject.bid, function (val, key) {
+	        if ( key === 'created_at' || key === 'requested_at' || key === 'maturity' ) val = toISODate( val )
 	        bid[key] = val
-	      })
+	      } )
 
-	      LcBidRequest.put(bid).$promise.then(function () {
-	        confirmationDialog.showDialog({title: title, text: 'Edit successful: ' + text, infoOnly: true})
+	      LcBidRequest.put( bid ).$promise.then( function () {
+	        confirmationDialog.showDialog( { title: title, text: 'Edit successful: ' + text, infoOnly: true } )
 	        init()
-	        formMObject.setBids(bidsNewlySetCb)
+	        formMObject.setBids( bidsNewlySetCb )
 
 	      }, function (xhr) {
-	        xhrErrorDisplay(xhr)
-	      })
+	        xhrErrorDisplay( xhr )
+	      } )
 	    }
 	  }
 
 	  vm.viewBidDetail = function (selectedBids) {
-	    var bids = getSelectedBids(selectedBids)
-	    if (bids.length !== 1) return
+	    var bids = getSelectedBids( selectedBids )
+	    if ( bids.length !== 1 ) return
 	    init()
-	    ViewBidDetail.showDialog({bid: bids[0]})
+	    ViewBidDetail.showDialog( { bid: bids[0] } )
 	  }
 
 	  vm.allocateFx = function allocateFx(selectedBids) {
-	    var bids = getSelectedBids(selectedBids)
-	    if (bids.length !== 1) return
+	    var bids = getSelectedBids( selectedBids )
+	    if ( bids.length !== 1 ) return
 	    var bid = bids[0]
 	    vm.formM.showBidForm = false
 	    vm.title = title
@@ -1470,25 +1529,25 @@
 	      content_type: bid.ct_url,
 	      object_id: bid.id
 	    }
-	    vm.allocationTitle = 'bid amount: ' + $filter('number')(bid.amount, 2)
+	    vm.allocationTitle = 'bid amount: ' + $filter( 'number' )( bid.amount, 2 )
 	    vm.showAllocateFx = true
 	  }
 
 	  vm.onFxAllocated = function onFxAllocated(result) {
 	    function getAmount(val) {
-	      return result.currency_data.code + ' ' + $filter('number')(val, 2)
+	      return result.currency_data.code + ' ' + $filter( 'number' )( val, 2 )
 	    }
 
 	    var text = '' +
 	      '\nDeal number     : ' + result.deal_number +
-	      '\nDeal date       : ' + $filter('date')(result.allocated_on, 'dd-MMM-yyyy') +
-	      '\nAmount allocated: ' + getAmount(result.amount_allocated) +
-	      '\nAmount utilized : ' + getAmount(result.amount_utilized) +
-	      '\nDate utilized   : ' + $filter('date')(result.utilized_on, 'dd-MMM-yyyy')
+	      '\nDeal date       : ' + $filter( 'date' )( result.allocated_on, 'dd-MMM-yyyy' ) +
+	      '\nAmount allocated: ' + getAmount( result.amount_allocated ) +
+	      '\nAmount utilized : ' + getAmount( result.amount_utilized ) +
+	      '\nDate utilized   : ' + $filter( 'date' )( result.utilized_on, 'dd-MMM-yyyy' )
 
-	    confirmationDialog.showDialog({title: 'Allocation success', text: text, infoOnly: true})
+	    confirmationDialog.showDialog( { title: 'Allocation success', text: text, infoOnly: true } )
 	    init()
-	    formMObject.setBids(bidsNewlySetCb)
+	    formMObject.setBids( bidsNewlySetCb )
 	  }
 
 	  vm.dismissShowAllocateFxForm = function dismissShowAllocateFxForm() {
@@ -1500,17 +1559,17 @@
 	      amount: vm.bidToEdit.amount === formMObject.bid.amount,
 	      goods_description: vm.bidToEdit.goods_description === formMObject.bid.goods_description,
 	      downloaded: vm.bidToEdit.downloaded === formMObject.bid.downloaded,
-	      created_at: angular.equals(vm.bidToEdit.created_at, formMObject.bid.created_at),
-	      requested_at: angular.equals(vm.bidToEdit.requested_at, formMObject.bid.requested_at),
-	      maturity: angular.equals(vm.bidToEdit.maturity, formMObject.bid.maturity)
+	      created_at: angular.equals( vm.bidToEdit.created_at, formMObject.bid.created_at ),
+	      requested_at: angular.equals( vm.bidToEdit.requested_at, formMObject.bid.requested_at ),
+	      maturity: angular.equals( vm.bidToEdit.maturity, formMObject.bid.maturity )
 	    }
 	  }
 
 	  function getBidFromId(id) {
-	    for (var bidIndex = 0; bidIndex < vm.formM.existingBids.length; bidIndex++) {
+	    for ( var bidIndex = 0; bidIndex < vm.formM.existingBids.length; bidIndex++ ) {
 	      var bid = vm.formM.existingBids[bidIndex]
 
-	      if (bid.id === +id) return bid
+	      if ( bid.id === +id ) return bid
 	    }
 
 	    return null
@@ -1519,36 +1578,36 @@
 	  function checkBids(selectedBids) {
 	    vm.selectedBidsLen = 0
 
-	    underscore.each(selectedBids, function (checked, id) {
-	      if (checked) ++vm.selectedBidsLen
+	    underscore.each( selectedBids, function (checked, id) {
+	      if ( checked ) ++vm.selectedBidsLen
 
-	      var bid = getBidFromId(id)
-	      if (bid) bid.checked = checked
+	      var bid = getBidFromId( id )
+	      if ( bid ) bid.checked = checked
 
-	    })
+	    } )
 
-	    if (formMObject.existingBids.length && !vm.selectedBidsLen) init()
+	    if ( formMObject.existingBids.length && !vm.selectedBidsLen ) init()
 	  }
 
 	  function bidsNewlySetCb() {
-	    checkBids(vm.selectedBids)
+	    checkBids( vm.selectedBids )
 	  }
 
-	  $scope.$watch(function getFormMObject() {return formMObject}, function onFormMObjectChanged(formM) {
+	  $scope.$watch( function getFormMObject() {return formMObject}, function onFormMObjectChanged(formM) {
 	    formMObject.bidForm = $scope.bidForm
 
-	    if (formM) {
-	      if (!formM.amount || !formM.number) {
-	        init(formMObject.bidForm)
+	    if ( formM ) {
+	      if ( !formM.amount || !formM.number ) {
+	        init( formMObject.bidForm )
 	        vm.selectedBids = {}
 	        vm.selectedBidsLen = 0
 	      }
 	    }
-	  }, true)
+	  }, true )
 
-	  $scope.$watch(function getSelectedBids() {return vm.selectedBids}, function onSelectedBidsChanged(selectedBids) {
-	    if (selectedBids) checkBids(selectedBids)
-	  }, true)
+	  $scope.$watch( function getSelectedBids() {return vm.selectedBids}, function onSelectedBidsChanged(selectedBids) {
+	    if ( selectedBids ) checkBids( selectedBids )
+	  }, true )
 	}
 
 

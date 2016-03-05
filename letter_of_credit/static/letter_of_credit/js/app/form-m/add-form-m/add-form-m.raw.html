@@ -1,4 +1,38 @@
 <div id="add-form-m-root-container" class="add-form-m-root-container" style="margin-top: 5px;">
+  <div class="form-m-deleted" ng-if="addFormMState.formM.deleted_at">CANCELLED</div>
+
+  <form ng-if="addFormMState.formM._id" class="form-horizontal form-m-action-form">
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label class="control-label col-sm-3" for="form-m-actions">Action</label>
+
+          <div class="col-sm-9">
+            <div class="input-group">
+              <select class="form-control" name="" id="form-m-actions" ng-model="addFormMState.action">
+                <option value="">-----Select Action-----</option>
+                <option ng-if="!addFormMState.formM.deleted_at" value="cancel">Cancel Form M</option>
+                <option ng-if="addFormMState.formM.deleted_at" value="reinstate">Reinstate Form M</option>
+              </select>
+
+              <span class="input-group-addon form-m-action-execute"
+                    ng-if="addFormMState.action"
+                    ng-click="addFormMState.doAction( addFormMState.action, addFormMState.formM )"
+              >
+                <span>Go</span>
+              </span>
+
+              <span class="input-group-addon" ng-if="!addFormMState.action"></span>
+
+            </div>
+          </div>
+        </div>
+
+        <hr/>
+      </div>
+    </div>
+  </form>
+
   <form class="form-horizontal" name="addFormMForm" novalidate autocomplete="off" id="addFormMForm"
         ng-submit="addFormMState.submit(addFormMState.formM)">
 
@@ -215,7 +249,7 @@
 
           <div class="col-sm-5" style="text-align: left ">
             <button type="submit" name="formMAddSubmitBtn" class="btn btn-info"
-                    ng-disabled="addFormMState.disableSubmitBtn()">
+                    ng-disabled="addFormMState.disableSubmitBtn()" ng-if="!addFormMState.formM.deleted_at">
               Save
             </button>
           </div>
@@ -225,7 +259,7 @@
           </div>
         </div>
 
-        <div form-m-comment=""></div>
+        <div ng-if="addFormMState.formM._id" form-m-comment></div>
         <div lc-cover></div>
       </div>
 

@@ -54,6 +54,7 @@ class FormMSerializer(serializers.HyperlinkedModelSerializer):
             'currency_data',
             'amount',
             'date_received',
+            'deleted_at',
             'url',
             'goods_description',
             'lc',
@@ -63,4 +64,3 @@ class FormMSerializer(serializers.HyperlinkedModelSerializer):
 
     def create(self, validated_data):
         return super(FormMSerializer, self).create(validated_data)
-

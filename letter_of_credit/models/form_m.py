@@ -1,11 +1,21 @@
 from django.contrib.contenttypes.fields import GenericRelation
-from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.db import models
 from adhocmodels.models import Customer, Currency
 from core_recons.models import Comment
 from core_recons.utilities import get_content_type_url, get_content_type_id
 from letter_of_credit.models import LCRegister
+from datetime import date
+
+
+class FormMStatus(models.Model):
+    code = models.CharField('Code', max_length=20, unique=True)
+    description = models.CharField('Description', max_length=100)
+
+    class Meta:
+        db_table = 'form_m_status'
+        verbose_name = 'Form M Status'
+        verbose_name_plural = 'Form M Status'
 
 
 class FormMNotDeletedManager(models.Manager):
@@ -42,6 +52,10 @@ class FormM(models.Model):
             self.applicant.name,
             self.goods_description and self.goods_description[:10] or ''
         )
+
+    def delete(self, *args, **kwargs):
+        self.deleted_at = date.today()
+        self.save()
 
     def save(self, *args, **kwargs):
         if self.goods_description:

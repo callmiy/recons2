@@ -2,19 +2,19 @@
 
 /*jshint camelcase:false*/
 
-var app = angular.module('lc-issue', [
+var app = angular.module( 'lc-issue', [
   'rootApp',
   'add-form-m-form-m-object'
-])
+] )
 
-app.directive('lcIssue', lcIssueDirective)
+app.directive( 'lcIssue', lcIssueDirective )
 
 lcIssueDirective.$inject = []
 
 function lcIssueDirective() {
   return {
     restrict: 'A',
-    templateUrl: require('lcAppCommons').buildUrl('form-m/add-form-m/lc-issue/lc-issue.html'),
+    templateUrl: require( 'lcAppCommons' ).buildUrl( 'form-m/add-form-m/lc-issue/lc-issue.html' ),
     scope: true,
     bindToController: {
       onIssuesChanged: '&'
@@ -23,7 +23,7 @@ function lcIssueDirective() {
   }
 }
 
-app.controller('LcIssueDirectiveController', LcIssueDirectiveController)
+app.controller( 'LcIssueDirectiveController', LcIssueDirectiveController )
 
 LcIssueDirectiveController.$inject = [
   '$scope',
@@ -43,52 +43,57 @@ function LcIssueDirectiveController($scope, resetForm2, clearFormField, formMObj
     formMObject.selectedIssues = []
     formMObject.issue = null
 
-    if (form) resetForm2(form, [
-      {form: form, elements: ['issue']}
-    ])
+    if ( form ) resetForm2( form, [
+      { form: form, elements: ['issue'] }
+    ] )
   }
 
   vm.issueSelected = function issueSelected($item, $model) {
-    formMObject.selectedIssues.push($model)
+    formMObject.selectedIssues.push( $model )
     formMObject.issue = null
-    clearFormField($scope.issuesForm, 'issue')
+    clearFormField( $scope.issuesForm, 'issue' )
   }
 
   vm.deleteIssue = function deleteIssue(index) {
-    vm.formM.selectedIssues.splice(index, 1)
+    vm.formM.selectedIssues.splice( index, 1 )
   }
 
   vm.toggleShow = function toggleShow(form) {
+    if ( vm.formM.deleted_at ) {
+      formMObject.showIssueForm = false
+      return
+    }
+
     formMObject.showIssueForm = vm.formM.amount && vm.formM.number && !formMObject.showIssueForm
 
-    if (!formMObject.showIssueForm) init(form)
+    if ( !formMObject.showIssueForm ) init( form )
     else vm.title = 'Dismiss'
   }
 
-  $scope.$watch(function getFormM() {return vm.formM}, function (formM) {
+  $scope.$watch( function getFormM() {return vm.formM}, function (formM) {
     vm.formM.issuesForm = $scope.issuesForm
 
-    if (formM) {
-      if (!formM.amount || !formM.number) {
-        init(formMObject.issueForm)
+    if ( formM ) {
+      if ( !formM.amount || !formM.number ) {
+        init( formMObject.issueForm )
       }
     }
-  }, true)
+  }, true )
 
-  $scope.$watch(function getShowContainer() {return formMObject.showIssueForm}, function onUpdateShowContainer() {
+  $scope.$watch( function getShowContainer() {return formMObject.showIssueForm}, function onUpdateShowContainer() {
     $scope.issuesForm.issue.$validate()
-  })
+  } )
 }
 
-app.directive('validateIssues', function validateIssues() {
+app.directive( 'validateIssues', function validateIssues() {
   return {
     restrict: 'A',
     require: 'ngModel',
     link: function ($scope, elm, attributes, ctrl) {
       var vm = $scope.lcIssue
       ctrl.$validators.issues = function () {
-        return !vm.formM.showIssueForm || Boolean(vm.formM.selectedIssues.length)
+        return !vm.formM.showIssueForm || Boolean( vm.formM.selectedIssues.length )
       }
     }
   }
-})
+} )
