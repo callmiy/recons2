@@ -16,6 +16,7 @@ class LcBidRequestSerializer(serializers.HyperlinkedModelSerializer):
             'currency',
             'created_at',
             'requested_at',
+            'deleted_at',
             'amount',
             'mf',
             'form_m_number',

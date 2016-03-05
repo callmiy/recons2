@@ -165,8 +165,8 @@
       <div add-fx-allocation
            initial-deal-props="lcBid.initialBidProps"
            km-title="lcBid.allocationTitle"
-           on-fx-allocated="lcBid.onFxAllocated(result)"
-      ></div>
+           on-fx-allocated="lcBid.onFxAllocated(result)">
+      </div>
     </div>
 
     <table class="table table-responsive table-striped table-bordered">
@@ -188,7 +188,7 @@
 
       <tbody class="existing-bids-table-body">
         <tr ng-repeat="bid in lcBid.formM.existingBids"
-            ng-class="['existing-bid-row', {'existing-bid-checked': bid.checked}]">
+            ng-class="['existing-bid-row', {'existing-bid-checked': bid.checked, 'deleted': (bid.deleted_at || lcBid.formM.deleted_at ) } ]">
           <td>
             <input type="checkbox"
                    ng-model="lcBid.selectedBids[bid.id]"
@@ -230,14 +230,25 @@
       <span class="glyphicon glyphicon-edit control-icon"
             data-toggle="tooltip"
             data-placement="bottom" title="Edit bid"
-            ng-click="lcBid.onEditBid(lcBid.selectedBids, bidForm)"></span>
+            ng-click="lcBid.onEditBid(lcBid.selectedBids, bidForm)"
+            ng-if="lcBid.selectedBidNotDeleted(lcBid.selectedBids)">
+      </span>
+
+      <span class="glyphicon glyphicon-plus-sign control-icon"
+            data-toggle="tooltip"
+            data-placement="bottom" title="Reinstate bid"
+            ng-click="lcBid.trashOrReinstateBid(lcBid.selectedBids, 'reinstate')"
+            ng-if="!lcBid.selectedBidNotDeleted(lcBid.selectedBids)">
+      </span>
 
       <span class="glyphicon glyphicon-link  control-icon"
             data-toggle="tooltip"
             data-placement="bottom" title="Add allocation"
-            ng-click="lcBid.allocateFx(lcBid.selectedBids, bidForm)"></span>
+            ng-click="lcBid.allocateFx(lcBid.selectedBids, bidForm)"
+            ng-if="lcBid.selectedBidNotDeleted(lcBid.selectedBids)">
+      </span>
 
-      <span class="glyphicon glyphicon-new-window  control-icon"
+      <span class="glyphicon glyphicon-info-sign  control-icon"
             data-toggle="tooltip"
             data-placement="bottom" title="View Bid"
             ng-click="lcBid.viewBidDetail(lcBid.selectedBids)"></span>
@@ -245,7 +256,9 @@
       <span class="glyphicon glyphicon-trash  control-icon"
             data-toggle="tooltip"
             data-placement="bottom" title="Trash bid"
-            ng-click="lcBid.trashBid(lcBid.selectedBids)"></span>
+            ng-click="lcBid.trashOrReinstateBid(lcBid.selectedBids, 'delete')"
+            ng-if="lcBid.selectedBidNotDeleted(lcBid.selectedBids)">
+      </span>
     </div>
   </div>
 </div>

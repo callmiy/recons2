@@ -11,9 +11,9 @@ class DownloadBidsView(View):
     def get(self, request):
         wb = Workbook()
         sheet = wb.active
-
         bid_ids = request.GET.getlist('bid_ids')
         mark_as_downloaded = False
+
         if bid_ids:
             file_name = '%s.xlsx' % datetime.now().strftime('fx-request-%Y-%m-%d-%H-%S-%f')
             mark_as_downloaded = True
@@ -23,7 +23,6 @@ class DownloadBidsView(View):
 
         if bid_ids:
             font = Font(bold=True)
-
             sheet.cell(row=1, column=1, value='S/N').font = font
             sheet.cell(row=1, column=2, value='CUSTOMER').font = font
             sheet.cell(row=1, column=3, value='CURR').font = font
@@ -36,9 +35,11 @@ class DownloadBidsView(View):
             sheet.cell(row=1, column=10, value='ESTB. DATE').font = font
 
             if not mark_as_downloaded:
+                # we are downloading all bids
                 sheet.cell(row=1, column=11, value='TOTAL ALLOCATION').font = font
                 sheet.cell(row=1, column=12, value='UNALLOCATED').font = font
                 sheet.cell(row=1, column=13, value='DATE SENT TO TREASURY').font = font
+                sheet.cell(row=1, column=14, value='REMARK').font = font
 
             row = 2
             row_index = 1
@@ -72,8 +73,10 @@ class DownloadBidsView(View):
                 sheet.cell(row=row, column=8, value=lc_number)
                 sheet.cell(row=row, column=10, value=estb_date)
                 maturity = 'CASH BACKED'
+
                 if bid.maturity:
                     maturity = mark_as_downloaded and bid.maturity.strftime('%d-%b-%Y') or bid.maturity
+
                 sheet.cell(row=row, column=9, value=maturity)
 
                 if not mark_as_downloaded:
@@ -81,6 +84,14 @@ class DownloadBidsView(View):
                     sheet.cell(row=row, column=11, value=total_allocation)
                     sheet.cell(row=row, column=12, value=(bid.amount - total_allocation))
                     sheet.cell(row=row, column=13, value=bid.requested_at)
+                    remark = ''
+
+                    if bid.deleted_at:
+                        remark = 'bid deleted'
+                    elif mf.deleted_at:
+                        remark = 'form M cancelled'
+
+                    sheet.cell(row=row, column=14, value=remark)
 
                 row += 1
                 row_index += 1

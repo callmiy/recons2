@@ -2,15 +2,19 @@
 
 /*jshint camelcase:false*/
 
-var app = angular.module('lc-bid-request', ['rootApp'])
+var app = angular.module( 'lc-bid-request', ['rootApp'] )
 
-app.factory('LcBidRequest', LcBidRequest)
+app.factory( 'LcBidRequest', LcBidRequest )
 LcBidRequest.$inject = ['$resource', 'urls']
 function LcBidRequest($resource, urls) {
-  var url = appendToUrl(urls.lcBidRequestAPIUrl, ':id');
-  return $resource(url, {id: '@id'}, {
+  var url = appendToUrl( urls.lcBidRequestAPIUrl, ':id' );
+  return $resource( url, { id: '@id' }, {
       put: {
         method: 'PUT'
+      },
+
+      patch: {
+        method: 'PATCH'
       },
 
       getPaginated: {
@@ -27,10 +31,10 @@ function LcBidRequest($resource, urls) {
   )
 }
 
-app.factory('lcBidRequestModelManager', lcBidRequestModelManager)
+app.factory( 'lcBidRequestModelManager', lcBidRequestModelManager )
 lcBidRequestModelManager.$inject = ['$filter']
 function lcBidRequestModelManager($filter) {
-  var numberCssStyle = {'text-align': 'right'}
+  var numberCssStyle = { 'text-align': 'right' }
 
   return [
     {
@@ -48,30 +52,30 @@ function lcBidRequestModelManager($filter) {
     {
       title: 'Amount', tdStyle: numberCssStyle,
       render: function (model) {
-        return $filter('number')(model.amount, 2)
+        return $filter( 'number' )( model.amount, 2 )
       }
     },
 
     {
       title: 'Date Created', tdStyle: numberCssStyle,
       render: function (model) {
-        return $filter('date')(model.created_at, 'dd-MMM-yyyy')
+        return $filter( 'date' )( model.created_at, 'dd-MMM-yyyy' )
       }
     },
 
     {
       title: 'Date Requested', tdStyle: numberCssStyle,
       render: function (model) {
-        return $filter('date')(model.requested_at, 'dd-MMM-yyyy')
+        return $filter( 'date' )( model.requested_at, 'dd-MMM-yyyy' )
       }
     }
   ]
 }
 
-app.value('bidAttributesVerboseNames', {mf: 'form m', amount: 'amount'})
+app.value( 'bidAttributesVerboseNames', { mf: 'form m', amount: 'amount' } )
 
 
-app.factory('ViewBidDetail', ViewBidDetail)
+app.factory( 'ViewBidDetail', ViewBidDetail )
 
 ViewBidDetail.$inject = ['ModalService', '$filter']
 
@@ -81,17 +85,17 @@ function ViewBidDetail(ModalService, $filter) {
     this.showDialog = showDialog
 
     function showDialog(config) {
-      ModalService.showModal({
-        template: require('./view-bid-detail.html'),
-        inputs: {config: config},
+      ModalService.showModal( {
+        template: require( './view-bid-detail.html' ),
+        inputs: { config: config },
         controller: 'ViewBidDetailModalCtrl as bidDetail'
-      }).then(modalHandler)
+      } ).then( modalHandler )
 
       function modalHandler(modal) {
         var bid = modal.controller.bid
-        var title = 'Bid Detail: ' + bid.form_m_number + ' ' + bid.currency + ' ' + $filter('number')(bid.amount, 2)
+        var title = 'Bid Detail: ' + bid.form_m_number + ' ' + bid.currency + ' ' + $filter( 'number' )( bid.amount, 2 )
 
-        modal.element.dialog({
+        modal.element.dialog( {
           modal: true,
           dialogClass: 'no-close',
           minWidth: 720,
@@ -99,7 +103,7 @@ function ViewBidDetail(ModalService, $filter) {
           title: title,
 
           close: function () {modal.controller.close()}
-        })
+        } )
       }
     }
   }
@@ -107,7 +111,7 @@ function ViewBidDetail(ModalService, $filter) {
   return new BidDetail()
 }
 
-app.controller('ViewBidDetailModalCtrl', ViewBidDetailModalCtrl)
+app.controller( 'ViewBidDetailModalCtrl', ViewBidDetailModalCtrl )
 
 ViewBidDetailModalCtrl.$inject = ['config', 'close']
 

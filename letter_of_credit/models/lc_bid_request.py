@@ -9,6 +9,7 @@ class LcBidRequest(models.Model):
     mf = models.ForeignKey(FormM, verbose_name='Related Form M', related_name='bids')
     created_at = models.DateField('Date Created', auto_now_add=True)
     requested_at = models.DateField('Date Request To Treasury', blank=True, null=True)
+    deleted_at = models.DateField('Date Deleted', blank=True, null=True)
     amount = models.DecimalField('Amount', max_digits=20, decimal_places=2)
     downloaded = models.BooleanField('Downloaded', default=False)
     maturity = models.DateField('Maturity Date', blank=True, null=True)

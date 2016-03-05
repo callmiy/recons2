@@ -144,9 +144,17 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     copyBidForEdit()
   }
 
-  vm.trashBid = function trashBid(selectedBids) {
+  vm.selectedBidNotDeleted = function selectedBidNotDeleted(selectedBids) {
+    var bids = getSelectedBids( selectedBids )
+    return (bids.length === 1) && !bids[0].deleted_at
+  }
+
+  vm.trashOrReinstateBid = function trashOrReinstateBid(selectedBids, action) {
+    if ( vm.formM.deleted_at ) return
+
     var bids = getSelectedBids( selectedBids )
     if ( bids.length !== 1 ) return
+
     init()
     var bid = bids[0]
     var text = '\n' +
@@ -157,19 +165,26 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     var mf = '"' + bid.form_m_number + '"'
 
     confirmationDialog.showDialog( {
-      text: 'Sure you want to delete bid:' + text, title: 'Delete bid for ' + mf
+      text: 'Sure you want to ' + action + ' bid:' + text,
+      title: action.toUpperCase() + ' bid ' + mf
+
     } ).then( function (answer) {
       if ( answer ) {
-        LcBidRequest.delete( bid ).$promise.then( bidDeleteSuccess, function bidDeleteFailure(xhr) {
+
+        LcBidRequest.patch( {
+          id: bid.id,
+          deleted_at: action === 'delete' ? toISODate( new Date() ) : null
+        } ).$promise.then( trashOrReinstateBidSuccess, function trashOrReinstateBidFailure(xhr) {
           xhrErrorDisplay( xhr )
         } )
       }
     } )
 
-    function bidDeleteSuccess() {
+    function trashOrReinstateBidSuccess() {
+      action = action === 'delete' ? 'deleted' : 'reinstated'
       confirmationDialog.showDialog( {
-        text: 'Bid delete successfully:' + text,
-        title: 'Bid for ' + mf + ' deleted successfully',
+        text: 'Bid ' + action + ' successfully:' + text,
+        title: 'Bid ' + mf + ' ' + action + ' successfully',
         infoOnly: true
       } )
       formMObject.setBids()
@@ -266,6 +281,11 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
   }
 
   vm.allocateFx = function allocateFx(selectedBids) {
+    if ( vm.formM.deleted_at ) {
+      vm.showAllocateFx = false
+      return
+    }
+
     var bids = getSelectedBids( selectedBids )
     if ( bids.length !== 1 ) return
     var bid = bids[0]
