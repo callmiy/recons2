@@ -78,19 +78,20 @@ class DownloadBidsView(View):
                     maturity = mark_as_downloaded and bid.maturity.strftime('%d-%b-%Y') or bid.maturity
 
                 sheet.cell(row=row, column=9, value=maturity)
+                remark = ''
+
+                if bid.deleted_at:
+                    remark = 'bid deleted'
+                elif mf.deleted_at:
+                    remark = 'form M cancelled'
+
+                sheet.cell(row=row, column=11, value=remark)
 
                 if not mark_as_downloaded:
                     total_allocation = sum([allocation['amount_allocated'] for allocation in bid.allocations()])
                     sheet.cell(row=row, column=11, value=total_allocation)
                     sheet.cell(row=row, column=12, value=(bid.amount - total_allocation))
                     sheet.cell(row=row, column=13, value=bid.requested_at)
-                    remark = ''
-
-                    if bid.deleted_at:
-                        remark = 'bid deleted'
-                    elif mf.deleted_at:
-                        remark = 'form M cancelled'
-
                     sheet.cell(row=row, column=14, value=remark)
 
                 row += 1

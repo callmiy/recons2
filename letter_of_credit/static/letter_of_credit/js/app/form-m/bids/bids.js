@@ -108,6 +108,7 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, unde
   }
 
   var url = kanmiiUri(urls.lcBidRequestDownloadUrl)
+
   vm.downloadUrl = function downloadUrl() {
     if (!underscore.isEmpty(vm.selectedBids)) {
       var search = []

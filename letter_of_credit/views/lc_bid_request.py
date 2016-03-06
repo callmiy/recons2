@@ -29,7 +29,7 @@ class LcBidRequestFilter(django_filters.FilterSet):
             return qs
 
         param = True if param == 'true' else False
-        return qs.filter(requested_at__isnull=param)
+        return qs.filter(mf__deleted_at__isnull=True, requested_at__isnull=param, deleted_at__isnull=True)
 
 
 class LcBidRequestListCreateAPIView(generics.ListCreateAPIView):

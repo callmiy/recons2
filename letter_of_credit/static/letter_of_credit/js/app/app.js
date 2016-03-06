@@ -1254,7 +1254,12 @@
 
 	/*jshint camelcase:false*/
 
-	var app = angular.module( 'lc-bid', ['add-fx-allocation', 'lc-bid-request'] )
+	var app = angular.module( 'lc-bid', [
+	  'rootApp',
+	  'add-fx-allocation',
+	  'lc-bid-request',
+	  'kanmii-URI',
+	] )
 
 	app.directive( 'lcBid', lcBidDirective )
 
@@ -1283,15 +1288,19 @@
 	  'resetForm2',
 	  'moment',
 	  'toISODate',
-	  'ViewBidDetail'
+	  'ViewBidDetail',
+	  'kanmiiUri',
+	  'urls',
+	  '$timeout',
 	]
 
 	function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore, LcBidRequest, xhrErrorDisplay,
-	  confirmationDialog, formMObject, resetForm2, moment, toISODate, ViewBidDetail) {
+	  confirmationDialog, formMObject, resetForm2, moment, toISODate, ViewBidDetail, kanmiiUri, urls, $timeout) {
 	  var vm = this
 	  vm.formM = formMObject
 	  var title = 'New Bid Request'
 	  vm.selectedBids = {}
+	  var bidFormCtrlNames = ['bidMaturityDate', 'bidAmount', 'bidGoodsDescription']
 
 	  init()
 	  function init(form) {
@@ -1307,10 +1316,7 @@
 	    formMObject.bid = {}
 	    vm.showAllocateFx = false
 
-	    if ( form ) {
-	      var bidFormCtrlNames = ['bidMaturityDate', 'bidAmount', 'bidGoodsDescription']
-	      resetForm2( form, [{ form: form, elements: bidFormCtrlNames }] )
-	    }
+	    if ( form ) resetForm2( form, [{ form: form, elements: bidFormCtrlNames }] )
 	  }
 
 	  vm.openDatePicker = function openDatePicker(prop) {
@@ -1572,6 +1578,25 @@
 
 	  vm.dismissShowAllocateFxForm = function dismissShowAllocateFxForm() {
 	    vm.showAllocateFx = false
+	  }
+
+	  var url = kanmiiUri( urls.lcBidRequestDownloadUrl )
+
+	  vm.downloadUrl = function downloadUrl(selectedBids) {
+	    var search = []
+
+	    underscore.each( selectedBids, function (selection, bidId) {
+	      if ( selection === true ) search.push( bidId )
+	    } )
+
+	    return search.length ? url.search( { bid_ids: search } ).toString() : null
+	  }
+
+	  vm.refreshBids = function refreshBids() {
+	    $timeout( function () {
+	      init()
+	      formMObject.setBids()
+	    }, 3000 )
 	  }
 
 	  function bidNotModified() {
@@ -1849,6 +1874,7 @@
 	  }
 
 	  var url = kanmiiUri(urls.lcBidRequestDownloadUrl)
+
 	  vm.downloadUrl = function downloadUrl() {
 	    if (!underscore.isEmpty(vm.selectedBids)) {
 	      var search = []
