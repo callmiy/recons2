@@ -6,7 +6,7 @@ ISSUE_TEXT_RE = re.compile(':ISSUE', re.IGNORECASE)
 
 
 class LCIssue(models.Model):
-    text = models.CharField('Issue Text', max_length=300)
+    text = models.TextField('Issue Text',)
 
     class Meta:
         app_label = 'letter_of_credit'
