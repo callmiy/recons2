@@ -12,6 +12,7 @@ class AccountNumber(models.Model):
     owner = models.ForeignKey('Customer', related_name='acct_numbs', verbose_name='Customer Name')
     branch = models.ForeignKey(Branch, related_name='accts')
     acct_id = models.CharField('Customer ID For Acct.', max_length=10, unique=True, )
+    description = models.CharField('Description', max_length=300, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.nuban = str(self.nuban)
