@@ -27,11 +27,11 @@ class RelationshipManagerAdmin(AjaxSelectAdmin):
 
 
 class AccountNumberAdmin(AjaxSelectAdmin):
-    form = make_ajax_form(models.AccountNumber, {'owner': 'customer', 'branch': 'branch'})
+    form = make_ajax_form(models.AccountNumber, {'owner': 'customer', 'branch': 'branch', 'currency': 'ccy'})
 
-    list_display = ('nuban', 'owner', 'branch', 'acct_id', 'old_numb',)
+    list_display = ('nuban', 'currency', 'owner', 'branch', 'acct_id', 'old_numb',)
 
-    search_fields = ('nuban', 'owner__name', 'branch__name', 'branch__code', 'old_numb', 'acct_id',)
+    search_fields = ('nuban', 'owner__name', 'branch__name', 'branch__code', 'old_numb', 'acct_id', 'currency__code',)
 
 
 class CustomerAdmin(AjaxSelectAdmin):

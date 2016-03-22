@@ -1,11 +1,13 @@
 from django.db import models
 from core_recons.utilities import prepend_zeros
 from adhocmodels.models.branch import Branch
+from adhocmodels.models.currency import Currency
 from django.core.exceptions import ValidationError
 
 
 class AccountNumber(models.Model):
     nuban = models.CharField("Nuban", max_length=10, unique=True)
+    currency = models.ForeignKey(Currency, related_name='acct_numb_currencies',)
     old_numb = models.CharField('Old Acct. Number', max_length=13, null=True, blank=True)
     owner = models.ForeignKey('Customer', related_name='acct_numbs', verbose_name='Customer Name')
     branch = models.ForeignKey(Branch, related_name='accts')
