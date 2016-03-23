@@ -28,6 +28,7 @@ urlpatterns += patterns(
             name='comment-detail'),
 )
 
+# fx deals
 urlpatterns += patterns(
         '',
 
@@ -35,4 +36,15 @@ urlpatterns += patterns(
 
         url(r'^fx-deal/(?P<pk>\d+)/?$', FxDealRetrieveUpdateDestroyAPIView.as_view(),
             name='fxdeal-detail'),
+)
+
+
+# attachment
+urlpatterns += patterns(
+        '',
+
+        url(r'^attachment/?$', login_required(FxDealListCreateAPIView.as_view()), name='attachment-list'),
+
+        url(r'^attachment/(?P<pk>\d+)/?$', FxDealRetrieveUpdateDestroyAPIView.as_view(),
+            name='attachment-detail'),
 )
