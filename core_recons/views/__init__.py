@@ -26,6 +26,7 @@ class CoreAppsView(View):
             'formMCoverAPIUrl': reverse('formmcover-list'),
             'commentAPIUrl': reverse('comment-list'),
             'fxDealAPIUrl': reverse('fxdeal-list'),
+            'attachmentAPIUrl': reverse('attachment-list'),
         })
 
     @staticmethod

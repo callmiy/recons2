@@ -2,9 +2,11 @@ import json
 import logging
 from rest_framework import generics
 import django_filters
+from django_downloadview import ObjectDownloadView
 
-from core_recons.models import Attachment
+from core_recons.models import Attachment, AttachmentFile
 from core_recons.serializers import AttachmentSerializer
+from core_recons.serializers.attachment import AttachmentFileSerializer
 
 logger = logging.getLogger('recons_logger')
 
@@ -34,7 +36,7 @@ class AttachmentListCreateAPIView(generics.ListCreateAPIView):
     filter_class = AttachmentFilter
 
     def create(self, request, *args, **kwargs):
-        log_prefix = 'Create new fx deal:'
+        log_prefix = 'Create new attachment:'
         incoming_data = request.data
         logger.info('%s with incoming data = \n%s', log_prefix, json.dumps(incoming_data, indent=4))
         response = super(AttachmentListCreateAPIView, self).create(request, *args, **kwargs)
@@ -47,9 +49,22 @@ class AttachmentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIVi
     serializer_class = AttachmentSerializer
 
     def update(self, request, *args, **kwargs):
-        log_prefix = 'Update fx deal:'
+        log_prefix = 'Update attachment:'
         incoming_data = request.data
         logger.info('%s with incoming data = \n%s', log_prefix, json.dumps(incoming_data, indent=4))
         response = super(AttachmentRetrieveUpdateDestroyAPIView, self).update(request, *args, **kwargs)
         logger.info('%s fx deal updated successfully, result is:\n%s', log_prefix, json.dumps(response.data, indent=4))
         return response
+
+
+class AttachmentFileListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = AttachmentFileSerializer
+    queryset = AttachmentFile.objects.all()
+
+
+class AttachmentFileRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = AttachmentFile.objects.all()
+    serializer_class = AttachmentFileSerializer
+
+
+attachment_file_download_view = ObjectDownloadView.as_view(model=AttachmentFile)

@@ -1,26 +1,29 @@
 from rest_framework import serializers
-from core_recons.models import FxDeal
-from adhocmodels.serializers import CurrencySerializer
+from core_recons.models import Attachment, AttachmentFile
+
+
+class AttachmentFileSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = AttachmentFile
+        fields = (
+            'url',
+            'download_url',
+        )
 
 
 class AttachmentSerializer(serializers.HyperlinkedModelSerializer):
-    currency_data = CurrencySerializer(read_only=True)
+    files = serializers.StringRelatedField(many=True)
 
     class Meta:
-        model = FxDeal
+        model = Attachment
         fields = (
-            'deal_number',
-            'currency',
-            'currency_data',
-            'amount_allocated',
-            'amount_utilized',
-            'allocated_on',
-            'utilized_on',
+            'title',
+            'comment',
+            'files',
             'id',
             'url',
             'content_type',
             'created_at',
-            'updated_at',
             'deleted_at',
             'object_id',
             'related_model_class_str',

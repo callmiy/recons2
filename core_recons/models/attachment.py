@@ -1,6 +1,9 @@
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core.urlresolvers import reverse
 from django.db import models
+
+from core_recons.utilities import get_generic_related_model_class_str
 
 
 class AttachmentFile(models.Model):
@@ -13,7 +16,10 @@ class AttachmentFile(models.Model):
         app_label = 'core_recons'
 
     def __unicode__(self):
-        return self.file.url[19:].replace('/', '__', 1, )
+        return reverse('download-attachment-file', kwargs={'pk': self.pk})
+
+    def download_url(self):
+        return reverse('download-attachment-file', kwargs={'pk': self.pk})
 
 
 class Attachment(models.Model):
@@ -34,3 +40,6 @@ class Attachment(models.Model):
 
     def files_names(self):
         return ' '.join(['[%s]' % file.__unicode__() for file in self.files.all()])
+
+    def related_model_class_str(self):
+        return get_generic_related_model_class_str(self)

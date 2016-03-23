@@ -8,8 +8,10 @@ Django==1.8.4
 django-ajax-selects==1.3.6
 django-appconf==1.0.1
 django-behave==0.1.5
+django-downloadview==1.9
 django-extensions==1.5.7
 django-filter==0.11.0
+django-nose==1.2
 django-pdb==0.4.2
 djangorestframework==3.2.4
 docutils==0.12
@@ -38,10 +40,12 @@ pycrypto==2.6.1
 Pygments==2.0.2
 pyreadline==2.1
 pytz==2015.6
+requests==2.9.1
 selenium==2.47.3
 simplegeneric==0.8.1
 six==1.9.0
 snowballstemmer==1.2.0
+South==0.8.4
 Sphinx==1.3.1
 sphinx-rtd-theme==0.1.9
 splinter==0.7.3
