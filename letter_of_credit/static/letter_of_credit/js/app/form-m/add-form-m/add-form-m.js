@@ -7,6 +7,7 @@ require( './lc-issue/lc-issue.js' )
 require( './lc-cover/lc-cover.js' )
 require( './lc-bid/lc-bid.js' )
 require( './comment/comment.js' )
+require( './attachment/attachment-form-m.js' )
 
 var app = angular.module( 'add-form-m', [
   'ui.router',
@@ -23,7 +24,8 @@ var app = angular.module( 'add-form-m', [
   'add-form-m-form-m-object',
   'lc-service',
   'complex-object-validator',
-  'display-uploaded-form-m'
+  'display-uploaded-form-m',
+  'form-m-attachment',
 ] )
 
 app.config( formMStateConfig )

@@ -2,31 +2,29 @@
 
 /*jshint camelcase:false*/
 
-var app = angular.module('add-attachment', [
+var app = angular.module( 'add-attachment', [
   'attachment-service',
   'rootApp',
   'complex-object-validator'
-])
+] )
 
-app.directive('addAttachment', addAttachmentDirective)
+app.directive( 'addAttachment', addAttachmentDirective )
 
 addAttachmentDirective.$inject = []
 
 function addAttachmentDirective() {
   return {
     restrict: 'AE',
-    template: require('./add-attachment.html'),
+    template: require( './add-attachment.html' ),
     scope: true,
     bindToController: {
-      initialDealProps: '=',
       kmTitle: '=',
-      onFxAllocated: '&'
     },
-    controller: 'addAttachmentController as fxDeal'
+    controller: 'addAttachmentController as attachment'
   }
 }
 
-app.controller('addAttachmentController', addAttachmentController)
+app.controller( 'addAttachmentController', addAttachmentController )
 addAttachmentController.$inject = [
   'underscore',
   'getTypeAheadCurrency',
@@ -37,7 +35,7 @@ addAttachmentController.$inject = [
 function addAttachmentController(underscore, getTypeAheadCurrency, resetForm2, toISODate, FxDeal) {
   var vm = this //jshint -W040
 
-  var initialDealProps = vm.initialDealProps ? angular.copy(vm.initialDealProps) : {}
+  var initialDealProps = vm.initialDealProps ? angular.copy( vm.initialDealProps ) : {}
 
   init()
   function init() {
@@ -59,8 +57,8 @@ function addAttachmentController(underscore, getTypeAheadCurrency, resetForm2, t
   }
 
   vm.disableSubmitBtn = function disableSubmitBtn(form) {
-    if (form.$invalid) return true
-    if (vm.deal.amount_utilized && !vm.deal.utilized_on) return true
+    if ( form.$invalid ) return true
+    if ( vm.deal.amount_utilized && !vm.deal.utilized_on ) return true
 
     return (!vm.deal.amount_utilized && vm.deal.utilized_on)
   }
@@ -72,43 +70,20 @@ function addAttachmentController(underscore, getTypeAheadCurrency, resetForm2, t
   }
 
   vm.clearForm = function clearForm(form) {
-    resetForm2(form)
+    resetForm2( form )
     init()
   }
 
   vm.saveDeal = function saveDeal(deal) {
-    deal = angular.copy(deal)
-    deal.allocated_on = toISODate(deal.allocated_on)
-    deal.utilized_on = toISODate(deal.utilized_on)
+    deal = angular.copy( deal )
+    deal.allocated_on = toISODate( deal.allocated_on )
+    deal.utilized_on = toISODate( deal.utilized_on )
     deal.currency = deal.currency.url
 
-    new FxDeal(deal).$save(function (data) {
-      vm.onFxAllocated({result: data})
+    new FxDeal( deal ).$save( function (data) {
+      vm.onFxAllocated( { result: data } )
     }, function (error) {
-      vm.onFxAllocated({result: error})
-    })
-  }
-}
-
-
-app.directive('requiredTogether', requiredTogether)
-
-function requiredTogether() {
-  return {
-    restrict: 'A',
-    require: 'ngModel',
-    link: function ($scope, element, attributes, ctrl) {
-      ctrl.$validators.requiredTogether = function () {
-        if (attributes.required) return true
-        else {
-          var relatedTo = attributes.kmRelatedTo
-          if (ctrl.$modelValue) {
-            console.log($scope.$eval(relatedTo))
-          }
-        }
-
-        return true
-      }
-    }
+      vm.onFxAllocated( { result: error } )
+    } )
   }
 }

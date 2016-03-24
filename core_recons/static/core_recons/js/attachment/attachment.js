@@ -16,3 +16,5 @@ function Attachment($resource, urls) {
     }
   )
 }
+
+require( './add-attachment/add-attachment.js' )
