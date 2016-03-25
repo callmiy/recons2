@@ -82,6 +82,7 @@ STATICFILES_DIRS = (
     # </editor-fold>
     os.path.join(SETTINGS_DIR, 'static'),
     os.path.join(PROJECT_DIR, 'bower_components'),
+    os.path.join(PROJECT_DIR, 'app'),
 )
 
 # List of finder classes that know how to find static files in
@@ -127,6 +128,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(SETTINGS_DIR, 'templates'),
+    os.path.join(PROJECT_DIR, 'app'),
 )
 
 INSTALLED_APPS = (

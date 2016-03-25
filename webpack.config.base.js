@@ -1,14 +1,8 @@
 "use strict";
 
-var webpackExternals = {
-  'angular': 'angular'
-}
+var path = require( 'path' )
 
-var webpackAliases = {
-  commons: __dirname + '/core_recons/static/core_recons/js/commons',
-  lcCommons: __dirname + '/letter_of_credit/static/letter_of_credit/js/commons',
-  lcAppCommons: __dirname + '/letter_of_credit/static/letter_of_credit/js/app/commons'
-}
+var webpackAliases = { commons: __dirname + '/app/app/index.js', }
 
 var webpackTestConfig = {
   cache: true,
@@ -28,16 +22,26 @@ var webpackTestConfig = {
   }
 }
 
-var webpackBaseConfig = {
+var appPath = path.join( __dirname, 'app', 'app' )
+
+var webpackAppConfig = {
   cache: true,
   watch: true,
+  entry: path.join( appPath, 'app.js' ),
 
-  externals: webpackExternals,
+  output: {
+    path: appPath,
+    filename: 'app.js'
+  },
+
+  externals: {
+    'angular': 'angular'
+  },
 
   module: {
     loaders: [
-      {test: /\.html$/, loader: 'html'},
-      {test: /\.css$/, loader: 'html'}
+      { test: /\.html$/, loader: 'html' },
+      { test: /\.css$/, loader: 'html' }
     ]
   },
 
@@ -47,6 +51,6 @@ var webpackBaseConfig = {
 }
 
 module.exports = {
-  webpackBaseConfig: webpackBaseConfig,
+  webpackAppConfig: webpackAppConfig,
   webpackTestConfig: webpackTestConfig
 }

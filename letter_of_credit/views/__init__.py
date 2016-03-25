@@ -38,4 +38,4 @@ class AppHomeView(CoreAppsView):
     def get(self, request):
         context = {'urls': self.get_core_app_urls()}
         context.update(self.get_form_m_cover_types())
-        return render(request, 'letter_of_credit/app/index.html', context)
+        return render(request, 'app/index.html', context)
