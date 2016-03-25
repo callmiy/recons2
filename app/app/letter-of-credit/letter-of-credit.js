@@ -28,9 +28,7 @@ function formMRootAppURLConfig($stateProvider, $urlRouterProvider) {
   $stateProvider
     .state('home', {
       url: '/',
-
       kanmiiTitle: 'Home',
-
-      template: require('./app.html')
+      template: require('./letter-of-credit.html')
     })
 }

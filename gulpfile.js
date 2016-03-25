@@ -12,7 +12,6 @@ var lessFiles = [
   './core_recons/static/core_recons/**/*.less',
   '!./core_recons/static/core_recons/css/recons-base.less',
   './letter_of_credit/static/letter_of_credit/**/*.less',
-  './app/app/app.less',
   './contingent_report/static/contingent_report/**/*.less'
 ]
 
@@ -130,6 +129,20 @@ gulp.task( 'less', function () {
     .pipe( gulp.dest( '' ) )
 } )
 
+gulp.task( 'less-app', function () {
+  return gulp.src( './app/app/app.less', { base: '.' } )
+    .pipe( plugins.sourcemaps.init() )
+    .pipe( plugins.less() )
+    .pipe( plugins.minifyCss() )
+    .pipe( plugins.rename( { suffix: '.min', extname: '.css' } ) )
+    .pipe( plugins.sourcemaps.write( '.', {
+      sourceMappingURL: function (file) {
+        return path.basename( file.path ) + '.map'
+      }
+    } ) )
+    .pipe( gulp.dest( '' ) )
+} )
+
 gulp.task( 'minify-js', function () {
   return gulp.src( minifyJsFiles, { base: '.' } )
     .pipe( plugins.sourcemaps.init() )
@@ -145,6 +158,7 @@ gulp.task( 'watch', function () {
   gulp.watch( minifyJsFiles, ['minify-js'] )
   gulp.watch( lessFiles, ['less'] )
   gulp.watch( ['./**/*.raw.html'], ['minify-html'] )
+  gulp.watch( ['./app/app/**/*.less'], ['less-app'] )
   gulp.watch( lessNoCssMinFiles, ['less-no-css-min', 'initial-css'] )
 } )
 
