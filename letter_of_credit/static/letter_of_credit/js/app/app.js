@@ -47,7 +47,7 @@
 	"use strict";
 
 	__webpack_require__(1)
-	__webpack_require__(27)
+	__webpack_require__(28)
 
 	var rootCommons = __webpack_require__(7)
 
@@ -77,7 +77,7 @@
 
 	      kanmiiTitle: 'Home',
 
-	      template: __webpack_require__(30)
+	      template: __webpack_require__(31)
 	    })
 	}
 
@@ -91,12 +91,12 @@
 	/*jshint camelcase:false*/
 
 	__webpack_require__(2)
-	__webpack_require__(11)
-	__webpack_require__(16)
-	__webpack_require__(18)
+	__webpack_require__(12)
+	__webpack_require__(17)
 	__webpack_require__(19)
-	__webpack_require__(21)
-	__webpack_require__(24)
+	__webpack_require__(20)
+	__webpack_require__(22)
+	__webpack_require__(25)
 
 	var app = angular.module('form-m',
 	  ['rootApp',
@@ -117,7 +117,7 @@
 
 	      kanmiiTitle: 'Form M',
 
-	      template: __webpack_require__(26),
+	      template: __webpack_require__(27),
 
 	      controller: 'FormMController as formMHome'
 	    })
@@ -210,7 +210,7 @@
 	__webpack_require__( 8 )
 	__webpack_require__( 9 )
 	__webpack_require__( 10 )
-	__webpack_require__( 31 )
+	__webpack_require__( 11 )
 
 	var app = angular.module( 'add-form-m', [
 	  'ui.router',
@@ -1770,7 +1770,106 @@
 
 	/*jshint camelcase:false*/
 
-	__webpack_require__(12)
+	var app = angular.module( 'form-m-attachment', [
+	  'rootApp',
+	  'add-attachment'
+	] )
+
+	app.directive( 'formMAttachment', formMAttachmentDirective )
+
+	formMAttachmentDirective.$inject = []
+
+	function formMAttachmentDirective() {
+	  return {
+	    restrict: 'A',
+	    templateUrl: __webpack_require__( 5 ).buildUrl( 'form-m/add-form-m/attachment/attachment-form-m.html' ),
+	    scope: true,
+	    controller: 'FormMAttachmentDirectiveController as formMAttachment'
+	  }
+	}
+
+	app.controller( 'FormMAttachmentDirectiveController', FormMAttachmentDirectiveController )
+
+	FormMAttachmentDirectiveController.$inject = [
+	  '$scope',
+	  'formFieldIsValid',
+	  'underscore',
+	  'confirmationDialog',
+	  'formMObject',
+	  'resetForm2'
+	]
+
+	function FormMAttachmentDirectiveController($scope, formFieldIsValid, underscore, confirmationDialog, formMObject,
+	  resetForm2) {
+	  var vm = this
+	  vm.formM = formMObject
+	  var confirmationTitleLength = 40
+
+	  init()
+	  function init(form) {
+	    vm.showAttachment = false
+	    vm.formM.showEditComment = false
+	    vm.commentToEdit = null
+	    formMObject.commentText = null
+
+	    if ( form ) resetForm2( form )
+	  }
+
+	  vm.isValid = function (name, validity) { return formFieldIsValid( $scope, 'commentForm', name, validity ) }
+
+	  vm.toggleShow = function toggleShow() {
+	    vm.showAttachment = formMObject._id && !vm.showAttachment
+	  }
+
+	  vm.editCommentInvalid = function editCommentInvalid(form) {
+	    if ( underscore.isEmpty( vm.commentToEdit ) || form.$invalid ) return true
+
+	    return vm.commentToEdit.text === formMObject.commentText
+	  }
+
+	  vm.onCommentDblClick = function onCommentDblClick(comment) {
+	    vm.formM.showEditComment = true
+	    vm.showAttachment = false
+	    vm.toggleShow()
+	    vm.commentToEdit = angular.copy( comment )
+	    formMObject.commentText = vm.commentToEdit.text
+	  }
+
+	  vm.viewComment = function viewComment(comment) {
+	    confirmationDialog.showDialog( {
+	      title: 'View comment "' + comment.text.slice( 0, confirmationTitleLength ) + '"',
+	      text: comment.text,
+	      infoOnly: true
+	    } )
+	  }
+
+	  vm.editComment = function editComment(text, form) {
+	    formMObject.editComment( text, vm.commentToEdit ).then( function () {init( form )} )
+	  }
+
+	  vm.addComment = function addComment(text, form) {
+	    formMObject.addComment( text ).then( function () { init( form ) } )
+	  }
+
+	  $scope.$watch( function () {return formMObject}, function onFormMObjectChanged(formM) {
+	    formMObject.commentForm = $scope.commentForm
+
+	    if ( formM ) {
+	      if ( !formM.amount || !formM.number ) init( formMObject.commentForm )
+	    }
+	  }, true )
+	}
+
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	/*jshint camelcase:false*/
+
+	__webpack_require__(13)
 
 	var app = angular.module('form-m-bids', [
 	  'ui.router',
@@ -1791,7 +1890,7 @@
 
 	      views: {
 	        bids: {
-	          template: __webpack_require__(14),
+	          template: __webpack_require__(15),
 
 	          controller: 'BidRequestController as bidHome'
 	        }
@@ -1958,11 +2057,11 @@
 	  }
 	}
 
-	__webpack_require__(15)
+	__webpack_require__(16)
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1982,7 +2081,7 @@
 	function searchBidsDirective() {
 	  return {
 	    restrict: 'AE',
-	    template: __webpack_require__(13),
+	    template: __webpack_require__(14),
 	    scope: true,
 	    bindToController: {
 	      onBidsSearched: '&'
@@ -2059,19 +2158,19 @@
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"search-bids-directive\"><div class=\"search-bid-toggle-show\"><div ng-click=\"searchBids.toggleShow(searchBidsForm)\" class=\"form-m-add-on-toggle clearfix\"><span class=\"form-m-add-on-show-helper\" ng-if=\"searchBids.showForm\"></span><div class=\"form-m-add-on-show-icon form-m-bid-add-on-show-icon\"><span ng-class=\"['glyphicon', {'glyphicon-chevron-down': !searchBids.showForm, 'glyphicon-chevron-up': searchBids.showForm}]\"></span> Search Bids</div></div></div><form class=\"form-horizontal\" name=\"searchBidsForm\" role=\"form\" autocomplete=\"off\" ng-show=\"searchBids.showForm\" ng-submit=\"searchBids.searchBids(searchBids.searchParams)\"><div class=\"form-group form-m-group\" control-has-feedback=\"\"><label for=\"form-m-number\" class=\"control-label col-sm-3\">Form M Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"formMNumber\" ng-model=\"searchBids.searchParams.mf\" id=\"form-m-number\" to-upper=\"\" ng-pattern=\"/(?:mf)?\\d{3,}/i\" maxlength=\"13\"></div></div><div class=\"form-group applicant-group\" control-has-feedback=\"\"><label for=\"applicant\" class=\"control-label col-sm-3\">Applicant</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"applicant\" ng-model=\"searchBids.searchParams.applicant\" id=\"applicant\" ng-minlength=\"3\" ng-pattern=\"searchBids.validators.applicant\" typeahead-min-length=\"3\" uib-typeahead=\"applicant as applicant.name for applicant in searchBids.getApplicant($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group currency-group\" control-has-feedback=\"\"><label for=\"currency\" class=\"control-label col-sm-3\">Currency</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"currency\" ng-model=\"searchBids.searchParams.currency\" id=\"currency\" maxlength=\"3\" ng-pattern=\"searchBids.validators.currency\" autocomplete=\"off\" uib-typeahead=\"currency as currency.code for currency in searchBids.getCurrency($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group amount-group\" control-has-feedback=\"\"><label for=\"amount\" class=\"control-label col-sm-3\">Amount</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"amount\" ng-model=\"searchBids.searchParams.amount\" id=\"amount\" number-format=\"\"></div></div><div class=\"form-group created-date-group\" control-has-feedback=\"\" feedback-after=\".input-group-addon\"><label for=\"created-at\" class=\"control-label col-sm-3\">Created At</label><div class=\"col-sm-9\"><div class=\"input-group\"><input type=\"text\" class=\"form-control\" name=\"createdAt\" ng-model=\"searchBids.searchParams.created_at\" id=\"created-at\" uib-datepicker-popup=\"dd-MMM-yyyy\" is-open=\"searchBids.datePickerIsOpen\"> <span class=\"input-group-addon\" ng-click=\"searchBids.openDatePicker($event)\"><i class=\"glyphicon glyphicon-calendar\"></i></span></div></div></div><div class=\"form-group lc-number-group\"><label for=\"lc-number\" class=\"control-label col-sm-3\">LC Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"lcNumber\" ng-model=\"searchBids.searchParams.lc_number\" id=\"lc-number\" to-upper=\"\" maxlength=\"16\"></div></div><div class=\"form-group pending-group\"><label for=\"pending\" class=\"control-label col-sm-3\">Pending only</label><div class=\"col-sm-9\"><input type=\"checkbox\" name=\"pending\" ng-model=\"searchBids.searchParams.pending\" id=\"pending\"></div></div><div class=\"form-group submit-group\"><div class=\"col-sm-9 col-sm-offset-3\"><div class=\"clearfix\"><div class=\"pull-left\"><input type=\"submit\" class=\"btn btn-info\" value=\"Search Bids\" ng-disabled=\"searchBidsForm.$invalid\"></div><div class=\"pull-right\" style=\"text-align: right\"><input type=\"button\" class=\"btn btn-warning\" value=\"Clear All\" ng-click=\"searchBids.clearForm(searchBidsForm)\"></div></div></div></div></form></div>";
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"list-bid-view\"><div class=\"row\" style=\"margin-bottom: 30px; margin-top: 10px\"><div class=\"col-sm-6\"><div search-bids=\"\" on-bids-searched=\"bidHome.onBidsSearched(searchResult)\"></div></div><div class=\"col-sm-6\"><div class=\"action-buttons\" style=\"text-align: right;\"><a class=\"btn btn-success\" ng-href=\"{$bidHome.downloadUrl()$}\" ng-disabled=\"bidHome.downloadBtnDisabled()\" ng-click=\"bidHome.refreshPage()\">Download</a> <button type=\"button\" name=\"bid-home-mark-as-requested-btn\" class=\"btn btn-success\" ng-click=\"bidHome.markRequested()\" ng-disabled=\"bidHome.markRequestedBtnDisabled()\">Mark as requested</button></div></div></div><div display-pending-bid=\"\" pending-bids=\"bidHome.bidRequests\" pager-object=\"bidHome.paginationHooks\" update-collection=\"bidHome.getBidsOnNavigation(linkUrl)\" pagination-size=\"20\" selected-bids=\"bidHome.selectedBids\" on-selected-bids-changed=\"bidHome.onSelectedBidsChanged(newSelections)\" on-row-dbl-click=\"bidHome.rowDblClickCb(bid)\" table-caption=\"bidHome.tableCaption\"></div></div>";
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2212,7 +2311,7 @@
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict"
@@ -2237,7 +2336,7 @@
 
 	      views: {
 	        'listFormM': {
-	          template: __webpack_require__(17),
+	          template: __webpack_require__(18),
 
 	          controller: 'FormMListController as formMList'
 	        }
@@ -2320,13 +2419,13 @@
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"manage-form-m-tab-content\"><div class=\"row\" style=\"margin-bottom: 30px; margin-top: 10px\"><div class=\"col-sm-6\"><div search-mf=\"\" on-mf-search=\"formMList.updateFormMs(searchResult)\"></div></div></div><div model-table=\"\" model-collection=\"formMList.formMs\" table-model-manager=\"::formMList.modelManager\" table-caption=\"::formMList.tableCaption\" pagination-size=\"20\" update-collection=\"formMList.getFormMCollectionOnNavigation(linkUrl)\" pager-object=\"formMList.paginationHooks\" on-row-dbl-click-callback=\"formMList.modelRowDblClick(rowModel)\"></div></div>";
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2437,7 +2536,7 @@
 
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2458,7 +2557,7 @@
 	  function searchMfDirective() {
 	  return {
 	    restrict: 'AE',
-	    template: __webpack_require__(20),
+	    template: __webpack_require__(21),
 	    scope: true,
 	    bindToController: {
 	      onMfSearch: '&'
@@ -2522,20 +2621,20 @@
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"search-mf-directive\"><div class=\"search-mf-toggle-show\"><div ng-click=\"searchMf.toggleShow(searchMfForm)\" class=\"form-m-add-on-toggle clearfix\"><span class=\"form-m-add-on-show-helper\" ng-if=\"searchMf.showForm\"></span><div class=\"form-m-add-on-show-icon\"><span ng-class=\"['glyphicon', {'glyphicon-chevron-down': !searchMf.showForm, 'glyphicon-chevron-up': searchMf.showForm}]\"></span> Search Form M</div></div></div><form class=\"form-horizontal\" name=\"searchMfForm\" role=\"form\" autocomplete=\"off\" ng-show=\"searchMf.showForm\" ng-submit=\"searchMf.searchMf(searchMf.searchParams)\"><div class=\"form-group form-m-number-group\" control-has-feedback=\"\"><label for=\"form-m-number\" class=\"control-label col-sm-3\">Form M Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"formMNumber\" ng-model=\"searchMf.searchParams.number\" id=\"form-m-number\" to-upper=\"\" ng-pattern=\"/(?:mf)?\\d{3,}/i\" maxlength=\"13\"></div></div><div class=\"form-group applicant-group\" control-has-feedback=\"\"><label for=\"applicant\" class=\"control-label col-sm-3\">Applicant</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"applicant\" ng-model=\"searchMf.searchParams.applicantObj\" id=\"applicant\" ng-minlength=\"3\" autocomplete=\"off\" typeahead-min-length=\"3\" uib-typeahead=\"applicant as applicant.name for applicant in searchMf.getApplicant($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group currency-group\" control-has-feedback=\"\"><label for=\"currency\" class=\"control-label col-sm-3\">Currency</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"currency\" ng-model=\"searchMf.searchParams.currency\" id=\"currency\" maxlength=\"3\" autocomplete=\"off\" uib-typeahead=\"currency as currency.code for currency in searchMf.getCurrency($viewValue)\" typeahead-select-on-blur=\"true\" typeahead-select-on-exact=\"true\"></div></div><div class=\"form-group amount-group\" control-has-feedback=\"\"><label for=\"amount\" class=\"control-label col-sm-3\">Amount</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"amount\" ng-model=\"searchMf.searchParams.amount\" id=\"amount\" number-format=\"\"></div></div><div class=\"form-group created-date-group\" control-has-feedback=\"\" feedback-after=\".input-group-addon\"><label for=\"created-at\" class=\"control-label col-sm-3\">Created At</label><div class=\"col-sm-9\"><div class=\"input-group\"><input type=\"text\" class=\"form-control\" name=\"createdAt\" ng-model=\"searchMf.searchParams.created_at\" id=\"created-at\" uib-datepicker-popup=\"dd-MMM-yyyy\" is-open=\"searchMf.datePickerIsOpen\"> <span class=\"input-group-addon\" ng-click=\"searchMf.openDatePicker($event)\"><i class=\"glyphicon glyphicon-calendar\"></i></span></div></div></div><div class=\"form-group lc-number-group\"><label for=\"lc-number\" class=\"control-label col-sm-3\">LC Number</label><div class=\"col-sm-9\"><input type=\"text\" class=\"form-control\" name=\"lcNumber\" ng-model=\"searchMf.searchParams.lc_number\" id=\"lc-number\" to-upper=\"\" maxlength=\"16\"></div></div><div class=\"form-group cancelled-group\"><label for=\"cancelled\" class=\"control-label col-sm-3\">Include cancelled</label><div class=\"col-sm-9\"><input type=\"checkbox\" name=\"cancelled\" ng-model=\"searchMf.searchParams.cancelled\" id=\"cancelled\"></div></div><div class=\"form-group submit-group\"><div class=\"col-sm-9 col-sm-offset-3\"><div class=\"clearfix\"><div class=\"pull-left\"><input type=\"submit\" class=\"btn btn-info\" value=\"Search Form M\" ng-disabled=\"searchMfForm.$invalid\"></div><div class=\"pull-right\" style=\"text-align: right\"><input type=\"button\" class=\"btn btn-warning\" value=\"Clear All\" ng-click=\"searchMf.clearForm(searchMfForm)\"></div></div></div></div></form></div>";
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict"
 
 	/*jshint camelcase:false*/
 
-	__webpack_require__(22)
+	__webpack_require__(23)
 
 	var rootCommons = __webpack_require__(7)
 
@@ -2558,7 +2657,7 @@
 
 	      views: {
 	        'uploadFormM': {
-	          template: __webpack_require__(23),
+	          template: __webpack_require__(24),
 
 	          controller: 'UploadFormMController as uploadFormM'
 	        }
@@ -2689,7 +2788,7 @@
 
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2802,13 +2901,13 @@
 
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"upload-form-m-tab-content\" ng-keypress=\"uploadFormM.dismissIndicatorEvent($event)\"><form class=\"upload-form-m-form\" role=\"form\" name=\"uploadFormMForm\" ng-submit=\"uploadFormM.uploadFormM(uploadFormM.uploadFormMText, uploadFormMForm)\"><div class=\"form-group upload-form-m-text-group\"><pre ng-class=\"['upload-form-m-indicator', {'error-indicator': uploadFormM.indicateError}]\" ng-show=\"uploadFormM.formMShowIndicator\">{$uploadFormM.uploadIndicationText$}\r\n        <span class=\"dismiss\" data-toggle=\"tooltip\" title=\"Dismiss\" ng-click=\"uploadFormM.dismissIndicator()\">x</span>\r\n      </pre><label for=\"upload-form-m\" class=\"control-label\">{$uploadFormM.datePrompt$}</label> <textarea name=\"upload-form-m\" id=\"upload-form-m\" required=\"\" ng-model=\"uploadFormM.uploadFormMText\" ng-class=\"['form-control', 'upload-form-m', {'form-m-is-uploading':uploadFormM.formMIsUploading}]\" ng-readonly=\"uploadFormM.formMIsUploading\"></textarea></div><div class=\"upload-form-m-submit\" style=\"text-align: center\"><button type=\"submit\" class=\"btn btn-success\" ng-disabled=\"uploadFormMForm.$invalid || uploadFormM.formMIsUploading\">Upload</button></div></form></div>";
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2830,7 +2929,7 @@
 	      var deferred = $q.defer()
 
 	      ModalService.showModal({
-	        template: __webpack_require__(25),
+	        template: __webpack_require__(26),
 	        controller: 'DisplayUploadedFormMModalCtrl as displayUploadedFormMModal',
 	        inputs: {forMData: forMData}
 	      }).then(function (modal) {
@@ -2876,19 +2975,19 @@
 
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"display-uploaded-form-m-modal-root\"><div model-table=\"\" model-collection=\"displayUploadedFormMModal.forMData\" table-model-manager=\"::displayUploadedFormMModal.modelManager\" table-caption=\"::displayUploadedFormMModal.tableCaption\" on-row-dbl-click-callback=\"displayUploadedFormMModal.close(rowModel)\" show-pagination=\"false\"></div></div>";
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-m-home-view\"><div uib-tabset=\"\"><div uib-tab=\"\" ng-repeat=\"(key, tab) in tabs\" heading=\"{$tab.title$}\" active=\"tab.active\" select=\"tab.select()\" ng-attr-class=\"{$tab.className$}\"><div class=\"\" ui-view=\"{$tab.viewName$}\"></div></div></div></div>";
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2942,12 +3041,12 @@
 	}
 
 
-	__webpack_require__(28)
 	__webpack_require__(29)
+	__webpack_require__(30)
 
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -3151,7 +3250,7 @@
 
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -3280,114 +3379,10 @@
 
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-m-home-view\"><div class=\"form-m-home-action-buttons btn-group-vertical\" role=\"group\"><a class=\"btn btn-info form-m-home-action-button\" ui-sref=\"lc\">Letter of credit</a> <a class=\"btn btn-info form-m-home-action-button\" ui-sref=\"form_m\">Form M</a></div></div>";
-
-/***/ },
-/* 31 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	/*jshint camelcase:false*/
-
-	var app = angular.module( 'form-m-attachment', [
-	  'rootApp',
-	  'add-attachment'
-	] )
-
-	app.directive( 'formMAttachment', formMAttachmentDirective )
-
-	formMAttachmentDirective.$inject = []
-
-	function formMAttachmentDirective() {
-	  return {
-	    restrict: 'A',
-	    templateUrl: __webpack_require__( 5 ).buildUrl( 'form-m/add-form-m/attachment/attachment-form-m.html' ),
-	    scope: true,
-	    controller: 'FormMAttachmentDirectiveController as formMAttachment'
-	  }
-	}
-
-	app.controller( 'FormMAttachmentDirectiveController', FormMAttachmentDirectiveController )
-
-	FormMAttachmentDirectiveController.$inject = [
-	  '$scope',
-	  'formFieldIsValid',
-	  'underscore',
-	  'confirmationDialog',
-	  'formMObject',
-	  'resetForm2'
-	]
-
-	function FormMAttachmentDirectiveController($scope, formFieldIsValid, underscore, confirmationDialog, formMObject,
-	  resetForm2) {
-	  var vm = this
-	  vm.formM = formMObject
-	  var title = 'Add comment'
-	  var confirmationTitleLength = 40
-
-	  init()
-	  function init(form) {
-	    vm.title = title
-	    vm.formM.showCommentForm = false
-	    vm.formM.showEditComment = false
-	    vm.commentToEdit = null
-	    formMObject.commentText = null
-
-	    if ( form ) resetForm2( form )
-	  }
-
-	  vm.isValid = function (name, validity) { return formFieldIsValid( $scope, 'commentForm', name, validity ) }
-
-	  vm.toggleShow = function toggleShow(form) {
-	    vm.formM.showCommentForm = formMObject._id && !vm.formM.showCommentForm
-
-	    if ( !vm.formM.showCommentForm ) init( form )
-	    else vm.title = 'Dismiss'
-	  }
-
-	  vm.editCommentInvalid = function editCommentInvalid(form) {
-	    if ( underscore.isEmpty( vm.commentToEdit ) || form.$invalid ) return true
-
-	    return vm.commentToEdit.text === formMObject.commentText
-	  }
-
-	  vm.onCommentDblClick = function onCommentDblClick(comment) {
-	    vm.formM.showEditComment = true
-	    vm.formM.showCommentForm = false
-	    vm.toggleShow()
-	    vm.commentToEdit = angular.copy( comment )
-	    formMObject.commentText = vm.commentToEdit.text
-	  }
-
-	  vm.viewComment = function viewComment(comment) {
-	    confirmationDialog.showDialog( {
-	      title: 'View comment "' + comment.text.slice( 0, confirmationTitleLength ) + '"',
-	      text: comment.text,
-	      infoOnly: true
-	    } )
-	  }
-
-	  vm.editComment = function editComment(text, form) {
-	    formMObject.editComment( text, vm.commentToEdit ).then( function () {init( form )} )
-	  }
-
-	  vm.addComment = function addComment(text, form) {
-	    formMObject.addComment( text ).then( function () { init( form ) } )
-	  }
-
-	  $scope.$watch( function () {return formMObject}, function onFormMObjectChanged(formM) {
-	    formMObject.commentForm = $scope.commentForm
-
-	    if ( formM ) {
-	      if ( !formM.amount || !formM.number ) init( formMObject.commentForm )
-	    }
-	  }, true )
-	}
-
 
 /***/ }
 /******/ ]);

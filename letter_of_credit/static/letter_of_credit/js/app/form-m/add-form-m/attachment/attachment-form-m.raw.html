@@ -1,20 +1,19 @@
 <div class="form-m-attachment-container form-m-add-on-container" style="margin-bottom: 30px;">
 
-  <div ng-click="formMAttachment.toggleShow(commentForm)"
+  <div ng-click="formMAttachment.toggleShow()"
        class="form-m-add-on-toggle form-m-attachment-toggle-show clearfix">
-    <span class="form-m-add-on-show-helper" ng-if="formMAttachment.formM.showCommentForm">Add a comment</span>
 
     <div class="form-m-add-on-show-icon form-m-comment-add-on-show-icon">
       <span
-        ng-class="['glyphicon', {'glyphicon-chevron-down': !formMAttachment.formM.showCommentForm, 'glyphicon-chevron-up': formMAttachment.formM.showCommentForm}]">
+        ng-class="['glyphicon', {'glyphicon-chevron-down': !formMAttachment.showAttachment, 'glyphicon-chevron-up': formMAttachment.showAttachment}]">
       </span>
 
-      {$formMAttachment.title$}
+      Attachment
     </div>
   </div>
 
-  <div add-attachment
-       km-title="'Form M'">
+  <div ng-if="formMAttachment.showAttachment" add-attachment
+       km-title="formMAttachment.formM.number + ' (' + formMAttachment.formM.applicant.name + ')'">
   </div>
 
   <div class="items-table-display" ng-if="formMAttachment.formM.comments.length">

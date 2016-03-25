@@ -35,13 +35,11 @@ function FormMAttachmentDirectiveController($scope, formFieldIsValid, underscore
   resetForm2) {
   var vm = this
   vm.formM = formMObject
-  var title = 'Add comment'
   var confirmationTitleLength = 40
 
   init()
   function init(form) {
-    vm.title = title
-    vm.formM.showCommentForm = false
+    vm.showAttachment = false
     vm.formM.showEditComment = false
     vm.commentToEdit = null
     formMObject.commentText = null
@@ -51,11 +49,8 @@ function FormMAttachmentDirectiveController($scope, formFieldIsValid, underscore
 
   vm.isValid = function (name, validity) { return formFieldIsValid( $scope, 'commentForm', name, validity ) }
 
-  vm.toggleShow = function toggleShow(form) {
-    vm.formM.showCommentForm = formMObject._id && !vm.formM.showCommentForm
-
-    if ( !vm.formM.showCommentForm ) init( form )
-    else vm.title = 'Dismiss'
+  vm.toggleShow = function toggleShow() {
+    vm.showAttachment = formMObject._id && !vm.showAttachment
   }
 
   vm.editCommentInvalid = function editCommentInvalid(form) {
@@ -66,7 +61,7 @@ function FormMAttachmentDirectiveController($scope, formFieldIsValid, underscore
 
   vm.onCommentDblClick = function onCommentDblClick(comment) {
     vm.formM.showEditComment = true
-    vm.formM.showCommentForm = false
+    vm.showAttachment = false
     vm.toggleShow()
     vm.commentToEdit = angular.copy( comment )
     formMObject.commentText = vm.commentToEdit.text

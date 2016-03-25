@@ -29,7 +29,7 @@ for (var key in baseConfig) {
   if (baseConfig.hasOwnProperty(key)) webpackConfig[key] = baseConfig[key]
 }
 
-module.exports = {
+   module.exports = {
   destDir: destDir,
   base: rootApp,
   entry: entry,

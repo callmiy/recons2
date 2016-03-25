@@ -1,26 +1,28 @@
-<form class="form-horizontal" role="form">
-  <fieldset ng-form name="addAttachmentForm">
-    <legend style="font-size: 18px;">
-      Attachments: {$::attachment.kmTitle$}
-    </legend>
+<div class="add-attachment-container">
+  <form role="form" name="addAttachmentForm">
+    <fieldset>
+      <legend style="font-size: 15px;">
+        Add Attachments: {$::attachment.kmTitle$}
+      </legend>
 
-    <div class="form-group">
-      <div class="col-sm-9 col-sm-offset-3">
-        <div class="clearfix">
-          <div class="pull-left">
-            <input type="button" class="btn btn-info" value="Allocate Fx"
-                   ng-disabled="attachment.disableSubmitBtn(addAttachmentForm)"
-                   ng-click="attachment.saveDeal(attachment.deal, addAttachmentForm)"
-            >
-          </div>
-
-          <div class="pull-right" style="text-align: right">
-            <input type="button" class="btn btn-warning" id="fx-deal-add-reset" value="Reset"
-                   ng-click="attachment.clearForm(addAttachmentForm)"
-            >
-          </div>
+      <div style="margin-left: 20px; margin-right: 20px;" class="pull-left">
+        <div>
+          <label for="attachment-title">Title</label>
         </div>
+        <input type="text" class="form-control" name="attachmentTitle" id="attachment-title"
+               ng-model="attachment.file.title">
       </div>
-    </div>
-  </fieldset>
-</form>
+
+      <div class="pull-left">
+        <div>
+          <label for="attachment-comment">Comment</label>
+        </div>
+      <textarea style="height: 80px; width: 251px;"
+                class="form-control" name="attachmentComment" id="attachment-comment"
+                ng-model="attachment.file.comment"> </textarea>
+      </div>
+
+      <div class="clearfix"></div>
+    </fieldset>
+  </form>
+</div>
