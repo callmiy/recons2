@@ -2,7 +2,7 @@ import json
 import logging
 from copy import deepcopy
 
-from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files.uploadedfile import UploadedFile
 from rest_framework import generics
 import django_filters
 from django_downloadview import ObjectDownloadView
@@ -75,6 +75,8 @@ class AttachmentListCreateAPIView(generics.ListCreateAPIView):
             u'content_type': [u'/core-app/ct/44']}>
         }
 
+        Note that InMemoryUploadedFile could any subclass of UploadedFile
+
         We pass above data and return a dict of the form:
         {
             'comment': 'comment',
@@ -93,7 +95,7 @@ class AttachmentListCreateAPIView(generics.ListCreateAPIView):
         for key in data:
             the_file = data[key]
             if QUERY_DICT_KEY_RE.match(key):
-                if isinstance(the_file, InMemoryUploadedFile):
+                if isinstance(the_file, UploadedFile):
                     files.append(the_file)
                     has_raw_files = True
             else:

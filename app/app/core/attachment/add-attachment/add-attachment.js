@@ -75,18 +75,17 @@ function addAttachmentController(resetForm2, Upload, urls) {
   }
 
   vm.addAttachment = function addAttachment(attachment, form) {
-    //vm.onAttachmentFileAdded( { $attachmentFile: attachment } )
-
     Upload.upload( {
       url: urls.attachmentAPIUrl,
       data: Object.assign( attachment, vm.attachmentContext )
 
     } ).then( function (response) {
-      console.log( response )
+      vm.onAttachmentFileAdded( { $attachmentFile: { result: response.data } } )
       init( form )
 
     }, function (xhr) {
-      if ( xhr.status > 0 ) {
+      if ( xhr.statusText !== "CREATED" ) {
+        vm.onAttachmentFileAdded( { $attachmentFile: { error: xhr } } )
         console.log( xhr )
       }
     } )

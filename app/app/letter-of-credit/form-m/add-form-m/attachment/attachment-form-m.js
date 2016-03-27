@@ -35,7 +35,6 @@ function FormMAttachmentDirectiveController(formMObject) {
   function init() {
     vm.showAttachment = false
     vm.attachments = []
-    vm.selectedAttachments = []
   }
 
   vm.attachmentContext = {
@@ -47,16 +46,17 @@ function FormMAttachmentDirectiveController(formMObject) {
     vm.showAttachment = formMObject._id && !vm.showAttachment
   }
 
-  vm.attachmentFileAdded = function attachmentFileAdded($attachmentFile) {
-    vm.selectedAttachments.push( $attachmentFile )
-    console.log( $attachmentFile )
+  vm.attachmentFileAdded = function attachmentFileAdded(attachmentFileAddedResult) {
+    console.log( attachmentFileAddedResult )
+
+    if ( attachmentFileAddedResult.result ) {
+      //var result = attachmentFileAddedResult
+      formMObject.setAttachments()
+    }
   }
 
-  vm.deleteSelectedAttachment = function deleteSelectedAttachment($index, deleteAll) {
+  vm.deleteAttachment = function deleteAttachment($index, deleteAll) {
     if ( $index !== null ) vm.selectedAttachments.splice( $index, 1 )
     else if ( deleteAll ) vm.selectedAttachments = []
-  }
-
-  vm.uploadFiles = function uploadFiles() {
   }
 }

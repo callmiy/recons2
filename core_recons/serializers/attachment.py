@@ -14,8 +14,17 @@ class AttachmentFileSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
+class FileAttachmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AttachmentFile
+        fields = (
+            'name',
+            'download_url',
+        )
+
+
 class AttachmentSerializer(serializers.HyperlinkedModelSerializer):
-    files = serializers.StringRelatedField(many=True, read_only=True)
+    files = FileAttachmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Attachment

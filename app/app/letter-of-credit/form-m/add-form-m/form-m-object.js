@@ -7,7 +7,8 @@ var app = angular.module( 'add-form-m-form-m-object', [
   'lc-issue-service',
   'lc-cover-service',
   'form-m-service',
-  'comment-service'
+  'comment-service',
+  'attachment-service'
 ] )
 
 app.factory( 'formMObject', formMObject )
@@ -24,11 +25,12 @@ formMObject.$inject = [
   'getTypeAheadLCIssue',
   'FormM',
   '$q',
-  'Comment'
+  'Comment',
+  'Attachment',
 ]
 
 function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDialog, formatDate, xhrErrorDisplay,
-  underscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment) {
+  underscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment, Attachment) {
   function Factory() {
     var self = this
     self.datePickerFormat = 'dd-MMM-yyyy'
@@ -189,6 +191,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         self._id = null
         self.lc_number = null
         self.deleted_at = null
+        self.attachments = []
       }
 
       var formM
@@ -489,6 +492,15 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
       } )
 
       return deferred.promise
+    }
+
+    self.setAttachments = function setAttachments() {
+      Attachment.query( { ct: self.ct_id, pk: self._id, not_deleted: true } ).$promise.then( function (data) {
+        self.attachments = data
+
+      }, function (xhr) {
+        console.log( 'xhr = ', xhr )
+      } )
     }
   }
 

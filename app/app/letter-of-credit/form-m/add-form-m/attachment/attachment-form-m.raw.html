@@ -19,58 +19,73 @@
          on-attachment-file-added="formMAttachment.attachmentFileAdded($attachmentFile)"
          attachment-context="formMAttachment.attachmentContext"></div>
 
-    <div class="items-table-display" ng-if="formMAttachment.selectedAttachments.length">
+    <div class="items-table-display" ng-if="formMAttachment.formM.attachments.length">
 
       <table class="table table-responsive table-striped table-bordered selected-attachments-table">
         <caption>
-          Selected Attachments <span class="badge">{$formMAttachment.selectedAttachments.length$}</span>
+          Attachments <span class="badge">{$formMAttachment.formM.attachments.length$}</span>
 
-          <span class="glyphicon glyphicon-remove selected-attachments-dismiss-all selected-attachments-dismiss"
+          <span class="glyphicon glyphicon-remove selected-attachments-dismiss-all selected-attachments trash-attachment"
                 data-toggle="tooltip"
                 title="Close all attachments"
                 ng-click="formMAttachment.deleteSelectedAttachment(null, true)"></span>
         </caption>
         <thead>
           <tr>
-            <td>S/N</td>
+            <td style="width: 1px">S/N</td>
             <td>Title</td>
             <td>Comment</td>
-            <td>File Name</td>
+            <td>Files</td>
             <td></td>
           </tr>
         </thead>
 
         <tbody>
-          <tr ng-repeat="selectedAttachment in formMAttachment.selectedAttachments">
+          <tr ng-repeat="attachment in formMAttachment.formM.attachments">
             <td>{$$index + 1$}</td>
 
             <td>
-              {$::selectedAttachment.title$}
+              {$::attachment.title$}
             </td>
 
-            <td data-toggle="tooltip" data-placement="bottom" title="{$::selectedAttachment.comment$}">
-              {$::selectedAttachment.comment.slice(0, 30)$}
+            <td data-toggle="tooltip" data-placement="bottom" title="{$::attachment.comment$}">
+              {$::attachment.comment.slice(0, 30)$}
             </td>
-
-            <td>{$::selectedAttachment.file.name$}</td>
 
             <td>
-              <span class="glyphicon glyphicon-remove selected-attachments-dismiss"
+              <span style="display: block" ng-repeat="file in attachment.files">
+                <span style="display: block" class="pull-left">
+                  {$::file.name$}
+                </span>
+
+                <span style="display: block" class="pull-right">
+                  <span style="margin-right: 15px;"
+                        class="glyphicon glyphicon-download selected-attachments download-attachment">
+                  </span>
+
+                  <span class="glyphicon glyphicon-trash selected-attachments trash-attachment"
+                        data-toggle="tooltip"
+                        title="Delete attachment file"
+                        ng-click="formMAttachment.deleteSelectedAttachment($index)"></span>
+                </span>
+
+                <span class="clearfix"></span>
+              </span>
+            </td>
+
+            <td align="center" style="text-align: center;">
+              <span class="glyphicon glyphicon-remove selected-attachments trash-attachment"
                     data-toggle="tooltip"
-                    title="Close attachment"
+                    title="Delete attachment"
                     ng-click="formMAttachment.deleteSelectedAttachment($index)"></span>
             </td>
           </tr>
         </tbody>
-
-        <tfoot>
-          <tr>
-            <td colspan="5" style="text-align: center;">
-              <button class="btn btn-info" ng-click="formMAttachment.uploadFiles()">Upload files</button>
-            </td>
-          </tr>
-        </tfoot>
       </table>
+    </div>
+
+    <div style="text-align: right">
+      <button class="btn btn-default" ng-click="formMAttachment.formM.setAttachments()">Refresh</button>
     </div>
   </div>
 </div>

@@ -2,8 +2,10 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.db import models
-
 from core_recons.utilities import get_generic_related_model_class_str
+import re
+
+FILE_NAME_RE = re.compile(r'attachments/\d{4}-\d{2}-\d{2}/(.+)')
 
 
 class AttachmentFile(models.Model):
@@ -20,6 +22,9 @@ class AttachmentFile(models.Model):
 
     def download_url(self):
         return self.__unicode__()
+
+    def name(self):
+        return FILE_NAME_RE.search(self.file.name).group(1)
 
 
 class Attachment(models.Model):
@@ -40,6 +45,9 @@ class Attachment(models.Model):
 
     def file_download_uri(self):
         return [the_file.__unicode__() for the_file in self.files.all()]
+
+    def file_names(self):
+        return [the_file.name() for the_file in self.files.all()]
 
     def related_model_class_str(self):
         return get_generic_related_model_class_str(self)
