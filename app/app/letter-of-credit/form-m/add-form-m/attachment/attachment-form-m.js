@@ -24,71 +24,39 @@ function formMAttachmentDirective() {
 app.controller( 'FormMAttachmentDirectiveController', FormMAttachmentDirectiveController )
 
 FormMAttachmentDirectiveController.$inject = [
-  '$scope',
-  'formFieldIsValid',
-  'underscore',
-  'confirmationDialog',
   'formMObject',
-  'resetForm2'
 ]
 
-function FormMAttachmentDirectiveController($scope, formFieldIsValid, underscore, confirmationDialog, formMObject,
-  resetForm2) {
+function FormMAttachmentDirectiveController(formMObject) {
   var vm = this
   vm.formM = formMObject
-  var confirmationTitleLength = 40
 
   init()
-  function init(form) {
+  function init() {
     vm.showAttachment = false
-    vm.formM.showEditComment = false
-    vm.commentToEdit = null
-    formMObject.commentText = null
-
-    if ( form ) resetForm2( form )
+    vm.attachments = []
+    vm.selectedAttachments = []
   }
 
-  vm.isValid = function (name, validity) { return formFieldIsValid( $scope, 'commentForm', name, validity ) }
+  vm.attachmentContext = {
+    content_type: formMObject.ct_url,
+    object_id: formMObject._id
+  }
 
   vm.toggleShow = function toggleShow() {
     vm.showAttachment = formMObject._id && !vm.showAttachment
   }
 
-  vm.editCommentInvalid = function editCommentInvalid(form) {
-    if ( underscore.isEmpty( vm.commentToEdit ) || form.$invalid ) return true
-
-    return vm.commentToEdit.text === formMObject.commentText
+  vm.attachmentFileAdded = function attachmentFileAdded($attachmentFile) {
+    vm.selectedAttachments.push( $attachmentFile )
+    console.log( $attachmentFile )
   }
 
-  vm.onCommentDblClick = function onCommentDblClick(comment) {
-    vm.formM.showEditComment = true
-    vm.showAttachment = false
-    vm.toggleShow()
-    vm.commentToEdit = angular.copy( comment )
-    formMObject.commentText = vm.commentToEdit.text
+  vm.deleteSelectedAttachment = function deleteSelectedAttachment($index, deleteAll) {
+    if ( $index !== null ) vm.selectedAttachments.splice( $index, 1 )
+    else if ( deleteAll ) vm.selectedAttachments = []
   }
 
-  vm.viewComment = function viewComment(comment) {
-    confirmationDialog.showDialog( {
-      title: 'View comment "' + comment.text.slice( 0, confirmationTitleLength ) + '"',
-      text: comment.text,
-      infoOnly: true
-    } )
+  vm.uploadFiles = function uploadFiles() {
   }
-
-  vm.editComment = function editComment(text, form) {
-    formMObject.editComment( text, vm.commentToEdit ).then( function () {init( form )} )
-  }
-
-  vm.addComment = function addComment(text, form) {
-    formMObject.addComment( text ).then( function () { init( form ) } )
-  }
-
-  $scope.$watch( function () {return formMObject}, function onFormMObjectChanged(formM) {
-    formMObject.commentForm = $scope.commentForm
-
-    if ( formM ) {
-      if ( !formM.amount || !formM.number ) init( formMObject.commentForm )
-    }
-  }, true )
 }

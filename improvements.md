@@ -18,3 +18,4 @@
 3. Display customer details including RM
 4. Display form M details
 5. Display LC details
+6. In form M details app - separate bid, issues and covers from main form M

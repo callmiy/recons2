@@ -3,16 +3,19 @@ from core_recons.models import Attachment, AttachmentFile
 
 
 class AttachmentFileSerializer(serializers.HyperlinkedModelSerializer):
+    file = serializers.FileField()
+
     class Meta:
         model = AttachmentFile
         fields = (
+            'file',
             'url',
             'download_url',
         )
 
 
 class AttachmentSerializer(serializers.HyperlinkedModelSerializer):
-    files = serializers.StringRelatedField(many=True)
+    files = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Attachment

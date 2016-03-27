@@ -5,24 +5,80 @@
         Add Attachments: {$::attachment.kmTitle$}
       </legend>
 
-      <div style="margin-left: 20px; margin-right: 20px;" class="pull-left">
-        <div>
-          <label for="attachment-title">Title</label>
+      <div>
+        <div class="pull-left">
+          <div class="add-attachment-label">
+            <label for="attachment-title">Title</label>
+          </div>
+          <input style="width: 350px;"
+                 type="text" class="form-control" name="attachmentTitle" id="attachment-title" required
+                 ng-model="attachment.attachment.title">
         </div>
-        <input type="text" class="form-control" name="attachmentTitle" id="attachment-title"
-               ng-model="attachment.file.title">
-      </div>
 
-      <div class="pull-left">
-        <div>
-          <label for="attachment-comment">Comment</label>
-        </div>
+        <div style="margin-left: 10px; margin-right: 10px;" class="pull-left">
+          <div class="add-attachment-label">
+            <label for="attachment-comment">Comment</label>
+          </div>
       <textarea style="height: 80px; width: 251px;"
                 class="form-control" name="attachmentComment" id="attachment-comment"
-                ng-model="attachment.file.comment"> </textarea>
+                ng-model="attachment.attachment.comment"> </textarea>
+        </div>
+
+        <div style="" class="pull-left">
+          <div class="add-attachment-label">
+          </div>
+
+          <div>
+            <button name="files" multiple
+                    ngf-max-size="10MB"
+                    ngf-select="attachment.onFilesSelected($files)">
+              Select files
+            </button>
+          </div>
+
+        </div>
+
+        <div style="margin-left: 20px" class="pull-left" ng-if="attachment.attachment.files.length">
+          <div class="add-attachment-label">
+            <label>Selected files</label>
+          </div>
+
+          <table class="table table-striped table-condensed table-responsive">
+            <thead>
+              <tr>
+                <th>S/N</th>
+                <th>File name</th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr ng-repeat="file in attachment.attachment.files">
+                <td>{$$index + 1$}</td>
+                <td>{$file.name$}</td>
+                <td>
+                  <span class="glyphicon glyphicon-trash" ng-click="attachment.deleteFile($index)"></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="clearfix"></div>
       </div>
 
-      <div class="clearfix"></div>
+      <div style="margin-top: 15px;">
+        <button type="button" class="btn btn-info"
+                ng-disabled="addAttachmentForm.$invalid || !attachment.attachment.files.length"
+                ng-click="attachment.addAttachment(attachment.attachment, addAttachmentForm)">
+          Add Attachment
+        </button>
+        &nbsp;&nbsp;
+
+          <span class="btn btn-default" ng-click="attachment.clearForm(addAttachmentForm)">
+            &nbsp;&nbsp;&nbsp;&nbsp; Clear &nbsp;&nbsp;&nbsp;&nbsp;
+          </span>
+      </div>
     </fieldset>
   </form>
 </div>

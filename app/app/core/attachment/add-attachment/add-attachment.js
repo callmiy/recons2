@@ -5,7 +5,8 @@
 var app = angular.module( 'add-attachment', [
   'attachment-service',
   'rootApp',
-  'complex-object-validator'
+  'complex-object-validator',
+  'ngFileUpload',
 ] )
 
 app.directive( 'addAttachment', addAttachmentDirective )
@@ -19,6 +20,8 @@ function addAttachmentDirective() {
     scope: true,
     bindToController: {
       kmTitle: '=',
+      onAttachmentFileAdded: '&',
+      attachmentContext: '=',
     },
     controller: 'addAttachmentController as attachment'
   }
@@ -26,64 +29,70 @@ function addAttachmentDirective() {
 
 app.controller( 'addAttachmentController', addAttachmentController )
 addAttachmentController.$inject = [
-  'underscore',
-  'getTypeAheadCurrency',
   'resetForm2',
-  'toISODate',
-  'FxDeal'
+  'Upload',
+  'urls',
 ]
-function addAttachmentController(underscore, getTypeAheadCurrency, resetForm2, toISODate, FxDeal) {
+function addAttachmentController(resetForm2, Upload, urls) {
   var vm = this //jshint -W040
 
-  var initialDealProps = vm.initialDealProps ? angular.copy( vm.initialDealProps ) : {}
-
   init()
-  function init() {
-    vm.deal = {
-      deal_number: null,
-      currency: initialDealProps.currency ? initialDealProps.currency : null,
-      amount_allocated: initialDealProps.amount_allocated ? initialDealProps.amount_allocated : null,
-      allocated_on: new Date(),
-      amount_utilized: initialDealProps.amount_utilized ? initialDealProps.amount_utilized : null,
-      utilized_on: new Date(),
-      content_type: initialDealProps.content_type,
-      object_id: initialDealProps.object_id
+  function init(form) {
+    vm.attachment = {
+      files: []
     }
 
-    vm.datePickerIsOpenFor = {
-      dealDate: false,
-      dealDateUtilized: false
+    if ( form ) resetForm2( form )
+  }
+
+  vm.deleteFile = function deleteFile($index) {
+    vm.attachment.files.splice( $index, 1 )
+  }
+
+  vm.onFilesSelected = function onFilesSelected($files) {
+    var len = $files.length
+    if ( !($files && len) ) return
+
+    var files = vm.attachment.files
+    var attachmentFiles = files
+    var filesLen = files.length
+
+    for ( var i = 0; i < len; i++ ) {
+      var selectedFile = $files[i]
+      var exists = false
+
+      for ( var j = 0; j < filesLen; j++ ) {
+        if ( angular.equals( selectedFile, files[j] ) ) {
+          exists = true
+          break
+        }
+      }
+
+      if ( !exists ) attachmentFiles.push( selectedFile )
     }
+
+    vm.attachment.files = attachmentFiles
   }
 
-  vm.disableSubmitBtn = function disableSubmitBtn(form) {
-    if ( form.$invalid ) return true
-    if ( vm.deal.amount_utilized && !vm.deal.utilized_on ) return true
+  vm.addAttachment = function addAttachment(attachment, form) {
+    //vm.onAttachmentFileAdded( { $attachmentFile: attachment } )
 
-    return (!vm.deal.amount_utilized && vm.deal.utilized_on)
-  }
+    Upload.upload( {
+      url: urls.attachmentAPIUrl,
+      data: Object.assign( attachment, vm.attachmentContext )
 
-  vm.getCurrency = getTypeAheadCurrency
-  vm.datePickerFormat = 'dd-MMM-yyyy'
-  vm.openDatePickerFor = function openDatePickerFor(element) {
-    vm.datePickerIsOpenFor[element] = true
+    } ).then( function (response) {
+      console.log( response )
+      init( form )
+
+    }, function (xhr) {
+      if ( xhr.status > 0 ) {
+        console.log( xhr )
+      }
+    } )
   }
 
   vm.clearForm = function clearForm(form) {
-    resetForm2( form )
-    init()
-  }
-
-  vm.saveDeal = function saveDeal(deal) {
-    deal = angular.copy( deal )
-    deal.allocated_on = toISODate( deal.allocated_on )
-    deal.utilized_on = toISODate( deal.utilized_on )
-    deal.currency = deal.currency.url
-
-    new FxDeal( deal ).$save( function (data) {
-      vm.onFxAllocated( { result: data } )
-    }, function (error) {
-      vm.onFxAllocated( { result: error } )
-    } )
+    init( form )
   }
 }

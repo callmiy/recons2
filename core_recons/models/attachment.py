@@ -19,7 +19,7 @@ class AttachmentFile(models.Model):
         return reverse('download-attachment-file', kwargs={'pk': self.pk})
 
     def download_url(self):
-        return reverse('download-attachment-file', kwargs={'pk': self.pk})
+        return self.__unicode__()
 
 
 class Attachment(models.Model):
@@ -38,8 +38,8 @@ class Attachment(models.Model):
         verbose_name_plural = 'Attachment'
         app_label = 'core_recons'
 
-    def files_names(self):
-        return ' '.join(['[%s]' % file.__unicode__() for file in self.files.all()])
+    def file_download_uri(self):
+        return [the_file.__unicode__() for the_file in self.files.all()]
 
     def related_model_class_str(self):
         return get_generic_related_model_class_str(self)
