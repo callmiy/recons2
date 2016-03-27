@@ -1,9 +1,5 @@
-# Attachment Model
-    make it generic
-
 ## Attachment Form M
-1. attach to form M only
-2. choose context - attach to form M or customer (what other contexts are possible? LC?)
+1. choose context - attach to form M or customer (what other contexts are possible? LC?)
 
 
 # Form M App
@@ -19,3 +15,9 @@
 4. Display form M details
 5. Display LC details
 6. In form M details app - separate bid, issues and covers from main form M
+
+## Form M Attachment
+1. Attachment table
+    - provide every attachment row and file with checkboxes
+    - select box for performing actions such as delete, update etc.
+        on attachments and files

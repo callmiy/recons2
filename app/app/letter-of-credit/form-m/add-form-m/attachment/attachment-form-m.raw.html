@@ -12,30 +12,35 @@
     </div>
   </div>
 
-  <div ng-if="formMAttachment.showAttachment">
+  <div ng-if="formMAttachment.showAttachment" style="position:relative; margin-top: 30px;">
+    <div class="add-attachment-form-toggle"
+         ng-click="formMAttachment.showAddAttachmentForm = !formMAttachment.showAddAttachmentForm">
+      <div class="add-attachment-form-toggle-line"></div>
 
-    <div class="form-m-add-attachment-container" add-attachment
-         km-title="formMAttachment.formM.number + ' (' + formMAttachment.formM.applicant.name + ')'"
+      <span class="glyphicon glyphicon-plus-sign"></span>
+
+      <span class="add-attachment-form-toggle-text">Add attachment</span>
+    </div>
+
+    <div class="absolute-spacer"></div>
+
+    <div class="form-m-add-attachment-container" add-attachment ng-show="formMAttachment.showAddAttachmentForm"
          on-attachment-file-added="formMAttachment.attachmentFileAdded($attachmentFile)"
-         attachment-context="formMAttachment.attachmentContext"></div>
+         attachment-context="formMAttachment.attachmentContext">
+    </div>
 
     <div class="items-table-display" ng-if="formMAttachment.formM.attachments.length">
 
-      <table class="table table-responsive table-striped table-bordered selected-attachments-table">
+      <table class="table table-responsive table-striped table-bordered form-m-attachments-table">
         <caption>
           Attachments <span class="badge">{$formMAttachment.formM.attachments.length$}</span>
-
-          <span class="glyphicon glyphicon-remove selected-attachments-dismiss-all selected-attachments trash-attachment"
-                data-toggle="tooltip"
-                title="Close all attachments"
-                ng-click="formMAttachment.deleteSelectedAttachment(null, true)"></span>
         </caption>
         <thead>
           <tr>
             <td style="width: 1px">S/N</td>
             <td>Title</td>
-            <td>Comment</td>
-            <td>Files</td>
+            <td style="width: 220px;">Comment</td>
+            <td style="width: 40%;">Files</td>
             <td></td>
           </tr>
         </thead>
@@ -54,27 +59,22 @@
 
             <td>
               <span style="display: block" ng-repeat="file in attachment.files">
-                <span style="display: block" class="pull-left">
-                  {$::file.name$}
-                </span>
+                <a style="display: block" class="pull-left" ng-href="{$::file.download_url$}">
+                  {$::formMAttachment.getFileName(file.name)$}
+                </a>
 
-                <span style="display: block" class="pull-right">
-                  <span style="margin-right: 15px;"
-                        class="glyphicon glyphicon-download selected-attachments download-attachment">
-                  </span>
-
-                  <span class="glyphicon glyphicon-trash selected-attachments trash-attachment"
-                        data-toggle="tooltip"
-                        title="Delete attachment file"
-                        ng-click="formMAttachment.deleteSelectedAttachment($index)"></span>
-                </span>
+                <span style="display: block"
+                      class="glyphicon glyphicon-trash attachment-control trash-attachment pull-right"
+                      data-toggle="tooltip"
+                      title="Delete attachment file"
+                      ng-click="formMAttachment.deleteSelectedAttachment($index)"></span>
 
                 <span class="clearfix"></span>
               </span>
             </td>
 
             <td align="center" style="text-align: center;">
-              <span class="glyphicon glyphicon-remove selected-attachments trash-attachment"
+              <span class="glyphicon glyphicon-trash attachment-control trash-attachment"
                     data-toggle="tooltip"
                     title="Delete attachment"
                     ng-click="formMAttachment.deleteSelectedAttachment($index)"></span>
@@ -84,7 +84,7 @@
       </table>
     </div>
 
-    <div style="text-align: right">
+    <div style="text-align: right" ng-class="{'no-attachment': !formMAttachment.formM.attachments.length}">
       <button class="btn btn-default" ng-click="formMAttachment.formM.setAttachments()">Refresh</button>
     </div>
   </div>
