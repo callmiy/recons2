@@ -17,4 +17,17 @@ function Attachment($resource, urls) {
   )
 }
 
+app.factory( 'AttachmentFile', AttachmentFile )
+AttachmentFile.$inject = ['$resource', 'urls']
+
+function AttachmentFile($resource, urls) {
+  var url = appendToUrl( urls.attachmentFileAPIUrl, ':id' );
+  return $resource( url, { id: '@id' }, {
+      'put': {
+        method: 'PUT'
+      }
+    }
+  )
+}
+
 require( './add-attachment/add-attachment.js' )

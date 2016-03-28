@@ -496,6 +496,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
 
     self.setAttachments = function setAttachments() {
       Attachment.query( { ct: self.ct_id, pk: self._id, not_deleted: true } ).$promise.then( function (data) {
+
         self.attachments = data
 
       }, function (xhr) {

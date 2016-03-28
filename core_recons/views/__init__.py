@@ -27,6 +27,7 @@ class CoreAppsView(View):
             'commentAPIUrl': reverse('comment-list'),
             'fxDealAPIUrl': reverse('fxdeal-list'),
             'attachmentAPIUrl': reverse('attachment-list'),
+            'attachmentFileAPIUrl': reverse('attachmentfile-list'),
         })
 
     @staticmethod

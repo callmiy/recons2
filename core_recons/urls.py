@@ -26,7 +26,7 @@ urlpatterns += patterns(
 
         url(r'^comment/?$', login_required(CommentListCreateAPIView.as_view()), name='comment-list'),
 
-        url(r'^comment/(?P<pk>\d+)/?$', CommentRetrieveUpdateDestroyAPIView.as_view(),
+        url(r'^comment/(?P<pk>\d+)/?$', login_required(CommentRetrieveUpdateDestroyAPIView.as_view()),
             name='comment-detail'),
 )
 
@@ -36,7 +36,7 @@ urlpatterns += patterns(
 
         url(r'^fx-deal/?$', login_required(FxDealListCreateAPIView.as_view()), name='fxdeal-list'),
 
-        url(r'^fx-deal/(?P<pk>\d+)/?$', FxDealRetrieveUpdateDestroyAPIView.as_view(),
+        url(r'^fx-deal/(?P<pk>\d+)/?$', login_required(FxDealRetrieveUpdateDestroyAPIView.as_view()),
             name='fxdeal-detail'),
 )
 
@@ -46,7 +46,7 @@ urlpatterns += patterns(
 
         url(r'^attachment/?$', login_required(AttachmentListCreateAPIView.as_view()), name='attachment-list'),
 
-        url(r'^attachment/(?P<pk>\d+)/?$', AttachmentRetrieveUpdateDestroyAPIView.as_view(),
+        url(r'^attachment/(?P<pk>\d+)/?$', login_required(AttachmentRetrieveUpdateDestroyAPIView.as_view()),
             name='attachment-detail'),
 )
 
@@ -60,6 +60,6 @@ urlpatterns += patterns(
         url(r'^attachment-file/(?P<pk>\d+)/?$', AttachmentFileRetrieveUpdateDestroyAPIView.as_view(),
             name='attachmentfile-detail'),
 
-        url(r'^download-attachment-file/(?P<pk>\d+)/?$', attachment_file_download_view,
+        url(r'^download-attachment-file/(?P<pk>\d+)/?$', login_required(attachment_file_download_view),
             name='download-attachment-file'),
 )

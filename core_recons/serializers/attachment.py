@@ -9,6 +9,8 @@ class AttachmentFileSerializer(serializers.HyperlinkedModelSerializer):
         model = AttachmentFile
         fields = (
             'file',
+            'id',
+            'name',
             'url',
             'download_url',
         )
@@ -18,7 +20,9 @@ class FileAttachmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = AttachmentFile
         fields = (
+            'id',
             'name',
+            'url',
             'download_url',
         )
 

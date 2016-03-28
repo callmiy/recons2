@@ -17,8 +17,7 @@
 
               <span class="input-group-addon form-m-action-execute"
                     ng-if="addFormMState.action"
-                    ng-click="addFormMState.doAction( addFormMState.action, addFormMState.formM )"
-              >
+                    ng-click="addFormMState.doAction( addFormMState.action, addFormMState.formM )">
                 <span>Go</span>
               </span>
 
@@ -271,9 +270,7 @@
     </div>
   </form>
 
-  <div class="attachment" ng-if="addFormMState.formM._id">
-    <hr/>
-
+  <div style="margin-top: 30px;" class="attachment" ng-if="addFormMState.formM._id">
     <div form-m-attachment></div>
   </div>
 </div>

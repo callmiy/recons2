@@ -368,6 +368,11 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     return null
   }
 
+  /**
+   * If a bid has been checked or unchecked i.e vm.selectedBids has an entry with bid ID and value for checked,
+   * then we pull the bid with that ID and assign the value of checked to the bid's checked attribute
+   * @param selectedBids
+   */
   function checkBids(selectedBids) {
     vm.selectedBidsLen = 0
 
