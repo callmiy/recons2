@@ -1,12 +1,12 @@
 "use strict";
 
-var rootCommons = require('commons')
+var rootCommons = require( 'commons' )
 
-angular.module('kanmii-underscore', []).factory('kanmiiUnderscore', function () { return window._ })
+angular.module( 'kanmii-underscore', [] ).factory( 'kanmiiUnderscore', function () { return window._ } )
 
-angular.module('kanmii-URI', []).factory('kanmiiUri', function () { return window.URI })
+angular.module( 'kanmii-URI', [] ).factory( 'kanmiiUri', function () { return window.URI } )
 
-var app = angular.module('rootApp', [
+var app = angular.module( 'rootApp', [
   'tradeApp',
   'ngRoute',
   'ui.bootstrap',
@@ -15,13 +15,13 @@ var app = angular.module('rootApp', [
   'ngMessages',
   'angularModalService',
   'toggle-dim-element'
-])
-rootCommons.setStaticPrefix(app)
+] )
+rootCommons.setStaticPrefix( app )
 
-app.factory('moment', function () { return require('moment') })
-app.factory('underscore', function () { return require('underscore') })
+app.factory( 'moment', function () { return require( 'moment' ) } )
+app.factory( 'underscore', function () { return require( 'underscore' ) } )
 
-app.factory('resetForm', resetForm)
+app.factory( 'resetForm', resetForm )
 function resetForm() {
 
   /**
@@ -33,9 +33,9 @@ function resetForm() {
    * @param cb - optional callback
    */
   function reset(form, el, selector, cb) {
-    el.find(selector).each(function () {
-      $(this).val('')
-    })
+    el.find( selector ).each( function () {
+      $( this ).val( '' )
+    } )
 
     //form.$error = {}
     form.$setPristine()
@@ -47,12 +47,20 @@ function resetForm() {
   return reset
 }
 
-app.factory('clearFormField', clearFormField)
+app.factory( 'clearFormField', clearFormField )
+
 function clearFormField() {
   /**
    * this is a hack required to clear form controls where ng-model is a complex object and the control did not validate.
    */
   return function (form, fieldName) {
+    if ( angular.isArray( fieldName ) ) {
+      if ( fieldName[0] === 'file' ) {
+        $( '[name=' + fieldName[1] + ']' ).val( null )
+      }
+      return
+    }
+
     var field = form[fieldName]
     field.$$lastCommittedViewValue = ''
     field.$rollbackViewValue()
@@ -61,7 +69,7 @@ function clearFormField() {
   }
 }
 
-app.factory('resetForm2', resetForm2)
+app.factory( 'resetForm2', resetForm2 )
 resetForm2.$inject = ['clearFormField']
 function resetForm2(clearFormField) {
 
@@ -69,26 +77,30 @@ function resetForm2(clearFormField) {
    *
    * @param {angular.form} form - the global form (may contain children ng-forms)
    * @param {null|[]} clearForm - if present, it is an array of objects of the form:
-   * {form: angular.form, elements: []} where elements are the form control elements of the 'form' key
+   * {form: angular.form, elements: []} where elements are the string name of form control elements of the 'form' key.
+   *   However, for elements such as file fields that are not handled by angular, the element will not be the string
+   *   name but rather an array of the type ['elementType', 'elementName']. The type of the element (array index 0)
+   *   will be used to determine how to handle this element - see factory `clearFormField` for details on how this is
+   *   done.
    */
   function reset(form, clearForm) {
     form.$setPristine()
     form.$setUntouched()
 
-    if (clearForm) {
-      clearForm.forEach(function (obj) {
+    if ( clearForm ) {
+      clearForm.forEach( function (obj) {
         var theForm = obj.form
-        obj.elements.forEach(function (element) {
-          clearFormField(theForm, element)
-        })
-      })
+        obj.elements.forEach( function (element) {
+          clearFormField( theForm, element )
+        } )
+      } )
     }
   }
 
   return reset
 }
 
-app.factory('formFieldIsValid', formFieldIsValid)
+app.factory( 'formFieldIsValid', formFieldIsValid )
 function formFieldIsValid() {
   /**
    * A function whose return value is used to evaluate whether a form control element has error or success
@@ -104,83 +116,83 @@ function formFieldIsValid() {
   }
 }
 
-app.directive('controlHasFeedback', controlHasFeedback)
+app.directive( 'controlHasFeedback', controlHasFeedback )
 
 function controlHasFeedback() {
   return {
     restrict: 'A',
     link: function (scope, element, attributes) {
-      element.addClass('has-feedback')
-      var $input = element.find(attributes.controlSelector || '.form-control')
-      var $beforeFeedback = element.find(attributes.feedbackAfter)
-      var $fieldBack = $('<i class="form-control-feedback glyphicon"></i>')
+      element.addClass( 'has-feedback' )
+      var $input = element.find( attributes.controlSelector || '.form-control' )
+      var $beforeFeedback = element.find( attributes.feedbackAfter )
+      var $fieldBack = $( '<i class="form-control-feedback glyphicon"></i>' )
 
-      if ($beforeFeedback.size()) {
-        $fieldBack.insertAfter($beforeFeedback)
+      if ( $beforeFeedback.size() ) {
+        $fieldBack.insertAfter( $beforeFeedback )
 
-        if ($beforeFeedback.is('.input-group-addon')) $fieldBack.css('right', -2)
+        if ( $beforeFeedback.is( '.input-group-addon' ) ) $fieldBack.css( 'right', -2 )
 
       } else {
-        $fieldBack.insertAfter($input)
+        $fieldBack.insertAfter( $input )
       }
 
-      var $form = element.closest('[ng-form]')
-      if (!$form.size()) $form = element.closest('form')
+      var $form = element.closest( '[ng-form]' )
+      if ( !$form.size() ) $form = element.closest( 'form' )
 
-      var field = scope[$form.attr('name')][$input.prop('name')]
+      var field = scope[$form.attr( 'name' )][$input.prop( 'name' )]
 
-      scope.$watch(function () {return field.$modelValue}, function () {
-        if (field.$dirty) {
-          if (field.$valid) {
-            element.removeClass('has-error').addClass('has-success')
-            $fieldBack.removeClass('glyphicon-remove').addClass('glyphicon-ok')
+      scope.$watch( function () {return field.$modelValue}, function () {
+        if ( field.$dirty ) {
+          if ( field.$valid ) {
+            element.removeClass( 'has-error' ).addClass( 'has-success' )
+            $fieldBack.removeClass( 'glyphicon-remove' ).addClass( 'glyphicon-ok' )
 
           } else {
-            element.removeClass('has-success').addClass('has-error')
-            $fieldBack.removeClass('glyphicon-ok').addClass('glyphicon-remove')
+            element.removeClass( 'has-success' ).addClass( 'has-error' )
+            $fieldBack.removeClass( 'glyphicon-ok' ).addClass( 'glyphicon-remove' )
           }
 
           $fieldBack.show()
         }
-      })
+      } )
 
-      scope.$watch(function () {return field.$pristine}, function (pristine) {
-        if (pristine) {
-          element.removeClass('has-success has-error')
-          $fieldBack.removeClass('glyphicon-ok glyphicon-remove').hide()
+      scope.$watch( function () {return field.$pristine}, function (pristine) {
+        if ( pristine ) {
+          element.removeClass( 'has-success has-error' )
+          $fieldBack.removeClass( 'glyphicon-ok glyphicon-remove' ).hide()
         }
-      })
+      } )
     }
   }
 }
 
-app.factory('toISODate', toISODate)
+app.factory( 'toISODate', toISODate )
 toISODate.$inject = ['moment']
 function toISODate(moment) {
   return function (dtObj) {
-    return dtObj ? moment(dtObj).format('YYYY-MM-DD') : null
+    return dtObj ? moment( dtObj ).format( 'YYYY-MM-DD' ) : null
   }
 }
 
 
-require('./commons/toggle-dim-element')
-require('./customer/customer.js')
-require('./lc-bid-request/lc-bid-request.js')
-require('./form-m/form-m.js')
-require('./lc/lc.js')
-require('./comment/comment.js')
-require('./fx-deal/fx-deal.js')
-require('./attachment/attachment.js')
-require('./lc-cover/lc-cover.js')
-require('./upload-form-m/upload-form-m.js')
-require('./lc-issue/lc-issue.js')
-require('./commons/number-format.js')
-require('./commons/to-upper.js')
-require('./commons/toggle-bg-color')
-require('./pager-nav/pager-nav.js')
-require('./form-validators/form-validators.js')
-require('./model-table/model-table.js')
-require('./commons/commons.services.js')
-require('./search-lc')
-require('./confirmation-dialog/confirmation-dialog.js')
-require('./complex-object-validator/complex-object-validator.js')
+require( './commons/toggle-dim-element' )
+require( './customer/customer.js' )
+require( './lc-bid-request/lc-bid-request.js' )
+require( './form-m/form-m.js' )
+require( './lc/lc.js' )
+require( './comment/comment.js' )
+require( './fx-deal/fx-deal.js' )
+require( './attachment/attachment.js' )
+require( './lc-cover/lc-cover.js' )
+require( './upload-form-m/upload-form-m.js' )
+require( './lc-issue/lc-issue.js' )
+require( './commons/number-format.js' )
+require( './commons/to-upper.js' )
+require( './commons/toggle-bg-color' )
+require( './pager-nav/pager-nav.js' )
+require( './form-validators/form-validators.js' )
+require( './model-table/model-table.js' )
+require( './commons/commons.services.js' )
+require( './search-lc' )
+require( './confirmation-dialog/confirmation-dialog.js' )
+require( './complex-object-validator/complex-object-validator.js' )

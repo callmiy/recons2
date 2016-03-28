@@ -42,7 +42,13 @@ function addAttachmentController(resetForm2, Upload, urls) {
       files: []
     }
 
-    if ( form ) resetForm2( form )
+    if ( form ) resetForm2( form, [{
+        form: form,
+        elements: [
+          ['file', 'files']
+        ]
+      }]
+    )
   }
 
   vm.deleteFile = function deleteFile($index) {
