@@ -20,4 +20,4 @@ class AttachmentAdmin(admin.ModelAdmin):
 
 @admin.register(AttachmentFile)
 class AttachmentFileAdmin(admin.ModelAdmin):
-    list_display = ('file',)
+    list_display = ('name', 'file',)
