@@ -60,7 +60,8 @@
             </td>
 
             <td>
-              <span style="display: block" ng-repeat="file in attachment.files"
+              <span style="display: block; padding: 4px 0 0 8px; margin-bottom: 5px;"
+                    ng-repeat="file in attachment.files"
                     ng-class="['attachment-file-row', {'form-m-attachment-file-checked': file.checked}]">
 
                 <a style="display: block" class="pull-left" target="_self" download="{$file.name$}"
