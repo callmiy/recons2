@@ -36,39 +36,6 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
     self.datePickerFormat = 'dd-MMM-yyyy'
     var confirmationTitleLength = 40
 
-    self.setBids = function setBids(cb) {
-      self.existingBids = []
-      LcBidRequest.getPaginated( { mf: self.number } ).$promise.then( function (data) {
-
-        if ( data.count ) {
-          var results = data.results
-
-          if ( results.length ) {
-            results.forEach( function (bid) {
-              var total_allocation = 0
-              var total_utilization = 0
-
-              underscore.each( bid.allocations, function (allocation) {
-                total_allocation += allocation.amount_allocated
-                total_utilization += allocation.amount_utilized
-              } )
-
-              bid.total_allocation = total_allocation
-              bid.total_utilization = total_utilization
-              bid.unallocated = bid.amount - total_allocation
-
-              self.existingBids.push( bid )
-            } )
-
-            if ( cb ) cb( self.existingBids )
-          }
-        }
-
-      }, function (xhr) {
-        console.log( 'xhr = ', xhr )
-      } )
-    }
-
     function setComments(id) {
       Comment.query( { ct: self.ct_id, pk: id, not_deleted: true } ).$promise.then( function (data) {
         self.comments = data
@@ -218,6 +185,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
             setIssues()
             setCovers()
             setComments( self._id )
+            self.setAttachments()
           }
 
           cb( self, formM )
@@ -492,6 +460,39 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
       } )
 
       return deferred.promise
+    }
+
+    self.setBids = function setBids(cb) {
+      self.existingBids = []
+      LcBidRequest.getPaginated( { mf: self.number } ).$promise.then( function (data) {
+
+        if ( data.count ) {
+          var results = data.results
+
+          if ( results.length ) {
+            results.forEach( function (bid) {
+              var total_allocation = 0
+              var total_utilization = 0
+
+              underscore.each( bid.allocations, function (allocation) {
+                total_allocation += allocation.amount_allocated
+                total_utilization += allocation.amount_utilized
+              } )
+
+              bid.total_allocation = total_allocation
+              bid.total_utilization = total_utilization
+              bid.unallocated = bid.amount - total_allocation
+
+              self.existingBids.push( bid )
+            } )
+
+            if ( cb ) cb( self.existingBids )
+          }
+        }
+
+      }, function (xhr) {
+        console.log( 'xhr = ', xhr )
+      } )
     }
 
     self.setAttachments = function setAttachments() {

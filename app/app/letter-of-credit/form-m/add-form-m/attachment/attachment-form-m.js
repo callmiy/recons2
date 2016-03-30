@@ -41,8 +41,8 @@ function FormMAttachmentDirectiveController(formMObject, underscore, $scope, Att
 
   init()
   function init() {
-    vm.showAttachment = false
-    vm.showAddAttachmentForm = showAddAttachmentForm()
+    vm.showAttachment = true
+    vm.showAddAttachmentForm = false
 
     /**
      * A mapping from attachment file ID to corresponding value of checked i.e
