@@ -29,9 +29,11 @@ class RelationshipManagerAdmin(AjaxSelectAdmin):
 class AccountNumberAdmin(AjaxSelectAdmin):
     form = make_ajax_form(models.AccountNumber, {'owner': 'customer', 'branch': 'branch', 'currency': 'ccy'})
 
-    list_display = ('nuban', 'currency', 'owner', 'branch', 'acct_id', 'old_numb',)
+    list_display = ('nuban', 'currency', 'owner', 'branch', 'acct_id', 'description',)
 
-    search_fields = ('nuban', 'owner__name', 'branch__name', 'branch__code', 'old_numb', 'acct_id', 'currency__code',)
+    search_fields = (
+        'nuban', 'owner__name', 'branch__name', 'branch__code', 'old_numb', 'acct_id', 'currency__code', 'description',
+    )
 
 
 class CustomerAdmin(AjaxSelectAdmin):
@@ -43,8 +45,8 @@ class CustomerAdmin(AjaxSelectAdmin):
 
 class NostroAccountAdmin(AjaxSelectAdmin):
     form = make_ajax_form(
-        models.NostroAccount,
-        {'bank': 'overseas_bank', 'ccy': 'ccy'})
+            models.NostroAccount,
+            {'bank': 'overseas_bank', 'ccy': 'ccy'})
 
     list_display = ('number', 'currency', 'bank', 'name',)
     search_fields = (
@@ -56,10 +58,10 @@ class NostroAccountAdmin(AjaxSelectAdmin):
 
 class LedgerAccountAdmin(AjaxSelectAdmin):
     form = make_ajax_form(
-        models.LedgerAccount,
-        {'external_number': 'nostro_acct',
-         'ccy': 'ccy',
-         })
+            models.LedgerAccount,
+            {'external_number': 'nostro_acct',
+             'ccy': 'ccy',
+             })
 
     list_display = (
         'number', 'currency', 'acct_type_display', 'external_number', 'name')
