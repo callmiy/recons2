@@ -33,5 +33,6 @@ def after_all(context):
     """
     # required to prevent 'connection was forcibly closed' exception being thrown
     context.browser.driver.refresh()
+
     context.browser.quit()
     context.browser = None

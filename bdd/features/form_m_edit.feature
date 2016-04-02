@@ -36,11 +36,11 @@ Feature: Edit form M
     And that the tab title is 'Form M'
     When I double click on the search icon of 'Search Form M' field
     Then I see a dialog with title 'Search Form M'
-    When I fill field 'Search Form M Number' field with number of form M I wish to edit
+    When I fill field 'Search Form M Number' field with number of form M I wish to work with
     And I click on 'Search Form M' button
     Then I see that dialog with title 'Search Form M' has disappeared
     And that tab title has changed to a text containing information about fetched form M
-    And 'Form M Number' field is now filled with fetched form M number
+    Then I see that 'Form M Number' field is now filled with fetched form M number
     And 'Applicant' field is now filled with fetched form M applicant
     And 'Currency' field is now filled with fetched form M currency code
     And 'Amount' field is now filled with fetched form M amount

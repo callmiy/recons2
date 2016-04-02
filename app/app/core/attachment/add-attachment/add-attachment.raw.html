@@ -1,5 +1,5 @@
 <div class="add-attachment-container">
-  <form role="form" name="addAttachmentForm">
+  <form name="addAttachmentForm">
     <fieldset>
 
       <div>
@@ -53,7 +53,7 @@
       </div>
 
       <div style="margin-top: 15px;">
-        <button type="button" class="btn btn-info"
+        <button type="button" class="btn btn-info" id="add-attachment-form-submit-btn"
                 ng-disabled="addAttachmentForm.$invalid || !attachment.attachment.files.length"
                 ng-click="attachment.addAttachment(attachment.attachment, addAttachmentForm)">
           Add Attachment

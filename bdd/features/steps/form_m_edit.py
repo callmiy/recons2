@@ -208,7 +208,7 @@ def step_impl(context):
         )
 
 
-@when("I fill field 'Search Form M Number' field with number of form M I wish to edit")
+@when("I fill field 'Search Form M Number' field with number of form M I wish to work with")
 def step_impl(context):
     """
     :type context: behave.runner.Context
@@ -241,7 +241,7 @@ def step_impl(context):
            'Details of "%s"' % context.form_m_data['number'])
 
 
-@step("'Form M Number' field is now filled with fetched form M number")
+@then("I see that 'Form M Number' field is now filled with fetched form M number")
 def step_impl(context):
     """
     :type context: behave.runner.Context
@@ -509,11 +509,11 @@ def step_impl(context):
     context.execute_steps(u"""
     When I double click on the search icon of 'Search Form M' field
     Then I see a dialog with title 'Search Form M'
-    When I fill field 'Search Form M Number' field with number of form M I wish to edit
+    When I fill field 'Search Form M Number' field with number of form M I wish to work with
     And I click on 'Search Form M' button
     Then I see that dialog with title 'Search Form M' has disappeared
     And that tab title has changed to a text containing information about fetched form M
-    And 'Form M Number' field is now filled with fetched form M number
+    Then I see that 'Form M Number' field is now filled with fetched form M number
     And 'Applicant' field is now filled with fetched form M applicant
     And 'Currency' field is now filled with fetched form M currency code
     And 'Amount' field is now filled with fetched form M amount

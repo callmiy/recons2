@@ -3,7 +3,6 @@ import factory
 from factory import fuzzy
 from adhocmodels.factories import CustomerFactory, CurrencyFactory
 from core_recons.utilities import digits_char
-from .lc_register import LCRegisterFactory
 from letter_of_credit.models import FormM, LCIssue, LCIssueConcrete, LcBidRequest
 
 

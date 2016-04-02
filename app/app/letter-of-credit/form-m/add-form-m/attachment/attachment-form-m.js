@@ -40,6 +40,8 @@ function FormMAttachmentDirectiveController(formMObject, underscore, $scope, Att
   vm.formM = formMObject
 
   init()
+  setAttachments()
+
   function init() {
     vm.showAttachment = true
     vm.showAddAttachmentForm = false
@@ -62,6 +64,12 @@ function FormMAttachmentDirectiveController(formMObject, underscore, $scope, Att
 
     vm.selectedAttachmentsLen = 0
     vm.selectedAttachmentFilesLen = 0
+  }
+
+  function setAttachments() {
+    formMObject.setAttachments().then( function (attachments) {
+      vm.showAddAttachmentForm = !attachments.length
+    } )
   }
 
   function checkAttachmentFiles(selectedAttachmentFiles) {
@@ -139,14 +147,14 @@ function FormMAttachmentDirectiveController(formMObject, underscore, $scope, Att
     console.log( attachmentFileAddedResult )
 
     if ( attachmentFileAddedResult.result ) {
-      formMObject.setAttachments()
+      setAttachments()
     }
   }
 
   vm.refreshAttachments = function refreshAttachments() {
     vm.selectedAttachmentFiles = {}
     vm.selectedAttachments = {}
-    formMObject.setAttachments()
+    setAttachments()
   }
 
   vm.getFileName = function getFileName(name) {

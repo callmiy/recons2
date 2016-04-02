@@ -185,7 +185,6 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
             setIssues()
             setCovers()
             setComments( self._id )
-            self.setAttachments()
           }
 
           cb( self, formM )
@@ -496,13 +495,19 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
     }
 
     self.setAttachments = function setAttachments() {
+      var deferred = $q.defer()
+
       Attachment.query( { ct: self.ct_id, pk: self._id, not_deleted: true } ).$promise.then( function (data) {
 
         self.attachments = data
+        deferred.resolve( data )
 
       }, function (xhr) {
         console.log( 'xhr = ', xhr )
+        deferred.reject( xhr )
       } )
+
+      return deferred.promise
     }
   }
 
