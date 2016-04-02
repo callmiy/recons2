@@ -128,6 +128,8 @@ class LCRegisterUploadView(View):
 
     def post(self, request):
         uploaded_text = request.POST['upload-lc-register-text'].strip(' \n\r')
+        date_format = request.POST['date-format']
+        # raise ValueError('\n\n\n\n\n\n\n\n date_format = %s\n\n\n\n\n\n\n\n' % date_format, )
 
         logger.info("Raw data received from client:\n%s" % uploaded_text)
 
@@ -138,8 +140,8 @@ class LCRegisterUploadView(View):
             for data in json.loads(uploaded_text):
                 logger.info('About to create or update lc using raw data from client:\n%s' % data)
 
-                data["expiry_date"] = parser_utility.normalize_date(data["expiry_date"])
-                data["estb_date"] = parser_utility.normalize_date(data["estb_date"])
+                data["expiry_date"] = parser_utility.normalize_date(data["expiry_date"], date_format)
+                data["estb_date"] = parser_utility.normalize_date(data["estb_date"], date_format)
                 data['ccy_obj'] = Currency.objects.get(code=data['ccy_obj'].strip(' \n\r'))
                 data["lc_amt_org_ccy"] = round(float(data["lc_amt_org_ccy"].strip(' \n\r').replace(',', '')), 2)
 

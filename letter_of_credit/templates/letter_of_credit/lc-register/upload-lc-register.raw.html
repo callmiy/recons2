@@ -13,17 +13,33 @@
 
 {% block page_content %}
 
-  <h1>Use LC Register Internal Control Report From BO</h1>
+  <h6 style="font-weight: 600;">Use LC Register Internal Control Report From BO</h6>
+
   <div class="row upload-lc-register-form-row">
     <form action="" class="upload-lc-register-form" method="post" style="position: relative;">{% csrf_token %}
       <div class="row top-controls">
-        <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+        <div class="col-sm-10">
           <label for="id_upload-lc-register" class="sr-only">Upload textarea</label>
 
-          <textarea name="upload-lc-register-text" id="id_upload-lc-register"></textarea>
+          <textarea name="upload-lc-register-text" id="id_upload-lc-register" disabled></textarea>
         </div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-          <input type="submit" value="Upload" id="upload-lc-register-submit">
+
+        <div class="col-sm-2">
+          <div style="margin-top: 120%;" class="submit-controls">
+            <div class="">
+              <label>
+                <input type="radio" name="date-format" value="dd-mm-yyyy">
+                dd-mm-yyyy
+              </label>
+
+              <label>
+                <input type="radio" name="date-format" value="mm-dd-yyyy">
+                mm-dd-yyyy
+              </label>
+            </div>
+
+            <input style="margin-top: 20px;" type="submit" value="Upload" id="upload-lc-register-submit">
+          </div>
         </div>
       </div>
     </form>
@@ -32,6 +48,6 @@
 
 {% block page_js %}
   <script>
-    var mappings = JSON.parse('{{ mappings | escapejs }}');
+    var mappings = JSON.parse( '{{ mappings | escapejs }}' );
   </script>
 {% endblock %}

@@ -1,13 +1,20 @@
 {% extends 'core_recons/recons-base.html' %}
 {% load static %}
 {% block title %}TI Posting Status Upload-{% endblock %}
+
 {% block page_css %}
   <link rel="stylesheet" href="{% static 'contingent_report/css/upload-ti-posting-status.min.css' %}">
 {% endblock %}
+
+{% block page_js_up %}
+  <script src="{% static 'contingent_report/js/upload-ti-posting-status.js' %}"></script>
+{% endblock page_js_up %}
+
 {% block page_content %}
   <div class="row upload-ti-posting-status-form-row">
     <form action="" class="upload-ti-posting-status-form col-lg-12" method="post">{% csrf_token %}
-      <div class="col-lg-10">
+
+      <div class="col-sm-10">
 				<pre data-label-for="id_upload-ti-posting-status">
 					From BO, export TI POSTING STATUS REPORT data in text file format. Ensure the headers
 					are in the order listed below. Then copy and paste the text here.
@@ -21,10 +28,26 @@
 					8. NARRATION
 					9. STATUS
 				</pre>
-        <textarea name="upload-ti-posting-status-text" id="id_upload-ti-posting-status"></textarea>
+        <textarea name="upload-ti-posting-status-text" id="id_upload-ti-posting-status"
+                  title="upload Ti posting status report" disabled></textarea>
       </div>
-      <div class="col-lg-2">
-        <input type="submit" value="Upload">
+
+      <div class="col-sm-2">
+        <div style="margin-top: 70%">
+          <div class="">
+            <label>
+              <input type="radio" name="date-format" value="dd-mm-yyyy">
+              dd-mm-yyyy
+            </label>
+
+            <label>
+              <input type="radio" name="date-format" value="mm-dd-yyyy">
+              mm-dd-yyyy
+            </label>
+          </div>
+
+          <input style="margin-top: 20px;" type="submit" value="Upload">
+        </div>
       </div>
     </form>
   </div>

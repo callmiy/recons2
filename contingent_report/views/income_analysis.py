@@ -4,7 +4,7 @@ from django.views.generic import View
 from django.shortcuts import render
 from django.http import HttpResponse
 from contingent_report.models import TIPostingStatusReport
-from contingent_report.csv_utilities import wrow as writerow, UploadCSVParserUtility
+from core_recons.csv_utilities import wrow as writerow, UploadCSVParserUtility
 import csv
 from cStringIO import StringIO
 from xlwt import Workbook
@@ -32,9 +32,9 @@ ACCOUNT_RE = re.compile(r"\s+(\d{10})[^0-9]*", re.IGNORECASE)
 
 class IncomeUploadForm(forms.Form):
     upload_income = forms.CharField(
-        label='Upload Income', widget=forms.Textarea)
+            label='Upload Income', widget=forms.Textarea)
     narr = forms.CharField(
-        label='Narration Column Letter')
+            label='Narration Column Letter')
 
 
 class UploadIncomeView(View):
@@ -47,21 +47,21 @@ class UploadIncomeView(View):
 
     def get(self, request):
         return render(
-            request, 'income-upload.html', {'form': IncomeUploadForm()})
+                request, 'income-upload.html', {'form': IncomeUploadForm()})
 
     def post(self, request):
         form = IncomeUploadForm(request.POST)
 
         if form.is_valid():
             income_text = form.cleaned_data['upload_income'].encode(
-                'utf-8', 'ignore').strip(' \n\r\t')
+                    'utf-8', 'ignore').strip(' \n\r\t')
             _csv = csv.reader(StringIO(income_text), delimiter='\t')
 
             wb = Workbook()
             self.sh = wb.add_sheet('Trade Finance Related')
             self.wrow = 0
             self.narr_pos = getattr(
-                col, form.cleaned_data['narr'].strip().lower())
+                    col, form.cleaned_data['narr'].strip().lower())
             self.acct_pos = 4
             header_row = _csv.next()
             header_row.insert(self.acct_pos, 'Customer Acct.')
@@ -105,7 +105,7 @@ class UploadIncomeView(View):
 
     def get_income_acct(self, filter_param):
         posts = TIPostingStatusReport.objects.filter(
-            Q(ref=filter_param) | Q(narration__contains=filter_param))
+                Q(ref=filter_param) | Q(narration__contains=filter_param))
         for post in posts:
             acct = post.is_customer_acct()
             if acct:
@@ -119,7 +119,7 @@ class Income2View(View):
         filter_param = request.GET.get('filter_param')
         if filter_param:
             posts = TIPostingStatusReport.objects.filter(
-                Q(ref=filter_param) | Q(narration__contains=filter_param))
+                    Q(ref=filter_param) | Q(narration__contains=filter_param))
             for post in posts:
                 acct = post.is_customer_acct()
                 if acct:

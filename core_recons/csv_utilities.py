@@ -15,22 +15,22 @@ MF_RE = re.compile(r'MF\d+', re.IGNORECASE)
 LC_REF_RE = re.compile(r'(ILCL|026L)[A-Z]{3}\d+', re.IGNORECASE)
 
 DATE_RE = re.compile(
-    r'(?P<d>\d{1,2})[\s\\/-](?P<m>([a-z]{3}|\d{1,2}))[\s\\/-](?P<y>\d{2,4})',
-    re.IGNORECASE
+        r'(?P<d>\d{1,2})[\s\\/-](?P<m>([a-z]{3}|\d{1,2}))[\s\\/-](?P<y>\d{2,4})',
+        re.IGNORECASE
 )
 
 
-def parse_date(dt_string):
-    DATE_RE1 = re.compile(r'(?P<d>\d{1,2})-(?P<m>\d{1,2})-(?P<y>\d{4})')
-    dt_str = DATE_RE1.match(dt_string.strip('\n\r '))
+def parse_date(dtsring):
+    DATE_RE = re.compile(r'(?P<d>\d{1,2})-(?P<m>\d{1,2})-(?P<y>\d{4})')
+    dt_str = DATE_RE.match(dtsring.strip('\n\r '))
 
     if not dt_str:
         raise ValueError('Date format incorrect')
 
     return date(
-        int(dt_str.group('y')),
-        int(dt_str.group('m')),
-        int(dt_str.group('d'))
+            int(dt_str.group('y')),
+            int(dt_str.group('m')),
+            int(dt_str.group('d'))
     )
 
 
@@ -39,7 +39,6 @@ def parse_xl_date(xldate):
 
 
 class UploadCSVParserUtility:
-
     def __init__(self):
         pass
 
@@ -62,7 +61,7 @@ class UploadCSVParserUtility:
 
         return ref.strip(' \n\r\t').upper()
 
-    def normalize_date(self, val, sep=' '):
+    def normalize_date(self, val, date_format='dd-mm-yyyy'):
         mon_names = ('jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug',
                      'sep', 'oct', 'nov', 'dec')
 
@@ -72,11 +71,13 @@ class UploadCSVParserUtility:
 
             if mon_name.isalpha():
                 return date(
-                    int(year),
-                    mon_names.index(mon_name.lower()) + 1,
-                    int(day)
+                        int(year),
+                        mon_names.index(mon_name.lower()) + 1,
+                        int(day)
                 )
             else:
+                if date_format == 'mm-dd-yyyy':
+                    return date(int(year), int(day), int(mon_name))
                 return date(int(year), int(mon_name), int(day))
         else:
             raise ValueError('Not a valid date: %s' % val)
@@ -98,7 +99,6 @@ class UploadCSVParserUtility:
 
 
 class GefuExcelMaker(object):
-
     """Writes gefu data to excel."""
 
     def __init__(self):

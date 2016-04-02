@@ -8,7 +8,7 @@ from contingent_report.models import (
 )
 from letter_of_credit.models import LCRegister
 from django.shortcuts import render
-from contingent_report.csv_utilities import parse_date, wrow
+from core_recons.csv_utilities import parse_date, wrow
 from xlwt import Workbook
 
 
@@ -20,11 +20,11 @@ class ContingentBalancesView(View):
 
     def get(self, request):
         return render(
-            request,
-            'contingent_report/from-to-date.html',
-            {'header': self.info, 'title': self.title,
-             'submit_btn_val': self.submit_btn_val,
-             'show_end_date': True}
+                request,
+                'contingent_report/from-to-date.html',
+                {'header': self.info, 'title': self.title,
+                 'submit_btn_val': self.submit_btn_val,
+                 'show_end_date': True}
         )
 
     def post(self, request):
@@ -38,8 +38,8 @@ class ContingentBalancesView(View):
         self.contingent_accounts_asset_gl_codes = self.contingent_accounts_asset.values_list('gl_code', flat=True)
 
         conts = ContingentReport.objects.filter(
-            gl_code__in=self.contingent_accounts_asset_gl_codes,
-            booking_date__lte=self.end_date).exclude(ti_ref__isnull=True)
+                gl_code__in=self.contingent_accounts_asset_gl_codes,
+                booking_date__lte=self.end_date).exclude(ti_ref__isnull=True)
 
         self.lc_references = set(conts.values_list('ti_ref', flat=True))
         self.ccys = set(conts.values_list('ccy', flat=True))
@@ -65,7 +65,7 @@ class OutStandingLCBalances(ContingentBalancesView):
         not_found = []
         for lc in self.lc_references:
             contingents = ContingentReport.objects.filter(
-                ti_ref=lc, booking_date__lte=self.end_date, acct_class='ASSET')
+                    ti_ref=lc, booking_date__lte=self.end_date, acct_class='ASSET')
 
             sum_amount = sum([con.fx_amt for con in contingents])
 
@@ -112,26 +112,26 @@ class ContingentBalancesViewRiskMgmt(ContingentBalancesView):
         seqs = {'ALL': 1}
 
         wrow(
-            sheets['ALL'],
-            rows['ALL'],
-            ('S/NO',
-             'CUSTOMER NAME',
-             'LC REFERENCE NO',
-             'CUSTOMER ID',
-             'CUSTOMER ACCT NO',
-             'LC TYPE',
-             'CORRESPONDENT BANK',
-             'BENEFICIARY',
-             'TRANSACTION CURRENCY',
-             'EXCHANGE RATE',
-             'GLOBAL LIMIT APPROVED (TCY)',
-             'LC AMOUNT FINANCED (TCY)',
-             'OUTSTANDING (TCY)',
-             'OUTSTANDING (LCY)',
-             'EFFECTIVE DATE',
-             'MATURITY DATE',
-             'ORIGINATING BRANCH',
-             'MARGIN DEPOSIT')
+                sheets['ALL'],
+                rows['ALL'],
+                ('S/NO',
+                 'CUSTOMER NAME',
+                 'LC REFERENCE NO',
+                 'CUSTOMER ID',
+                 'CUSTOMER ACCT NO',
+                 'LC TYPE',
+                 'CORRESPONDENT BANK',
+                 'BENEFICIARY',
+                 'TRANSACTION CURRENCY',
+                 'EXCHANGE RATE',
+                 'GLOBAL LIMIT APPROVED (TCY)',
+                 'LC AMOUNT FINANCED (TCY)',
+                 'OUTSTANDING (TCY)',
+                 'OUTSTANDING (LCY)',
+                 'EFFECTIVE DATE',
+                 'MATURITY DATE',
+                 'ORIGINATING BRANCH',
+                 'MARGIN DEPOSIT')
         )
         rows['ALL'] += 1
 
@@ -155,18 +155,18 @@ class ContingentBalancesViewRiskMgmt(ContingentBalancesView):
             seqs[cur] = 1
 
             wrow(
-                sheets[cur],
-                rows[cur],
-                (
-                    'S/N', 'LC NUMBER', 'CCY', 'RATE', 'FX BALANCE', 'NGN BALANCE', 'ESTB. DATE', 'EXP. DATE',
-                )
+                    sheets[cur],
+                    rows[cur],
+                    (
+                        'S/N', 'LC NUMBER', 'CCY', 'RATE', 'FX BALANCE', 'NGN BALANCE', 'ESTB. DATE', 'EXP. DATE',
+                    )
             )
 
             rows[cur] += 1
 
         for lc in self.lc_references:
             contingents = ContingentReport.objects.filter(
-                ti_ref=lc, booking_date__lte=self.end_date, gl_code__in=self.contingent_accounts_asset_gl_codes)
+                    ti_ref=lc, booking_date__lte=self.end_date, gl_code__in=self.contingent_accounts_asset_gl_codes)
 
             sum_amount = sum([con.fx_amt for con in contingents])
 
@@ -242,24 +242,24 @@ class ContingentBalancesViewRiskMgmt(ContingentBalancesView):
                 cont_bal = acct.get_fx_balance(self.end_date)
 
                 wrow(
-                    sheets[ccy1],
-                    rows[ccy1],
-                    ('', '', '', 'bal direct from contingent account', cont_bal, sum(ngn_bals[ccy1].values()))
+                        sheets[ccy1],
+                        rows[ccy1],
+                        ('', '', '', 'bal direct from contingent account', cont_bal, sum(ngn_bals[ccy1].values()))
                 )
 
                 rows[ccy1] += 1
 
                 wrow(
-                    sheets[ccy1],
-                    rows[ccy1],
-                    (
-                        '',
-                        '',
-                        '',
-                        'Bal obtained by summing individual lc bal.',
-                        sum(sum_lc_bal[ccy1].values()),
-                        sum(sum_ngn_bals[ccy1].values())
-                    )
+                        sheets[ccy1],
+                        rows[ccy1],
+                        (
+                            '',
+                            '',
+                            '',
+                            'Bal obtained by summing individual lc bal.',
+                            sum(sum_lc_bal[ccy1].values()),
+                            sum(sum_ngn_bals[ccy1].values())
+                        )
                 )
                 rows[ccy1] += 1
 
@@ -295,17 +295,17 @@ class ContingentBalancesViewRiskMgmt(ContingentBalancesView):
         wrow(sheet, row, ('', 'CONTINGENT ACCOUNT BALANCES'))
         row += 1
         wrow(
-            sheet,
-            row,
-            (
-                'S/N',
-                'ACCT NO.',
-                'CCY',
-                'FX BALANCE',
-                'BALANCES SUMMING INDIVIDUAL LC',
-                'CA-LC-BALCD',
-                'CONT BALCD WITH LC BALANCES'
-            )
+                sheet,
+                row,
+                (
+                    'S/N',
+                    'ACCT NO.',
+                    'CCY',
+                    'FX BALANCE',
+                    'BALANCES SUMMING INDIVIDUAL LC',
+                    'CA-LC-BALCD',
+                    'CONT BALCD WITH LC BALANCES'
+                )
         )
         row += 1
         cont_acct_seq = 1
@@ -325,17 +325,17 @@ class ContingentBalancesViewRiskMgmt(ContingentBalancesView):
                     lc_balances = bal.get(cont_acct.get_acctount_counterpart(), 0)
 
             wrow(
-                sheet,
-                row,
-                (
-                    cont_acct_seq,
-                    gl_code,
-                    cont_acct.ccy,
-                    fx_bal,
-                    lc_balances,
-                    str(cont_acct.is_ca_cl_balcd(self.end_date)),
-                    str(abs(fx_bal) == abs(float(lc_balances)))
-                )
+                    sheet,
+                    row,
+                    (
+                        cont_acct_seq,
+                        gl_code,
+                        cont_acct.ccy,
+                        fx_bal,
+                        lc_balances,
+                        str(cont_acct.is_ca_cl_balcd(self.end_date)),
+                        str(abs(fx_bal) == abs(float(lc_balances)))
+                    )
             )
             row += 1
             cont_acct_seq += 1
@@ -366,12 +366,12 @@ class OldContingentBalancesViewRiskMgmt(ContingentBalancesView):
 class ContingentNonPostView(View):
     def get(self, request):
         return render(
-            request,
-            'from-to-date.html',
-            {'header': 'Items Not Posted By TI: Contingent',
-             'title': 'Non Post: Contingent Report-',
-             'show_start_date': True,
-             'show_end_date': True})
+                request,
+                'from-to-date.html',
+                {'header': 'Items Not Posted By TI: Contingent',
+                 'title': 'Non Post: Contingent Report-',
+                 'show_start_date': True,
+                 'show_end_date': True})
 
     def post(self, request):
         start_date = parse_date(request.POST['stdt'])
@@ -381,9 +381,9 @@ class ContingentNonPostView(View):
             raise Exception('Start date must be less than end date')
 
         queryset = TIPostingStatusReport.objects.filter(
-            posting_date__gte=start_date,
-            posting_date__lte=end_date).exclude(ccy='NGN').exclude(
-            ref__startswith='CBN')
+                posting_date__gte=start_date,
+                posting_date__lte=end_date).exclude(ccy='NGN').exclude(
+                ref__startswith='CBN')
 
         if queryset.exists():
             wb = Workbook()
@@ -391,9 +391,9 @@ class ContingentNonPostView(View):
             row = 0
             seq = 1
             wrow(
-                sh, row, (
-                    'SEQ', 'LC NUMBER', 'POSTING DATE', 'ACCOUNT NUMBER', 'CCY',
-                    'AMOUNT', 'APPLICANT', 'POST STATUS',))
+                    sh, row, (
+                        'SEQ', 'LC NUMBER', 'POSTING DATE', 'ACCOUNT NUMBER', 'CCY',
+                        'AMOUNT', 'APPLICANT', 'POST STATUS',))
             row += 1
 
             for post in queryset:

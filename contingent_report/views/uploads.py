@@ -2,7 +2,7 @@ import json
 from django.views.generic import View
 from django.shortcuts import render, redirect
 from cStringIO import StringIO
-from contingent_report.csv_utilities import col, UploadCSVParserUtility, LC_REF_RE
+from core_recons.csv_utilities import col, UploadCSVParserUtility, LC_REF_RE
 import csv
 import re
 from contingent_report.models import (
@@ -111,6 +111,7 @@ class UploadContingentReportView(View):
 
     def post(self, request):
         uploaded_text = request.POST['upload-contingent-text']
+        self.date_format = request.POST['date-format']
 
         if uploaded_text:
             uploaded_text = uploaded_text.strip(' \n\r')
@@ -130,8 +131,8 @@ class UploadContingentReportView(View):
         parser_utility = UploadCSVParserUtility()
         for row in csv.reader(fobj, delimiter='\t'):
             if self.ok_to_parse(row):
-                booking_date = parser_utility.normalize_date(row[col.g])
-                liq_date = parser_utility.normalize_date(row[col.h])
+                booking_date = parser_utility.normalize_date(row[col.g], self.date_format)
+                liq_date = parser_utility.normalize_date(row[col.h], self.date_format)
                 fx_amt = parser_utility.normalize_amount(row[col.j])
                 ngn_amt = parser_utility.normalize_amount(row[col.k])
                 narration = parser_utility.normalize(row[col.l])
