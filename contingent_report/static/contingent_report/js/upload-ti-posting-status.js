@@ -2,7 +2,7 @@ $( function () {
   "use strict";
 
   var $dateFormat = $( '[name=date-format]' )
-  var $upload = $( '#id_upload-contingent' )
+  var $upload = $( '#id_upload-ti-posting-status' )
 
 
   $dateFormat.change( function () {

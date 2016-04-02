@@ -58,6 +58,7 @@ class TIPostingStatusUploadView(View):
 
     def post(self, request):
         uploaded_text = request.POST['upload-ti-posting-status-text']
+        self.date_format = request.POST['date-format']
 
         if uploaded_text:
             uploaded_text = uploaded_text.strip(' \n\r')
@@ -72,7 +73,7 @@ class TIPostingStatusUploadView(View):
         for row in csv.reader(file_obj, delimiter='\t'):
             if self.ok_to_parse(row):
                 ref = parser_utility.normalize_ref(row[col.b])
-                posting_date = parser_utility.normalize_date(row[col.c])
+                posting_date = parser_utility.normalize_date(row[col.c], self.date_format)
                 acct_number = parser_utility.normalize_acct_numb(row[col.d])
                 ccy = parser_utility.normalize(row[col.f])
                 amount_raw = parser_utility.normalize_amount(row[col.j])
