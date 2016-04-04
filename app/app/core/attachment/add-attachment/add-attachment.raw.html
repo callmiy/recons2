@@ -26,7 +26,8 @@
           </div>
 
           <div>
-            <input type="file" name="files" multiple value="Select files" title="select files for attachment"
+            <input type="file" name="files" value="Select files" id="add-attachment-files-select"
+                   title="select files for attachment"
                    ngf-max-size="15MB"
                    ngf-select="attachment.onFilesSelected($files)">
           </div>
@@ -36,7 +37,9 @@
         <div class="clearfix"></div>
       </div>
 
-      <div style="" ng-if="attachment.attachment.files.length">
+      <div style="" class="form-m-selected-attachment-file-display-container"
+           ng-if="attachment.attachment.files.length">
+
         <div class="add-attachment-label">
           <label>Selected files</label>
         </div>
