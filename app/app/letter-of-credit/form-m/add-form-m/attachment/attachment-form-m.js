@@ -144,10 +144,25 @@ function FormMAttachmentDirectiveController(formMObject, underscore, $scope, Att
   }
 
   vm.attachmentFileAdded = function attachmentFileAdded(attachmentFileAddedResult) {
-    console.log( attachmentFileAddedResult )
+    vm.result = attachmentFileAddedResult
+    var result = attachmentFileAddedResult.result
 
-    if ( attachmentFileAddedResult.result ) {
+    if ( result ) {
+      var numFiles = result.files.length
+      var filesStr = numFiles === 1 ? 'file' : 'files'
+
+      confirmationDialog.showDialog( {
+        infoOnly: true,
+        text: numFiles + ' attachment ' + filesStr + ' successfully saved!',
+        title: 'Attachment Successfully Saved'
+      } )
+
       setAttachments()
+
+    } else {
+      confirmationDialog.showDialog( {
+        infoOnly: true, text: attachmentFileAddedResult.error, title: 'Error while saving attachment'
+      } )
     }
   }
 

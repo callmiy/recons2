@@ -11,7 +11,7 @@ Feature: Form M Attachment
     And I am logged in
     And I am at form M page
 
-  @attachment_with_one_file @x
+  @attachment_with_one_file @ex
   Scenario: Create form M attachment with one file - no existing attachments
     Given There is customer in the system
     And form M already saved in the system

@@ -1,7 +1,6 @@
 from behave import *
 from splinter.browser import Browser
 from django.core import management
-import time
 
 
 def before_all(context):
@@ -9,6 +8,7 @@ def before_all(context):
     :type context behave.runner.Context
     """
     # Unless we tell test runner otherwise, set default browser to PhantomJS
+    # context.config.server_url = 'localhost:8000'
 
     if context.config.browser:
         context.browser = Browser(context.config.browser)

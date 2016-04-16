@@ -92,8 +92,20 @@ function addAttachmentController(resetForm2, Upload, urls) {
     }, function (xhr) {
       if ( xhr.statusText !== "CREATED" ) {
         vm.onAttachmentFileAdded( { $attachmentFile: { error: xhr } } )
-        console.log( xhr )
       }
+    }, function (evt) {
+      var progressPercentage = parseInt( 100.0 * evt.loaded / evt.total )
+      vm.progressPercentage = progressPercentage
+      var progressBarType
+
+      if ( progressPercentage < 25 ) progressBarType = 'danger'
+      else if ( progressPercentage < 50 ) progressBarType = 'warning'
+      else if ( progressPercentage < 75 ) progressBarType = 'info'
+      else progressBarType = 'success'
+
+      vm.progressBarType = progressBarType
+
+      console.log( 'progress: ' + progressPercentage + '%' )
     } )
   }
 

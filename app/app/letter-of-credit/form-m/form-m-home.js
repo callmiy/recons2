@@ -2,40 +2,40 @@
 
 /*jshint camelcase:false*/
 
-require('./add-form-m/add-form-m.js')
-require('./bids/bids.js')
-require('./list-form-m/list-form-m.js')
-require('./search-detailed-or-uploaded-form-m/search-detailed-or-uploaded-form-m.js')
-require('./search-form-m/search-form-m.js')
-require('./upload-form-m/upload-form-m.js')
-require('./display-uploaded-form-m-modal/display-uploaded-form-m-modal.js')
+require( './add-form-m/add-form-m.js' )
+require( './bids/bids.js' )
+require( './list-form-m/list-form-m.js' )
+require( './search-detailed-or-uploaded-form-m/search-detailed-or-uploaded-form-m.js' )
+require( './search-form-m/search-form-m.js' )
+require( './upload-form-m/upload-form-m.js' )
+require( './display-uploaded-form-m-modal/display-uploaded-form-m-modal.js' )
 
-var app = angular.module('form-m',
+var app = angular.module( 'form-m',
   ['rootApp',
    'ui.router',
    'list-form-m',
    'upload-form-m',
    'add-form-m',
    'form-m-bids'
-  ])
+  ] )
 
-app.config(formMURLConfig)
+app.config( formMURLConfig )
 formMURLConfig.$inject = ['$stateProvider']
 function formMURLConfig($stateProvider) {
 
   $stateProvider
-    .state('form_m', {
+    .state( 'form_m', {
       url: '/form-m',
 
       kanmiiTitle: 'Form M',
 
-      template: require('./form-m-home.html'),
+      template: require( './form-m-home.html' ),
 
       controller: 'FormMController as formMHome'
-    })
+    } )
 }
 
-app.controller('FormMController', FormMController)
+app.controller( 'FormMController', FormMController )
 FormMController.$inject = ['$state', '$scope']
 function FormMController($state, $scope) {
 
@@ -45,27 +45,19 @@ function FormMController($state, $scope) {
     viewName: 'listFormM',
     select: function () {
       $scope.updateAddFormMTitle()
-      $state.go('form_m.list')
+      $state.go( 'form_m.list' )
     }
   }
 
   var addFormMTitle = 'Form M'
-  /** Angular uib tab executes 'select' function which invokes $state.go. However, if we are transiting to this state
-   from a place outside angular uib tab, this will result in the state transition function been called twice (see
-   "$scope.goToFormM" function below for example) - one for the calling position and another for angular uib tab. This
-   flag keeps track of whether state transition function had been called and thus helps to avoid duplicate call. A
-   consequence of the duplicate call is that the controller for the addFormMTab is called twice with all sorts of
-   unintended consequences.
-   */
-  var addFormMGoTo = true
+
   var addFormMTab = {
     className: 'add-form-tab-ctrl',
     title: addFormMTitle,
     active: true,
     viewName: 'addFormM',
     select: function () {
-      if (addFormMGoTo) $state.go('form_m.add')
-      addFormMGoTo = true
+      $state.go( 'form_m.add' )
     }
   }
 
@@ -75,7 +67,7 @@ function FormMController($state, $scope) {
     viewName: 'formMReports',
     select: function () {
       $scope.updateAddFormMTitle()
-      $state.go('form_m.add')
+      $state.go( 'form_m.add' )
     }
   }
 
@@ -86,7 +78,7 @@ function FormMController($state, $scope) {
     viewName: 'bids',
     select: function () {
       $scope.updateAddFormMTitle()
-      $state.go('form_m.bids')
+      $state.go( 'form_m.bids' )
     }
   }
 
@@ -97,13 +89,15 @@ function FormMController($state, $scope) {
     reports: reportsTab
   }
 
+  $scope.activeIndex = 1
+
   $scope.updateAddFormMTitle = function (formM) {
     $scope.tabs.addFormM.title = formM ? 'Details of "' + formM.number + '"' : addFormMTitle
   }
 
   $scope.goToFormM = function goToFormM(formMNumber) {
-    addFormMGoTo = false
-    $state.transitionTo('form_m.add', {formM: formMNumber})
-    $scope.tabs.addFormM.active = true
+    $state.transitionTo( 'form_m.add', { formM: formMNumber } )
+    $scope.activeIndex = 1
+    $scope.updateAddFormMTitle( formMNumber )
   }
 }

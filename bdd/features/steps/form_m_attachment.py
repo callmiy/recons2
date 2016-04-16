@@ -5,7 +5,7 @@ import time
 
 use_step_matcher("re")
 
-add_attachment_form_btn_id = 'add-attachment-form-submit-btn'
+add_attachment_form_btn_id = 'add-attachment-form-m-submit-btn'
 
 
 def add_attachment_button_is_disabled(context):
@@ -101,9 +101,10 @@ def step_impl(context):
     """
     :type context: behave.runner.Context
     """
-    # files_field = context.browser.driver.find_element_by_id('add-attachment-files-select')
-    # files_field.send_keys(os.path.join(os.path.abspath(__file__), 'attachment-1.txt'))
-    context.browser.attach_file('files', os.path.join(os.path.abspath(__file__), 'attachment-1.txt'))
+    files_field = context.browser.driver.find_element_by_id('add-attachment-files-select')
+    # files_field.click()
+    files_field.send_keys(os.path.join(os.path.abspath(__file__), 'attachment-1.txt'))
+    # context.browser.attach_file('files', os.path.join(os.path.abspath(__file__), 'attachment-1.txt'))
 
 
 @then("I notice selected file name has appeared in the form")
@@ -122,8 +123,6 @@ def step_impl(context):
     """
     :type context: behave.runner.Context
     """
-
-    # time.sleep(10)
     nt.assert_false(add_attachment_button_is_disabled(context), 'Add attachment form submit button must be enabled')
 
 
@@ -132,10 +131,8 @@ def step_impl(context):
     """
     :type context: behave.runner.Context
     """
-    add_attachment_form_btn = context.browser.find_by_id(add_attachment_form_btn_id).first
-    print('\n\n\n\n\n\nadd_attachment_form_btn = ', add_attachment_form_btn, '\n\n\n\n\n\n\n\n\n')
-    add_attachment_form_btn.click()
-    time.sleep(20)
+    context.browser.find_by_id(add_attachment_form_btn_id).first.click()
+    time.sleep(100)
 
 
 @then("I notice 'Add attachment' form is not visible")
@@ -144,6 +141,6 @@ def step_impl(context):
     :type context: behave.runner.Context
     """
     nt.assert_false(
-            context.browser.is_element_present_by_name(context.add_attachment_form_name, wait_time=1),
-            'Add attachment form must not be visible'
+            context.browser.is_element_present_by_name(context.add_attachment_form_name, wait_time=3),
+            # 'Add attachment form must not be visible'
     )

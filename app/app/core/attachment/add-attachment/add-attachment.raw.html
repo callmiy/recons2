@@ -1,7 +1,12 @@
 <div class="add-attachment-container">
+
+  <uib-progressbar class="progress-striped active" value="attachment.progressPercentage"
+                   type="{$ attachment.progressBarType $}">
+    <b>{$attachment.progressPercentage$}%</b>
+  </uib-progressbar>
+
   <form name="addAttachmentForm">
     <fieldset>
-
       <div>
         <div class="pull-left">
           <div class="add-attachment-label">
@@ -26,8 +31,9 @@
           </div>
 
           <div>
-            <input type="file" name="files" value="Select files" id="add-attachment-files-select"
+            <input type="file" name="files" value="Select files" id="add-attachment-files-select" multiple
                    title="select files for attachment"
+                   ngf-keep="distinct"
                    ngf-max-size="15MB"
                    ngf-select="attachment.onFilesSelected($files)">
           </div>
@@ -56,7 +62,7 @@
       </div>
 
       <div style="margin-top: 15px;">
-        <button type="button" class="btn btn-info" id="add-attachment-form-submit-btn"
+        <button type="submit" class="btn btn-info" id="add-attachment-form-m-submit-btn"
                 ng-disabled="addAttachmentForm.$invalid || !attachment.attachment.files.length"
                 ng-click="attachment.addAttachment(attachment.attachment, addAttachmentForm)">
           Add Attachment
