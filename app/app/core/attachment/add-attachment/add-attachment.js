@@ -42,6 +42,8 @@ function addAttachmentController(resetForm2, Upload, urls) {
       files: []
     }
 
+    vm.showProgessBar = false
+
     if ( form ) resetForm2( form, [{
         form: form,
         elements: [
@@ -96,6 +98,9 @@ function addAttachmentController(resetForm2, Upload, urls) {
     }, function (evt) {
       var progressPercentage = parseInt( 100.0 * evt.loaded / evt.total )
       vm.progressPercentage = progressPercentage
+
+      if ( progressPercentage ) vm.showProgessBar = true
+
       var progressBarType
 
       if ( progressPercentage < 25 ) progressBarType = 'danger'
@@ -104,8 +109,6 @@ function addAttachmentController(resetForm2, Upload, urls) {
       else progressBarType = 'success'
 
       vm.progressBarType = progressBarType
-
-      console.log( 'progress: ' + progressPercentage + '%' )
     } )
   }
 

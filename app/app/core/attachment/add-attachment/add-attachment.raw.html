@@ -1,8 +1,10 @@
 <div class="add-attachment-container">
 
-  <uib-progressbar class="progress-striped active" value="attachment.progressPercentage"
+  <uib-progressbar class="progress-striped active"
+                   value="attachment.progressPercentage"
+                   ng-if="attachment.showProgessBar"
                    type="{$ attachment.progressBarType $}">
-    <b>{$attachment.progressPercentage$}%</b>
+    <b>Uploading files: {$attachment.progressPercentage$}% complete</b>
   </uib-progressbar>
 
   <form name="addAttachmentForm">

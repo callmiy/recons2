@@ -153,7 +153,7 @@ function FormMAttachmentDirectiveController(formMObject, underscore, $scope, Att
 
       confirmationDialog.showDialog( {
         infoOnly: true,
-        text: numFiles + ' attachment ' + filesStr + ' successfully saved!',
+        text: numFiles + ' attachment ' + filesStr + ' successfully uploaded!',
         title: 'Attachment Successfully Saved'
       } )
 
@@ -172,6 +172,14 @@ function FormMAttachmentDirectiveController(formMObject, underscore, $scope, Att
     setAttachments()
   }
 
+  /**
+   * Ensures that a file name is at most 40 characters when displayed in list of files associated with an attachment.
+   * If file name is at most 40 characters, we return the file name unchanged.
+   * If file name is more than 40 characters, we take first 27 characters, append '...', then append the last 5
+   * characters before extension (for a total of 35 characters), and finally append the extension
+   * @param {string} name - original file name
+   * @returns {string}
+   */
   vm.getFileName = function getFileName(name) {
     var len = name.length
 
