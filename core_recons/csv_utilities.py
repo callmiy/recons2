@@ -69,6 +69,9 @@ class UploadCSVParserUtility:
         if m:
             day, mon_name, year = m.group('d'), m.group('m'), m.group('y')
 
+            if len(year) == 2:
+                year = '20%s' % year
+
             if mon_name.isalpha():
                 return date(
                         int(year),
