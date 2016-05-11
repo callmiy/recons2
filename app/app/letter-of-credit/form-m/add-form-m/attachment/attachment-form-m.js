@@ -233,7 +233,6 @@ function FormMAttachmentDirectiveController(formMObject, underscore, $scope, Att
   $scope.$watch( function getSelectedAttachments() {return vm.selectedAttachments},
     function onSelectedAttachmentsChanged(selectedAttachments) {
       if ( selectedAttachments ) {
-        //console.log( 'selectedAttachments = ' , selectedAttachments)
         checkAttachments( selectedAttachments )
       }
     }, true )
@@ -242,7 +241,6 @@ function FormMAttachmentDirectiveController(formMObject, underscore, $scope, Att
     function onSelectedAttachmentFilesChanged(selectedAttachmentFiles) {
 
       if ( selectedAttachmentFiles ) {
-        //console.log( 'selectedAttachmentFiles = ', selectedAttachmentFiles )
         checkAttachmentFiles( selectedAttachmentFiles )
       }
     }, true )

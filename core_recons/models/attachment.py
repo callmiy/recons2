@@ -43,6 +43,9 @@ class Attachment(models.Model):
         verbose_name_plural = 'Attachment'
         app_label = 'core_recons'
 
+    def __unicode__(self):
+        return self.title
+
     def file_download_uri(self):
         return [the_file.__unicode__() for the_file in self.files.all()]
 

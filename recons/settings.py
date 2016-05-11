@@ -29,7 +29,7 @@ ALLOWED_HOSTS = project_config['ALLOWED_HOSTS']
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'Africa/Lagos'  # 'America/Chicago'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -39,7 +39,7 @@ SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
-USE_I18N = True
+USE_I18N = False
 
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale.
@@ -47,11 +47,6 @@ USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = False
-
-# Absolute filesystem path to the directory that will hold user-uploaded files.
-# Example: "/var/www/example.com/media/"
-media_path = os.path.join(PROJECT_DIR, '..', 'media')
-not os.path.exists(media_path) and os.mkdir(media_path)
 
 MEDIA_ROOT = project_config['MEDIA_ROOT']
 
@@ -105,7 +100,7 @@ TEMPLATE_LOADERS = (
 
 MIDDLEWARE_CLASSES = (
     # <editor-fold description=''>
-    'core_recons.middleware.RequestLoggingMiddleware',
+    # 'core_recons.middleware.RequestLoggingMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -166,10 +161,12 @@ INSTALLED_APPS = (
 
 TEST_RUNNER = 'django_behave.runner.DjangoBehaveTestSuiteRunner'
 
-from recons.logging import logging
-LOGGING = logging
+from recons.logging import get_logging_config
+
+LOGGING = get_logging_config(project_config['LOG_DIR'])
 
 from ajax_lookup_channels import ajax_lookup_channels
+
 AJAX_LOOKUP_CHANNELS = ajax_lookup_channels
 
 APPEND_SLASH = False

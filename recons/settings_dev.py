@@ -1,40 +1,47 @@
 import os
 
 
-def my_project_config(PROJECT_DIR, SETTINGS_DIR):
-    DB_DIR = os.path.join(PROJECT_DIR, '..', 'database')
-    not os.path.exists(DB_DIR) and os.mkdir(DB_DIR)
+def my_project_config(project_dir, settings_dir):
+    db_dir = os.path.join(project_dir, '..', 'database')
+    not os.path.exists(db_dir) and os.mkdir(db_dir)
 
-    DB_PATH = os.path.join(DB_DIR, 'reconciliation.db')
+    db_path = os.path.join(db_dir, 'reconciliation.db')
 
-    DATABASES = {
+    databases = {
         'default': {
             # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
             'ENGINE': 'django.db.backends.sqlite3',
             # Or path to database file if using sqlite3.
-            'NAME': DB_PATH,
+            'NAME': db_path,
         }
     }
 
-    media_path = os.path.join(PROJECT_DIR, '..', 'media')
+    # Absolute filesystem path to the directory that will hold user-uploaded files.
+    # Example: "/var/www/example.com/media/"
+    media_path = os.path.join(project_dir, '..', 'media')
     not os.path.exists(media_path) and os.mkdir(media_path)
 
+    log_dir = os.path.join(project_dir, '..', 'applogs')
+    not os.path.exists(log_dir) and os.mkdir(log_dir)
+
     return dict(
-        DEBUG=True,
+            DEBUG=True,
 
-        ADMINS=(('maneptha', 'maneptha@gmail.com'),),
+            ADMINS=(('maneptha', 'maneptha@gmail.com'),),
 
-        DATABASES=DATABASES,
+            DATABASES=databases,
 
-        ALLOWED_HOSTS=[],
+            ALLOWED_HOSTS=[],
 
-        MEDIA_ROOT=media_path,
+            MEDIA_ROOT=media_path,
 
-        MEDIA_URL='/media/',
+            LOG_DIR=log_dir,
 
-        STATIC_ROOT=os.path.join(PROJECT_DIR, '..', 'static-files'),
+            MEDIA_URL='/media/',
 
-        SECRET_KEY='+vbk$x)t5!ga*+$2#*6h8_#&#kc+$_1vt0z0u2%hn3-=p@c2c$',
+            STATIC_ROOT=os.path.join(project_dir, '..', 'static-files'),
 
-        SESSION_COOKIE_NAME='recons_main_sessionid'
+            SECRET_KEY='+vbk$x)t5!ga*+$2#*6h8_#&#kc+$_1vt0z0u2%hn3-=p@c2c$',
+
+            SESSION_COOKIE_NAME='recons_main_sessionid'
     )
