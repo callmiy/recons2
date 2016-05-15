@@ -30,8 +30,11 @@ def get_logging_config(log_dir):
             },
             'file': {
                 'level': 'INFO',
-                'class': 'logging.FileHandler',
+                'class': 'logging.handlers.RotatingFileHandler',
                 'filename': os.path.join(log_dir, '%s-recons.log' % date.today()),
+                'maxBytes': 1024*1024*5,
+                'backupCount': 5000,
+                'delay': True,
                 'formatter': 'verbose'
             }
         },
