@@ -1,6 +1,10 @@
 {% extends "admin/base.html" %}
+{% load static %}
 {% load i18n %}s
 {% block title %}{{ title }} | {% trans 'Trade App Admin' %}{% endblock %}
+{% block extrastyle %}
+  <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+{% endblock %}
 {% block branding %}
   <h1 id="site-name">{% trans 'Trade App' %}</h1>
 {% endblock %}
