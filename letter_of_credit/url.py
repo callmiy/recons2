@@ -22,7 +22,8 @@ from .views import (
     FormMCoverListCreateAPIView,
     FormMCoverRetrieveUpdateDestroyAPIView,
     UploadFromSingleWindowView,
-    ProcessSwiftView)
+    ProcessSwiftView,
+    UploadLcCommissionView)
 
 urlpatterns = patterns(
         # <editor-fold description='home view and upload'>
@@ -113,7 +114,7 @@ urlpatterns += patterns(
             name='lcissueconcrete-detail'),
 )
 
-# uploaded form m
+# uploaded form
 urlpatterns += patterns(
         '',
 
@@ -144,4 +145,11 @@ urlpatterns += patterns(
         '',
 
         url(r'^process-swift/?$', login_required(ProcessSwiftView.as_view()), name='process-swift'),
+)
+
+# LC commission
+urlpatterns += patterns(
+        '',
+
+        url(r'^upload-lc-commission/?$', login_required(UploadLcCommissionView.as_view()), name='upload-lc-commission'),
 )

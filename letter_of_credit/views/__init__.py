@@ -33,6 +33,8 @@ from .uploaded_form_m import (
 
 from .process_swift import ProcessSwiftView
 
+from .lc_commission import UploadLcCommissionView
+
 
 class AppHomeView(CoreAppsView):
     def get(self, request):

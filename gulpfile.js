@@ -29,6 +29,7 @@ var minifyJsFiles = [
   './letter_of_credit/static/letter_of_credit/js/lc-register-upload.js',
   './letter_of_credit/static/letter_of_credit/js/uploaded-form-m/uploaded-form-m.js',
   './letter_of_credit/static/letter_of_credit/js/process_swift/process_swift.js',
+  './letter_of_credit/static/letter_of_credit/js/lc_commission/lc-commission-upload.js',
 ]
 
 var lessNoCssMinFiles = [baseStaticCss + '/recons-base.less']
