@@ -24,8 +24,8 @@ $( function () {
         if ( obj['LC NUMBER'].indexOf( 'GTE-' ) === 0 ) return
 
         _.each( obj, function (val, key) {
-          if ( key in mappings ) {
-            var lcAttribute = mappings[key]
+          if ( key in LC_REGISTER_REPORT_MODEL_HEADERS_MAPPING ) {
+            var lcAttribute = LC_REGISTER_REPORT_MODEL_HEADERS_MAPPING[key]
             lcInstance[lcAttribute] = val.trim()
           }
         } )

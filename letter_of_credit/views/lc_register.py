@@ -1,16 +1,17 @@
+import json
+import logging
+
 import django_filters
+from django.shortcuts import render, redirect
+from django.views.generic import View
 from rest_framework import generics, pagination
-from rest_framework.renderers import JSONRenderer
+
+from adhocmodels.models import Currency
 from contingent_report.models import LCClass
+from core_recons.csv_utilities import UploadCSVParserUtility
 from core_recons.utilities import admin_url
 from letter_of_credit.models import LCRegister, FormM
 from letter_of_credit.serializers import LetterOfCreditRegisterSerializer
-import json
-from django.views.generic import View
-from django.shortcuts import render, redirect
-from adhocmodels.models import Currency
-from core_recons.csv_utilities import UploadCSVParserUtility
-import logging
 
 logger = logging.getLogger('recons_logger')
 
@@ -64,7 +65,7 @@ class ReleaseTelexView(View):
 
 
 class LCRegisterUploadView(View):
-    REPORT_MODEL_HEADERS_MAPPING = {
+    LC_REGISTER_REPORT_MODEL_HEADERS_MAPPING = {
         "LC ESTABLISHMENT DATE": "estb_date",
         "NAME OF IMPORTER": "applicant",
         "BENEFICIARY": "bene",
@@ -82,7 +83,7 @@ class LCRegisterUploadView(View):
         return render(
                 request,
                 'letter_of_credit/lc-register/upload-lc-register.html',
-                {'mappings': json.dumps(self.REPORT_MODEL_HEADERS_MAPPING)}
+                {'LC_REGISTER_REPORT_MODEL_HEADERS_MAPPING': json.dumps(self.LC_REGISTER_REPORT_MODEL_HEADERS_MAPPING)}
         )
 
     def update_only_if_lc_changed(self, lc_number, lc_qs, data):
