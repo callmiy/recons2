@@ -4,7 +4,7 @@
 {% block page_title %}Upload Single Window Form M-{% endblock %}
 
 {% block page_css %}
-  <link rel="stylesheet" href="{% static 'letter_of_credit/css/upload-lc-register.min.css' %}">
+  <link rel="stylesheet" href="{% static 'letter_of_credit/css/upload-lc-commission.min.css' %}">
 {% endblock %}
 
 {% block page_js_up %}
@@ -13,34 +13,28 @@
 
 {% block page_content %}
 
-  <h6 style="font-weight: 600;">Use Form M Report from single window</h6>
-  <div class="row upload-lc-register-form-row">
-    <form action="" class="upload-lc-register-form" method="post" style="position: relative;">{% csrf_token %}
+  <h6 style="font-weight: 600;">Upload LC Commission</h6>
+
+  <div class="row upload-lc-commission-form-row">
+    <form action="" class="upload-lc-commission-form" method="post" style="position: relative;">{% csrf_token %}
       <div class="row top-controls">
 
         <div class="col-sm-10">
-          <label for="id_upload-lc-register" class="sr-only">Upload textarea</label>
-          <label for="id_upload-lc-register-text" class="sr-only">Upload textarea</label>
+          <label for="upload-lc-commission" class="sr-only">Upload textarea</label>
+          <label for="upload-lc-commission-text" class="sr-only">Upload textarea</label>
+          <label for="upload-lc-commission-status" class="sr-only">Upload status textarea</label>
 
-          <textarea class="text-area-control" id="id_upload-lc-register-text" disabled></textarea>
+          <textarea style="display: none; height: 250px;" class="text-area-control" id="upload-lc-commission-status"
+                    disabled>{{ commission_upload_status }}</textarea>
+
+          <textarea class="text-area-control" id="upload-lc-commission-text"></textarea>
+
           <textarea style="height: 50px;" class="text-area-control"
-                    name="upload-lc-register" id="id_upload-lc-register" disabled></textarea>
+                    name="upload-lc-commission" id="upload-lc-commission"></textarea>
         </div>
 
         <div class="col-sm-2">
           <div style="margin-top: 120%;" class="submit-controls">
-            <div class="">
-              <label>
-                <input type="radio" name="date-format" value="dd-mm-yyyy">
-                dd-mm-yyyy
-              </label>
-
-              <label>
-                <input type="radio" name="date-format" value="mm-dd-yyyy">
-                mm-dd-yyyy
-              </label>
-            </div>
-
             <input style="margin-top: 20px;" type="submit" value="Upload" id="upload-lc-register-submit">
           </div>
         </div>
@@ -50,4 +44,7 @@
 {% endblock %}
 
 {% block page_js %}
+  <script>
+    var LC_COMMISSION_REPORT_MODEL_HEADERS_MAPPING = JSON.parse( '{{ LC_COMMISSION_REPORT_MODEL_HEADERS_MAPPING | escapejs }}' );
+  </script>
 {% endblock %}

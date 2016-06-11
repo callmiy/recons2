@@ -4,7 +4,7 @@ $( function () {
   "use strict";
 
   var $idUpload = $( '#id_upload-lc-register-text' ),
-    $toUpload = $( '#id_upload-lc-register' ),
+      $toUpload = $( '#id_upload-lc-register' ),
     $dateFormat = $( '[name=date-format]' ),
     $textAreaControls = $( '.text-area-control' ),
     dateFormat

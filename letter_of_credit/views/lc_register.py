@@ -130,8 +130,6 @@ class LCRegisterUploadView(View):
     def post(self, request):
         uploaded_text = request.POST['upload-lc-register-text'].strip(' \n\r')
         date_format = request.POST['date-format']
-        # raise ValueError('\n\n\n\n\n\n\n\n date_format = %s\n\n\n\n\n\n\n\n' % date_format, )
-
         logger.info("Raw data received from client:\n%s" % uploaded_text)
 
         if uploaded_text:
