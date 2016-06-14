@@ -34,19 +34,19 @@ class DownloadBidsView(View):
         s.font = font
         s.alignment = alignment
 
-        s = sheet.cell(row=1, column=6, value='ACTUAL BID AMOUNT')
+        s = sheet.cell(row=1, column=6, value='LC VALUE')
         s.font = font
         s.alignment = alignment
 
-        s = sheet.cell(row=1, column=7, value='ALLOCATION')
+        s = sheet.cell(row=1, column=7, value='ACTUAL BID AMOUNT')
         s.font = font
         s.alignment = alignment
 
-        s = sheet.cell(row=1, column=8, value='OUTSTANDING BALANCE')
+        s = sheet.cell(row=1, column=8, value='FX ALLOCATION')
         s.font = font
         s.alignment = alignment
 
-        s = sheet.cell(row=1, column=9, value='ALLOCATION')
+        s = sheet.cell(row=1, column=9, value='OUTSTANDING BALANCE')
         s.font = font
         s.alignment = alignment
 
@@ -114,9 +114,10 @@ class DownloadBidsView(View):
 
                 total_allocation = sum([allocation['amount_allocated'] for allocation in bid.allocations()])
                 outstanding_bid_amount = bid.amount - total_allocation
-                sheet.cell(row=row, column=6, value=outstanding_bid_amount)
-                sheet.cell(row=row, column=7, value=total_allocation)
-                sheet.cell(row=row, column=8, value=(outstanding_bid_amount))
+                sheet.cell(row=row, column=6, value=mf.amount)
+                sheet.cell(row=row, column=7, value=outstanding_bid_amount)
+                sheet.cell(row=row, column=8, value=total_allocation)
+                sheet.cell(row=row, column=9, value=outstanding_bid_amount)
 
                 acct = ''
                 acct_numbers_qs = applicant.acct_numbers
@@ -126,6 +127,7 @@ class DownloadBidsView(View):
 
                 sheet.cell(row=row, column=10, value=acct)
                 sheet.cell(row=row, column=11, value=mf.goods_description)
+                sheet.cell(row=row, column=12, value='CASH BACKED')
 
                 if not mark_as_downloaded:
                     remark = ''
