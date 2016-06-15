@@ -146,9 +146,6 @@ class DownloadBidsView(View):
                 if mark_as_downloaded and not bid.downloaded:
                     bid.downloaded = True
                     bid.save()
-            if not mark_as_downloaded:
-                # hide the column with heading 'allocation' as this is only necessary when sending to treasury
-                column_dimension = sheet.column_dimensions['I'].hidden = True
 
         resp = HttpResponse(save_virtual_workbook(wb), content_type='application/vnd.ms-excel')
         resp['Content-Disposition'] = 'attachment; filename="%s"' % file_name

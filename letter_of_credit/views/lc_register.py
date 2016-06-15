@@ -72,11 +72,13 @@ class LCRegisterUploadView(View):
         "CNTRY OF PAYMT": "bene_country",
         "LC CURR": "ccy_obj",
         "LC AMOUNT": "lc_amt_org_ccy",
+        "OUTSTANDING AMT": "os_amount",
         "LC NUMBER": "lc_number",
         "EXPIRY DATE": "expiry_date",
         'ADVISING BANK': 'advising_bank',
         'APPLICANT REF': 'mf',
         'CUSTOMER ACCOUNT NUMBER': 'acct_numb',
+        'STATUS': 'status',
     }
 
     def get(self, request):
@@ -111,6 +113,13 @@ class LCRegisterUploadView(View):
             if key == "lc_amt_org_ccy":
                 lc_attr_val = round(float(lc_attr_val), 2)  # lc_attr_val was originally decimal
 
+            if key == "os_amount":
+                # lc_attr_val was originally decimal or None
+                if lc_attr_val is None:
+                    lc_attr_val = 0.00
+                else:
+                    lc_attr_val = round(float(lc_attr_val), 2)
+
             if client_attr_val != lc_attr_val:
                 logger.info(
                         'LC %s: attribute "%s" has changed from "%s" to "%s". It will be updated' % (
@@ -143,6 +152,7 @@ class LCRegisterUploadView(View):
                 data["estb_date"] = parser_utility.normalize_date(data["estb_date"], date_format)
                 data['ccy_obj'] = Currency.objects.get(code=data['ccy_obj'].strip(' \n\r'))
                 data["lc_amt_org_ccy"] = round(float(data["lc_amt_org_ccy"].strip(' \n\r').replace(',', '')), 2)
+                data["os_amount"] = round(float(data["os_amount"].strip(' \n\r').replace(',', '')), 2)
 
                 logger.info('About to create or update lc after raw data from client cleaned up:\n%s' % data)
 

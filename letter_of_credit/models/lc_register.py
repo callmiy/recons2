@@ -19,6 +19,7 @@ class LCRegister(models.Model):
     ccy_obj = models.ForeignKey(Currency, related_name='lc_reg_ccy', verbose_name='Currency', )
     lc_amt_org_ccy = models.DecimalField('FX Amount', max_digits=100, decimal_places=2, )
     lc_amt_usd = models.DecimalField('LC Amount In USD', max_digits=100, decimal_places=2, null=True, blank=True)
+    os_amount = models.DecimalField('Amount Outstanding', max_digits=100, decimal_places=2, null=True, blank=True)
     supply_country = models.CharField('Country of Supply', max_length=200, null=True, blank=True)
     port = models.CharField('Port of Discharge', max_length=200, null=True, blank=True)
     description = models.TextField('Goods Description', null=True, blank=True)
@@ -34,6 +35,7 @@ class LCRegister(models.Model):
         null=True,
         blank=True
     )
+    status = models.CharField('Status', max_length=3, default='LIV')
     mt_730_received_at = models.DateField('MT 730 Received', null=True, blank=True)
 
     class Meta:
