@@ -19,7 +19,7 @@ $( function () {
   }
 
   function parseDate(val) {
-    var dateRe = new RegExp( "(\\d+)[^\d](\\d+)[^\d](\\d+)" ),
+    var dateRe = new RegExp( "(\\d+)[^\\d](\\d+)[^\\d](\\d+)" ),
       exec = dateRe.exec( val.trim() ),
       start = prePendZeros( exec[3] ) + '-'
 
@@ -55,6 +55,7 @@ $( function () {
               ccy: data.CURRENCY.trim(),
               fob: parseNumber( data.FOB ),
               applicant: data['APPLICANT NAME'].trim(),
+              bene: data["BENEFICIARY'S NAME"].trim(),
               submitted_at: parseDate( data['DATE SUBMITTED'] ),
               goods_description: data.DESCS.trim(),
               cost_freight: parseNumber( data['COST AND FREIGHT'] ),

@@ -7,6 +7,7 @@ class UploadedFormM(models.Model):
     ccy = models.CharField('Currency', max_length=3)
     fob = models.DecimalField('FOB Value', decimal_places=2, max_digits=18)
     applicant = models.CharField('Applicant', max_length=300)
+    bene = models.CharField('Beneficiary', max_length=300)
     goods_description = models.CharField('Goods Description', max_length=1000, null=True, blank=True)
     cost_freight = models.DecimalField('Cost and freight', decimal_places=2, max_digits=18, null=True, blank=True)
     validity_type = models.CharField('Validity Type', max_length=100, null=True, blank=True)
