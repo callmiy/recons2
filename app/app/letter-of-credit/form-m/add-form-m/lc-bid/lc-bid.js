@@ -48,14 +48,13 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
   vm.formM = formMObject
   var title = 'New Bid Request'
   vm.selectedBids = {}
-  var bidFormCtrlNames = ['bidMaturityDate', 'bidAmount', 'bidGoodsDescription']
+  var bidFormCtrlNames = ['bidAmount', 'bidGoodsDescription', 'bidRate']
 
   init()
   function init(form) {
     vm.datePickerIsOpen = {
       bidRequestedDate: false,
-      bidCreatedDate: false,
-      bidMaturityDate: false
+      bidCreatedDate: false
     }
     vm.title = title
     vm.formM.showBidForm = false
@@ -118,8 +117,11 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     vm.formM.bid.created_at = vm.bidToEdit.created_at
     vm.bidToEdit.requested_at = vm.bidToEdit.requested_at ? new Date( vm.bidToEdit.requested_at ) : null
     vm.formM.bid.requested_at = vm.bidToEdit.requested_at
-    vm.bidToEdit.maturity = vm.bidToEdit.maturity ? new Date( vm.bidToEdit.maturity ) : null
-    vm.formM.bid.maturity = vm.bidToEdit.maturity
+    vm.formM.bid.rate = vm.bidToEdit.rate
+    vm.formM.bid.bid_letter = vm.bidToEdit.bid_letter
+    vm.formM.bid.credit_approval = vm.bidToEdit.credit_approval
+    vm.formM.bid.comment = vm.bidToEdit.comment
+    vm.formM.bid.docs_complete = vm.bidToEdit.docs_complete
   }
 
   function toHumanDate(dtObj) {
@@ -214,12 +216,6 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
         '\n  after edit:     ' + formMObject.bid.goods_description
     }
 
-    if ( !bidIsNotModified.maturity ) {
-      text += '\nMaturity' +
-        '\n  before edit:    ' + toHumanDate( vm.bidToEdit.maturity ) +
-        '\n  after edit:     ' + toHumanDate( formMObject.bid.maturity )
-    }
-
     if ( !bidIsNotModified.created_at ) {
       text += '\nDate created' +
         '\n  before edit:    ' + toHumanDate( vm.bidToEdit.created_at ) +
@@ -236,6 +232,30 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
       text += '\nDownloaded' +
         '\n  before edit:    ' + vm.bidToEdit.downloaded +
         '\n  after edit:     ' + vm.formM.bid.downloaded
+    }
+
+    if ( !bidIsNotModified.rate ) {
+      text += '\nRate' +
+        '\n  before edit:    ' + vm.bidToEdit.rate +
+        '\n  after edit:     ' + vm.formM.bid.rate
+    }
+
+    if ( !bidIsNotModified.bid_letter ) {
+      text += '\nBid Letter' +
+        '\n  before edit:    ' + (vm.bidToEdit.bid_letter || false) +
+        '\n  after edit:     ' + vm.formM.bid.bid_letter
+    }
+
+    if ( !bidIsNotModified.credit_approval ) {
+      text += '\nCredit Approval' +
+        '\n  before edit:    ' + (vm.bidToEdit.credit_approval || false) +
+        '\n  after edit:     ' + vm.formM.bid.credit_approval
+    }
+
+    if ( !bidIsNotModified.docs_complete ) {
+      text += '\nDocumentation Complete' +
+        '\n  before edit:    ' + (vm.bidToEdit.docs_complete || false) +
+        '\n  after edit:     ' + vm.formM.bid.docs_complete
     }
 
     return text
@@ -264,7 +284,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
       }
 
       underscore.each( formMObject.bid, function (val, key) {
-        if ( key === 'created_at' || key === 'requested_at' || key === 'maturity' ) val = toISODate( val )
+        if ( key === 'created_at' || key === 'requested_at' ) val = toISODate( val )
         bid[key] = val
       } )
 
@@ -351,11 +371,19 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     return {
       amount: vm.bidToEdit.amount === formMObject.bid.amount,
       goods_description: vm.bidToEdit.goods_description === formMObject.bid.goods_description,
+      rate: vm.bidToEdit.rate === formMObject.bid.rate,
+      bid_letter: vm.bidToEdit.bid_letter === formMObject.bid.bid_letter,
+      credit_approval: vm.bidToEdit.credit_approval === formMObject.bid.credit_approval,
+      comment: vm.bidToEdit.comment === formMObject.bid.comment,
       downloaded: vm.bidToEdit.downloaded === formMObject.bid.downloaded,
       created_at: angular.equals( vm.bidToEdit.created_at, formMObject.bid.created_at ),
       requested_at: angular.equals( vm.bidToEdit.requested_at, formMObject.bid.requested_at ),
-      maturity: angular.equals( vm.bidToEdit.maturity, formMObject.bid.maturity )
+      docs_complete: vm.bidToEdit.docs_complete === formMObject.bid.docs_complete
     }
+  }
+
+  function bidDocumentationComplete() {
+    return formMObject.bid.rate && formMObject.bid.bid_letter && formMObject.bid.credit_approval
   }
 
   function getBidFromId(id) {

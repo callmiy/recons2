@@ -1,6 +1,7 @@
 import json
 import logging
 import re
+from copy import copy
 
 import django_filters
 from django.db.models import Q
@@ -73,7 +74,8 @@ class FormIssueBidCoverUtil:
 
     def create_bid(self, bid):
         if len(bid):
-            log = {'amount': "{:,.2f}".format(bid['amount']), 'maturity': bid['maturity']}
+            log = copy(bid)
+            log['amount'] = "{:,.2f}".format(bid['amount'])
             logger.info('%s creating bid with data:\n%s', self.log_prefix, json.dumps(log, indent=4))
 
             bid.update({'mf': self.form_m_url})

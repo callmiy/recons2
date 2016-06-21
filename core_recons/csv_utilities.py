@@ -20,6 +20,16 @@ DATE_RE = re.compile(
 )
 
 
+def iso_to_date_obj(iso_date_string):
+    date_re = re.compile(r'(\d{4})-(\d{1,2})-(\d{1,2})')
+    searched = date_re.search(iso_date_string)
+
+    if not searched:
+        raise ValueError('Date to parse must be in format "yyyy-mm-dd"')
+    grp = searched.group
+    return date(int(grp(1)), int(grp(2)), int(grp(3)))
+
+
 def parse_date(dtsring):
     DATE_RE = re.compile(r'(?P<d>\d{1,2})-(?P<m>\d{1,2})-(?P<y>\d{4})')
     dt_str = DATE_RE.match(dtsring.strip('\n\r '))

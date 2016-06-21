@@ -2,9 +2,13 @@ import json
 
 from rest_framework import generics, pagination
 import django_filters
+
+from core_recons.csv_utilities import iso_to_date_obj
 from letter_of_credit.models import LcBidRequest, FormM
 from letter_of_credit.serializers import LcBidRequestSerializer
 import logging
+import re
+from datetime import date
 
 logger = logging.getLogger('recons_logger')
 
@@ -50,7 +54,14 @@ class LcBidRequestUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = LcBidRequest.objects.all()
     serializer_class = LcBidRequestSerializer
 
+    def __init__(self, **kwargs):
+        self.created_at = None
+        super(LcBidRequestUpdateAPIView, self).__init__(**kwargs)
+
     def update(self, request, *args, **kwargs):
+        # django rest framework does not update auto date field. We store that 'created_at' date field from
+        # client and if it has changed, we update it in method perform_update
+        self.created_at = request.data.get('created_at')
         logger.info('Updating bid request with incoming data = \n%s', json.dumps(request.data, indent=4))
 
         if request.data.get('update_goods_description'):
@@ -60,4 +71,14 @@ class LcBidRequestUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
                     form_m.goods_description)
             form_m.goods_description = request.data['goods_description']
             form_m.save()
-        return super(LcBidRequestUpdateAPIView, self).update(request, *args, **kwargs)
+        updated_bid_response = super(LcBidRequestUpdateAPIView, self).update(request, *args, **kwargs)
+        logger.info('Bid successfully updated with result:\n%s' % json.dumps(updated_bid_response.data, indent=4))
+        return updated_bid_response
+
+    def perform_update(self, serializer):
+        saved_bid = serializer.save()
+        if self.created_at:
+            self.created_at = iso_to_date_obj(self.created_at)
+            if saved_bid.created_at != self.created_at:
+                saved_bid.created_at = self.created_at
+                saved_bid.save()

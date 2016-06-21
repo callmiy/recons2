@@ -11,6 +11,11 @@ class LcBidRequest(models.Model):
     requested_at = models.DateField('Date Request To Treasury', blank=True, null=True)
     deleted_at = models.DateField('Date Deleted', blank=True, null=True)
     amount = models.DecimalField('Amount', max_digits=20, decimal_places=2)
+    rate = models.CharField('Rate', max_length=200, null=True, blank=True)
+    bid_letter = models.BooleanField('Bid Letter', default=False)
+    credit_approval = models.BooleanField('Credit Approval', default=False)
+    docs_complete = models.BooleanField('Documentation Complete', default=False)
+    comment = models.TextField('Comment', null=True, blank=True)
     downloaded = models.BooleanField('Downloaded', default=False)
     maturity = models.DateField('Maturity Date', blank=True, null=True)
 

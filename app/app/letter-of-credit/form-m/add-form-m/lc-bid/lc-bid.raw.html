@@ -53,29 +53,89 @@
       </div>
     </div>
 
-    <div class="form-group bid-maturity-date-group" control-has-feedback feedback-after=".input-group-addon">
+    <div class="form-group bid-rate-group" control-has-feedback>
 
-      <label class="control-label col-sm-3" for="bid-maturity-date">Maturity Date</label>
+      <label class="control-label col-sm-3" for="bid-rate">Rate</label>
 
       <div class="col-sm-9">
-        <div class="input-group">
-          <input type="text" class="form-control" id="bid-maturity-date" name="bidMaturityDate"
-                 ng-model="lcBid.formM.bid.maturity"
-                 uib-datepicker-popup="{$lcBid.formM.datePickerFormat$}"
-                 is-open="lcBid.datePickerIsOpen.bidMaturityDate"
-          />
+        <input type="text" class="form-control" id="bid-rate" name="bidRate" ng-model="lcBid.formM.bid.rate"
+               to-upper ng-required="lcBid.formM.showBidForm"/>
 
-            <span class="input-group-addon"
-                  ng-click="lcBid.openDatePicker('bidMaturityDate')">
-              <i class=" glyphicon glyphicon-calendar"></i>
-            </span>
-        </div>
-
-        <div ng-messages="bidForm.bidMaturityDate.$error" role="alert">
-          <div ng-if="lcBid.isValid('bidMaturityDate')">
+        <div ng-messages="bidForm.bidRate.$error" role="alert">
+          <div ng-if="lcBid.isValid('bidRate')">
             <div ng-messages-include="form-error-messages"></div>
           </div>
         </div>
+
+      </div>
+    </div>
+
+    <div class="form-group bid-letter-group" control-has-feedback control-selector="input[name=bidLetter]">
+
+      <label class="control-label col-sm-3" for="bid-letter">Bid Letter?</label>
+
+      <div class="col-sm-9">
+        <input type="checkbox" id="bid-letter" name="bidLetter" ng-model="lcBid.formM.bid.bid_letter"/>
+
+        <div ng-messages="bidForm.bidLetter.$error" role="alert">
+          <div ng-if="lcBid.isValid('bidLetter')">
+            <div ng-messages-include="form-error-messages"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="form-group bid-credit-approval-group" control-has-feedback
+         control-selector="input[name=bidCreditApproval]">
+
+      <label class="control-label col-sm-3" for="bid-credit-approval">Credit Approval?</label>
+
+      <div class="col-sm-9">
+        <input type="checkbox" id="bid-credit-approval" name="bidCreditApproval"
+               ng-model="lcBid.formM.bid.credit_approval"/>
+
+        <div ng-messages="bidForm.bidCreditApproval.$error" role="alert">
+          <div ng-if="lcBid.isValid('bidCreditApproval')">
+            <div ng-messages-include="form-error-messages"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="form-group bid-docs-complete-group" control-has-feedback
+         control-selector="input[name=bidDocsComplete]">
+
+      <label class="control-label col-sm-3" for="bid-docs-complete">Documentation Complete?</label>
+
+      <div class="col-sm-9">
+        <input type="checkbox" id="bid-docs-complete" name="bidDocsComplete"
+               ng-model="lcBid.formM.bid.docs_complete" ng-disabled=""/>
+
+        <div ng-messages="bidForm.bidDocsComplete.$error" role="alert">
+          <div ng-if="lcBid.isValid('bidDocsComplete')">
+            <div ng-messages-include="form-error-messages"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="form-group bid-comment-group" control-has-feedback>
+
+      <label class="control-label col-sm-3" for="bid-comment">Comment</label>
+
+      <div class="col-sm-9">
+        <textarea style="height: 70px" class="form-control" id="bid-comment" name="bidComment"
+                  ng-model="lcBid.formM.bid.comment"></textarea>
+
+        <div ng-messages="bidForm.bidComment.$error" role="alert">
+          <div ng-if="lcBid.isValid('bidComment')">
+            <div ng-messages-include="form-error-messages"></div>
+          </div>
+        </div>
+
       </div>
     </div>
 
