@@ -189,7 +189,19 @@ class DownloadBidsLcEstablished(View):
         s.font = font
         s.alignment = alignment
 
-        s = sheet.cell(row=1, column=9, value='COMMENT')
+        s = sheet.cell(row=1, column=9, value='ALLOCATIONS')
+        s.font = font
+        s.alignment = alignment
+
+        s = sheet.cell(row=1, column=10, value='OUTSTANDING BIDS')
+        s.font = font
+        s.alignment = alignment
+
+        s = sheet.cell(row=1, column=11, value='ADVISING BANK')
+        s.font = font
+        s.alignment = alignment
+
+        s = sheet.cell(row=1, column=12, value='COMMENT')
         s.font = font
         s.alignment = alignment
 
@@ -213,15 +225,18 @@ class DownloadBidsLcEstablished(View):
             row += 1
             sheet.cell(row=row, column=1, value=row_index)
             lc = bid.mf.lc
+            allocations = sum([allocation['amount_allocated'] for allocation in bid.allocations()])
             sheet.cell(row=row, column=2, value=bid.applicant())
             sheet.cell(row=row, column=3, value=lc.lc_number)
             sheet.cell(row=row, column=4, value=lc.estb_date)
             sheet.cell(row=row, column=5, value=bid.form_m_number())
             sheet.cell(row=row, column=6, value=bid.currency().code)
             sheet.cell(row=row, column=7, value=lc.lc_amt_org_ccy)
-            sheet.cell(row=row, column=8,
-                       value=sum([allocation['amount_allocated'] for allocation in bid.allocations()]))
-            sheet.cell(row=row, column=9, value=remark)
+            sheet.cell(row=row, column=8, value=bid.amount)
+            sheet.cell(row=row, column=9, value=allocations)
+            sheet.cell(row=row, column=10, value=(bid.amount - allocations))
+            sheet.cell(row=row, column=11, value=lc.advising_bank)
+            sheet.cell(row=row, column=12, value=remark)
 
         resp = HttpResponse(save_virtual_workbook(wb), content_type='application/vnd.ms-excel')
         resp['Content-Disposition'] = 'attachment; filename="%s"' % file_name
