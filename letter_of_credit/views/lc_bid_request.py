@@ -72,7 +72,7 @@ class LcBidRequestUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
             form_m.goods_description = request.data['goods_description']
             form_m.save()
         updated_bid_response = super(LcBidRequestUpdateAPIView, self).update(request, *args, **kwargs)
-        logger.info('Bid successfully updated with result:\n%s' % json.dumps(updated_bid_response.data, indent=4))
+        # logger.info('Bid successfully updated with result:\n%s' % json.dumps(updated_bid_response.data, indent=4))
         return updated_bid_response
 
     def perform_update(self, serializer):

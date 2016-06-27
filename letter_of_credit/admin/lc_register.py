@@ -21,7 +21,7 @@ class LCRegisterAdmin(AjaxSelectAdmin):
     list_display_links = ('mf', 'ba', 'lc_number',)
 
     search_fields = (
-        'mf', 'ba', 'estb_date', 'lc_number', 'applicant', 'ccy_obj__code', 'acct_numb',
+        'mf', 'ba', 'estb_date', 'lc_number', 'applicant', 'ccy_obj__code', 'acct_numb', 'description',
         'lc_amt_org_ccy', 'bene', 'advising_bank', 'mt_730_received_at','status', 'os_amount')
 
     actions = ('download_mt_730_not_received', 'download_selected')
