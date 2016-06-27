@@ -8,7 +8,7 @@
 
     <div class="form-m-add-on-show-icon form-m-bid-add-on-show-icon">
       <span
-        ng-class="['glyphicon', {'glyphicon-chevron-down': !lcBid.formM.showBidForm, 'glyphicon-chevron-up': lcBid.formM.showBidForm}]">
+          ng-class="['glyphicon', {'glyphicon-chevron-down': !lcBid.formM.showBidForm, 'glyphicon-chevron-up': lcBid.formM.showBidForm}]">
       </span>
 
       {$lcBid.title$}
@@ -208,9 +208,16 @@
       </div>
     </div>
 
-    <div style="text-align: right" ng-show="lcBid.formM.showEditBid">
+    <div style="text-align: right" ng-if="lcBid.formM.showEditBid">
       <button type="button" class="btn btn-info" ng-click="lcBid.editBid()" ng-disabled="lcBid.editBidInvalid(bidForm)">
         Edit Bid
+      </button>
+    </div>
+
+    <div style="text-align: right" ng-if="!lcBid.formM.showEditBid">
+      <button type="button" class="btn btn-info" ng-click="lcBid.saveBid(lcBid.formM.bid)"
+              ng-disabled="bidForm.$invalid">
+        Save Bid
       </button>
     </div>
   </fieldset>

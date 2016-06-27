@@ -62,7 +62,7 @@ class FormMFilter(django_filters.FilterSet):
             return qs
 
 
-class FormIssueBidCoverUtil:
+class FormIssueCoverUtil:
     """
     Utility class for handling cases where form M will be created/updated simultaneously with bid and or issues
     """
@@ -71,19 +71,6 @@ class FormIssueBidCoverUtil:
         self.request = request
         self.form_m_url = form_m_url
         self.log_prefix = log_prefix
-
-    def create_bid(self, bid):
-        if len(bid):
-            log = copy(bid)
-            log['amount'] = "{:,.2f}".format(bid['amount'])
-            logger.info('%s creating bid with data:\n%s', self.log_prefix, json.dumps(log, indent=4))
-
-            bid.update({'mf': self.form_m_url})
-            serializer = LcBidRequestSerializer(data=bid, context={'request': self.request})
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            data = serializer.data
-            logger.info('{} bid successfully created:\n{}'.format(self.log_prefix, json.dumps(data, indent=4)))
 
     def create_issues(self, issues):
         logger.info('%s creating form M issues with data:\n%s', self.log_prefix, json.dumps(issues, indent=4))
@@ -128,10 +115,7 @@ class FormMListCreateAPIView(generics.ListCreateAPIView):
         self.perform_create(serializer)
         form_m_data = serializer.data
         headers = self.get_success_headers(form_m_data)
-
-        util = FormIssueBidCoverUtil(request, form_m_data['url'], self.log_prefix)
-        if 'bid' in incoming_data:
-            util.create_bid(incoming_data['bid'])
+        util = FormIssueCoverUtil(request, form_m_data['url'], self.log_prefix)
 
         if 'cover' in incoming_data:
             util.create_cover(incoming_data['cover'])
@@ -169,16 +153,11 @@ class FormMRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
             form_m_data = serializer.data
             logger.info('%s form m successfully updated: \n%s', self.log_prefix, json.dumps(form_m_data, indent=4))
 
-        util = FormIssueBidCoverUtil(request, form_m_data['url'], self.log_prefix)
+        util = FormIssueCoverUtil(request, form_m_data['url'], self.log_prefix)
         if 'cover' in incoming_data:
             util.create_cover(incoming_data['cover'])
             if 'cover' in form_m_data:
                 del form_m_data['cover']
-
-        if 'bid' in incoming_data:
-            util.create_bid(incoming_data['bid'])
-            if 'bid' in form_m_data:
-                del form_m_data['bid']
 
         if 'issues' in incoming_data:
             form_m_data['new_issues'] = util.create_issues(incoming_data['issues'])

@@ -142,20 +142,15 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
     if ( underscore.has( vm.formM.coverForm, '$invalid' ) && vm.formM.coverForm.$invalid ) return true
 
-    if ( underscore.has( vm.formM.bidForm, '$invalid' ) && vm.formM.bidForm.$invalid ) return true
-
     if ( underscore.has( vm.formM.issuesForm, '$invalid' ) && vm.formM.issuesForm.$invalid ) return true
 
     if ( underscore.has( vm.formM.commentForm, '$invalid' ) && vm.formM.commentForm.$invalid ) return true
-
-    if ( formMObject.showEditBid || formMObject.showCommentForm ) return true
 
     var compared = formMObject.compareFormMs( vm.detailedFormM )
 
     if ( !compared ) return false
 
     if ( underscore.all( compared ) ) {
-      if ( formMObject.bid.goods_description && formMObject.bid.amount ) return false
       if ( !underscore.isEmpty( vm.formM.cover ) ) return false
       if ( vm.formM.lcRef.lc_number ) return false
       return !vm.formM.selectedIssues.length

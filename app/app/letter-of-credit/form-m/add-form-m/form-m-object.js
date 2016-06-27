@@ -30,7 +30,7 @@ formMObject.$inject = [
 ]
 
 function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDialog, formatDate, xhrErrorDisplay,
-  underscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment, Attachment) {
+                     underscore, $filter, getTypeAheadLCIssue, FormM, $q, Comment, Attachment) {
   function Factory() {
     var self = this
     self.datePickerFormat = 'dd-MMM-yyyy'
@@ -166,7 +166,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
       if ( formMNumber ) {
         FormM.getPaginated( { number: formMNumber } ).$promise.then( function (data) {
           if ( data.count ) {
-            formM = data.results[0]
+            formM = data.results[ 0 ]
             self.date_received = new Date( formM.date_received )
             self.number = formM.number
             self.applicant = formM.applicant_data
@@ -196,7 +196,9 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
 
     }
 
-    self.formatIssueText = function formatIssueText(text) {return text.replace( /:ISSUE$/i, '' )}
+    self.formatIssueText = function formatIssueText(text) {
+      return text.replace( /:ISSUE$/i, '' )
+    }
 
     self.closeIssue = function closeIssue(issue, $index) {
       var text = 'Sure you want to close issue:\n"' + self.formatIssueText( issue.issue_text ) + '"?'
@@ -214,7 +216,9 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
         self.closedIssues.push( issue )
       }
 
-      function issueClosedError(xhr) {xhrErrorDisplay( xhr )}
+      function issueClosedError(xhr) {
+        xhrErrorDisplay( xhr )
+      }
     }
 
     self.createIssuesMessage = function createIssuesMessage(issues) {
@@ -268,7 +272,7 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
       var URL_REGEXP = new RegExp( ".+/(\\d+)$" )
 
       x.concat( self.nonClosedIssues ).concat( self.closedIssues ).forEach( function (issue) {
-        _ids.push( URL_REGEXP.exec( issue.issue )[1] )
+        _ids.push( URL_REGEXP.exec( issue.issue )[ 1 ] )
       } )
 
       return getTypeAheadLCIssue( { text: text, exclude_issue_ids: _ids.join( ',' ) } )
@@ -287,17 +291,10 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
 
       if ( formM.lcRef.lc_number ) formMToSave.lc = formM.lcRef.lc_number
 
-      if ( formM.bid.amount && formM.bid.goods_description ) {
-        formMToSave.goods_description = self.goods_description = formM.bid.goods_description
-        formMToSave.bid = angular.copy( formM.bid )
-        formMToSave.bid.amount = Number( formM.bid.amount )
-        formMToSave.maturity = formatDate( formM.bid.maturity )
-      }
-
       if ( formM.selectedIssues.length ) formMToSave.issues = formM.selectedIssues
 
       if ( !underscore.isEmpty( formM.cover ) ) {
-        formMToSave.cover = { amount: formM.cover.amount, cover_type: formM.cover.cover_type[0] }
+        formMToSave.cover = { amount: formM.cover.amount, cover_type: formM.cover.cover_type[ 0 ] }
       }
 
       var deferred = $q.defer()
@@ -317,10 +314,6 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
 
       function formMSavedSuccess(data) {
         var summary = self.createFormMMessage() + self.createIssuesMessage( data.new_issues )
-
-        if ( formMToSave.bid ) {
-          summary += '\n\nBid Amount     : ' + formM.currency.code + ' ' + $filter( 'number' )( formMToSave.bid.amount, 2 )
-        }
 
         delete data.new_issues
         deferred.resolve( { showSummary: summary, formM: data.number } )
@@ -446,8 +439,8 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
             var comments = angular.copy( self.comments )
 
             for ( var index = 0, len = comments.length; index < len; index++ ) {
-              if ( data.id === comments[index].id ) {
-                comments[index] = data
+              if ( data.id === comments[ index ].id ) {
+                comments[ index ] = data
                 break
               }
             }

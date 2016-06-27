@@ -43,12 +43,12 @@ LcBidDirectiveController.$inject = [
 ]
 
 function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore, LcBidRequest, xhrErrorDisplay,
-  confirmationDialog, formMObject, resetForm2, moment, toISODate, ViewBidDetail, kanmiiUri, urls, $timeout) {
+                                  confirmationDialog, formMObject, resetForm2, moment, toISODate, ViewBidDetail, kanmiiUri, urls, $timeout) {
   var vm = this
   vm.formM = formMObject
   var title = 'New Bid Request'
   vm.selectedBids = {}
-  var bidFormCtrlNames = ['bidAmount', 'bidGoodsDescription', 'bidRate']
+  var bidFormCtrlNames = [ 'bidAmount', 'bidGoodsDescription', 'bidRate' ]
 
   init()
   function init(form) {
@@ -63,12 +63,12 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     formMObject.bid = {}
     vm.showAllocateFx = false
 
-    if ( form ) resetForm2( form, [{ form: form, elements: bidFormCtrlNames }] )
+    if ( form ) resetForm2( form, [ { form: form, elements: bidFormCtrlNames } ] )
   }
 
   vm.openDatePicker = function openDatePicker(prop) {
     underscore.each( vm.datePickerIsOpen, function (val, key) {
-      vm.datePickerIsOpen[key] = prop === key
+      vm.datePickerIsOpen[ key ] = prop === key
     } )
   }
 
@@ -90,7 +90,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
       return
     }
 
-    vm.formM.showBidForm = vm.formM.amount && vm.formM.number && !vm.formM.showBidForm
+    vm.formM.showBidForm = vm.formM._id && !vm.formM.showBidForm
 
     if ( !vm.formM.showBidForm ) init( form )
     else {
@@ -99,6 +99,22 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
       formMObject.bid.goods_description = formMObject.goods_description
       vm.formM.bid.amount = !vm.formM.existingBids.length ? formMObject.amount : null
     }
+  }
+
+  vm.saveBid = function saveBid(bid) {
+    var text = ''
+    bid.mf = formMObject.url
+
+    LcBidRequest.save( bid ).$promise.then( function (createdBid) {
+      console.log( 'createdBid = \n', createdBid );
+
+      confirmationDialog.showDialog( { title: title, text: 'Bid created successfully: ' + text, infoOnly: true } )
+      init()
+      formMObject.setBids( bidsNewlySetCb )
+
+    }, function (xhr) {
+      xhrErrorDisplay( xhr )
+    } )
   }
 
   vm.editBidInvalid = function editBidInvalid(form) {
@@ -132,7 +148,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     var index, result = []
 
     for ( index in selections ) {
-      if ( selections[index] ) {
+      if ( selections[ index ] ) {
         var bid = getBidFromId( index )
         if ( bid ) result.push( bid )
       }
@@ -148,13 +164,13 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     vm.formM.showEditBid = true
     vm.formM.showBidForm = false
     vm.toggleShow()
-    vm.bidToEdit = angular.copy( bids[0] )
+    vm.bidToEdit = angular.copy( bids[ 0 ] )
     copyBidForEdit()
   }
 
   vm.selectedBidNotDeleted = function selectedBidNotDeleted(selectedBids) {
     var bids = getSelectedBids( selectedBids )
-    return (bids.length === 1) && !bids[0].deleted_at
+    return (bids.length === 1) && !bids[ 0 ].deleted_at
   }
 
   vm.trashOrReinstateBid = function trashOrReinstateBid(selectedBids, action) {
@@ -164,7 +180,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     if ( bids.length !== 1 ) return
 
     init()
-    var bid = bids[0]
+    var bid = bids[ 0 ]
     var text = '\n' +
       '\nApplicant  : ' + bid.applicant +
       '\nForm M     : ' + bid.form_m_number +
@@ -285,7 +301,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
 
       underscore.each( formMObject.bid, function (val, key) {
         if ( key === 'created_at' || key === 'requested_at' ) val = toISODate( val )
-        bid[key] = val
+        bid[ key ] = val
       } )
 
       LcBidRequest.put( bid ).$promise.then( function () {
@@ -303,7 +319,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     var bids = getSelectedBids( selectedBids )
     if ( bids.length !== 1 ) return
     init()
-    ViewBidDetail.showDialog( { bid: bids[0] } )
+    ViewBidDetail.showDialog( { bid: bids[ 0 ] } )
   }
 
   vm.allocateFx = function allocateFx(selectedBids) {
@@ -314,7 +330,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
 
     var bids = getSelectedBids( selectedBids )
     if ( bids.length !== 1 ) return
-    var bid = bids[0]
+    var bid = bids[ 0 ]
     vm.formM.showBidForm = false
     vm.title = title
 
@@ -388,7 +404,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
 
   function getBidFromId(id) {
     for ( var bidIndex = 0; bidIndex < vm.formM.existingBids.length; bidIndex++ ) {
-      var bid = vm.formM.existingBids[bidIndex]
+      var bid = vm.formM.existingBids[ bidIndex ]
 
       if ( bid.id === +id ) return bid
     }
@@ -419,19 +435,22 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     checkBids( vm.selectedBids )
   }
 
-  $scope.$watch( function getFormMObject() {return formMObject}, function onFormMObjectChanged(formM) {
-    formMObject.bidForm = $scope.bidForm
+  $scope.$watch( function getFormMObject() {
+    return formMObject
+  }, function onFormMObjectChanged(formM) {
 
     if ( formM ) {
       if ( !formM.amount || !formM.number ) {
-        init( formMObject.bidForm )
+        init( formMObject.Form )
         vm.selectedBids = {}
         vm.selectedBidsLen = 0
       }
     }
   }, true )
 
-  $scope.$watch( function getSelectedBids() {return vm.selectedBids}, function onSelectedBidsChanged(selectedBids) {
+  $scope.$watch( function getSelectedBids() {
+    return vm.selectedBids
+  }, function onSelectedBidsChanged(selectedBids) {
     if ( selectedBids ) checkBids( selectedBids )
   }, true )
 }

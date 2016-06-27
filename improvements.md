@@ -28,3 +28,7 @@
 1. Attachment table
     - select box for performing actions such as delete, update etc.
         on attachments and files
+
+## Bid
+1. Make comment show up in bid front end
+2. lc-bid.py view update date is not jason serializable

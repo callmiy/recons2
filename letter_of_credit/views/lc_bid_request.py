@@ -42,12 +42,15 @@ class LcBidRequestListCreateAPIView(generics.ListCreateAPIView):
     pagination_class = LcBidRequestPagination
     filter_class = LcBidRequestFilter
 
+    def initial(self, request, *args, **kwargs):
+        super(LcBidRequestListCreateAPIView, self).initial(request, *args, **kwargs)
+
     def create(self, request, *args, **kwargs):
-        logger.info(
-                'Creating new letter of credit bid request with incoming data = \n%s',
-                json.dumps(request.data, indent=4)
-        )
-        return super(LcBidRequestListCreateAPIView, self).create(request, *args, **kwargs)
+        log_text = 'Creating new letter of credit bid request:'
+        logger.info('%s with incoming data = \n%s', log_text, json.dumps(request.data, indent=4))
+        bid_response = super(LcBidRequestListCreateAPIView, self).create(request, *args, **kwargs)
+        logger.info('%s lc bid successfully created. Bid is:\n%s', log_text, json.dumps(bid_response.data, indent=4))
+        return bid_response
 
 
 class LcBidRequestUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -59,7 +62,7 @@ class LcBidRequestUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
         super(LcBidRequestUpdateAPIView, self).__init__(**kwargs)
 
     def update(self, request, *args, **kwargs):
-        # django rest framework does not update auto date field. We store that 'created_at' date field from
+        # django rest framework does not update auto date field. We store the 'created_at' date field from
         # client and if it has changed, we update it in method perform_update
         self.created_at = request.data.get('created_at')
         logger.info('Updating bid request with incoming data = \n%s', json.dumps(request.data, indent=4))
