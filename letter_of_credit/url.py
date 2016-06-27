@@ -23,7 +23,7 @@ from .views import (
     FormMCoverRetrieveUpdateDestroyAPIView,
     UploadFromSingleWindowView,
     ProcessSwiftView,
-    UploadLcCommissionView)
+    UploadLcCommissionView, DownloadBidsLcEstablished)
 
 urlpatterns = patterns(
         # <editor-fold description='home view and upload'>
@@ -138,6 +138,9 @@ urlpatterns += patterns(
             name='lcbidrequest-detail'),
 
         url(r'^lc-bid-request/download/?$', login_required(DownloadBidsView.as_view()), name='lcbidrequest-download'),
+
+        url(r'^lc-estb-bid-request/download/?$', login_required(DownloadBidsLcEstablished.as_view()),
+            name='lc-estb-bid-download'),
 )
 
 # process swift
