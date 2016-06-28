@@ -1,4 +1,5 @@
-<div id="add-form-m-root-container" class="add-form-m-root-container" style="margin-top: 5px;">
+<div id="add-form-m-root-container" class="add-form-m-root-container"
+     style="margin-top: 5px;">
   <div class="form-m-deleted" ng-if="addFormMState.formM.deleted_at">CANCELLED</div>
 
   <form ng-if="addFormMState.formM._id" class="form-horizontal form-m-action-form">
@@ -92,7 +93,7 @@
                 <span class="input-group-addon" style="cursor:pointer;"
                       ng-click="addFormMState.enableFieldEdit('number')">
                   <i
-                    ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.number, 'glyphicon-eye-open': addFormMState.fieldIsEditable.number}]"></i>
+                      ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.number, 'glyphicon-eye-open': addFormMState.fieldIsEditable.number}]"></i>
                 </span>
 
                 <input type="text" class="form-control" maxlength="13" id="form-m-number" required
@@ -111,7 +112,7 @@
                 <span class="input-group-addon" style="cursor:pointer;"
                       ng-click="addFormMState.enableFieldEdit('applicant')">
                   <i
-                    ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.applicant, 'glyphicon-eye-open': addFormMState.fieldIsEditable.applicant}]"></i>
+                      ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.applicant, 'glyphicon-eye-open': addFormMState.fieldIsEditable.applicant}]"></i>
                 </span>
 
                 <input class="form-control" type="text" ng-minlength="3" id="applicant" name="applicant" required
@@ -142,7 +143,7 @@
                 <span class="input-group-addon" style="cursor:pointer;"
                       ng-click="addFormMState.enableFieldEdit('currency')">
                   <i
-                    ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.currency, 'glyphicon-eye-open': addFormMState.fieldIsEditable.currency}]"></i>
+                      ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.currency, 'glyphicon-eye-open': addFormMState.fieldIsEditable.currency}]"></i>
                 </span>
 
                 <input type="text" class="form-control" id="currency" maxlength="3" name="currency" required
@@ -166,7 +167,7 @@
                 <span class="input-group-addon" style="cursor:pointer;"
                       ng-click="addFormMState.enableFieldEdit('amount')">
                   <i
-                    ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.amount, 'glyphicon-eye-open': addFormMState.fieldIsEditable.amount}]"></i>
+                      ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.amount, 'glyphicon-eye-open': addFormMState.fieldIsEditable.amount}]"></i>
                 </span>
 
                 <input type="text" class="form-control" id="amount" name="amount" required
@@ -185,7 +186,7 @@
                 <span class="input-group-addon" style="cursor:pointer;"
                       ng-click="addFormMState.enableFieldEdit('date_received')">
                   <i
-                    ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.date_received, 'glyphicon-eye-open': addFormMState.fieldIsEditable.date_received}]"></i>
+                      ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.date_received, 'glyphicon-eye-open': addFormMState.fieldIsEditable.date_received}]"></i>
                 </span>
 
                 <input type="text" class="form-control" id="received-date" required name="receivedDate"
@@ -211,7 +212,7 @@
                 <span class="input-group-addon" style="cursor:pointer;"
                       ng-click="addFormMState.enableFieldEdit('lcRef')">
                   <i
-                    ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.lcRef, 'glyphicon-eye-open': addFormMState.fieldIsEditable.lcRef}]"></i>
+                      ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.lcRef, 'glyphicon-eye-open': addFormMState.fieldIsEditable.lcRef}]"></i>
                 </span>
 
                 <input type="text" class="form-control" id="lc-ref" name="lcRef"
@@ -263,7 +264,7 @@
       </div>
 
       <div class="col-lg-6 col-md-6 col-sm-12">
-        <div lc-bid></div>
+        <!--   <div lc-bid></div> -->
 
         <div lc-issue></div>
       </div>

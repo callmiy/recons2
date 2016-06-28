@@ -2,7 +2,9 @@
 
 /*jshint camelcase:false*/
 
+require( './add-form-m/form-m-object.js' )
 require( './add-form-m/add-form-m.js' )
+require( './add-form-m/lc-bid/lc-bid.js' )
 require( './bids/bids.js' )
 require( './list-form-m/list-form-m.js' )
 require( './search-detailed-or-uploaded-form-m/search-detailed-or-uploaded-form-m.js' )
@@ -11,16 +13,27 @@ require( './upload-form-m/upload-form-m.js' )
 require( './display-uploaded-form-m-modal/display-uploaded-form-m-modal.js' )
 
 var app = angular.module( 'form-m',
-  ['rootApp',
-   'ui.router',
-   'list-form-m',
-   'upload-form-m',
-   'add-form-m',
-   'form-m-bids'
+  [ 'rootApp',
+    'ui.router',
+    'list-form-m',
+    'upload-form-m',
+    'add-form-m',
+    'form-m-bids',
+    'add-form-m-form-m-object',
+    'ngSanitize',
+    'lc-bid'
   ] )
 
+
+/**
+ * Basically for storing the formM number of the current form M when in formM.add view
+ */
+app.value( 'formMAppStore', {
+  formMNumber: null
+} )
+
 app.config( formMURLConfig )
-formMURLConfig.$inject = ['$stateProvider']
+formMURLConfig.$inject = [ '$stateProvider' ]
 function formMURLConfig($stateProvider) {
 
   $stateProvider
@@ -36,27 +49,29 @@ function formMURLConfig($stateProvider) {
 }
 
 app.controller( 'FormMController', FormMController )
-FormMController.$inject = ['$state', '$scope']
-function FormMController($state, $scope) {
+FormMController.$inject = [ '$state', '$scope', 'formMAppStore', '$rootScope' ]
+function FormMController($state, $scope, formMAppStore, $rootScope) {
+  var vm = this
 
   var listFormMTab = {
     className: 'list-form-m-tab-ctrl',
     title: 'List Form M',
     viewName: 'listFormM',
     select: function () {
+      vm.tabContent = null
       $scope.updateAddFormMTitle()
       $state.go( 'form_m.list' )
     }
   }
 
   var addFormMTitle = 'Form M'
-
   var addFormMTab = {
     className: 'add-form-tab-ctrl',
     title: addFormMTitle,
     active: true,
     viewName: 'addFormM',
     select: function () {
+      vm.tabContent = null
       $state.go( 'form_m.add' )
     }
   }
@@ -66,38 +81,64 @@ function FormMController($state, $scope) {
     active: false,
     viewName: 'formMReports',
     select: function () {
+      vm.tabContent = null
       $scope.updateAddFormMTitle()
       $state.go( 'form_m.add' )
     }
   }
 
-  var bidsTab = {
+  var listBidsTab = {
     className: 'bid-list-tab-ctrl',
-    title: 'Bids',
+    title: 'List All Bids',
     active: false,
     viewName: 'bids',
     select: function () {
+      vm.tabContent = null
       $scope.updateAddFormMTitle()
       $state.go( 'form_m.bids' )
     }
   }
 
-  $scope.tabs = {
-    listFormM: listFormMTab,
-    addFormM: addFormMTab,
-    bids: bidsTab,
-    reports: reportsTab
+  var bidTitle = 'Bid'
+  var bidTab = {
+    className: 'cash-backed-lc-bid-tab',
+    title: bidTitle,
+    active: false,
+    select: function () {
+      vm.tabContent = 'lc-bid'
+    }
   }
 
-  $scope.activeIndex = 1
+  vm.tabs = {
+    listFormM: listFormMTab,
+    addFormM: addFormMTab,
+    bid: bidTab,
+    bids: listBidsTab
+    //reports: reportsTab,
+  }
+
+  vm.activeIndex = 1
 
   $scope.updateAddFormMTitle = function (formM) {
-    $scope.tabs.addFormM.title = formM ? 'Details of "' + formM.number + '"' : addFormMTitle
+    vm.tabs.addFormM.title = addFormMTitle
+    vm.tabs.bid.title = bidTitle
+
+    if ( formM || formMAppStore.formMNumber ) {
+      var formMNumber = formM ? formM.number : formMAppStore.formMNumber
+      vm.tabs.bid.title = 'Bids for "' + formMNumber + '"'
+      vm.tabs.addFormM.title = 'Details of "' + formMNumber + '"'
+    }
   }
 
   $scope.goToFormM = function goToFormM(formMNumber) {
     $state.transitionTo( 'form_m.add', { formM: formMNumber } )
-    $scope.activeIndex = 1
+    vm.activeIndex = 1
     $scope.updateAddFormMTitle( formMNumber )
   }
+
+  $rootScope.$on( '$stateChangeStart', function (evt, toState, toParams) {
+    if ( toState.name === 'form_m.add' ) {
+      if ( toParams.formM === null ) toParams.formM = formMAppStore.formMNumber
+    }
+  } )
 }

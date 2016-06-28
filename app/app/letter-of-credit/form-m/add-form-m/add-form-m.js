@@ -2,10 +2,8 @@
 
 /*jshint camelcase:false*/
 
-require( './form-m-object.js' )
 require( './lc-issue/lc-issue.js' )
 require( './lc-cover/lc-cover.js' )
-require( './lc-bid/lc-bid.js' )
 require( './comment/comment.js' )
 require( './attachment/attachment-form-m.js' )
 
@@ -30,7 +28,7 @@ var app = angular.module( 'add-form-m', [
 
 app.config( formMStateConfig )
 
-formMStateConfig.$inject = ['$stateProvider']
+formMStateConfig.$inject = [ '$stateProvider' ]
 
 function formMStateConfig($stateProvider) {
   $stateProvider
@@ -41,7 +39,7 @@ function formMStateConfig($stateProvider) {
 
       views: {
         addFormM: {
-          templateUrl: require( 'commons' ).buildUrl('letter-of-credit', 'form-m/add-form-m/add-form-m.html' ),
+          templateUrl: require( 'commons' ).buildUrl( 'letter-of-credit', 'form-m/add-form-m/add-form-m.html' ),
 
           controller: 'AddFormMStateController as addFormMState'
         }
@@ -66,11 +64,13 @@ AddFormMStateController.$inject = [
   'formMAttributesVerboseNames',
   'getTypeAheadLetterOfCredit',
   'DisplayUploadedFormMModal',
+  'formMAppStore'
 ]
 
 function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, SearchDetailedOrUploadedFormMService,
-  underscore, xhrErrorDisplay, $stateParams, resetForm2, $state, $scope, confirmationDialog, formMObject,
-  formMAttributesVerboseNames, getTypeAheadLetterOfCredit, DisplayUploadedFormMModal) {
+                                 underscore, xhrErrorDisplay, $stateParams, resetForm2, $state, $scope, confirmationDialog, formMObject,
+                                 formMAttributesVerboseNames, getTypeAheadLetterOfCredit, DisplayUploadedFormMModal,
+                                 formMAppStore) {
   var vm = this
 
   function initFormMCb(formM, detailedFormM) {
@@ -78,6 +78,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     vm.formM = formM
     vm.formM.lcRef = { lc_number: null }
     vm.detailedFormM = detailedFormM
+    formMAppStore.formMNumber = formM.number
 
     if ( detailedFormM ) {
       vm.fieldIsEditable = {
@@ -98,13 +99,15 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   function initialize(form, formMNumber) {
 
     if ( form ) {
-      var elements = ['applicant', 'currency'].concat( $scope.newFormMForm.lcRef ? ['lcRef'] : [] )
-      resetForm2( form, [{ form: $scope.newFormMForm, elements: elements }] )
+      var elements = [ 'applicant', 'currency' ].concat( $scope.newFormMForm.lcRef ? [ 'lcRef' ] : [] )
+      resetForm2( form, [ { form: $scope.newFormMForm, elements: elements } ] )
       form.$setPristine()
       form.$setUntouched()
     }
 
+    formMAppStore.formMNumber = null
     vm.detailedFormM = null
+
     vm.fieldIsEditable = {
       number: true,
       currency: true,
@@ -113,6 +116,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       amount: true,
       lcRef: true
     }
+
     formMObject.init( formMNumber || $stateParams.formM, initFormMCb )
     vm.searchFormM = {}
     vm.action = '';
@@ -134,7 +138,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
   }
 
   vm.enableFieldEdit = function enableFieldEdit(field) {
-    vm.fieldIsEditable[field] = vm.detailedFormM ? !vm.fieldIsEditable[field] : true
+    vm.fieldIsEditable[ field ] = vm.detailedFormM ? !vm.fieldIsEditable[ field ] : true
   }
 
   vm.disableSubmitBtn = function disableSubmitBtn() {
@@ -187,7 +191,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
             vm.formM.goods_description = formM.goods_description
 
             getTypeAheadCurrency( formM.ccy ).then( function (ccy) {
-              vm.formM.currency = ccy[0]
+              vm.formM.currency = ccy[ 0 ]
             } )
           }
         } )
@@ -195,7 +199,9 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
     } )
   }
 
-  function saveFormMError(xhr) { xhrErrorDisplay( xhr, formMAttributesVerboseNames ) }
+  function saveFormMError(xhr) {
+    xhrErrorDisplay( xhr, formMAttributesVerboseNames )
+  }
 
   vm.submit = function submit(formM) {
     formMObject.saveFormM( formM, vm.detailedFormM ).then( function saveFormMSuccess(data) {
@@ -206,7 +212,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   vm.doAction = function doAction(action, formM) {
 
-    switch (action) {
+    switch ( action ) {
       case 'cancel':
       case 'reinstate':
         cancelOrReinstate( formM, action )

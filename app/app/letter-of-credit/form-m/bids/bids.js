@@ -2,36 +2,36 @@
 
 /*jshint camelcase:false*/
 
-require('./search-bids/search-bids.js')
+require( './search-bids/search-bids.js' )
 
-var app = angular.module('form-m-bids', [
+var app = angular.module( 'form-m-bids', [
   'ui.router',
   'lc-bid-request',
   'rootApp',
   'kanmii-URI',
   'search-bids'
-])
+] )
 
-app.config(bidURLConfig)
-bidURLConfig.$inject = ['$stateProvider']
+app.config( bidURLConfig )
+bidURLConfig.$inject = [ '$stateProvider' ]
 function bidURLConfig($stateProvider) {
 
   $stateProvider
-    .state('form_m.bids', {
+    .state( 'form_m.bids', {
 
       kanmiiTitle: 'Bids',
 
       views: {
         bids: {
-          template: require('./bids.html'),
+          template: require( './bids.html' ),
 
           controller: 'BidRequestController as bidHome'
         }
       }
-    })
+    } )
 }
 
-app.controller('BidRequestController', BidRequestController)
+app.controller( 'BidRequestController', BidRequestController )
 BidRequestController.$inject = [
   'LcBidRequest',
   '$scope',
@@ -60,10 +60,10 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, unde
     vm.bidRequests = []
     vm.paginationHooks = {}
 
-    if (!arguments.length) {
-      LcBidRequest.pending().$promise.then(function (data) {
-        updateBids(data)
-      })
+    if ( !arguments.length ) {
+      LcBidRequest.pending().$promise.then( function (data) {
+        updateBids( data )
+      } )
     }
   }
 
@@ -72,7 +72,7 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, unde
    * @param {{}} bid - the bid object at the row that was double clicked
    */
   vm.rowDblClickCb = function rowDblClickCb(bid) {
-    $scope.goToFormM(bid.form_m_number)
+    $scope.goToFormM( bid.form_m_number )
   }
 
   /**
@@ -81,22 +81,24 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, unde
    */
   vm.getBidsOnNavigation = getBidsOnNavigation
   function getBidsOnNavigation(linkUrl) {
-    $http.get(linkUrl).then(function (response) {
-      updateBids(response.data)
-    })
+    $http.get( linkUrl ).then( function (response) {
+      updateBids( response.data )
+    } )
   }
 
   vm.onBidsSearched = function onBidsSearched(result) {
-    initialize(false)
-    updateBids(result)
+    initialize( false )
+    updateBids( result )
   }
 
-  $scope.$watch(function searchedBidResult() {return vm.searchedBidResult},
+  $scope.$watch( function searchedBidResult() {
+      return vm.searchedBidResult
+    },
     function searchedBidResultChanged(searchedBidResult) {
-      if (searchedBidResult) {
-        updateBids(searchedBidResult)
+      if ( searchedBidResult ) {
+        updateBids( searchedBidResult )
       }
-    })
+    } )
 
   /**
    * Update the bid collection and pagination hooks
@@ -104,90 +106,92 @@ function BidRequestController(LcBidRequest, $scope, $http, kanmiiUri, urls, unde
    */
   function updateBids(data) {
     vm.bidRequests = data.results
-    vm.paginationHooks = {next: data.next, previous: data.previous, count: data.count}
+    vm.paginationHooks = { next: data.next, previous: data.previous, count: data.count }
   }
 
-  var url = kanmiiUri(urls.lcBidRequestDownloadUrl)
+  var url = kanmiiUri( urls.lcBidRequestDownloadUrl )
 
   vm.downloadUrl = function downloadUrl() {
-    if (!underscore.isEmpty(vm.selectedBids)) {
+    if ( !underscore.isEmpty( vm.selectedBids ) ) {
       var search = []
 
-      underscore.each(vm.selectedBids, function (selection, bidId) {
-        if (selection === true) search.push(bidId)
-      })
+      underscore.each( vm.selectedBids, function (selection, bidId) {
+        if ( selection === true ) search.push( bidId )
+      } )
 
-      return search.length ? url.search({bid_ids: search}).toString() : null
+      return search.length ? url.search( { bid_ids: search } ).toString() : null
     }
 
     return null
   }
 
   vm.downloadBtnDisabled = function downloadBtnDisabled() {
-    if (underscore.isEmpty(vm.selectedBids)) return true
+    if ( underscore.isEmpty( vm.selectedBids ) ) return true
 
-    return !underscore.any(vm.selectedBids, function (selectionVal) {
+    return !underscore.any( vm.selectedBids, function (selectionVal) {
       return selectionVal === true
-    })
+    } )
   }
 
   vm.onSelectedBidsChanged = onSelectedBidsChanged
   function onSelectedBidsChanged(newSelections) {
-    if (newSelections && !underscore.isEmpty(newSelections)) {
-      underscore.each(newSelections, function (checked, bidId) {
-        var bid = getBidFromId(bidId)
+    if ( newSelections && !underscore.isEmpty( newSelections ) ) {
+      underscore.each( newSelections, function (checked, bidId) {
+        var bid = getBidFromId( bidId )
 
-        if (bid && bid.downloaded) vm.selectedDownloadedBids[bidId] = checked
-      })
+        if ( bid && bid.downloaded ) vm.selectedDownloadedBids[ bidId ] = checked
+      } )
     }
   }
 
   vm.markRequestedBtnDisabled = function markRequestedBtnDisabled() {
-    if (underscore.isEmpty(vm.selectedDownloadedBids)) return true
+    if ( underscore.isEmpty( vm.selectedDownloadedBids ) ) return true
 
-    for (var bidId in vm.selectedBids) {
-      if (!(bidId in vm.selectedDownloadedBids) && vm.selectedBids[bidId]) return true
+    for ( var bidId in vm.selectedBids ) {
+      if ( !(bidId in vm.selectedDownloadedBids) && vm.selectedBids[ bidId ] ) return true
     }
 
-    return !underscore.any(vm.selectedDownloadedBids, function (checked) {
+    return !underscore.any( vm.selectedDownloadedBids, function (checked) {
       return checked === true
-    })
+    } )
   }
 
   vm.markRequested = function markRequested() {
     var editedBids = []
 
-    underscore.each(vm.selectedDownloadedBids, function (checked, bidId) {
-      if (!checked) return
+    underscore.each( vm.selectedDownloadedBids, function (checked, bidId) {
+      if ( !checked ) return
 
-      var bid = getBidFromId(bidId)
-      if (bid) {
-        bid.requested_at = formatDate(new Date())
-        editedBids.push(LcBidRequest.put(bid).$promise)
+      var bid = getBidFromId( bidId )
+      if ( bid ) {
+        bid.requested_at = formatDate( new Date() )
+        editedBids.push( LcBidRequest.put( bid ).$promise )
       }
-    })
+    } )
 
-    if (editedBids.length) {
-      $q.all(editedBids).then(function () {
+    if ( editedBids.length ) {
+      $q.all( editedBids ).then( function () {
         initialize()
-      })
+      } )
     }
   }
 
   vm.refreshPage = function refreshPage() {
-    if (!vm.downloadBtnDisabled()) {
-      $timeout(function () {initialize()}, 3000)
+    if ( !vm.downloadBtnDisabled() ) {
+      $timeout( function () {
+        initialize()
+      }, 3000 )
     }
   }
 
   function getBidFromId(bidId) {
-    for (var index = 0; index < vm.bidRequests.length; index++) {
-      var bid = vm.bidRequests[index]
-      if (bid.id === +bidId) return bid
+    for ( var index = 0; index < vm.bidRequests.length; index++ ) {
+      var bid = vm.bidRequests[ index ]
+      if ( bid.id === +bidId ) return bid
     }
 
     return null
   }
 }
 
-require('./display-pending-bid/display-pending-bid.js')
+require( './display-pending-bid/display-pending-bid.js' )

@@ -32,10 +32,10 @@ var minifyJsFiles = [
   './letter_of_credit/static/letter_of_credit/js/lc_commission/lc-commission-upload.js',
 ]
 
-var lessNoCssMinFiles = [baseStaticCss + '/recons-base.less']
+var lessNoCssMinFiles = [ baseStaticCss + '/recons-base.less' ]
 
 gulp.task( 'minify-html', function () {
-  return gulp.src( ['./**/*.raw.html'], { base: '.' } )
+  return gulp.src( [ './**/*.raw.html' ], { base: '.' } )
     .pipe( plugins.changed( '.', {
       hasChanged: function (stream, cb, sourceFile, targetPath) {
         targetPath = targetPath.replace( /\.raw\.html$/, '.html' )
@@ -54,10 +54,10 @@ gulp.task( 'minify-html', function () {
 } )
 
 gulp.task( 'initial-css', function () {
-  var gulpInitialCss = gulp.src( initialCssFiles[0] )
+  var gulpInitialCss = gulp.src( initialCssFiles[ 0 ] )
 
   for ( var i = 1; i < initialCssFiles.length; i++ ) {
-    gulpInitialCss = gulpInitialCss.pipe( plugins.addSrc.append( initialCssFiles[i] ) )
+    gulpInitialCss = gulpInitialCss.pipe( plugins.addSrc.append( initialCssFiles[ i ] ) )
   }
   gulpInitialCss.pipe( plugins.concat( 'compiled.css' ) )
     .pipe( plugins.sourcemaps.init() )
@@ -78,6 +78,7 @@ gulp.task( 'initial-js', function () {
     .pipe( plugins.addSrc.append( bower + '/angular-resource/angular-resource.js' ) )
     .pipe( plugins.addSrc.append( bower + '/angular-cookies/angular-cookies.js' ) )
     .pipe( plugins.addSrc.append( bower + '/angular-messages/angular-messages.js' ) )
+    .pipe( plugins.addSrc.append( bower + '/angular-sanitize/angular-sanitize.js' ) )
     .pipe( plugins.addSrc.append( bower + '/angular-bootstrap/ui-bootstrap-tpls.js' ) )
     .pipe( plugins.addSrc.append( bower + '/angular-modal-service/dst/angular-modal-service.js' ) )
     .pipe( plugins.addSrc.append( bower + '/bootstrap/dist/js/bootstrap.js' ) )
@@ -153,14 +154,14 @@ gulp.task( 'minify-js', function () {
     .pipe( gulp.dest( '.' ) )
 } )
 
-gulp.task( 'initial', ['initial-js', 'initial-css'] )
+gulp.task( 'initial', [ 'initial-js', 'initial-css' ] )
 
 gulp.task( 'watch', function () {
-  gulp.watch( minifyJsFiles, ['minify-js'] )
-  gulp.watch( lessFiles, ['less'] )
-  gulp.watch( ['./**/*.raw.html'], ['minify-html'] )
-  gulp.watch( ['./app/app/**/*.less'], ['less-app'] )
-  gulp.watch( lessNoCssMinFiles, ['less-no-css-min', 'initial-css'] )
+  gulp.watch( minifyJsFiles, [ 'minify-js' ] )
+  gulp.watch( lessFiles, [ 'less' ] )
+  gulp.watch( [ './**/*.raw.html' ], [ 'minify-html' ] )
+  gulp.watch( [ './app/app/**/*.less' ], [ 'less-app' ] )
+  gulp.watch( lessNoCssMinFiles, [ 'less-no-css-min', 'initial-css' ] )
 } )
 
-gulp.task( 'default', ['initial', 'webpack', 'watch'] )
+gulp.task( 'default', [ 'initial', 'webpack', 'watch' ] )
