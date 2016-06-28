@@ -75,6 +75,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   function initFormMCb(formM, detailedFormM) {
     $stateParams.formM = null
+    var summary = $stateParams.showSummary
+    $stateParams = { showSummary: null, formM: null }
     vm.formM = formM
     vm.formM.lcRef = { lc_number: null }
     vm.detailedFormM = detailedFormM
@@ -87,12 +89,13 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
         applicant: false,
         date_received: false,
         amount: false,
-        lcRef: false
+        lcRef: false,
+        goods_description: false
       }
     }
 
     $scope.updateAddFormMTitle( detailedFormM )
-    formMSavedSuccessMessage()
+    formMSavedSuccessMessage( summary )
   }
 
   initialize()
@@ -114,7 +117,8 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
       applicant: true,
       date_received: true,
       amount: true,
-      lcRef: true
+      lcRef: true,
+      goods_description: true
     }
 
     formMObject.init( formMNumber || $stateParams.formM, initFormMCb )
@@ -124,9 +128,7 @@ function AddFormMStateController(getTypeAheadCustomer, getTypeAheadCurrency, Sea
 
   vm.reset = initialize
 
-  function formMSavedSuccessMessage() {
-    var summary = $stateParams.showSummary
-    $stateParams.showSummary = null
+  function formMSavedSuccessMessage(summary) {
 
     if ( summary ) {
       confirmationDialog.showDialog( {

@@ -1,24 +1,24 @@
 <div class="bid-request-form-container form-m-add-on-container">
 
   <div class="row">
-    <div class="col-lg-6 col-md-6 col-sm-12">
+    <div class="col-lg-8 col-md-8 col-sm-12">
       <div ng-click="lcBid.toggleShow(bidForm)"
            class="form-m-add-on-toggle form-m-bid-toggle-show clearfix">
-    <span class="form-m-add-on-show-helper" ng-if="lcBid.formM.showBidForm">
+    <span class="form-m-add-on-show-helper" ng-if="lcBid.showBidForm">
       {$lcBid.formM.showEditBid ? 'Edit Bid' : 'New Bid Request'$}
     </span>
 
         <div class="form-m-add-on-show-icon form-m-bid-add-on-show-icon">
       <span
-          ng-class="['glyphicon', {'glyphicon-chevron-down': !lcBid.formM.showBidForm, 'glyphicon-chevron-up': lcBid.formM.showBidForm}]">
+          ng-class="['glyphicon', {'glyphicon-chevron-down': !lcBid.showBidForm, 'glyphicon-chevron-up': lcBid.showBidForm}]">
       </span>
 
           {$lcBid.title$}
         </div>
       </div>
 
-      <form class="form-horizontal" name="bidForm" novalidate id="bidForm" autocomplete="on"
-            ng-show="lcBid.formM.showBidForm">
+      <form style="margin-top: 15px;" class="form-horizontal" name="bidForm" novalidate id="bidForm"
+            autocomplete="on" ng-show="lcBid.showBidForm">
 
         <fieldset>
           <div class="form-group bid-goods-description" control-has-feedback>
@@ -28,8 +28,8 @@
             <div class="col-sm-9">
               <input type="text" class="form-control" id="goods-description" name="bidGoodsDescription" required
                      ng-minlength="3"
-                     ng-required="lcBid.formM.showBidForm" to-upper
-                     ng-model="lcBid.formM.bid.goods_description"/>
+                     ng-required="lcBid.showBidForm" to-upper
+                     ng-model="lcBid.bid.goods_description"/>
 
               <div ng-messages="bidForm.bidGoodsDescription.$error" role="alert">
                 <div ng-if="lcBid.isValid('bidGoodsDescription')">
@@ -48,7 +48,7 @@
               <input type="text" class="form-control" id="bid-amount" name="bidAmount"
                      ng-model="lcBid.amountGetterSetter"
                      ng-model-options="{getterSetter: true, updateOn: 'blur'}"
-                     ng-required="lcBid.formM.showBidForm"/>
+                     ng-required="lcBid.showBidForm"/>
 
               <div ng-messages="bidForm.bidAmount.$error" role="alert">
                 <div ng-if="lcBid.isValid('bidAmount')">
@@ -64,8 +64,8 @@
             <label class="control-label col-sm-3" for="bid-rate">Rate</label>
 
             <div class="col-sm-9">
-              <input type="text" class="form-control" id="bid-rate" name="bidRate" ng-model="lcBid.formM.bid.rate"
-                     to-upper ng-required="lcBid.formM.showBidForm"/>
+              <input type="text" class="form-control" id="bid-rate" name="bidRate" ng-model="lcBid.bid.rate"
+                     to-upper ng-required="lcBid.showBidForm"/>
 
               <div ng-messages="bidForm.bidRate.$error" role="alert">
                 <div ng-if="lcBid.isValid('bidRate')">
@@ -81,7 +81,7 @@
             <label class="control-label col-sm-3" for="bid-letter">Bid Letter?</label>
 
             <div class="col-sm-9">
-              <input type="checkbox" id="bid-letter" name="bidLetter" ng-model="lcBid.formM.bid.bid_letter"/>
+              <input type="checkbox" id="bid-letter" name="bidLetter" ng-model="lcBid.bid.bid_letter"/>
 
               <div ng-messages="bidForm.bidLetter.$error" role="alert">
                 <div ng-if="lcBid.isValid('bidLetter')">
@@ -99,7 +99,7 @@
 
             <div class="col-sm-9">
               <input type="checkbox" id="bid-credit-approval" name="bidCreditApproval"
-                     ng-model="lcBid.formM.bid.credit_approval"/>
+                     ng-model="lcBid.bid.credit_approval"/>
 
               <div ng-messages="bidForm.bidCreditApproval.$error" role="alert">
                 <div ng-if="lcBid.isValid('bidCreditApproval')">
@@ -117,7 +117,7 @@
 
             <div class="col-sm-9">
               <input type="checkbox" id="bid-docs-complete" name="bidDocsComplete"
-                     ng-model="lcBid.formM.bid.docs_complete" ng-disabled=""/>
+                     ng-model="lcBid.bid.docs_complete" ng-disabled=""/>
 
               <div ng-messages="bidForm.bidDocsComplete.$error" role="alert">
                 <div ng-if="lcBid.isValid('bidDocsComplete')">
@@ -133,8 +133,8 @@
             <label class="control-label col-sm-3" for="bid-comment">Comment</label>
 
             <div class="col-sm-9">
-        <textarea style="height: 70px" class="form-control" id="bid-comment" name="bidComment"
-                  ng-model="lcBid.formM.bid.comment"></textarea>
+              <textarea style="height: 70px" class="form-control" id="bid-comment" name="bidComment"
+                        ng-model="lcBid.bid.comment"></textarea>
 
               <div ng-messages="bidForm.bidComment.$error" role="alert">
                 <div ng-if="lcBid.isValid('bidComment')">
@@ -153,7 +153,7 @@
               <div class="col-sm-9">
                 <div class="input-group">
                   <input type="text" class="form-control" id="bid-created-date" name="bidCreatedDate"
-                         ng-model="lcBid.formM.bid.created_at"
+                         ng-model="lcBid.bid.created_at"
                          ng-disabled="!lcBid.formM.showEditBid" ng-required="lcBid.formM.showEditBid"
                          uib-datepicker-popup="{$lcBid.formM.datePickerFormat$}"
                          is-open="lcBid.datePickerIsOpen.bidCreatedDate"/>
@@ -178,7 +178,7 @@
               <div class="col-sm-9">
                 <div class="input-group">
                   <input type="text" class="form-control" id="bid-requested-date" name="bidRequestedDate"
-                         ng-model="lcBid.formM.bid.requested_at" ng-disabled="!lcBid.formM.showEditBid"
+                         ng-model="lcBid.bid.requested_at" ng-disabled="!lcBid.formM.showEditBid"
                          uib-datepicker-popup="{$lcBid.formM.datePickerFormat$}"
                          is-open="lcBid.datePickerIsOpen.bidRequestedDate"/>
 
@@ -202,7 +202,7 @@
 
               <div class="col-sm-9">
                 <input type="checkbox" id="bid-downloaded" name="bidDownloaded"
-                       ng-model="lcBid.formM.bid.downloaded" ng-disabled="!lcBid.formM.showEditBid"/>
+                       ng-model="lcBid.bid.downloaded" ng-disabled="!lcBid.formM.showEditBid"/>
 
                 <div ng-messages="bidForm.bidDownloaded.$error" role="alert">
                   <div ng-if="lcBid.isValid('bidRequestedDate')">
@@ -222,7 +222,7 @@
           </div>
 
           <div style="text-align: right" ng-if="!lcBid.formM.showEditBid">
-            <button type="button" class="btn btn-info" ng-click="lcBid.saveBid(lcBid.formM.bid)"
+            <button type="button" class="btn btn-info" ng-click="lcBid.saveBid(lcBid.bid)"
                     ng-disabled="bidForm.$invalid">
               Save Bid
             </button>

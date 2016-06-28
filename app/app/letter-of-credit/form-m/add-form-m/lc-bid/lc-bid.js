@@ -57,10 +57,10 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
       bidCreatedDate: false
     }
     vm.title = title
-    vm.formM.showBidForm = false
+    vm.showBidForm = false
     vm.formM.showEditBid = false
     vm.bidToEdit = null
-    formMObject.bid = {}
+    vm.bid = {}
     vm.showAllocateFx = false
 
     if ( form ) resetForm2( form, [ { form: form, elements: bidFormCtrlNames } ] )
@@ -78,26 +78,26 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
 
   vm.amountGetterSetter = function (val) {
     if ( arguments.length ) {
-      if ( !/[\d,\.]+/.test( val ) ) vm.formM.bid.amount = null
-      else vm.formM.bid.amount = Number( val.replace( /,/g, '' ) )
+      if ( !/[\d,\.]+/.test( val ) ) vm.bid.amount = null
+      else vm.bid.amount = Number( val.replace( /,/g, '' ) )
 
-    } else return vm.formM.bid.amount ? $filter( 'number' )( vm.formM.bid.amount, 2 ) : null
+    } else return vm.bid.amount ? $filter( 'number' )( vm.bid.amount, 2 ) : null
   }
 
   vm.toggleShow = function toggleShow(form) {
     if ( vm.formM.deleted_at ) {
-      vm.formM.showBidForm = false
+      vm.showBidForm = false
       return
     }
 
-    vm.formM.showBidForm = vm.formM._id && !vm.formM.showBidForm
+    vm.showBidForm = vm.formM._id && !vm.showBidForm
 
-    if ( !vm.formM.showBidForm ) init( form )
+    if ( !vm.showBidForm ) init( form )
     else {
       vm.showAllocateFx = false
       vm.title = 'Dismiss'
-      formMObject.bid.goods_description = formMObject.goods_description
-      vm.formM.bid.amount = !vm.formM.existingBids.length ? formMObject.amount : null
+      vm.bid.goods_description = formMObject.goods_description
+      vm.bid.amount = !vm.formM.existingBids.length ? formMObject.amount : null
     }
   }
 
@@ -106,8 +106,6 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     bid.mf = formMObject.url
 
     LcBidRequest.save( bid ).$promise.then( function (createdBid) {
-      console.log( 'createdBid = \n', createdBid );
-
       confirmationDialog.showDialog( { title: title, text: 'Bid created successfully: ' + text, infoOnly: true } )
       init()
       formMObject.setBids( bidsNewlySetCb )
@@ -127,17 +125,17 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
 
   function copyBidForEdit() {
     vm.bidToEdit.amount = Number( vm.bidToEdit.amount )
-    vm.formM.bid.amount = vm.bidToEdit.amount
-    vm.formM.bid.downloaded = vm.bidToEdit.downloaded
+    vm.bid.amount = vm.bidToEdit.amount
+    vm.bid.downloaded = vm.bidToEdit.downloaded
     vm.bidToEdit.created_at = new Date( vm.bidToEdit.created_at )
-    vm.formM.bid.created_at = vm.bidToEdit.created_at
+    vm.bid.created_at = vm.bidToEdit.created_at
     vm.bidToEdit.requested_at = vm.bidToEdit.requested_at ? new Date( vm.bidToEdit.requested_at ) : null
-    vm.formM.bid.requested_at = vm.bidToEdit.requested_at
-    vm.formM.bid.rate = vm.bidToEdit.rate
-    vm.formM.bid.bid_letter = vm.bidToEdit.bid_letter
-    vm.formM.bid.credit_approval = vm.bidToEdit.credit_approval
-    vm.formM.bid.comment = vm.bidToEdit.comment
-    vm.formM.bid.docs_complete = vm.bidToEdit.docs_complete
+    vm.bid.requested_at = vm.bidToEdit.requested_at
+    vm.bid.rate = vm.bidToEdit.rate
+    vm.bid.bid_letter = vm.bidToEdit.bid_letter
+    vm.bid.credit_approval = vm.bidToEdit.credit_approval
+    vm.bid.comment = vm.bidToEdit.comment
+    vm.bid.docs_complete = vm.bidToEdit.docs_complete
   }
 
   function toHumanDate(dtObj) {
@@ -162,7 +160,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     if ( bids.length !== 1 ) return
     form.$setPristine()
     vm.formM.showEditBid = true
-    vm.formM.showBidForm = false
+    vm.showBidForm = false
     vm.toggleShow()
     vm.bidToEdit = angular.copy( bids[ 0 ] )
     copyBidForEdit()
@@ -223,55 +221,55 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     if ( !bidIsNotModified.amount ) {
       text += '\nBid Amount' +
         '\n  before edit:    ' + ccy + $filter( 'number' )( vm.bidToEdit.amount, 2 ) +
-        '\n  after edit:     ' + ccy + $filter( 'number' )( formMObject.bid.amount, 2 )
+        '\n  after edit:     ' + ccy + $filter( 'number' )( vm.bid.amount, 2 )
     }
 
     if ( !bidIsNotModified.goods_description ) {
       text += '\nGoods description' +
         '\n  before edit:    ' + vm.bidToEdit.goods_description +
-        '\n  after edit:     ' + formMObject.bid.goods_description
+        '\n  after edit:     ' + vm.bid.goods_description
     }
 
     if ( !bidIsNotModified.created_at ) {
       text += '\nDate created' +
         '\n  before edit:    ' + toHumanDate( vm.bidToEdit.created_at ) +
-        '\n  after edit:     ' + toHumanDate( formMObject.bid.created_at )
+        '\n  after edit:     ' + toHumanDate( vm.bid.created_at )
     }
 
     if ( !bidIsNotModified.requested_at ) {
       text += '\nDate requested' +
         '\n  before edit:    ' + toHumanDate( vm.bidToEdit.requested_at ) +
-        '\n  after edit:     ' + toHumanDate( formMObject.bid.requested_at )
+        '\n  after edit:     ' + toHumanDate( vm.bid.requested_at )
     }
 
     if ( !bidIsNotModified.downloaded ) {
       text += '\nDownloaded' +
         '\n  before edit:    ' + vm.bidToEdit.downloaded +
-        '\n  after edit:     ' + vm.formM.bid.downloaded
+        '\n  after edit:     ' + vm.bid.downloaded
     }
 
     if ( !bidIsNotModified.rate ) {
       text += '\nRate' +
         '\n  before edit:    ' + vm.bidToEdit.rate +
-        '\n  after edit:     ' + vm.formM.bid.rate
+        '\n  after edit:     ' + vm.bid.rate
     }
 
     if ( !bidIsNotModified.bid_letter ) {
       text += '\nBid Letter' +
         '\n  before edit:    ' + (vm.bidToEdit.bid_letter || false) +
-        '\n  after edit:     ' + vm.formM.bid.bid_letter
+        '\n  after edit:     ' + vm.bid.bid_letter
     }
 
     if ( !bidIsNotModified.credit_approval ) {
       text += '\nCredit Approval' +
         '\n  before edit:    ' + (vm.bidToEdit.credit_approval || false) +
-        '\n  after edit:     ' + vm.formM.bid.credit_approval
+        '\n  after edit:     ' + vm.bid.credit_approval
     }
 
     if ( !bidIsNotModified.docs_complete ) {
       text += '\nDocumentation Complete' +
         '\n  before edit:    ' + (vm.bidToEdit.docs_complete || false) +
-        '\n  after edit:     ' + vm.formM.bid.docs_complete
+        '\n  after edit:     ' + vm.bid.docs_complete
     }
 
     return text
@@ -296,10 +294,10 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
 
       if ( !bidIsNotModified.goods_description ) {
         bid.update_goods_description = true
-        formMObject.goods_description = formMObject.bid.goods_description
+        formMObject.goods_description = vm.bid.goods_description
       }
 
-      underscore.each( formMObject.bid, function (val, key) {
+      underscore.each( vm.bid, function (val, key) {
         if ( key === 'created_at' || key === 'requested_at' ) val = toISODate( val )
         bid[ key ] = val
       } )
@@ -331,7 +329,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     var bids = getSelectedBids( selectedBids )
     if ( bids.length !== 1 ) return
     var bid = bids[ 0 ]
-    vm.formM.showBidForm = false
+    vm.showBidForm = false
     vm.title = title
 
     vm.initialBidProps = {
@@ -385,21 +383,21 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
 
   function bidNotModified() {
     return {
-      amount: vm.bidToEdit.amount === formMObject.bid.amount,
-      goods_description: vm.bidToEdit.goods_description === formMObject.bid.goods_description,
-      rate: vm.bidToEdit.rate === formMObject.bid.rate,
-      bid_letter: vm.bidToEdit.bid_letter === formMObject.bid.bid_letter,
-      credit_approval: vm.bidToEdit.credit_approval === formMObject.bid.credit_approval,
-      comment: vm.bidToEdit.comment === formMObject.bid.comment,
-      downloaded: vm.bidToEdit.downloaded === formMObject.bid.downloaded,
-      created_at: angular.equals( vm.bidToEdit.created_at, formMObject.bid.created_at ),
-      requested_at: angular.equals( vm.bidToEdit.requested_at, formMObject.bid.requested_at ),
-      docs_complete: vm.bidToEdit.docs_complete === formMObject.bid.docs_complete
+      amount: vm.bidToEdit.amount === vm.bid.amount,
+      goods_description: vm.bidToEdit.goods_description === vm.bid.goods_description,
+      rate: vm.bidToEdit.rate === vm.bid.rate,
+      bid_letter: vm.bidToEdit.bid_letter === vm.bid.bid_letter,
+      credit_approval: vm.bidToEdit.credit_approval === vm.bid.credit_approval,
+      comment: vm.bidToEdit.comment === vm.bid.comment,
+      downloaded: vm.bidToEdit.downloaded === vm.bid.downloaded,
+      created_at: angular.equals( vm.bidToEdit.created_at, vm.bid.created_at ),
+      requested_at: angular.equals( vm.bidToEdit.requested_at, vm.bid.requested_at ),
+      docs_complete: vm.bidToEdit.docs_complete === vm.bid.docs_complete
     }
   }
 
   function bidDocumentationComplete() {
-    return formMObject.bid.rate && formMObject.bid.bid_letter && formMObject.bid.credit_approval
+    return vm.bid.rate && vm.bid.bid_letter && vm.bid.credit_approval
   }
 
   function getBidFromId(id) {

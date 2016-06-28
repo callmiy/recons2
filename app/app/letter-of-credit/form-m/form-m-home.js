@@ -138,7 +138,16 @@ function FormMController($state, $scope, formMAppStore, $rootScope) {
 
   $rootScope.$on( '$stateChangeStart', function (evt, toState, toParams) {
     if ( toState.name === 'form_m.add' ) {
-      if ( toParams.formM === null ) toParams.formM = formMAppStore.formMNumber
+      if ( !toParams.formM ) {
+        toParams.formM = formMAppStore.formMNumber
+        toParams.showSummary = null;
+      }
+    }
+  } )
+
+  $rootScope.$on( '$stateChangeSuccess', function (evt, toState, toParams) {
+    if ( toState.name === 'form_m.add' ) {
+      //console.log( 'toParams =', toParams );
     }
   } )
 }

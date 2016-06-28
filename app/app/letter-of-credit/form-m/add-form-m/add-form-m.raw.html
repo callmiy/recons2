@@ -203,6 +203,31 @@
             </div>
           </div>
 
+          <div class="form-group goods-description-group" control-has-feedback>
+            <label class="control-label col-sm-3" for="form-m-goods-description">Goods Description</label>
+
+            <div class="col-sm-9">
+              <div class="input-group">
+                <span class="input-group-addon" style="cursor:pointer;"
+                      ng-click="addFormMState.enableFieldEdit('goods_description')">
+                  <i
+                      ng-class="['glyphicon', {'glyphicon-pencil': !addFormMState.fieldIsEditable.goods_description, 'glyphicon-eye-open': addFormMState.fieldIsEditable.goods_description}]"></i>
+                </span>
+
+                <textarea style="height: 70px" class="form-control" id="form-m-goods-description" required
+                          name="goodsDescription" ng-readonly="!addFormMState.fieldIsEditable.goods_description"
+                          ng-model="addFormMState.formM.goods_description"></textarea>
+              </div>
+
+              <div ng-messages="addFormMForm.goodsDescription.$error" role="alert">
+                <div ng-if="addFormMState.isValid('goodsDescription')">
+                  <div ng-messages-include="form-error-messages"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
           <div class="form-group lc-ref-group" control-has-feedback
                ng-if="!addFormMState.formM.lc_number && addFormMState.formM.number">
             <label class="control-label col-sm-3" for="lc-ref">Lc Ref</label>

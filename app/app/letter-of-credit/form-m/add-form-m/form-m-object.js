@@ -66,22 +66,6 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
       setInitialProperties()
 
       function setInitialProperties() {
-        /*
-         *@param {angular.form.model} will hold data for bid we wish to create or edit
-         */
-        self.bid = {}
-
-        /**
-         * Flag that determines whether we are editing bid and will show an edit bid button.
-         * @type {boolean}
-         */
-        self.showEditBid = false
-
-        /**
-         * Flag that controls whether to show bid form
-         * @type {boolean}
-         */
-        self.showBidForm = false
 
         /**
          * Bids that already exist for this form M. These bids can be edited.
