@@ -9,22 +9,30 @@ from .lc_register import (
     LetterOfCreditRegisterUpdateAPIView,
     LCRegisterUploadView,
     ReleaseTelexView)
+
 from .lc_issue import (
     LCIssueListCreateAPIView,
     LCIssueUpdateAPIView,
     LCIssueConcreteListCreateAPIView,
     LCIssueConcreteUpdateAPIView,
 )
+
 from .form_m import (
     FormMListCreateAPIView,
     FormMRetrieveUpdateDestroyAPIView,
 )
+
 from .lc_cover import (
     FormMCoverListCreateAPIView,
     FormMCoverRetrieveUpdateDestroyAPIView
 )
+
 from .lc_bid_request import LcBidRequestListCreateAPIView, LcBidRequestUpdateAPIView
+
 from .download_bids import DownloadBidsView, DownloadBidsLcEstablished
+
+from .treasury_allocation import TreasuryAllocationListCreateAPIView, TreasuryAllocationRetrieveUpdateDestroyAPIView
+
 from .uploaded_form_m import (
     UploadedFormMListCreateAPIView,
     UploadedFormMUpdateAPIView,

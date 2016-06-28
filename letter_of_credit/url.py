@@ -23,7 +23,10 @@ from .views import (
     FormMCoverRetrieveUpdateDestroyAPIView,
     UploadFromSingleWindowView,
     ProcessSwiftView,
-    UploadLcCommissionView, DownloadBidsLcEstablished)
+    UploadLcCommissionView,
+    DownloadBidsLcEstablished,
+    TreasuryAllocationListCreateAPIView,
+    TreasuryAllocationRetrieveUpdateDestroyAPIView)
 
 urlpatterns = patterns(
         # <editor-fold description='home view and upload'>
@@ -141,6 +144,18 @@ urlpatterns += patterns(
 
         url(r'^lc-estb-bid-request/download/?$', login_required(DownloadBidsLcEstablished.as_view()),
             name='lc-estb-bid-download'),
+)
+
+# treasury allocation
+urlpatterns += patterns(
+        '',
+
+        url(r'^treasury-allocation/?$', login_required(TreasuryAllocationListCreateAPIView.as_view()),
+            name='treasuryallocation-list'),
+
+        url(r'^treasury-allocation/(?P<pk>\d+)/?$',
+            login_required(TreasuryAllocationRetrieveUpdateDestroyAPIView.as_view()),
+            name='treasuryallocation-detail'),
 )
 
 # process swift

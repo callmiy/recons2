@@ -5,3 +5,4 @@ from letter_of_credit.models.lc_bid_request import LcBidRequest  # , LcBidReques
 from letter_of_credit.models.lc_issue import LCIssue, LCIssueConcrete
 from .uploaded_form_m import UploadedFormM
 from lc_commission import LcCommission
+from .treasury_allocation import TreasuryAllocation
