@@ -4,7 +4,8 @@
 
 require( './add-form-m/form-m-object.js' )
 require( './add-form-m/add-form-m.js' )
-require( './process-allocations/process-allocations.js' )
+require( './treasury-allocation/treasury-allocation.js' )
+require( './treasury-allocation/upload-allocation/upload-allocation.js' )
 require( './add-form-m/lc-bid/lc-bid.js' )
 require( './bids/bids.js' )
 require( './list-form-m/list-form-m.js' )
@@ -22,7 +23,9 @@ var app = angular.module( 'form-m',
     'form-m-bids',
     'add-form-m-form-m-object',
     'ngSanitize',
-    'lc-bid'
+    'lc-bid',
+    'upload-treasury-allocation',
+    'treasury-allocation'
   ] )
 
 
@@ -77,14 +80,14 @@ function FormMController($state, $scope, formMAppStore, $rootScope) {
     }
   }
 
-  var reportsTab = {
-    title: 'Reports',
+  var treasuryAllocationTab = {
+    title: 'Treasury Allocations',
     active: false,
-    viewName: 'formMReports',
+    viewName: 'treasuryAllocation',
     select: function () {
       vm.tabContent = null
       $scope.updateAddFormMTitle()
-      $state.go( 'form_m.add' )
+      $state.go( 'form_m.treasury_allocation' )
     }
   }
 
@@ -114,8 +117,8 @@ function FormMController($state, $scope, formMAppStore, $rootScope) {
     listFormM: listFormMTab,
     addFormM: addFormMTab,
     bid: bidTab,
-    bids: listBidsTab
-    //reports: reportsTab,
+    bids: listBidsTab,
+    treasuryAllocation: treasuryAllocationTab
   }
 
   vm.activeIndex = 1
@@ -143,12 +146,6 @@ function FormMController($state, $scope, formMAppStore, $rootScope) {
         toParams.formM = formMAppStore.formMNumber
         toParams.showSummary = null;
       }
-    }
-  } )
-
-  $rootScope.$on( '$stateChangeSuccess', function (evt, toState, toParams) {
-    if ( toState.name === 'form_m.add' ) {
-      //console.log( 'toParams =', toParams );
     }
   } )
 }

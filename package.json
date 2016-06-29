@@ -47,5 +47,10 @@
     "phantomjs": "^1.9.18",
     "underscore": "^1.8.3",
     "webpack": "^1.12.2"
+  },
+  "dependencies": {
+    "babyparse": "^0.4.6",
+    "moment": "^2.13.0",
+    "underscore": "^1.8.3"
   }
 }

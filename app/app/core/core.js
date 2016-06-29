@@ -2,9 +2,13 @@
 
 var rootCommons = require( 'commons' )
 
-angular.module( 'kanmii-underscore', [] ).factory( 'kanmiiUnderscore', function () { return window._ } )
+angular.module( 'kanmii-underscore', [] ).factory( 'kanmiiUnderscore', function () {
+  return window._
+} )
 
-angular.module( 'kanmii-URI', [] ).factory( 'kanmiiUri', function () { return window.URI } )
+angular.module( 'kanmii-URI', [] ).factory( 'kanmiiUri', function () {
+  return window.URI
+} )
 
 var app = angular.module( 'rootApp', [
   'tradeApp',
@@ -18,8 +22,17 @@ var app = angular.module( 'rootApp', [
 ] )
 rootCommons.setStaticPrefix( app )
 
-app.factory( 'moment', function () { return require( 'moment' ) } )
-app.factory( 'underscore', function () { return require( 'underscore' ) } )
+app.factory( 'moment', function () {
+  return require( 'moment' )
+} )
+
+app.factory( 'underscore', function () {
+  return require( 'underscore' )
+} )
+
+app.factory( 'baby', function () {
+  return require( 'babyparse' )
+} )
 
 app.factory( 'resetForm', resetForm )
 function resetForm() {
@@ -55,13 +68,13 @@ function clearFormField() {
    */
   return function (form, fieldName) {
     if ( angular.isArray( fieldName ) ) {
-      if ( fieldName[0] === 'file' ) {
-        $( '[name=' + fieldName[1] + ']' ).val( null )
+      if ( fieldName[ 0 ] === 'file' ) {
+        $( '[name=' + fieldName[ 1 ] + ']' ).val( null )
       }
       return
     }
 
-    var field = form[fieldName]
+    var field = form[ fieldName ]
     field.$$lastCommittedViewValue = ''
     field.$rollbackViewValue()
     field.$setPristine()
@@ -70,7 +83,7 @@ function clearFormField() {
 }
 
 app.factory( 'resetForm2', resetForm2 )
-resetForm2.$inject = ['clearFormField']
+resetForm2.$inject = [ 'clearFormField' ]
 function resetForm2(clearFormField) {
 
   /**
@@ -111,8 +124,8 @@ function formFieldIsValid() {
    */
 
   return function ($scope, formName, formControl, validity) {
-    var field = $scope[formName][formControl]
-    return field.$dirty && field[validity === 'ok' ? '$valid' : '$invalid']
+    var field = $scope[ formName ][ formControl ]
+    return field.$dirty && field[ validity === 'ok' ? '$valid' : '$invalid' ]
   }
 }
 
@@ -139,9 +152,11 @@ function controlHasFeedback() {
       var $form = element.closest( '[ng-form]' )
       if ( !$form.size() ) $form = element.closest( 'form' )
 
-      var field = scope[$form.attr( 'name' )][$input.prop( 'name' )]
+      var field = scope[ $form.attr( 'name' ) ][ $input.prop( 'name' ) ]
 
-      scope.$watch( function () {return field.$modelValue}, function () {
+      scope.$watch( function () {
+        return field.$modelValue
+      }, function () {
         if ( field.$dirty ) {
           if ( field.$valid ) {
             element.removeClass( 'has-error' ).addClass( 'has-success' )
@@ -156,7 +171,9 @@ function controlHasFeedback() {
         }
       } )
 
-      scope.$watch( function () {return field.$pristine}, function (pristine) {
+      scope.$watch( function () {
+        return field.$pristine
+      }, function (pristine) {
         if ( pristine ) {
           element.removeClass( 'has-success has-error' )
           $fieldBack.removeClass( 'glyphicon-ok glyphicon-remove' ).hide()
@@ -167,7 +184,7 @@ function controlHasFeedback() {
 }
 
 app.factory( 'toISODate', toISODate )
-toISODate.$inject = ['moment']
+toISODate.$inject = [ 'moment' ]
 function toISODate(moment) {
   return function (dtObj) {
     return dtObj ? moment( dtObj ).format( 'YYYY-MM-DD' ) : null

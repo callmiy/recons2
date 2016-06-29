@@ -14,11 +14,11 @@ var webpackTestConfig = {
   },
 
   module: {
-    postLoaders: [{
+    postLoaders: [ {
       test: /\.js$/,
       exclude: /(spec\.js|node_modules\/|compiled\.js|compiled\.min\.js)/,
       loader: 'istanbul-instrumenter'
-    }]
+    } ]
   }
 }
 
@@ -47,6 +47,10 @@ var webpackAppConfig = {
 
   resolve: {
     alias: webpackAliases
+  },
+
+  node: {
+    fs: "empty"
   }
 }
 

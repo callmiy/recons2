@@ -4,7 +4,7 @@ $( function () {
   "use strict";
 
   var $idUpload = $( '#id_upload-lc-register-text' ),
-      $toUpload = $( '#id_upload-lc-register' ),
+    $toUpload = $( '#id_upload-lc-register' ),
     $dateFormat = $( '[name=date-format]' ),
     $textAreaControls = $( '.text-area-control' ),
     dateFormat
@@ -21,11 +21,11 @@ $( function () {
   function parseDate(val) {
     var dateRe = new RegExp( "(\\d+)[^\\d](\\d+)[^\\d](\\d+)" ),
       exec = dateRe.exec( val.trim() ),
-      start = prePendZeros( exec[3] ) + '-'
+      start = prePendZeros( exec[ 3 ] ) + '-'
 
-    if ( dateFormat === 'mm-dd-yyyy' ) return start + exec[1] + '-' + exec[2]
+    if ( dateFormat === 'mm-dd-yyyy' ) return start + exec[ 1 ] + '-' + exec[ 2 ]
 
-    return start + exec[2] + '-' + exec[1]
+    return start + exec[ 2 ] + '-' + exec[ 1 ]
   }
 
   $dateFormat.change( function () {
@@ -39,31 +39,32 @@ $( function () {
 
   $idUpload.on( 'input', function () {
     var reportHeaderBeginText = 'FORM M PROCESSED ON CBN WINDOW',
-      toUpload = []
+      toUpload = [],
+      data
 
     Papa.parse( $idUpload.val().replace( reportHeaderBeginText, '' ).trim().replace( /"/g, '' ), {
       delimiter: '\t',
       header: true,
       step: function (row) {
-        var data = row.data[0]
+        data = row.data[ 0 ]
 
         try {
           toUpload.push(
             {
-              ba: data['BA NUM'].trim(),
-              mf: data['MF NUM'].trim(),
+              ba: data[ 'BA NUM' ].trim(),
+              mf: data[ 'MF NUM' ].trim(),
               ccy: data.CURRENCY.trim(),
               fob: parseNumber( data.FOB ),
-              applicant: data['APPLICANT NAME'].trim(),
-              bene: data["BENEFICIARY'S NAME"].trim(),
-              submitted_at: parseDate( data['DATE SUBMITTED'] ),
+              applicant: data[ 'APPLICANT NAME' ].trim(),
+              bene: data[ "BENEFICIARY'S NAME" ].trim(),
+              submitted_at: parseDate( data[ 'DATE SUBMITTED' ] ),
               goods_description: data.DESCS.trim(),
-              cost_freight: parseNumber( data['COST AND FREIGHT'] ),
-              validity_type: data['VALIDITY TYPE'].trim(),
+              cost_freight: parseNumber( data[ 'COST AND FREIGHT' ] ),
+              validity_type: data[ 'VALIDITY TYPE' ].trim(),
               status: data.STAX.trim()
             }
           )
-        } catch (e) {
+        } catch ( e ) {
           window.alert( "Error parsing data\n" + e.message )
         }
 
