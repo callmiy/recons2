@@ -2,7 +2,7 @@ import json
 
 from rest_framework import generics, pagination
 import django_filters
-
+from django.db.models import Q
 from core_recons.csv_utilities import iso_to_date_obj
 from letter_of_credit.models import LcBidRequest, FormM
 from letter_of_credit.serializers import LcBidRequestSerializer
@@ -15,10 +15,12 @@ logger = logging.getLogger('recons_logger')
 
 class LcBidRequestPagination(pagination.PageNumberPagination):
     page_size = 20
+    page_size_query_param = 'num_rows'
 
 
 class LcBidRequestFilter(django_filters.FilterSet):
     pending = django_filters.MethodFilter()
+    q = django_filters.MethodFilter()
     mf = django_filters.CharFilter(lookup_type='icontains', name='mf__number')
     applicant = django_filters.CharFilter(name='mf__applicant__id')
     amount = django_filters.CharFilter(name='amount')
@@ -26,7 +28,20 @@ class LcBidRequestFilter(django_filters.FilterSet):
 
     class Meta:
         model = LcBidRequest
-        fields = ('pending', 'mf', 'applicant', 'amount', 'lc_number',)
+        fields = ('pending', 'mf', 'applicant', 'amount', 'lc_number', 'q',)
+
+    def filter_q(self, qs, param):
+        refs_mf = []
+        refs_lc = []
+
+        for ref in param.split(','):
+            ref = ref.upper()
+            if ref.startswith('MF'):
+                refs_mf.append(ref)
+            elif ref.startswith('ILC'):
+                refs_lc.append(ref)
+
+        return qs.filter(Q(mf__number__in=refs_mf) | Q(mf__lc__lc_number=refs_lc))
 
     def filter_pending(self, qs, param):
         if not param:

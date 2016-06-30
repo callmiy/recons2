@@ -1,5 +1,5 @@
 <div class="treasury-upload-allocation-directive-container">
-  <span style="cursor: pointer"
+  <span style="cursor: pointer; padding: 10px 20px 0 0;"
         ng-click="uploadTreasuryAllocation.showPasteForm = !uploadTreasuryAllocation.showPasteForm"
         ng-class="['glyphicon', {'glyphicon-chevron-down': !uploadTreasuryAllocation.showPasteForm, 'glyphicon-chevron-up': uploadTreasuryAllocation.showPasteForm}]"></span>
 
@@ -14,6 +14,7 @@
       <table class="table table-bordered table-condensed table-responsive table-striped">
         <thead>
           <tr>
+            <th>S/N</th>
             <th ng-repeat="key in uploadTreasuryAllocation.parsedPastedBidKeys">
               {$key$}
             </th>
@@ -21,28 +22,9 @@
         </thead>
 
         <tbody>
-          <tr ng-repeat="allocationObj in uploadTreasuryAllocation.parsedPastedBids">
-            <td ng-repeat="key in uploadTreasuryAllocation.parsedPastedBidKeys">
-              {$allocationObj[key]$}
-            </td>
-          </tr>
-        </tbody>
+          <tr ng-repeat="allocationObj in uploadTreasuryAllocation.parsedPastedBids"
+              ng-class="['row', {'pasted-bid-row-matched': allocationObj.matched}]">
 
-      </table>
-    </div>
-
-    <div class="parsed-pasted-bid-table raw-bids-table">
-      <table class="table table-bordered table-condensed table-responsive table-striped">
-        <thead>
-          <tr>
-            <th ng-repeat="key in uploadTreasuryAllocation.parsedPastedBidKeys">
-              {$key$}
-            </th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr ng-repeat="allocationObj in uploadTreasuryAllocation.parsedPastedBids">
             <td ng-repeat="key in uploadTreasuryAllocation.parsedPastedBidKeys">
               {$allocationObj[key]$}
             </td>
