@@ -18,17 +18,22 @@ logger = logging.getLogger('recons_logger')
 
 class LetterOfCreditRegisterPagination(pagination.PageNumberPagination):
     page_size = 20
+    page_size_query_param = 'num_rows'
 
 
 class LetterOfCreditRegisterFilter(django_filters.FilterSet):
     lc_number = django_filters.CharFilter(lookup_type='icontains')
+    lc_numbers = django_filters.MethodFilter()
     applicant = django_filters.CharFilter(name='applicant', lookup_type='icontains')
     mf = django_filters.CharFilter(lookup_type='istartswith')
     form_m_not_attached = django_filters.MethodFilter()
 
     class Meta:
         model = LCRegister
-        fields = ('lc_number', 'applicant', 'mf',)
+        fields = ('lc_number', 'applicant', 'mf', 'lc_numbers',)
+
+    def filter_lc_numbers(self, qs, params):
+        return qs.filter(lc_number__in=params.split(','))
 
     def filter_form_m_not_attached(self, qs, param):
         if not param:

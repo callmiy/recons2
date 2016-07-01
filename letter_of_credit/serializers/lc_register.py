@@ -1,10 +1,11 @@
 from adhocmodels.serializers import CustomerSerializer, CurrencySerializer
+from core_recons.utilities import DynamicFieldsSerializerMixin
 from letter_of_credit.models import LCRegister
 from rest_framework import serializers
 from .lc_issue import LCIssueConcreteSerializer
 
 
-class LetterOfCreditRegisterSerializer(serializers.HyperlinkedModelSerializer):
+class LetterOfCreditRegisterSerializer(DynamicFieldsSerializerMixin, serializers.HyperlinkedModelSerializer):
     applicant_data = CustomerSerializer(required=False, read_only=True)
     ccy_data = CurrencySerializer(required=False, read_only=True)
     issues = LCIssueConcreteSerializer(read_only=True, many=True)

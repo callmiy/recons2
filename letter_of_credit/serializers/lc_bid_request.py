@@ -33,4 +33,7 @@ class LcBidRequestSerializer(serializers.HyperlinkedModelSerializer):
             'ct_id',
             'ct_url',
             'allocations',
+            'sum_allocations',
+            'sum_utilizations',
+            'unallocated',
         )

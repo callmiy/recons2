@@ -15,19 +15,66 @@
         <thead>
           <tr>
             <th>S/N</th>
-            <th ng-repeat="key in uploadTreasuryAllocation.parsedPastedBidKeys">
-              {$key$}
-            </th>
+            <th>DEAL NO</th>
+            <th>SOURCE</th>
+            <th>DEAL DATE</th>
+            <th>SETTLEMENT DATE</th>
+            <th>TYPE</th>
+            <th>CATEGORY</th>
+            <th>RATE</th>
+            <th>CCY</th>
+            <th>CUSTOMER NAME</th>
+            <th>REFERENCE</th>
+            <th>ALLOCATION</th>
+            <th>ORIGINAL REQUEST</th>
+            <th>PREVIOUS ALLOCATIONS</th>
+            <th>PREVIOUS OUTSTANDING</th>
+            <th>CURRENT OUTSTANDING</th>
           </tr>
         </thead>
 
         <tbody>
           <tr ng-repeat="allocationObj in uploadTreasuryAllocation.parsedPastedBids"
-              ng-class="['row', {'pasted-bid-row-matched': allocationObj.matched}]">
+              ng-class="{'pasted-bid-row-matched': allocationObj.original_requests}"
+          >
 
-            <td ng-repeat="key in uploadTreasuryAllocation.parsedPastedBidKeys">
-              {$allocationObj[key]$}
+            <td>{$$index + 1$}</td>
+            <td>{$::allocationObj.TRANSACTION_DEAL_SLIP$}</td>
+            <td>{$::allocationObj.SOURCE_OF_FUND$}</td>
+            <td>{$::allocationObj.DEAL_DATE$}</td>
+            <td>{$::allocationObj.SETTLEMENT_DATE$}</td>
+            <td>{$::allocationObj.TRANSACTION_TYPE$}</td>
+            <td>{$ allocationObj.CLIENT_CATEGORY$}</td>
+            <td>{$::allocationObj.RATE $}</td>
+            <td>{$::allocationObj.CURRENCY $}</td>
+            <td>{$allocationObj.NAME_NO_REF $}</td>
+            <td>{$allocationObj.REF $}</td>
+            <td>{$::allocationObj.FCY_AMOUNT |number:2$}</td>
+
+            <td>
+              <span class="original-request-row" ng-repeat="req in allocationObj.original_requests">
+                {$::req |number:2$}
+              </span>
             </td>
+
+            <td>
+              <span class="original-request-row" ng-repeat="req in allocationObj.previous_allocations">
+                {$::req |number:2$}
+              </span>
+            </td>
+
+            <td>
+              <span class="original-request-row" ng-repeat="req in allocationObj.previous_outstandings">
+                {$::req |number:2$}
+              </span>
+            </td>
+
+            <td>
+              <span class="original-request-row" ng-repeat="req in allocationObj.current_outstandings">
+                {$::req |number:2$}
+              </span>
+            </td>
+
           </tr>
         </tbody>
 

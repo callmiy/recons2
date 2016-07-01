@@ -48,3 +48,12 @@ class LcBidRequest(models.Model):
 
     def allocations(self):
         return FxDeal.get_allocations_basic(self)
+
+    def sum_allocations(self):
+        return sum([allocation['amount_allocated'] for allocation in self.allocations()])
+
+    def sum_utilizations(self):
+        return sum([allocation['amount_utilized'] for allocation in self.allocations()])
+
+    def unallocated(self):
+        return self.amount - self.sum_allocations()

@@ -4,7 +4,8 @@
 
 var app = angular.module( 'upload-treasury-allocation', [
   'rootApp',
-  'lc-bid-request'
+  'lc-bid-request',
+  'lc-service'
 ] )
 
 app.directive( 'uploadTreasuryAllocation', uploadTreasuryAllocationDirective )
@@ -23,19 +24,25 @@ function uploadTreasuryAllocationDirective() {
 
 app.controller( 'uploadTreasuryAllocationDirectiveController', uploadTreasuryAllocationDirectiveController )
 
-uploadTreasuryAllocationDirectiveController.$inject = [ 'baby', 'LcBidRequest', 'underscore' ]
+uploadTreasuryAllocationDirectiveController.$inject = [
+  'baby',
+  'LcBidRequest',
+  'underscore',
+  '$q',
+  'LetterOfCredit'
+]
 
-function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, underscore) {
-  var vm = this
+function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, underscore, $q, LetterOfCredit) {
+  var vm = this  // jshint -W040
 
   vm.parsedPastedBids = []
   vm.showPasteForm = true
-  var originalKeys = [ "TRANSACTION_DEAL_SLIP", "SWIFT", "SOURCE_OF_FUND", "DEAL_DATE", "SETTLEMENT_DATE", "PRODUCT_TYPE",
-    "TRANSACTION_TYPE", "CUST_GL_ID_NO", "CUSTOMER_NAME", "CLIENT_CATEGORY", "CURRENCY", "FCY_AMOUNT", "RATE",
-    "NGN_EQUIV" ]
+  var originalKeys = [ 'TRANSACTION_DEAL_SLIP', 'SWIFT', 'SOURCE_OF_FUND', 'DEAL_DATE', 'SETTLEMENT_DATE', 'PRODUCT_TYPE',
+    'TRANSACTION_TYPE', 'CUST_GL_ID_NO', 'CUSTOMER_NAME', 'CLIENT_CATEGORY', 'CURRENCY', 'FCY_AMOUNT', 'RATE',
+    'NGN_EQUIV' ]
 
-  vm.parsedPastedBidKeys = [ "TRANSACTION_DEAL_SLIP", "SOURCE_OF_FUND", "DEAL_DATE", "SETTLEMENT_DATE", "PRODUCT_TYPE",
-    "TRANSACTION_TYPE", "CLIENT_CATEGORY", "CURRENCY", "FCY_AMOUNT", "RATE", "NAME_NO_REF", 'REF' ]
+  vm.parsedPastedBidKeys = [ 'TRANSACTION_DEAL_SLIP', 'SOURCE_OF_FUND', 'DEAL_DATE', 'SETTLEMENT_DATE', 'PRODUCT_TYPE',
+    'TRANSACTION_TYPE', 'CLIENT_CATEGORY', 'RATE', 'CURRENCY', 'NAME_NO_REF', 'REF', 'FCY_AMOUNT', 'ORIGINAL' ]
 
   vm.onBlotterPasted = function onBlotterPasted() {
     if ( !vm.pastedBlotter ) return
@@ -56,7 +63,62 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
       }
     } )
 
-    if ( refs.length ) getBidRequests( refs )
+    if ( refs.length ) {
+      getBidRequests( refs ).then( function (bids) {
+
+        if ( bids ) {
+          vm.parsedPastedBids = attachBidsToAllocation( vm.parsedPastedBids, collateBidRequests( bids ) )
+        }
+
+      }, function (xhr) {
+        console.log( xhr );
+      } )
+    }
+  }
+
+  function getMfRefFromLcRef(refs) {
+    var lcReferences = refs.filter( function (ref) {
+      return ref.indexOf( 'MF20' ) === -1
+    } )
+
+    throw new Error('return mapping from mf number to lc number')
+    LetterOfCredit.get( { lc_numbers: lcReferences } )
+  }
+
+  /**
+   *
+   * @param {[]} currentAllocations
+   * @param {{}} bids - existing bids retrieved from database
+   * @returns {[]}
+   */
+  function attachBidsToAllocation(currentAllocations, bids) {
+    var ref, currentOutstandings, bid
+
+    underscore.each( currentAllocations, function (allocation) {
+      ref = allocation.REF
+
+      if ( underscore.has( bids, ref ) ) {
+        allocation.original_requests = true
+        currentOutstandings = []
+        bid = bids[ ref ]
+
+        allocation.original_requests = bid.original_requests
+        allocation.previous_allocations = bid.previous_allocations
+        allocation.previous_outstandings = bid.previous_outstandings
+
+        bid.previous_outstandings.forEach( function (prev) {
+          //the current outstanding is previous outstanding less the current allocation sale. but because current
+          // allocation sale is usually reported as negative, we do summation below
+          //TODO: how do I handle allocations which are repurchases?
+          //TODO: how do I handle charges and other allocations (sales and purchases) that should not reduce the outstanding allocation
+          currentOutstandings.push( Number( prev ) + Number( allocation.FCY_AMOUNT ) )
+        } )
+
+        allocation.current_outstandings = currentOutstandings
+      }
+    } )
+
+    return currentAllocations
   }
 
   /**
@@ -67,13 +129,32 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
    */
   function collateBidRequests(bids) {
     var result = {},
-      mf
+      mf,
+      amount,
+      previousAllocations,
+      previousOutstandings,
+      current
 
     bids.forEach( function (bid) {
       mf = bid.form_m_number
+      amount = Number( bid.amount )
+      previousAllocations = bid.sum_allocations
+      previousOutstandings = bid.unallocated
 
-      if ( !underscore.has( result, mf ) ) result[ mf ] = [ bid ]
-      else result[ mf ] = result[ mf ].concat( [ bid ] )
+      if ( !underscore.has( result, mf ) ) {
+        result[ mf ] = {
+          original_requests: [ amount ],
+          previous_allocations: [ previousAllocations ],
+          previous_outstandings: [ previousOutstandings ]
+        }
+      }
+      else {
+        current = result[ mf ]
+        current.original_requests.push( amount )
+        current.previous_outstandings.push( previousOutstandings )
+        current.previous_allocations.push( previousAllocations )
+        result[ mf ] = current
+      }
     } )
 
     return result
@@ -84,18 +165,16 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
    * @param {[]} refs
    */
   function getBidRequests(refs) {
+    var deferred = $q.defer()
+
     LcBidRequest.get( { q: refs.join( ',' ), num_rows: 5000 } ).$promise.then( function (fetchedBids) {
+      deferred.resolve( fetchedBids.count && fetchedBids.results || null )
 
-      if ( fetchedBids.count ) {
-        var results = collateBidRequests( fetchedBids.results ),
-          ref
-
-        underscore.each( vm.parsedPastedBids, function (val) {
-          ref = val.REF
-          if ( underscore.has( results, ref ) ) val.matched = results[ ref ]
-        } )
-      }
+    }, function (xhr) {
+      deferred.reject( xhr )
     } )
+
+    return deferred.promise
   }
 
   /**
