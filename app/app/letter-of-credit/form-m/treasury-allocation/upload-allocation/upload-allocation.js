@@ -48,54 +48,92 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
     if ( !vm.pastedBlotter ) return
 
     vm.showParsedPastedBid = true
+
+    var parsed = parsePastedBids( vm.pastedBlotter ),
+      refs = parsed[ 1 ]
+
+    vm.parsedPastedBids = parsed[ 0 ]
+
+    if ( refs.length ) {
+      $q.all( [ getBidRequests( refs ), getMfRefFromLcRef( refs ) ] ).then( function (resolves) {
+        vm.parsedPastedBids = attachBidsToAllocation(
+          vm.parsedPastedBids, collateBidRequests( resolves[ 0 ] ), resolves[ 1 ]
+        )
+      } )
+    }
+  }
+
+  /**
+   *
+   * @param {String} text
+   * @returns {*[]}
+   */
+  function parsePastedBids(text) {
     var cleanedData,
       ref,
-      refs = []
+      refs = [],
+      result = []
 
-    baby.parse( vm.pastedBlotter.trim(), {
+    baby.parse( text.trim(), {
       delimiter: '\t', header: true, step: function (row) {
         cleanedData = cleanPastedBids( row.data[ 0 ] )
         ref = cleanedData.REF
 
         if ( ref ) refs.push( ref )
 
-        vm.parsedPastedBids.push( cleanedData )
+        result.push( cleanedData )
       }
     } )
 
-    if ( refs.length ) {
-      getBidRequests( refs ).then( function (bids) {
-
-        if ( bids ) {
-          vm.parsedPastedBids = attachBidsToAllocation( vm.parsedPastedBids, collateBidRequests( bids ) )
-        }
-
-      }, function (xhr) {
-        console.log( xhr );
-      } )
-    }
+    return [ result, refs ]
   }
 
   function getMfRefFromLcRef(refs) {
+    var deferred = $q.defer()
+
     var lcReferences = refs.filter( function (ref) {
       return ref.indexOf( 'MF20' ) === -1
     } )
 
-    throw new Error('return mapping from mf number to lc number')
-    LetterOfCredit.get( { lc_numbers: lcReferences } )
+    if ( !lcReferences.length ) return deferred.resolve( {} )
+
+    LetterOfCredit.get( {
+      lc_numbers: lcReferences.join( ',' ),
+      fields: 'mf,lc_number'
+
+    } ).$promise.then( function (lcList) {
+      var result = {}
+
+      if ( lcList.count ) {
+        lcList.results.forEach( function (lc) {
+          result[ lc.lc_number ] = lc.mf
+        } )
+      }
+      deferred.resolve( result )
+
+    }, function (xhr) {
+      deferred.reject( xhr )
+    } )
+
+    return deferred.promise
   }
 
   /**
    *
    * @param {[]} currentAllocations
    * @param {{}} bids - existing bids retrieved from database
+   * @param {{}} lcMfMapping
    * @returns {[]}
    */
-  function attachBidsToAllocation(currentAllocations, bids) {
+  function attachBidsToAllocation(currentAllocations, bids, lcMfMapping) {
     var ref, currentOutstandings, bid
 
     underscore.each( currentAllocations, function (allocation) {
       ref = allocation.REF
+
+      if ( ref.indexOf( 'ILC' ) === 0 ) {
+        ref = lcMfMapping[ ref ]
+      }
 
       if ( underscore.has( bids, ref ) ) {
         allocation.original_requests = true

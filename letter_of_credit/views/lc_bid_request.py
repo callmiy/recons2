@@ -41,7 +41,7 @@ class LcBidRequestFilter(django_filters.FilterSet):
             elif ref.startswith('ILC'):
                 refs_lc.append(ref)
 
-        return qs.filter(Q(mf__number__in=refs_mf) | Q(mf__lc__lc_number=refs_lc))
+        return qs.filter(Q(mf__number__in=refs_mf) | Q(mf__lc__lc_number__in=refs_lc))
 
     def filter_pending(self, qs, param):
         if not param:
