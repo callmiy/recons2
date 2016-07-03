@@ -1,6 +1,9 @@
 import json
 import logging
 from rest_framework import generics
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
 import django_filters
 
 from letter_of_credit.models import TreasuryAllocation
@@ -37,9 +40,14 @@ class TreasuryAllocationListCreateAPIView(generics.ListCreateAPIView):
         log_prefix = 'Create new treasury allocation:'
         incoming_data = request.data
         logger.info('%s with incoming data = \n%s', log_prefix, json.dumps(incoming_data, indent=4))
-        response = super(TreasuryAllocationListCreateAPIView, self).create(request, *args, **kwargs)
+        serializer = self.get_serializer(data=incoming_data, many=isinstance(incoming_data, list))
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        response = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info('%s created successfully, result is:\n%s', log_prefix,
-                    json.dumps(response.data, indent=4))
+                    JSONRenderer().render(response.data, accepted_media_type='application/json; indent=4')
+                    )
         return response
 
 

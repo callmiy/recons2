@@ -7,6 +7,7 @@ var app = angular.module( 'upload-treasury-allocation', [
   'rootApp',
   'lc-bid-request',
   'lc-service',
+  'treasury-allocation-service',
   'ngTable'
 ] )
 
@@ -32,18 +33,24 @@ uploadTreasuryAllocationDirectiveController.$inject = [
   'underscore',
   '$q',
   'LetterOfCredit',
-  'NgTableParams'
+  'NgTableParams',
+  'TreasuryAllocation',
+  'toISODate',
+  'moment'
 ]
 
-function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, underscore, $q, LetterOfCredit, NgTableParams) {
+function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, underscore, $q, LetterOfCredit, NgTableParams,
+                                                     TreasuryAllocation, toISODate, moment) {
   var vm = this  // jshint -W040
 
   vm.showPasteForm = true
-  var originalKeys = [ 'TRANSACTION_DEAL_SLIP', 'SWIFT', 'SOURCE_OF_FUND', 'DEAL_DATE', 'SETTLEMENT_DATE', 'PRODUCT_TYPE',
-    'TRANSACTION_TYPE', 'CUST_GL_ID_NO', 'CUSTOMER_NAME', 'CLIENT_CATEGORY', 'CURRENCY', 'FCY_AMOUNT', 'RATE',
-    'NGN_EQUIV' ]
+
+  var bidsFromServer = []
 
   vm.onBlotterPasted = function onBlotterPasted() {
+    // always reset bids from server
+    bidsFromServer = []
+
     if ( !vm.pastedBlotter ) return
 
     vm.showParsedPastedBid = true
@@ -56,9 +63,10 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
 
     if ( refs.length ) {
       $q.all( [ getBidRequests( refs ), getMfRefFromLcRef( refs ) ] ).then( function (resolves) {
-        vm.tableParams.dataset = attachBidsToAllocation(
-          dataset, collateBidRequests( resolves[ 0 ] ), resolves[ 1 ]
-        )
+
+        bidsFromServer = resolves[ 0 ]
+        var mfLcRefMapping = resolves[ 1 ]
+        vm.tableParams.dataset = attachBidsToAllocation( dataset, collateBidRequests( bidsFromServer ), mfLcRefMapping )
       } )
     }
   }
@@ -67,7 +75,7 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
     for ( var i = 0; i < vm.tableParams.data.length; i++ ) {
       var obj = vm.tableParams.data[ i ]
 
-      if ( obj.index == allocationIndex ) {
+      if ( obj.index == allocationIndex ) { // jshint ignore:line
         //TODO: make it possible to restore request after it has been deleted
         obj.original_requests.splice( requestIndex, 1 )
         obj.previous_allocations.splice( requestIndex, 1 )
@@ -77,6 +85,66 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
         break
       }
     }
+  }
+
+  vm.showSaveBtn = function showSaveBtn(data) {
+    if ( !data ) return false
+
+    var obj
+
+    for ( var key in data ) {
+      if ( data.hasOwnProperty( key ) ) {
+        obj = data[ key ]
+
+        if ( underscore.has( obj, 'bid_ids' ) && obj.bid_ids.length > 1 ) return false
+      }
+    }
+
+    return true
+  }
+
+  vm.saveAllocations = function saveAllocations(data) {
+    var toBeSaved = [],
+      bidIds,
+      associatedBid
+
+    underscore.each( data, function (obj) {
+      bidIds = obj.bid_ids
+      associatedBid = bidIds ? getByKey( bidsFromServer, 'id', bidIds[ 0 ] ).url : null
+
+      toBeSaved.push( {
+        deal_number: obj.TRANSACTION_DEAL_SLIP,
+        transaction_type: obj.TRANSACTION_TYPE,
+        product_type: obj.PRODUCT_TYPE,
+        customer_name: obj.CUSTOMER_NAME,
+        customer_name_no_ref: obj.NAME_NO_REF,
+        ref: obj.REF,
+        client_category: obj.CLIENT_CATEGORY,
+        source_of_fund: obj.SOURCE_OF_FUND,
+        currency: obj.CURRENCY,
+        fcy_amount: obj.FCY_AMOUNT,
+        naira_rate: obj.RATE,
+        deal_date: toISODate( obj.DEAL_DATE ),
+        settlement_date: toISODate( obj.SETTLEMENT_DATE ),
+        original_request: associatedBid,
+      } )
+    } )
+
+    TreasuryAllocation.saveMany( toBeSaved ).$promise.then( function (savedData) {
+      console.log( 'savedData = ', savedData );
+
+    }, function (xhr) {
+      console.log( 'xhr = ', xhr );
+    } )
+  }
+
+  function getByKey(list, key, keyVal) {
+    for ( var i = 0; i < list.length; i++ ) {
+      var obj = list[ i ]
+      if ( obj[ key ] == keyVal ) return obj // jshint ignore:line
+    }
+
+    return null
   }
 
   /**
@@ -157,7 +225,7 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
         allocation.original_requests = true
         currentOutstandings = []
         collatedBid = collatedBids[ ref ]
-        allocatedAmount = Math.abs( Number( allocation.FCY_AMOUNT ) )
+        allocatedAmount = allocation.FCY_AMOUNT
         // we will always make sales allocation a negative number
         allocatedAmount = allocation.TRANSACTION_TYPE.toLowerCase() === 'sale' ? (-1 * allocatedAmount) : allocatedAmount
 
@@ -246,21 +314,25 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
    * @returns {{}} the input data now cleaned
    */
   function cleanPastedBids(data) {
-    var refName, name
+    var refName
 
-    underscore.each( originalKeys, function (key) {
-      if ( underscore.has( data, key ) ) {
-        switch ( key ) {
-          case 'CUSTOMER_NAME':
-          {
-            name = data[ key ].trim().replace( /"/g, '' )
-            data[ key ] = name
-            refName = getFormMLcRef( name )
-            data.REF = refName[ 0 ]
-            data.NAME_NO_REF = refName[ 1 ]
-            break
-          }
-        }
+    underscore.each( data, function (val, key) {
+      data[ key ] = val.trim()
+
+      if ( key === 'CUSTOMER_NAME' ) {
+        val = val.replace( /"/g, '' )
+        data.CUSTOMER_NAME = val
+        refName = getFormMLcRef( val )
+        data.REF = refName[ 0 ]
+        data.NAME_NO_REF = refName[ 1 ]
+      }
+
+      if ( key === 'FCY_AMOUNT' ) {
+        data.FCY_AMOUNT = Math.abs( Number( val ) )
+      }
+
+      if ( key.indexOf( '_DATE' ) > 1 ) {
+        data[ key ] = moment( val, 'DD-MM-YYYY' )._d
       }
     } )
 

@@ -26,7 +26,8 @@ class TreasuryAllocation(models.Model):
         db_table = 'treasury_allocation'
         app_label = 'letter_of_credit'
         verbose_name = 'Treasury Allocation'
-        verbose_name_plural = 'Treasury Allocation'
+        verbose_name_plural = 'Treasury Allocation',
+        unique_together = ('deal_number', 'deal_date', 'transaction_type',)
 
     def save(self, *args, **kwargs):
         self.customer_name = self.customer_name.strip(' \n\t\r\v"')
@@ -37,3 +38,6 @@ class TreasuryAllocation(models.Model):
         return '{}{:,.2f}'.format(sign, self.fcy_amount)
 
     fcy_amount_formatted.short_description = 'FCY Amount'
+
+    def original_request_obj(self):
+        return self.original_request

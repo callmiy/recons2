@@ -28,6 +28,7 @@ class CoreAppsView(View):
             'fxDealAPIUrl': reverse('fxdeal-list'),
             'attachmentAPIUrl': reverse('attachment-list'),
             'attachmentFileAPIUrl': reverse('attachmentfile-list'),
+            'treasuryAllocationAPIUrl': reverse('treasuryallocation-list'),
         })
 
     @staticmethod

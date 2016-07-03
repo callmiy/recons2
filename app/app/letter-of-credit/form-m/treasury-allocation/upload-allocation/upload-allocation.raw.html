@@ -10,6 +10,15 @@
   </form>
 
   <div ng-if="uploadTreasuryAllocation.showParsedPastedBid" class="parsed-pasted-bid-table-container clearfix">
+
+    <div ng-if="uploadTreasuryAllocation.showSaveBtn(uploadTreasuryAllocation.tableParams.dataset)"
+         class="save-parsed-allocation-btn-container">
+      <button class="btn btn-success"
+              ng-click="uploadTreasuryAllocation.saveAllocations(uploadTreasuryAllocation.tableParams.dataset)">
+        Save
+      </button>
+    </div>
+
     <div class="parsed-pasted-bid-table raw-bids-table">
       <table ng-table="uploadTreasuryAllocation.tableParams"
              class="table table-bordered table-condensed table-responsive table-striped">
@@ -27,9 +36,13 @@
 
             <td data-title="'SOURCE'" sortable="'SOURCE_OF_FUND'">{$::allocationObj.SOURCE_OF_FUND$}</td>
 
-            <td data-title="'DEAL DATE'" sortable="'DEAL_DATE'">{$::allocationObj.DEAL_DATE$}</td>
+            <td data-title="'DEAL DATE'" sortable="'DEAL_DATE'">
+              {$::allocationObj.DEAL_DATE | date:'dd-MMM-yyy'$}
+            </td>
 
-            <td data-title="'SETTLEMENT DATE'" sortable="'SETTLEMENT_DATE'">{$::allocationObj.SETTLEMENT_DATE$}</td>
+            <td data-title="'SETTLEMENT DATE'" sortable="'SETTLEMENT_DATE'">
+              {$::allocationObj.SETTLEMENT_DATE | date:'dd-MMM-yyy'$}
+            </td>
 
             <td data-title="'TYPE'" sortable="'TRANSACTION_TYPE'">{$::allocationObj.TRANSACTION_TYPE$}</td>
 
