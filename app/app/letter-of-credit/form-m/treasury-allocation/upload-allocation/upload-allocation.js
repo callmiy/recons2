@@ -68,6 +68,7 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
       var obj = vm.tableParams.data[ i ]
 
       if ( obj.index == allocationIndex ) {
+        //TODO: make it possible to restore request after it has been deleted
         obj.original_requests.splice( requestIndex, 1 )
         obj.previous_allocations.splice( requestIndex, 1 )
         obj.previous_outstandings.splice( requestIndex, 1 )
