@@ -2,10 +2,12 @@
 
 /*jshint camelcase:false*/
 
+
 var app = angular.module( 'upload-treasury-allocation', [
   'rootApp',
   'lc-bid-request',
-  'lc-service'
+  'lc-service',
+  'ngTable'
 ] )
 
 app.directive( 'uploadTreasuryAllocation', uploadTreasuryAllocationDirective )
@@ -29,20 +31,17 @@ uploadTreasuryAllocationDirectiveController.$inject = [
   'LcBidRequest',
   'underscore',
   '$q',
-  'LetterOfCredit'
+  'LetterOfCredit',
+  'NgTableParams'
 ]
 
-function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, underscore, $q, LetterOfCredit) {
+function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, underscore, $q, LetterOfCredit, NgTableParams) {
   var vm = this  // jshint -W040
 
-  vm.parsedPastedBids = []
   vm.showPasteForm = true
   var originalKeys = [ 'TRANSACTION_DEAL_SLIP', 'SWIFT', 'SOURCE_OF_FUND', 'DEAL_DATE', 'SETTLEMENT_DATE', 'PRODUCT_TYPE',
     'TRANSACTION_TYPE', 'CUST_GL_ID_NO', 'CUSTOMER_NAME', 'CLIENT_CATEGORY', 'CURRENCY', 'FCY_AMOUNT', 'RATE',
     'NGN_EQUIV' ]
-
-  vm.parsedPastedBidKeys = [ 'TRANSACTION_DEAL_SLIP', 'SOURCE_OF_FUND', 'DEAL_DATE', 'SETTLEMENT_DATE', 'PRODUCT_TYPE',
-    'TRANSACTION_TYPE', 'CLIENT_CATEGORY', 'RATE', 'CURRENCY', 'NAME_NO_REF', 'REF', 'FCY_AMOUNT', 'ORIGINAL' ]
 
   vm.onBlotterPasted = function onBlotterPasted() {
     if ( !vm.pastedBlotter ) return
@@ -50,17 +49,22 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
     vm.showParsedPastedBid = true
 
     var parsed = parsePastedBids( vm.pastedBlotter ),
+      dataset = parsed[ 0 ],
       refs = parsed[ 1 ]
 
-    vm.parsedPastedBids = parsed[ 0 ]
+    vm.tableParams = new NgTableParams( { sorting: { REF: 'desc' }, count: 1000000 }, { dataset: dataset, counts: [] } )
 
     if ( refs.length ) {
       $q.all( [ getBidRequests( refs ), getMfRefFromLcRef( refs ) ] ).then( function (resolves) {
-        vm.parsedPastedBids = attachBidsToAllocation(
-          vm.parsedPastedBids, collateBidRequests( resolves[ 0 ] ), resolves[ 1 ]
+        vm.tableParams.dataset = attachBidsToAllocation(
+          dataset, collateBidRequests( resolves[ 0 ] ), resolves[ 1 ]
         )
       } )
     }
+  }
+
+  vm.removeOriginalRequest = function removeOriginalRequest(allocationIndex, requestIndex) {
+    console.log( allocationIndex, requestIndex )
   }
 
   /**
@@ -72,11 +76,13 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
     var cleanedData,
       ref,
       refs = [],
-      result = []
+      result = [],
+      index = 1
 
     baby.parse( text.trim(), {
       delimiter: '\t', header: true, step: function (row) {
         cleanedData = cleanPastedBids( row.data[ 0 ] )
+        cleanedData.index = index++
         ref = cleanedData.REF
 
         if ( ref ) refs.push( ref )

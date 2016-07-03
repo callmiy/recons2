@@ -19,11 +19,23 @@
   .original-request-row {
     display: block;
     margin-bottom: 5px;
-    border-bottom: 1px solid blue;
+
+    &.multiple-requests {
+      padding: 2px 0;
+      font-size: 90%;
+      border-radius: 4px;
+      color: #c7254e;
+      background-color: #f9f2f4;
+
+      & > .glyphicon-remove {
+        padding: 0 4px 0 15px;
+        font-size: 90%;
+        cursor: pointer;
+      }
+    }
 
     &:last-child {
       margin-bottom: 0;
-      border-bottom: none;
     }
   }
 

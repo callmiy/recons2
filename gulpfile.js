@@ -19,6 +19,7 @@ var initialCssFiles = [
   bower + '/bootstrap/dist/css/bootstrap.css',
   bower + '/jquery-ui/themes/smoothness/jquery-ui.css',
   bower + '/jstree/dist/themes/default/style.css',
+  bower + '/ng-table/dist/ng-table.css',
   //baseStaticCss + '/jquery.treeview.css',
   baseStaticCss + '/recons-base.css'
 ]
@@ -81,6 +82,7 @@ gulp.task( 'initial-js', function () {
     .pipe( plugins.addSrc.append( bower + '/angular-sanitize/angular-sanitize.js' ) )
     .pipe( plugins.addSrc.append( bower + '/angular-bootstrap/ui-bootstrap-tpls.js' ) )
     .pipe( plugins.addSrc.append( bower + '/angular-modal-service/dst/angular-modal-service.js' ) )
+    .pipe( plugins.addSrc.append( bower + '/ng-table/dist/ng-table.js' ) )
     .pipe( plugins.addSrc.append( bower + '/bootstrap/dist/js/bootstrap.js' ) )
     .pipe( plugins.addSrc.append( bower + '/jquery-ui/jquery-ui.js' ) )
     .pipe( plugins.addSrc.append( bower + '/papa-parse/papaparse.js' ) )
