@@ -49,7 +49,7 @@
               {$allocationObj.REF $}
             </td>
 
-            <td data-title="'ALLOCATION'" sortable="'FCY_AMOUNT'" filter="{FCY_AMOUNT: 'number'}">
+            <td data-title="'CURRENT ALLOCATION'" sortable="'FCY_AMOUNT'" filter="{FCY_AMOUNT: 'number'}">
               {$::allocationObj.FCY_AMOUNT |number:2$}
             </td>
 
@@ -60,7 +60,7 @@
                 {$::req |number:2$}
 
                 <span ng-if="allocationObj.original_requests.length > 1" class="glyphicon glyphicon-remove"
-                ng-click="uploadTreasuryAllocation.removeOriginalRequest(allocationObj.index, $index)"></span>
+                      ng-click="uploadTreasuryAllocation.removeOriginalRequest(allocationObj.index, $index)"></span>
               </span>
             </td>
 

@@ -64,7 +64,18 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
   }
 
   vm.removeOriginalRequest = function removeOriginalRequest(allocationIndex, requestIndex) {
-    console.log( allocationIndex, requestIndex )
+    for ( var i = 0; i < vm.tableParams.data.length; i++ ) {
+      var obj = vm.tableParams.data[ i ]
+
+      if ( obj.index == allocationIndex ) {
+        obj.original_requests.splice( requestIndex, 1 )
+        obj.previous_allocations.splice( requestIndex, 1 )
+        obj.previous_outstandings.splice( requestIndex, 1 )
+        obj.current_outstandings.splice( requestIndex, 1 )
+        obj.bid_ids.splice( requestIndex, 1 )
+        break
+      }
+    }
   }
 
   /**
@@ -127,12 +138,12 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
   /**
    *
    * @param {[]} currentAllocations
-   * @param {{}} bids - existing bids retrieved from database
+   * @param {{}} collatedBids - existing bids retrieved from database
    * @param {{}} lcMfMapping
    * @returns {[]}
    */
-  function attachBidsToAllocation(currentAllocations, bids, lcMfMapping) {
-    var ref, currentOutstandings, bid
+  function attachBidsToAllocation(currentAllocations, collatedBids, lcMfMapping) {
+    var ref, currentOutstandings, collatedBid, allocatedAmount
 
     underscore.each( currentAllocations, function (allocation) {
       ref = allocation.REF
@@ -141,21 +152,26 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
         ref = lcMfMapping[ ref ]
       }
 
-      if ( underscore.has( bids, ref ) ) {
+      if ( underscore.has( collatedBids, ref ) ) {
         allocation.original_requests = true
         currentOutstandings = []
-        bid = bids[ ref ]
+        collatedBid = collatedBids[ ref ]
+        allocatedAmount = Math.abs( Number( allocation.FCY_AMOUNT ) )
+        // we will always make sales allocation a negative number
+        allocatedAmount = allocation.TRANSACTION_TYPE.toLowerCase() === 'sale' ? (-1 * allocatedAmount) : allocatedAmount
 
-        allocation.original_requests = bid.original_requests
-        allocation.previous_allocations = bid.previous_allocations
-        allocation.previous_outstandings = bid.previous_outstandings
+        allocation.original_requests = collatedBid.original_requests
+        allocation.previous_allocations = collatedBid.previous_allocations
+        allocation.previous_outstandings = collatedBid.previous_outstandings
+        allocation.bid_ids = collatedBid.bid_ids
 
-        bid.previous_outstandings.forEach( function (prev) {
-          //the current outstanding is previous outstanding less the current allocation sale. but because current
-          // allocation sale is usually reported as negative, we do summation below
-          //TODO: how do I handle allocations which are repurchases?
-          //TODO: how do I handle charges and other allocations (sales and purchases) that should not reduce the outstanding allocation
-          currentOutstandings.push( Number( prev ) + Number( allocation.FCY_AMOUNT ) )
+        collatedBid.previous_outstandings.forEach( function (prev) {
+          //the current outstanding is previous outstanding less the current allocation sale. But we do sum below since
+          // sales is a negative number
+          // TODO: how do I handle allocations which are repurchases?
+          // TODO: how do I handle charges and other allocations (sales and purchases) that should not reduce the
+          // outstanding allocation
+          currentOutstandings.push( Number( prev ) + allocatedAmount )
         } )
 
         allocation.current_outstandings = currentOutstandings
@@ -189,7 +205,8 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
         result[ mf ] = {
           original_requests: [ amount ],
           previous_allocations: [ previousAllocations ],
-          previous_outstandings: [ previousOutstandings ]
+          previous_outstandings: [ previousOutstandings ],
+          bid_ids: [ bid.id ]
         }
       }
       else {
@@ -197,6 +214,7 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
         current.original_requests.push( amount )
         current.previous_outstandings.push( previousOutstandings )
         current.previous_allocations.push( previousAllocations )
+        current.bid_ids.push( bid.id )
         result[ mf ] = current
       }
     } )
