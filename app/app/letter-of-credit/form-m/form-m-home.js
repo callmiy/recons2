@@ -33,7 +33,11 @@ var app = angular.module( 'form-m',
  * Basically for storing the formM number of the current form M when in formM.add view
  */
 app.value( 'formMAppStore', {
-  formMNumber: null
+  formMNumber: null,
+  treasuryAllocation: {
+    uploadAllocationParams: {},
+    treasuryAllocationParams: {}
+  }
 } )
 
 app.config( formMURLConfig )
@@ -146,6 +150,11 @@ function FormMController($state, $scope, formMAppStore, $rootScope) {
         toParams.formM = formMAppStore.formMNumber
         toParams.showSummary = null;
       }
+    }
+
+    if ( toState.name === 'form_m.treasury_allocation' ) {
+      toParams.uploadAllocationParams = formMAppStore.treasuryAllocation.uploadAllocationParams
+      toParams.treasuryAllocationParams = formMAppStore.treasuryAllocation.treasuryAllocationParams
     }
   } )
 }

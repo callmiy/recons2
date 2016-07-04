@@ -15,6 +15,11 @@ function treasuryAllocationConfig($stateProvider) {
 
       kanmiiTitle: 'Allocations',
 
+      params: {
+        uploadAllocationParams: {},
+        treasuryAllocationParams: {}
+      },
+
       views: {
         treasuryAllocation: {
           template: require( './treasury-allocation.html' ),
@@ -26,7 +31,32 @@ function treasuryAllocationConfig($stateProvider) {
 }
 
 app.controller( 'TreasuryAllocationController', TreasuryAllocationController )
-TreasuryAllocationController.$inject = []
-function TreasuryAllocationController() {
+TreasuryAllocationController.$inject = [
+  '$stateParams',
+  '$scope',
+  'formMAppStore'
+]
+
+function TreasuryAllocationController($stateParams, $scope, formMAppStore) {
   var vm = this
+
+  vm.uploadAllocationParams = $stateParams.uploadAllocationParams
+
+  var treasuryAllocationParams = $stateParams.treasuryAllocationParams
+
+  vm.action = treasuryAllocationParams.action
+
+  function getParams() {
+    return {
+      action: vm.action
+    }
+  }
+
+  function onParamsChanged() {
+    formMAppStore.treasuryAllocation.treasuryAllocationParams = {
+      action: vm.action
+    }
+  }
+
+  $scope.$watch( getParams, onParamsChanged, true )
 }

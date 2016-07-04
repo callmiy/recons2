@@ -41,18 +41,34 @@ uploadTreasuryAllocationDirectiveController.$inject = [
   'moment',
   'spinnerService',
   'confirmationDialog',
-  '$scope'
+  '$scope',
+  'formMAppStore'
 ]
 
 function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, underscore, $q, LetterOfCredit, NgTableParams,
                                                      TreasuryAllocation, toISODate, moment, spinnerService,
-                                                     confirmationDialog, $scope) {
+                                                     confirmationDialog, $scope, formMAppStore) {
   var vm = this  // jshint -W040
 
-  vm.showPasteForm = true
-  vm.isSaving = false
+  var uploadAllocationParams = $scope.$parent.treasuryAllocation.uploadAllocationParams,
+    bidsFromServer
 
-  var bidsFromServer = []
+  if ( underscore.isEmpty( uploadAllocationParams ) ) {
+    vm.showPasteForm = true
+    vm.isSaving = false
+    vm.showParsedPastedBid = false
+    vm.tableParams = null
+    vm.pastedBlotter = ''
+    bidsFromServer = []
+
+  } else {
+    vm.showPasteForm = uploadAllocationParams.showPasteForm
+    vm.isSaving = uploadAllocationParams.isSaving
+    vm.showParsedPastedBid = uploadAllocationParams.showParsedPastedBid
+    vm.tableParams = uploadAllocationParams.tableParams
+    vm.pastedBlotter = uploadAllocationParams.pastedBlotter
+    bidsFromServer = uploadAllocationParams.bidsFromServer
+  }
 
   vm.onBlotterPasted = function onBlotterPasted() {
     // always reset bids from server
@@ -372,4 +388,27 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
 
     return [ ref, val.replace( ref, '' ).trim() ]
   }
+
+  function getParams() {
+    return {
+      showPasteForm: vm.showPasteForm,
+      isSaving: vm.isSaving,
+      showParsedPastedBid: vm.showParsedPastedBid,
+      tableParams: vm.tableParams,
+      pastedBlotter: vm.pastedBlotter
+    }
+  }
+
+  function onParamsChanged() {
+    formMAppStore.treasuryAllocation.uploadAllocationParams = {
+      showPasteForm: vm.showPasteForm,
+      isSaving: vm.isSaving,
+      showParsedPastedBid: vm.showParsedPastedBid,
+      tableParams: vm.tableParams,
+      pastedBlotter: vm.pastedBlotter,
+      bidsFromServer: bidsFromServer
+    }
+  }
+
+  $scope.$watch( getParams, onParamsChanged, true )
 }
