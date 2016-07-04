@@ -1,9 +1,9 @@
 "use strict";
 
-var interpolateProviderConfig = ['$interpolateProvider', function ($interpolateProvider) {
+var interpolateProviderConfig = [ '$interpolateProvider', function ($interpolateProvider) {
   $interpolateProvider.startSymbol( '{$' );
   $interpolateProvider.endSymbol( '$}' );
-}];
+} ];
 
 /**
  * Takes a file system path to a file (most likely a template path) and returns the server compatible path. For
@@ -25,14 +25,15 @@ function buildUrl(appName, fsPath) {
  * @param {angular.module} app the angular module on which we wish to set the static root
  */
 function setStaticPrefix(app) {
-  app.run( ['$rootScope', function ($rootScope) {
+  app.run( [ '$rootScope', function ($rootScope) {
     $rootScope.staticPrefix = staticPrefix
     $rootScope.addIconSrc = staticPrefix + 'core_recons/css/images/icon_addposting.gif'
-  }] )
+    $rootScope.spinnerImgSrc = staticPrefix + 'core_recons/css/images/spinner3.gif'
+  } ] )
 }
 
 module.exports = {
-    interpolateProviderConfig: interpolateProviderConfig,
+  interpolateProviderConfig: interpolateProviderConfig,
   buildUrl: buildUrl,
   setStaticPrefix: setStaticPrefix
 }

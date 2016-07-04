@@ -13,7 +13,7 @@ function treasuryAllocationConfig($stateProvider) {
   $stateProvider
     .state( 'form_m.treasury_allocation', {
 
-      kanmiiTitle: 'Treasury Allocations',
+      kanmiiTitle: 'Allocations',
 
       views: {
         treasuryAllocation: {

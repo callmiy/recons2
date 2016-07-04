@@ -81,7 +81,7 @@ function FormMController($state, $scope, formMAppStore, $rootScope) {
   }
 
   var treasuryAllocationTab = {
-    title: 'Treasury Allocations',
+    title: 'Allocations',
     active: false,
     viewName: 'treasuryAllocation',
     select: function () {

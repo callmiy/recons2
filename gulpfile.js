@@ -83,6 +83,7 @@ gulp.task( 'initial-js', function () {
     .pipe( plugins.addSrc.append( bower + '/angular-bootstrap/ui-bootstrap-tpls.js' ) )
     .pipe( plugins.addSrc.append( bower + '/angular-modal-service/dst/angular-modal-service.js' ) )
     .pipe( plugins.addSrc.append( bower + '/ng-table/dist/ng-table.js' ) )
+    .pipe( plugins.addSrc.append( bower + '/angular-spinners/dist/angular-spinners.js' ) )
     .pipe( plugins.addSrc.append( bower + '/bootstrap/dist/js/bootstrap.js' ) )
     .pipe( plugins.addSrc.append( bower + '/jquery-ui/jquery-ui.js' ) )
     .pipe( plugins.addSrc.append( bower + '/papa-parse/papaparse.js' ) )

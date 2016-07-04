@@ -8,7 +8,9 @@ var app = angular.module( 'upload-treasury-allocation', [
   'lc-bid-request',
   'lc-service',
   'treasury-allocation-service',
-  'ngTable'
+  'ngTable',
+  'angularSpinners',
+  'confirmation-dialog'
 ] )
 
 app.directive( 'uploadTreasuryAllocation', uploadTreasuryAllocationDirective )
@@ -20,7 +22,7 @@ function uploadTreasuryAllocationDirective() {
     restrict: 'A',
     templateUrl: require( 'commons' )
       .buildUrl( 'letter-of-credit', 'form-m/treasury-allocation/upload-allocation/upload-allocation.html' ),
-    scope: true,
+    scope: false,
     controller: 'uploadTreasuryAllocationDirectiveController as uploadTreasuryAllocation'
   }
 }
@@ -36,14 +38,19 @@ uploadTreasuryAllocationDirectiveController.$inject = [
   'NgTableParams',
   'TreasuryAllocation',
   'toISODate',
-  'moment'
+  'moment',
+  'spinnerService',
+  'confirmationDialog',
+  '$scope'
 ]
 
 function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, underscore, $q, LetterOfCredit, NgTableParams,
-                                                     TreasuryAllocation, toISODate, moment) {
+                                                     TreasuryAllocation, toISODate, moment, spinnerService,
+                                                     confirmationDialog, $scope) {
   var vm = this  // jshint -W040
 
   vm.showPasteForm = true
+  vm.isSaving = false
 
   var bidsFromServer = []
 
@@ -108,6 +115,9 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
       bidIds,
       associatedBid
 
+    vm.isSaving = true
+    spinnerService.show( 'treasuryAllocationSpinner' )
+
     underscore.each( data, function (obj) {
       bidIds = obj.bid_ids
       associatedBid = bidIds ? getByKey( bidsFromServer, 'id', bidIds[ 0 ] ).url : null
@@ -131,10 +141,26 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
     } )
 
     TreasuryAllocation.saveMany( toBeSaved ).$promise.then( function (savedData) {
-      console.log( 'savedData = ', savedData );
+      confirmationDialog.showDialog( {
+        title: 'Allocations successfully saved',
+        text: savedData.length + ' allocations uploaded',
+        infoOnly: true
+      } ).then( function () {
+        $scope.$parent.treasuryAllocation.action = null
+      } )
 
     }, function (xhr) {
-      console.log( 'xhr = ', xhr );
+      confirmationDialog.showDialog( {
+        title: 'Error',
+        text: 'An error occurred while saving allocations.\nThis error has been logged.\nPlease inform admin.',
+        infoOnly: true
+      } )
+
+      console.log( 'xhr = ', xhr ) //TODO: remove console logging
+
+    } ).finally( function () {
+      vm.isSaving = false
+      spinnerService.hide( 'treasuryAllocationSpinner' )
     } )
   }
 

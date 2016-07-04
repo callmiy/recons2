@@ -1,12 +1,12 @@
 "use strict";
 
-var app = angular.module('confirmation-dialog', [
+var app = angular.module( 'confirmation-dialog', [
   'angularModalService'
-])
+] )
 
-app.factory('confirmationDialog', confirmationDialog)
+app.factory( 'confirmationDialog', confirmationDialog )
 
-confirmationDialog.$inject = ['ModalService', '$q']
+confirmationDialog.$inject = [ 'ModalService', '$q' ]
 
 function confirmationDialog(ModalService, $q) {
 
@@ -16,23 +16,28 @@ function confirmationDialog(ModalService, $q) {
     function showDialog(config) {
       var deferred = $q.defer()
 
-      ModalService.showModal({
-        template: require('./confirmation-dialog.html'),
-        inputs: {config: config},
+      ModalService.showModal( {
+        template: require( './confirmation-dialog.html' ),
+        inputs: { config: config },
         controller: 'ConfirmationDialogCtrl as confirm'
-      }).then(modalHandler)
+      } ).then( modalHandler )
 
       function modalHandler(modal) {
-        modal.element.dialog({
+        modal.element.dialog( {
           modal: true,
           dialogClass: 'no-close',
           minWidth: 500,
           title: config.title,
 
-          close: function() {modal.controller.close(false)}
-        })
+          close: function () {
+            modal.controller.close( false )
+          }
+        } )
 
-        if (!config.infoOnly) modal.close.then(function(answer) {deferred.resolve(answer)})
+        modal.close.then( function (answer) {
+          deferred.resolve( answer )
+        } )
+
       }
 
       return deferred.promise
@@ -42,9 +47,9 @@ function confirmationDialog(ModalService, $q) {
   return new Conf()
 }
 
-app.controller('ConfirmationDialogCtrl', ConfirmationDialogCtrl)
+app.controller( 'ConfirmationDialogCtrl', ConfirmationDialogCtrl )
 
-ConfirmationDialogCtrl.$inject = ['config', 'close']
+ConfirmationDialogCtrl.$inject = [ 'config', 'close' ]
 
 function ConfirmationDialogCtrl(config, close) {
   this.text = config.text

@@ -13,9 +13,11 @@
 
     <div ng-if="uploadTreasuryAllocation.showSaveBtn(uploadTreasuryAllocation.tableParams.dataset)"
          class="save-parsed-allocation-btn-container">
-      <button class="btn btn-success"
+
+      <button class="btn btn-success" ng-disabled="uploadTreasuryAllocation.isSaving"
               ng-click="uploadTreasuryAllocation.saveAllocations(uploadTreasuryAllocation.tableParams.dataset)">
-        Save
+        {$uploadTreasuryAllocation.isSaving ? 'Saving...' : 'Save'$}
+        <spinner name="treasuryAllocationSpinner" img-src="{$$root.spinnerImgSrc$}"></spinner>
       </button>
     </div>
 
@@ -37,11 +39,11 @@
             <td data-title="'SOURCE'" sortable="'SOURCE_OF_FUND'">{$::allocationObj.SOURCE_OF_FUND$}</td>
 
             <td data-title="'DEAL DATE'" sortable="'DEAL_DATE'">
-              {$::allocationObj.DEAL_DATE | date:'dd-MMM-yyy'$}
+              {$::allocationObj.DEAL_DATE | date:'dd-MMM-yyyy'$}
             </td>
 
             <td data-title="'SETTLEMENT DATE'" sortable="'SETTLEMENT_DATE'">
-              {$::allocationObj.SETTLEMENT_DATE | date:'dd-MMM-yyy'$}
+              {$::allocationObj.SETTLEMENT_DATE | date:'dd-MMM-yyyy'$}
             </td>
 
             <td data-title="'TYPE'" sortable="'TRANSACTION_TYPE'">{$::allocationObj.TRANSACTION_TYPE$}</td>
