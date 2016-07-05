@@ -12,7 +12,9 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/bower_components" isTestSource="false" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="recons node_modules" level="project" />
@@ -34,33 +36,9 @@
         <option value="$MODULE_DIR$/unmatched/templates/unmatched/forms/clirec" />
         <option value="$MODULE_DIR$/rateupload/templates/rateupload" />
         <option value="$MODULE_DIR$/undrawnbal/templates" />
-        <option value="$MODULE_DIR$/core_recons/static/core_recons/js/commons" />
-        <option value="$MODULE_DIR$/core_recons/static/core_recons/js/customer/add-customer" />
-        <option value="$MODULE_DIR$/core_recons/static/core_recons/js/customer/add-customer2" />
-        <option value="$MODULE_DIR$/core_recons/static/core_recons/js/pager-nav" />
-        <option value="$MODULE_DIR$/core_recons/static/core_recons/js/search-lc" />
-        <option value="$MODULE_DIR$/core_recons/static/core_recons/js/model-table" />
-        <option value="$MODULE_DIR$/core_recons/static/core_recons/js/confirmation-dialog" />
         <option value="$MODULE_DIR$/core_recons/templates/core_recons" />
         <option value="$MODULE_DIR$/core_recons/templates/registration" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/app" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/app/lc" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/app/lc/lc-detail" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/app/lc/search-lc" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/app/form-m" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/app/form-m/bids" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/app/form-m/bids/display-pending-bid" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/app/form-m/add-form-m" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/app/form-m/add-form-m/lc-bid" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/app/form-m/add-form-m/lc-cover" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/app/form-m/add-form-m/lc-issue" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/app/form-m/list-form-m" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/app/form-m/search-form-m" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/app/form-m/upload-form-m" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/app/form-m/upload-form-m/search-uploaded-form-m" />
-        <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit/js/app/form-m/search-detailed-or-uploaded-form-m" />
         <option value="$MODULE_DIR$/letter_of_credit/templates/letter_of_credit" />
-        <option value="$MODULE_DIR$/letter_of_credit/templates/letter_of_credit/app" />
         <option value="$MODULE_DIR$/letter_of_credit/templates/letter_of_credit/lc-register" />
         <option value="$MODULE_DIR$/letter_of_credit/templates/letter_of_credit/uploaded-form-m" />
         <option value="$MODULE_DIR$/contingent_report/templates" />
@@ -68,7 +46,6 @@
         <option value="$MODULE_DIR$/contingent_report/static" />
         <option value="$MODULE_DIR$/letter_of_credit/static/letter_of_credit" />
         <option value="$MODULE_DIR$/app" />
-        <option value="$MODULE_DIR$/app/app" />
       </list>
     </option>
   </component>

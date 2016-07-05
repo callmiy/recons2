@@ -26,7 +26,7 @@ class TreasuryAllocation(models.Model):
         db_table = 'treasury_allocation'
         app_label = 'letter_of_credit'
         verbose_name = 'Treasury Allocation'
-        verbose_name_plural = 'Treasury Allocation',
+        verbose_name_plural = 'Treasury Allocation'
         unique_together = ('deal_number', 'deal_date', 'transaction_type',)
 
     def save(self, *args, **kwargs):

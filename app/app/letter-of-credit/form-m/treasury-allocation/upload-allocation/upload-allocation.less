@@ -26,8 +26,17 @@
     }
 
     & > .parsed-pasted-bid-table {
+      position: relative;
       overflow: auto;
       max-height: 455px;
+
+      & > .parsed-pasted-bid-table-overlay {
+        background: #cb9b9b;
+        opacity: 0.3;
+        position: fixed;
+        height: 100%;
+        width: 100%;
+      }
 
       .pasted-bid-row-matched {
         background: #cbf4cb;

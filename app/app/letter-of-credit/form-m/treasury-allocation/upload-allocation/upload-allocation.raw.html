@@ -21,7 +21,10 @@
       </button>
     </div>
 
-    <div class="parsed-pasted-bid-table raw-bids-table">
+    <div class="parsed-pasted-bid-table">
+
+      <div ng-class="{'parsed-pasted-bid-table-overlay': uploadTreasuryAllocation.isSaving}"></div>
+
       <table ng-table="uploadTreasuryAllocation.tableParams"
              class="table table-bordered table-condensed table-responsive table-striped">
 

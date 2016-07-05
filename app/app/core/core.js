@@ -11,7 +11,7 @@ angular.module( 'kanmii-URI', [] ).factory( 'kanmiiUri', function () {
 } )
 
 var app = angular.module( 'rootApp', [
-  'tradeApp',
+  'tradeApp', // defined in django template file 'recons-base.raw.html' - contains API URLs
   'ngRoute',
   'ui.bootstrap',
   'ngResource',
@@ -20,8 +20,9 @@ var app = angular.module( 'rootApp', [
   'angularModalService',
   'toggle-dim-element'
 ] )
-rootCommons.setStaticPrefix( app )
 
+
+// start - angularize objects from nodejs
 app.factory( 'moment', function () {
   return require( 'moment' )
 } )
@@ -33,6 +34,9 @@ app.factory( 'underscore', function () {
 app.factory( 'baby', function () {
   return require( 'babyparse' )
 } )
+// end - angularize objects from nodejs
+
+rootCommons.setStaticPrefix( app )
 
 app.factory( 'resetForm', resetForm )
 function resetForm() {
