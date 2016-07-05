@@ -32,10 +32,11 @@
 
       & > .parsed-pasted-bid-table-overlay {
         background: #cb9b9b;
-        opacity: 0.3;
+        opacity: 0.5;
         position: fixed;
         height: 100%;
         width: 100%;
+        z-index: 99999999;
       }
 
       .pasted-bid-row-matched {
@@ -46,6 +47,7 @@
     }
   }
 
+  //original request row is currently a span
   .original-request-row {
     display: block;
     margin-bottom: 5px;
@@ -56,12 +58,22 @@
       border-radius: 4px;
       color: #c7254e;
       background-color: #f9f2f4;
+    }
 
-      & > .glyphicon-remove {
-        padding: 0 4px 0 15px;
-        font-size: 90%;
-        cursor: pointer;
-      }
+    &.deleted {
+      text-decoration: line-through;
+      color: #c7254e;
+    }
+
+    .remove-add-bid-icons {
+      padding: 0 4px 0 15px;
+      font-size: 90%;
+      cursor: pointer;
+
+      &.glyphicon-remove { color: #c7254e; }
+
+      &.glyphicon-plus-sign { color: #06ac06; }
+
     }
 
     &:last-child {

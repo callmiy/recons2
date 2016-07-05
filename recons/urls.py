@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 from ajax_select import urls as ajax_select_urls
 
-# import core_app_urls  # Uncomment the next two lines to enable the admin:
+# Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 
 from core_recons.views import CoreAppsView

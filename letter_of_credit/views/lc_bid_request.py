@@ -3,6 +3,8 @@ import json
 from rest_framework import generics, pagination
 import django_filters
 from django.db.models import Q
+from rest_framework.renderers import JSONRenderer
+
 from core_recons.csv_utilities import iso_to_date_obj
 from letter_of_credit.models import LcBidRequest, FormM
 from letter_of_credit.serializers import LcBidRequestSerializer
@@ -64,7 +66,8 @@ class LcBidRequestListCreateAPIView(generics.ListCreateAPIView):
         log_text = 'Creating new letter of credit bid request:'
         logger.info('%s with incoming data = \n%s', log_text, json.dumps(request.data, indent=4))
         bid_response = super(LcBidRequestListCreateAPIView, self).create(request, *args, **kwargs)
-        logger.info('%s lc bid successfully created. Bid is:\n%s', log_text, json.dumps(bid_response.data, indent=4))
+        logger.info('%s lc bid successfully created. Bid is:\n%s', log_text,
+                    JSONRenderer().render(bid_response.data, 'application/json; indent=4'))
         return bid_response
 
 
@@ -77,7 +80,7 @@ class LcBidRequestUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
         super(LcBidRequestUpdateAPIView, self).__init__(**kwargs)
 
     def update(self, request, *args, **kwargs):
-        # django rest framework does not update auto date field. We store the 'created_at' date field from
+        # django rest framework does not update auto date field. We cache the 'created_at' date field from
         # client and if it has changed, we update it in method perform_update
         self.created_at = request.data.get('created_at')
         logger.info('Updating bid request with incoming data = \n%s', json.dumps(request.data, indent=4))
@@ -89,8 +92,12 @@ class LcBidRequestUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
                     form_m.goods_description)
             form_m.goods_description = request.data['goods_description']
             form_m.save()
+
         updated_bid_response = super(LcBidRequestUpdateAPIView, self).update(request, *args, **kwargs)
-        # logger.info('Bid successfully updated with result:\n%s' % json.dumps(updated_bid_response.data, indent=4))
+        logger.info(
+                'Bid successfully updated with result:\n%s' % JSONRenderer().render(
+                        updated_bid_response.data, 'application/json; indent=4')
+        )
         return updated_bid_response
 
     def perform_update(self, serializer):

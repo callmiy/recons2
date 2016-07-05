@@ -53,28 +53,35 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
   var uploadAllocationParams = $scope.$parent.treasuryAllocation.uploadAllocationParams,
     bidsFromServer
 
-  if ( underscore.isEmpty( uploadAllocationParams ) ) {
-    vm.showPasteForm = true
-    vm.isSaving = false
-    vm.showParsedPastedBid = false
-    vm.tableParams = null
-    vm.pastedBlotter = ''
-    bidsFromServer = []
+  init()
 
-  } else {
-    vm.showPasteForm = uploadAllocationParams.showPasteForm
-    vm.isSaving = uploadAllocationParams.isSaving
-    vm.showParsedPastedBid = uploadAllocationParams.showParsedPastedBid
-    vm.tableParams = uploadAllocationParams.tableParams
-    vm.pastedBlotter = uploadAllocationParams.pastedBlotter
-    bidsFromServer = uploadAllocationParams.bidsFromServer
+  function init() {
+    if ( underscore.isEmpty( uploadAllocationParams ) ) {
+      vm.showPasteForm = true
+      vm.isSaving = false
+      vm.showParsedPastedBid = false
+      vm.tableParams = null
+      vm.pastedBlotter = ''
+      bidsFromServer = []
+
+    } else {
+      vm.showPasteForm = uploadAllocationParams.showPasteForm
+      vm.isSaving = uploadAllocationParams.isSaving
+      vm.showParsedPastedBid = uploadAllocationParams.showParsedPastedBid
+      vm.tableParams = uploadAllocationParams.tableParams
+      vm.pastedBlotter = uploadAllocationParams.pastedBlotter
+      bidsFromServer = uploadAllocationParams.bidsFromServer
+    }
   }
 
   vm.onBlotterPasted = function onBlotterPasted() {
     // always reset bids from server
     bidsFromServer = []
 
-    if ( !vm.pastedBlotter ) return
+    if ( !vm.pastedBlotter ) {
+      vm.showParsedPastedBid = false
+      return
+    }
 
     vm.showParsedPastedBid = true
 
@@ -85,32 +92,53 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
     vm.tableParams = new NgTableParams( { sorting: { REF: 'desc' }, count: 1000000 }, { dataset: dataset, counts: [] } )
 
     if ( refs.length ) {
-      $q.all( [ getBidRequests( refs ), getMfRefFromLcRef( refs ) ] ).then( function (resolves) {
+      $q.all( [ getBidRequests( refs ), getMfRefFromLcRef( refs ) ] ).then( function (bidsMfRefMapping) {
 
-        bidsFromServer = resolves[ 0 ]
-        var mfLcRefMapping = resolves[ 1 ]
+        bidsFromServer = bidsMfRefMapping[ 0 ]
+        var mfLcRefMapping = bidsMfRefMapping[ 1 ]
         vm.tableParams.dataset = attachBidsToAllocation( dataset, collateBidRequests( bidsFromServer ), mfLcRefMapping )
       } )
     }
   }
 
-  vm.removeOriginalRequest = function removeOriginalRequest(allocationIndex, requestIndex) {
+  /**
+   * Allocations are mapped to existing bid requests (original requests). The user will determine if this mapping is
+   * valid. This is especially true for situations where more than one original requests is mapped to one allocation.
+   * In this regard, user will determine which singular request should be validly mapped to the allocation. This
+   * function will mark an original request marked to an allocation as invalid (unmap) for this allocation. User can
+   * also reinstate an already unmapped allocation
+   * @param {int|String} allocationIndex - the index of allocation in the collection of allocations
+   *   (vm.tableParams.data)
+   * @param {int|String} requestIndex - the index of the original request to be mapped or unmapped
+   */
+  vm.toggleMapOriginalRequest = function toggleMapOriginalRequest(allocationIndex, requestIndex) {
+    var obj, current
     for ( var i = 0; i < vm.tableParams.data.length; i++ ) {
-      var obj = vm.tableParams.data[ i ]
+      obj = vm.tableParams.data[ i ]
 
       if ( obj.index == allocationIndex ) { // jshint ignore:line
-        //TODO: make it possible to restore request after it has been deleted
-        obj.original_requests.splice( requestIndex, 1 )
-        obj.previous_allocations.splice( requestIndex, 1 )
-        obj.previous_outstandings.splice( requestIndex, 1 )
-        obj.current_outstandings.splice( requestIndex, 1 )
-        obj.bid_ids.splice( requestIndex, 1 )
-        break
+        current = obj.original_requests_deleted[ requestIndex ]
+
+        if ( current === null ) obj.original_requests_deleted[ requestIndex ] = requestIndex
+        else obj.original_requests_deleted[ requestIndex ] = null
+
+        return
       }
     }
   }
 
+  /**
+   * We only show the save button when there is no allocation that has more than one original request mapped to it.
+   * @param {[]} data - array of allocations (vm.tableParams.data)
+   * @returns {boolean}
+   */
   vm.showSaveBtn = function showSaveBtn(data) {
+    function countNulls(list) {
+      return list.filter( function (val) {
+        return val === null
+      } ).length
+    }
+
     if ( !data ) return false
 
     var obj
@@ -119,7 +147,10 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
       if ( data.hasOwnProperty( key ) ) {
         obj = data[ key ]
 
-        if ( underscore.has( obj, 'bid_ids' ) && obj.bid_ids.length > 1 ) return false
+        if ( underscore.has( obj, 'original_requests_deleted' ) ) {
+
+          if ( countNulls( obj.original_requests_deleted ) > 1 ) return false
+        }
       }
     }
 
@@ -127,16 +158,32 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
   }
 
   vm.saveAllocations = function saveAllocations(data) {
+
+    /**
+     *
+     * @param {null|[]} mappingList
+     * @param {null|[]} bidList
+     * @returns {null|int}
+     */
+    function getMappedBid(mappingList, bidList) {
+
+      if ( !(mappingList && bidList) ) return null
+
+      for ( var i = 0; i < mappingList.length; i++ ) {
+        if ( mappingList[ i ] === null ) return getByKey( bidsFromServer, 'id', bidList[ i ] )
+      }
+
+      return null
+    }
+
     var toBeSaved = [],
-      bidIds,
       associatedBid
 
     vm.isSaving = true
     spinnerService.show( 'treasuryAllocationSpinner' )
 
     underscore.each( data, function (obj) {
-      bidIds = obj.bid_ids
-      associatedBid = bidIds ? getByKey( bidsFromServer, 'id', bidIds[ 0 ] ).url : null
+      associatedBid = getMappedBid( obj.original_requests_deleted, obj.bid_ids )
 
       toBeSaved.push( {
         deal_number: obj.TRANSACTION_DEAL_SLIP,
@@ -152,7 +199,7 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
         naira_rate: obj.RATE,
         deal_date: toISODate( obj.DEAL_DATE ),
         settlement_date: toISODate( obj.SETTLEMENT_DATE ),
-        original_request: associatedBid,
+        original_request: associatedBid ? associatedBid.url : null
       } )
     } )
 
@@ -275,6 +322,7 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
         allocation.previous_allocations = collatedBid.previous_allocations
         allocation.previous_outstandings = collatedBid.previous_outstandings
         allocation.bid_ids = collatedBid.bid_ids
+        allocation.original_requests_deleted = collatedBid.original_requests_deleted
 
         collatedBid.previous_outstandings.forEach( function (prev) {
           //the current outstanding is previous outstanding less the current allocation sale. But we do sum below since
@@ -317,7 +365,8 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
           original_requests: [ amount ],
           previous_allocations: [ previousAllocations ],
           previous_outstandings: [ previousOutstandings ],
-          bid_ids: [ bid.id ]
+          bid_ids: [ bid.id ],
+          original_requests_deleted: [ null ]
         }
       }
       else {
@@ -326,6 +375,7 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
         current.previous_outstandings.push( previousOutstandings )
         current.previous_allocations.push( previousAllocations )
         current.bid_ids.push( bid.id )
+        current.original_requests_deleted.push( null )
         result[ mf ] = current
       }
     } )
