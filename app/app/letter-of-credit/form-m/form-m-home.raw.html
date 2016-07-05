@@ -7,8 +7,7 @@
          select="tab.select()"
          disable="tab.disabled"
          ng-attr-class="{$tab.className$}">
-      <div ng-if="tab.viewName" class="tab-view" ui-view="{$tab.viewName$}"></div>
-      <div style="margin-top: 5px;" ng-if="(formMHome.tabContent === 'lc-bid')" lc-bid></div>
+      <div class="tab-view" ui-view="{$tab.viewName$}"></div>
     </div>
   </div>
 </div>

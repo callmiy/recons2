@@ -9,17 +9,25 @@ var app = angular.module( 'lc-bid', [
   'kanmii-URI',
 ] )
 
-app.directive( 'lcBid', lcBidDirective )
+app.config( LcBidStateConfig )
 
-lcBidDirective.$inject = []
+LcBidStateConfig.$inject = [ '$stateProvider' ]
 
-function lcBidDirective() {
-  return {
-    restrict: 'A',
-    templateUrl: require( 'commons' ).buildUrl( 'letter-of-credit', 'form-m/add-form-m/lc-bid/lc-bid.html' ),
-    scope: true,
-    controller: 'LcBidDirectiveController as lcBid'
-  }
+function LcBidStateConfig($stateProvider) {
+  $stateProvider
+    .state( 'form_m.lc_bid', {
+      kanmiiTitle: 'Bid Requests',
+
+      params: { },
+
+      views: {
+        lcBid: {
+          templateUrl: require( 'commons' ).buildUrl( 'letter-of-credit', 'form-m/lc-bid/lc-bid.html' ),
+
+          controller: 'LcBidDirectiveController as lcBid'
+        }
+      }
+    } )
 }
 
 app.controller( 'LcBidDirectiveController', LcBidDirectiveController )
@@ -43,7 +51,8 @@ LcBidDirectiveController.$inject = [
 ]
 
 function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore, LcBidRequest, xhrErrorDisplay,
-                                  confirmationDialog, formMObject, resetForm2, moment, toISODate, ViewBidDetail, kanmiiUri, urls, $timeout) {
+                                  confirmationDialog, formMObject, resetForm2, moment, toISODate, ViewBidDetail,
+                                  kanmiiUri, urls, $timeout) {
   var vm = this
   vm.formM = formMObject
   var title = 'New Bid Request'

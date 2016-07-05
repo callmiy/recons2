@@ -6,7 +6,7 @@ require( './add-form-m/form-m-object.js' )
 require( './add-form-m/add-form-m.js' )
 require( './treasury-allocation/treasury-allocation.js' )
 require( './treasury-allocation/upload-allocation/upload-allocation.js' )
-require( './add-form-m/lc-bid/lc-bid.js' )
+require( './lc-bid/lc-bid.js' )
 require( './bids/bids.js' )
 require( './list-form-m/list-form-m.js' )
 require( './search-detailed-or-uploaded-form-m/search-detailed-or-uploaded-form-m.js' )
@@ -66,7 +66,6 @@ function FormMController($state, $scope, formMAppStore, $rootScope) {
     title: 'List Form M',
     viewName: 'listFormM',
     select: function () {
-      vm.tabContent = null
       $scope.updateAddFormMTitle()
       $state.go( 'form_m.list' )
     }
@@ -79,7 +78,6 @@ function FormMController($state, $scope, formMAppStore, $rootScope) {
     active: true,
     viewName: 'addFormM',
     select: function () {
-      vm.tabContent = null
       $state.go( 'form_m.add' )
     }
   }
@@ -89,7 +87,6 @@ function FormMController($state, $scope, formMAppStore, $rootScope) {
     active: false,
     viewName: 'treasuryAllocation',
     select: function () {
-      vm.tabContent = null
       $scope.updateAddFormMTitle()
       $state.go( 'form_m.treasury_allocation' )
     }
@@ -112,8 +109,10 @@ function FormMController($state, $scope, formMAppStore, $rootScope) {
     className: 'cash-backed-lc-bid-tab',
     title: bidTitle,
     active: false,
+    viewName: 'lcBid',
     select: function () {
-      vm.tabContent = 'lc-bid'
+      $scope.updateAddFormMTitle()
+      $state.go( 'form_m.lc_bid' )
     }
   }
 
