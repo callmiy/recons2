@@ -1,3 +1,21 @@
+<script type="text/ng-template" id="blotter-pasted-text-invalid.html">
+  <div class="alert" style="background-color:#fa39c3;color:white" role="alert">
+    <button ng-show="closeable" type="button" class="close" ng-click="close({$event: $event})">
+      <span aria-hidden="true">×</span>
+      <span class="sr-only">Close</span>
+    </button>
+
+    <div style="font-size: 16px" ng-transclude></div>
+
+    <ul>
+      <li ng-repeat="header in [ 'TRANSACTION_DEAL_SLIP', 'DEAL_DATE', 'SETTLEMENT_DATE', 'TRANSACTION_TYPE', 'RATE', 'CURRENCY', 'FCY_AMOUNT' ]">
+        {$header$}
+      </li>
+    </ul>
+  </div>
+</script>
+
+
 <div class="treasury-upload-allocation-directive-container">
 
   <uib-accordion>
@@ -7,6 +25,13 @@
            ng-class="{'glyphicon-chevron-down': uploadTreasuryAllocation.showPasteForm, 'glyphicon-chevron-right': !uploadTreasuryAllocation.showPasteForm}"></i>
         Copy and paste from blotter excel
       </uib-accordion-heading>
+
+      <uib-alert ng-if="uploadTreasuryAllocation.invalidPastedTextMsg"
+                 template-url="blotter-pasted-text-invalid.html"
+                 dismiss-on-timeout="20000"
+                 close="uploadTreasuryAllocation.closeBlotterPasteAlert()">
+        {$uploadTreasuryAllocation.invalidPastedTextMsg$}
+      </uib-alert>
 
       <form ng-show="uploadTreasuryAllocation.showPasteForm" class="form-horizontal" role="form"
             name="pasteBlotterForm">

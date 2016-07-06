@@ -15,6 +15,7 @@ class TreasuryAllocationSerializer(serializers.HyperlinkedModelSerializer):
             'product_type',
             'customer_name',
             'customer_name_no_ref',
+            'ref',
             'client_category',
             'source_of_fund',
             'fcy_amount',

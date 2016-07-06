@@ -51,35 +51,58 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
   var vm = this  // jshint -W040
 
   var uploadAllocationParams = $scope.$parent.treasuryAllocation.uploadAllocationParams,
+    requiredBlotterHeaders = [
+      'TRANSACTION_DEAL_SLIP',
+      'DEAL_DATE',
+      'SETTLEMENT_DATE',
+      'TRANSACTION_TYPE',
+      'RATE',
+      'CURRENCY',
+      'FCY_AMOUNT'
+    ],
+    initAttributes = {
+      showPasteForm: true,
+      isSaving: false,
+      showParsedPastedBid: false,
+      tableParams: null,
+      pastedBlotter: '',
+      invalidPastedTextMsg: ''
+    },
     bidsFromServer
 
   init()
 
   function init() {
     if ( underscore.isEmpty( uploadAllocationParams ) ) {
-      vm.showPasteForm = true
-      vm.isSaving = false
-      vm.showParsedPastedBid = false
-      vm.tableParams = null
-      vm.pastedBlotter = ''
+      underscore.each( initAttributes, function (val, attr) {
+        vm[ attr ] = val
+      } )
+
       bidsFromServer = []
 
     } else {
-      vm.showPasteForm = uploadAllocationParams.showPasteForm
-      vm.isSaving = uploadAllocationParams.isSaving
-      vm.showParsedPastedBid = uploadAllocationParams.showParsedPastedBid
-      vm.tableParams = uploadAllocationParams.tableParams
-      vm.pastedBlotter = uploadAllocationParams.pastedBlotter
+      underscore.each( initAttributes, function (val, attr) {
+        vm[ attr ] = uploadAllocationParams[ attr ]
+      } )
+
       bidsFromServer = uploadAllocationParams.bidsFromServer
     }
   }
 
-  vm.onBlotterPasted = function onBlotterPasted() {
-    // always reset bids from server
-    bidsFromServer = []
+  vm.closeBlotterPasteAlert = function closeBlotterPasteAlert() {
+    vm.invalidPastedTextMsg = null
+    vm.pastedBlotter = null
+  }
 
-    if ( !vm.pastedBlotter ) {
-      vm.showParsedPastedBid = false
+  vm.onBlotterPasted = function onBlotterPasted() {
+    // always reset bids from server and hide allocation table
+    bidsFromServer = []
+    vm.showParsedPastedBid = false
+
+    if ( !vm.pastedBlotter ) return
+
+    if ( !isValidPastedBlotterText( vm.pastedBlotter, requiredBlotterHeaders ) ) {
+      vm.invalidPastedTextMsg = 'Pasted text must have the following headers: '
       return
     }
 
@@ -439,25 +462,39 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
     return [ ref, val.replace( ref, '' ).trim() ]
   }
 
-  function getParams() {
-    return {
-      showPasteForm: vm.showPasteForm,
-      isSaving: vm.isSaving,
-      showParsedPastedBid: vm.showParsedPastedBid,
-      tableParams: vm.tableParams,
-      pastedBlotter: vm.pastedBlotter
+  /**
+   *
+   * @param {String} text
+   * @param {[]} requiredHeaders
+   * @returns {boolean}
+   */
+  function isValidPastedBlotterText(text, requiredHeaders) {
+    for ( var i = 0; i < requiredHeaders.length; i++ ) {
+      if ( text.indexOf( requiredHeaders[ i ] ) === -1 ) return false
     }
+
+    return true
+  }
+
+  function getParams() {
+    var obj = {}
+
+    underscore.each( initAttributes, function (val, attr) {
+      obj[ attr ] = vm[ attr ]
+    } )
+    return obj
   }
 
   function onParamsChanged() {
-    formMAppStore.treasuryAllocation.uploadAllocationParams = {
-      showPasteForm: vm.showPasteForm,
-      isSaving: vm.isSaving,
-      showParsedPastedBid: vm.showParsedPastedBid,
-      tableParams: vm.tableParams,
-      pastedBlotter: vm.pastedBlotter,
+    var obj = {
       bidsFromServer: bidsFromServer
     }
+
+    underscore.each( initAttributes, function (val, attr) {
+      obj[ attr ] = vm[ attr ]
+    } )
+
+    formMAppStore.treasuryAllocation.uploadAllocationParams = obj
   }
 
   $scope.$watch( getParams, onParamsChanged, true )
