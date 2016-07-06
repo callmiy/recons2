@@ -24,7 +24,7 @@ from .lc_cover import (
     FormMCoverRetrieveUpdateDestroyAPIView
 )
 from .lc_bid_request import LcBidRequestListCreateAPIView, LcBidRequestUpdateAPIView
-from .download_bids import DownloadBidsView
+from .download_bids import DownloadBidsView, DownloadBidsLcEstablished
 from .uploaded_form_m import (
     UploadedFormMListCreateAPIView,
     UploadedFormMUpdateAPIView,

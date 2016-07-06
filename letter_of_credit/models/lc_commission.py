@@ -47,3 +47,9 @@ class LcCommission(models.Model):
         return '{:,.2f}'.format(self.charge_amount)
 
     charge_amount_formatted.short_description = 'Charge Amount'
+
+    def lc_value(self):
+        return self.lc.lc_amt_org_ccy
+
+    def lc_value_formatted(self):
+        return '{:,.2f}'.format(self.lc_value())

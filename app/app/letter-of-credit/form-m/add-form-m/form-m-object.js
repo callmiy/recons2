@@ -289,7 +289,9 @@ function formMObject(LcBidRequest, LCIssueConcrete, FormMCover, confirmationDial
 
       if ( formM.bid.amount && formM.bid.goods_description ) {
         formMToSave.goods_description = self.goods_description = formM.bid.goods_description
-        formMToSave.bid = { amount: Number( formM.bid.amount ), maturity: formatDate( formM.bid.maturity ) }
+        formMToSave.bid = angular.copy( formM.bid )
+        formMToSave.bid.amount = Number( formM.bid.amount )
+        formMToSave.maturity = formatDate( formM.bid.maturity )
       }
 
       if ( formM.selectedIssues.length ) formMToSave.issues = formM.selectedIssues

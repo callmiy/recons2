@@ -150,3 +150,94 @@ class DownloadBidsView(View):
         resp = HttpResponse(save_virtual_workbook(wb), content_type='application/vnd.ms-excel')
         resp['Content-Disposition'] = 'attachment; filename="%s"' % file_name
         return resp
+
+
+class DownloadBidsLcEstablished(View):
+    def set_header_row(self, sheet):
+        font = Font(bold=True, name='Rockwell')
+        alignment = Alignment(wrap_text=True, horizontal='center', vertical='center')
+
+        header_col_1 = sheet.cell(row=1, column=1, value='S/N')
+        header_col_1.font = font
+        header_col_1.alignment = alignment
+
+        s = sheet.cell(row=1, column=2, value='APPLICANT')
+        s.font = font
+        s.alignment = alignment
+
+        s = sheet.cell(row=1, column=3, value='ESTB. DATE')
+        s.font = font
+        s.alignment = alignment
+
+        s = sheet.cell(row=1, column=4, value='LC NUMBER')
+        s.font = font
+        s.alignment = alignment
+
+        s = sheet.cell(row=1, column=5, value='MF NUMBER')
+        s.font = font
+        s.alignment = alignment
+
+        s = sheet.cell(row=1, column=6, value='CCY')
+        s.font = font
+        s.alignment = alignment
+
+        s = sheet.cell(row=1, column=7, value='LC AMOUNT')
+        s.font = font
+        s.alignment = alignment
+
+        s = sheet.cell(row=1, column=8, value='BID AMOUNT')
+        s.font = font
+        s.alignment = alignment
+
+        s = sheet.cell(row=1, column=9, value='ALLOCATIONS')
+        s.font = font
+        s.alignment = alignment
+
+        s = sheet.cell(row=1, column=10, value='OUTSTANDING BIDS')
+        s.font = font
+        s.alignment = alignment
+
+        s = sheet.cell(row=1, column=11, value='ADVISING BANK')
+        s.font = font
+        s.alignment = alignment
+
+        s = sheet.cell(row=1, column=12, value='COMMENT')
+        s.font = font
+        s.alignment = alignment
+
+    def get(self, request):
+        file_name = '%s.xlsx' % datetime.now().strftime('bids-lc-established-%Y-%m-%d-%H-%S-%f')
+        wb = Workbook()
+        sheet = wb.active
+        self.set_header_row(sheet, )
+        row = 1
+        row_index = 0
+
+        for bid in LcBidRequest.objects.filter(mf__lc__isnull=False):
+            remark = ''
+
+            if bid.deleted_at:
+                remark = 'bid deleted'
+            elif bid.mf.deleted_at:
+                remark = 'form M cancelled'
+
+            row_index += 1
+            row += 1
+            sheet.cell(row=row, column=1, value=row_index)
+            lc = bid.mf.lc
+            allocations = sum([allocation['amount_allocated'] for allocation in bid.allocations()])
+            sheet.cell(row=row, column=2, value=bid.applicant())
+            sheet.cell(row=row, column=3, value=lc.lc_number)
+            sheet.cell(row=row, column=4, value=lc.estb_date)
+            sheet.cell(row=row, column=5, value=bid.form_m_number())
+            sheet.cell(row=row, column=6, value=bid.currency().code)
+            sheet.cell(row=row, column=7, value=lc.lc_amt_org_ccy)
+            sheet.cell(row=row, column=8, value=bid.amount)
+            sheet.cell(row=row, column=9, value=allocations)
+            sheet.cell(row=row, column=10, value=(bid.amount - allocations))
+            sheet.cell(row=row, column=11, value=lc.advising_bank)
+            sheet.cell(row=row, column=12, value=remark)
+
+        resp = HttpResponse(save_virtual_workbook(wb), content_type='application/vnd.ms-excel')
+        resp['Content-Disposition'] = 'attachment; filename="%s"' % file_name
+        return resp

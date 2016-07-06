@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from letter_of_credit.models import LcBidRequest
 
 
@@ -22,6 +23,11 @@ class LcBidRequestSerializer(serializers.HyperlinkedModelSerializer):
             'form_m_number',
             'applicant',
             'goods_description',
+            'rate',
+            'bid_letter',
+            'credit_approval',
+            'docs_complete',
+            'comment',
             'downloaded',
             'maturity',
             'ct_id',
