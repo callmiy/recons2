@@ -17,8 +17,30 @@
   </form>
 
   <div class="message-area">
-    <label class="sr-only" for="swift-messages">Swift Messages</label>
-    <textarea style="display: none; height: 600px" id="swift-messages" class="form-control"></textarea>
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne">
+          <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true"
+               aria-controls="collapseOne">
+              SWIFT Text
+            </a>
+          </h4>
+        </div>
+
+        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            <label class="sr-only" for="swift-messages">Swift Messages</label>
+            <textarea style="display: none; height: 600px" id="swift-messages" class="form-control"></textarea>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <label class="sr-only" for="swift-messages-20">Swift Messages</label>
+    <textarea style="display: none; height: 200px; margin-top: 50px" id="swift-messages-20"
+              class="form-control"></textarea>
   </div>
 {% endblock %}
 {% block page_js %}
