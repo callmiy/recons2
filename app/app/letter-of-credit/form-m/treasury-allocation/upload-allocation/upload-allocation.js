@@ -50,8 +50,7 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
                                                      confirmationDialog, $scope, formMAppStore) {
   var vm = this  // jshint -W040
 
-  var uploadAllocationParams = $scope.$parent.treasuryAllocation.uploadAllocationParams,
-    requiredBlotterHeaders = [
+  var requiredBlotterHeaders = [
       'TRANSACTION_DEAL_SLIP',
       'DEAL_DATE',
       'SETTLEMENT_DATE',
@@ -70,9 +69,13 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
     },
     bidsFromServer
 
-  init()
+  init( $scope.$parent.treasuryAllocation.uploadAllocationParams )
 
-  function init() {
+  /**
+   *
+   * @param {{}} uploadAllocationParams
+   */
+  function init(uploadAllocationParams) {
     if ( underscore.isEmpty( uploadAllocationParams ) ) {
       underscore.each( initAttributes, function (val, attr) {
         vm[ attr ] = val
@@ -231,8 +234,11 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
         title: 'Allocations successfully saved',
         text: savedData.length + ' allocations uploaded',
         infoOnly: true
+
       } ).then( function () {
+        init( {} )
         $scope.$parent.treasuryAllocation.action = null
+
       } )
 
     }, function (xhr) {
