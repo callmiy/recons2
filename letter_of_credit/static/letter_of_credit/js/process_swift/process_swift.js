@@ -89,7 +89,7 @@ $( function () {
             str += '\t'
           } )
 
-          finishedTime = finishedTime.toString().replace( /:\d+\s*GMT.+/, '' )
+          finishedTime = finishedTime ? finishedTime.toString().replace( /:\d+\s*GMT.+/, '' ) : ''
           tabbedStr += type + '\t' + ourRef + '\t' + theirRef + '\t' + deliveryStatus + '\t' + finishedTime + '\t' +
             str + '\n'
         }
