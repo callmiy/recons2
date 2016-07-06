@@ -74,7 +74,7 @@ $( function () {
           '\nAuthorized by:\t  ' + auth + '\nAuthorization completed at:\t' + finishedTime +
           '\nDelivery status:\t' + deliveryStatus + '\n================================================\n\n\n\n'
 
-        if ( type === 'fin.200' || type === 'fin.202' ) {
+        if ( type === 'fin.200x' || type === 'fin.202x' ) {
           var msg = (type === 'fin.200') ? extractFields200( message ) : extractFields202( message )
 
           var keys = [
