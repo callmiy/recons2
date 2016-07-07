@@ -2,7 +2,6 @@
 
 /*jshint camelcase:false*/
 
-
 var app = angular.module( 'upload-treasury-allocation', [
   'rootApp',
   'lc-bid-request',
@@ -104,8 +103,12 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
 
     if ( !vm.pastedBlotter ) return
 
-    if ( !isValidPastedBlotterText( vm.pastedBlotter, requiredBlotterHeaders ) ) {
-      vm.invalidPastedTextMsg = 'Pasted text must have the following headers: '
+    var invalidHeaders = getInvalidPastedTextHeader( vm.pastedBlotter, requiredBlotterHeaders )
+
+    if ( invalidHeaders.length ) {
+      vm.invalidPastedTextMsg = 'Pasted text missing headers:\n' + invalidHeaders.map( function (header) {
+          return '  - ' + header
+        } ).join( '\n' )
       return
     }
 
@@ -193,7 +196,8 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
      */
     function getMappedBid(mappingList, bidList) {
 
-      if ( !(mappingList && bidList) ) return null
+      if ( !(mappingList && bidList
+        ) ) return null
 
       for ( var i = 0; i < mappingList.length; i++ ) {
         if ( mappingList[ i ] === null ) return getByKey( bidsFromServer, 'id', bidList[ i ] )
@@ -345,7 +349,8 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
         collatedBid = collatedBids[ ref ]
         allocatedAmount = allocation.FCY_AMOUNT
         // we will always make sales allocation a negative number
-        allocatedAmount = allocation.TRANSACTION_TYPE.toLowerCase() === 'sale' ? (-1 * allocatedAmount) : allocatedAmount
+        allocatedAmount = allocation.TRANSACTION_TYPE.toLowerCase() === 'sale' ? (-1 * allocatedAmount
+        ) : allocatedAmount
 
         allocation.original_requests = collatedBid.original_requests
         allocation.previous_allocations = collatedBid.previous_allocations
@@ -472,14 +477,17 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
    *
    * @param {String} text
    * @param {[]} requiredHeaders
-   * @returns {boolean}
+   * @returns {[]}
    */
-  function isValidPastedBlotterText(text, requiredHeaders) {
+  function getInvalidPastedTextHeader(text, requiredHeaders) {
+    var invalidHeaders = []
+
     for ( var i = 0; i < requiredHeaders.length; i++ ) {
-      if ( text.indexOf( requiredHeaders[ i ] ) === -1 ) return false
+      var header = requiredHeaders[ i ];
+      if ( text.indexOf( header ) === -1 ) invalidHeaders.push( header )
     }
 
-    return true
+    return invalidHeaders
   }
 
   function getParams() {

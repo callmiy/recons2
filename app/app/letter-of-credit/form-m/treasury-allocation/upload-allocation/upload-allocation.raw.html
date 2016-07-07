@@ -1,17 +1,11 @@
 <script type="text/ng-template" id="blotter-pasted-text-invalid.html">
-  <div class="alert" style="background-color:#fa39c3;color:white" role="alert">
+  <div class="alert blotter-pasted-text-invalid" role="alert">
     <button ng-show="closeable" type="button" class="close" ng-click="close({$event: $event})">
       <span aria-hidden="true">×</span>
       <span class="sr-only">Close</span>
     </button>
 
-    <div style="font-size: 16px" ng-transclude></div>
-
-    <ul>
-      <li ng-repeat="header in [ 'TRANSACTION_DEAL_SLIP', 'DEAL_DATE', 'SETTLEMENT_DATE', 'TRANSACTION_TYPE', 'RATE', 'CURRENCY', 'FCY_AMOUNT' ]">
-        {$header$}
-      </li>
-    </ul>
+    <pre ng-transclude></pre>
   </div>
 </script>
 
@@ -28,7 +22,7 @@
 
       <uib-alert ng-if="uploadTreasuryAllocation.invalidPastedTextMsg"
                  template-url="blotter-pasted-text-invalid.html"
-                 dismiss-on-timeout="20000"
+                 dismiss-on-timeout="25000"
                  close="uploadTreasuryAllocation.closeBlotterPasteAlert()">
         {$uploadTreasuryAllocation.invalidPastedTextMsg$}
       </uib-alert>
