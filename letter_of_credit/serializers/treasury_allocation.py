@@ -1,11 +1,8 @@
 from rest_framework import serializers
 from letter_of_credit.models import TreasuryAllocation
-from letter_of_credit.serializers import LcBidRequestSerializer
 
 
 class TreasuryAllocationSerializer(serializers.HyperlinkedModelSerializer):
-    original_request_obj = LcBidRequestSerializer(read_only=True)
-
     class Meta:
         model = TreasuryAllocation
         fields = (
@@ -27,6 +24,5 @@ class TreasuryAllocationSerializer(serializers.HyperlinkedModelSerializer):
             'created_at',
             'updated_at',
             'deleted_at',
-            'original_request',
-            'original_request_obj',
+            'consolidated_bids',
         )

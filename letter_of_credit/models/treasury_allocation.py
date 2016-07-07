@@ -1,6 +1,6 @@
 from django.db import models
 
-from letter_of_credit.models import LcBidRequest
+from letter_of_credit.models import ConsolidatedLcBidRequest
 
 
 class TreasuryAllocation(models.Model):
@@ -20,7 +20,11 @@ class TreasuryAllocation(models.Model):
     naira_rate = models.DecimalField('Naira rate', max_digits=9, decimal_places=4)
     deal_date = models.DateField('Deal Date')
     settlement_date = models.DateField('Settlement Date')
-    original_request = models.ForeignKey(LcBidRequest, verbose_name='Original Request', null=True, blank=True)
+    consolidated_bids = models.ManyToManyField(
+            ConsolidatedLcBidRequest,
+            verbose_name='Related Consolidated Bids',
+            related_name='consolidated_bid_requests'
+    )
 
     class Meta:
         db_table = 'treasury_allocation'
@@ -38,6 +42,3 @@ class TreasuryAllocation(models.Model):
         return '{}{:,.2f}'.format(sign, self.fcy_amount)
 
     fcy_amount_formatted.short_description = 'FCY Amount'
-
-    def original_request_obj(self):
-        return self.original_request
