@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from letter_of_credit.models import LcBidRequest
+from letter_of_credit.models import LcBidRequest, ConsolidatedLcBidRequest
 
 
 class LcBidRequestSerializer(serializers.HyperlinkedModelSerializer):
@@ -36,4 +36,28 @@ class LcBidRequestSerializer(serializers.HyperlinkedModelSerializer):
             'sum_allocations',
             'sum_utilizations',
             'unallocated',
+        )
+
+
+class ConsolidatedLcBidRequestSerializer(serializers.HyperlinkedModelSerializer):
+    status_label = serializers.ReadOnlyField(source='get_status_display')
+
+    class Meta:
+        model = ConsolidatedLcBidRequest
+        fields = (
+            'id',
+            'url',
+            'created_at',
+            'requested_at',
+            'deleted_at',
+            'amount',
+            'initial_allocated_amount',
+            'allocations',
+            'rate',
+            'maturity',
+            'goods_category',
+            'purpose',
+            'status_label',
+            'mf',
+            'bid_requests',
         )

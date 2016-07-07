@@ -26,7 +26,9 @@ from .views import (
     UploadLcCommissionView,
     DownloadBidsLcEstablished,
     TreasuryAllocationListCreateAPIView,
-    TreasuryAllocationRetrieveUpdateDestroyAPIView)
+    TreasuryAllocationRetrieveUpdateDestroyAPIView,
+    ConsolidatedLcBidRequestUpdateAPIView,
+    ConsolidatedLcBidRequestListCreateAPIView)
 
 urlpatterns = patterns(
         # <editor-fold description='home view and upload'>
@@ -144,6 +146,19 @@ urlpatterns += patterns(
 
         url(r'^lc-estb-bid-request/download/?$', login_required(DownloadBidsLcEstablished.as_view()),
             name='lc-estb-bid-download'),
+)
+
+# consolidated bid
+urlpatterns += patterns(
+        '',
+
+        url(r'^consolidated-lc-bid-request/?$',
+            login_required(ConsolidatedLcBidRequestListCreateAPIView.as_view()),
+            name='consolidatedlcbidrequest-list'),
+
+        url(r'^consolidated-lc-bid-request/(?P<pk>\d+)/?$',
+            login_required(ConsolidatedLcBidRequestUpdateAPIView.as_view()),
+            name='consolidatedlcbidrequest-detail'),
 )
 
 # treasury allocation

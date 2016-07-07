@@ -33,6 +33,9 @@ from .download_bids import DownloadBidsView, DownloadBidsLcEstablished
 
 from .treasury_allocation import TreasuryAllocationListCreateAPIView, TreasuryAllocationRetrieveUpdateDestroyAPIView
 
+from .consolidated_lc_bid_request import ConsolidatedLcBidRequestListCreateAPIView, \
+    ConsolidatedLcBidRequestUpdateAPIView
+
 from .uploaded_form_m import (
     UploadedFormMListCreateAPIView,
     UploadedFormMUpdateAPIView,
