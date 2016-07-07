@@ -97,9 +97,10 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
   }
 
   vm.onBlotterPasted = function onBlotterPasted() {
-    // always reset bids from server and hide allocation table
+    // always reset bids from server, invalid blotter text message, and hide allocation table
     bidsFromServer = []
     vm.showParsedPastedBid = false
+    vm.invalidPastedTextMsg = ''
 
     if ( !vm.pastedBlotter ) return
 
