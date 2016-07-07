@@ -1,5 +1,5 @@
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
+import json
+
 from django.db import models
 
 from adhocmodels.models import Currency
@@ -63,25 +63,65 @@ class LcBidRequest(models.Model):
 
 
 class ConsolidatedLcBidRequest(models.Model):
+    CASH_BACKED = 0
+    MATURED_OBLIGATION = 1
+    LIQUIDITY_FUNDING = 2
+    STATUSES = (
+        (CASH_BACKED, 'CASH BACKED'),
+        (MATURED_OBLIGATION, 'MATURED OBLIGATION'),
+        (LIQUIDITY_FUNDING, 'LIQUIDITY FUNDING'),
+    )
+
     mf = models.ForeignKey(FormM, verbose_name='Related Form M', related_name='consolidated_bids')
     created_at = models.DateField('Date Created', auto_now_add=True)
     requested_at = models.DateField('Date Request To Treasury', blank=True, null=True)
     deleted_at = models.DateField('Date Deleted', blank=True, null=True)
     amount = models.DecimalField('Amount', max_digits=20, decimal_places=2)
-    initial_outst_amount = models.DecimalField('Initial Outstanding Amount', max_digits=20, decimal_places=2, default=0)
-    currency = models.ForeignKey(Currency, verbose_name='Currency')
-    rate = models.DecimalField('Rate', max_digits=15, decimal_places=8)
+
+    # new balance = amount - initial_allocated_amount - (new allocation from treasury allocation object represented by
+    #  the 'allocations' field below)
+    initial_allocated_amount = models.DecimalField(
+            'Initial Allocated Amount', max_digits=20, decimal_places=2, default=0)
+
+    # Ideally, a treasury allocation object should be tied to a consolidated bid object. But in reality, business may
+    #  take the decision to tie a treasury allocation object to 2 or more consolidated bid object. This field will
+    # then be a mapping from the treasury allocation object database ID to the proportion of the amount of the
+    # treasury allocation object that will be tied to this consolidated bid object. This field will look like so:
+    # {
+    #   id: amount, id: amount
+    # }
+    allocations = models.TextField('Allocation mapping from ID to amount for this bid', null=True, blank=True)
+
+    rate = models.CharField('Rate', max_length=200)
     maturity = models.DateField('Maturity Date', blank=True, null=True)
     goods_category = models.CharField('Category', max_length=200, blank=True, null=True)
     purpose = models.CharField('Purpose', max_length=300, blank=True, null=True)  # if different from goods description
-    status = models.CharField('Status', max_length=200)
+    status = models.SmallIntegerField('Status', choices=STATUSES)
     account_numb = models.CharField('Account Number', max_length=10, null=True, blank=True)
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    object_instance = GenericForeignKey('content_type', 'object_id')
+    bid_requests = models.ManyToManyField(
+            LcBidRequest, verbose_name='Related Bid Requests', related_name='consolidated_bids')
 
     class Meta:
         db_table = 'consolidated_lc_bid_request'
         app_label = 'letter_of_credit'
         verbose_name = 'Consolidated Lc Bid Request'
         verbose_name_plural = 'Consolidated Lc Bid Request'
+        unique_together = ('mf', 'status',)
+
+    def __unicode__(self):
+        return self.mf.__unicode__()
+
+    def form_m_number(self):
+        return self.mf.number
+
+    def customer_name(self):
+        return self.mf.applicant_name()
+
+    def currency(self):
+        return self.mf.currency.code
+
+    def goods_description(self):
+        return self.purpose or self.mf.goods_description
+
+    def sum_bid_requests(self):
+        return sum([x.amount for x in self.bid_requests.all()])
