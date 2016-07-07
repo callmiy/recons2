@@ -305,47 +305,61 @@
     </table>
 
     <div style="text-align: center" ng-if="lcBid.selectedBidsLen">
-      <a class="glyphicon glyphicon-download-alt control-icon"
-         data-toggle="tooltip"
-         data-placement="bottom" title="Download bids"
-         ng-href="{$lcBid.downloadUrl(lcBid.selectedBids)$}"
-         ng-click="lcBid.refreshBids()">
-      </a>
+      <form class="form-horizontal selected-bids-actions-form">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label class="control-label col-sm-3" for="selected-bids-actions">Action</label>
 
-      <span ng-if="lcBid.selectedBidsLen === 1">
-        <span class="glyphicon glyphicon-edit control-icon"
-              data-toggle="tooltip"
-              data-placement="bottom" title="Edit bid"
-              ng-click="lcBid.onEditBid(lcBid.selectedBids, bidForm)"
-              ng-if="lcBid.selectedBidNotDeleted(lcBid.selectedBids)">
-      </span>
+              <div class="col-sm-9">
+                <div class="input-group">
+                  <select class="form-control" name="" id="selected-bids-actions" ng-model="lcBid.action">
+                    <option value="">-----Select Action-----</option>
 
-        <span class="glyphicon glyphicon-plus-sign control-icon"
-              data-toggle="tooltip"
-              data-placement="bottom" title="Reinstate bid"
-              ng-click="lcBid.trashOrReinstateBid(lcBid.selectedBids, 'reinstate')"
-              ng-if="!lcBid.selectedBidNotDeleted(lcBid.selectedBids)">
-        </span>
+                    <option value="download">
+                      Download
+                    </option>
 
-        <span class="glyphicon glyphicon-link  control-icon"
-              data-toggle="tooltip"
-              data-placement="bottom" title="Add allocation"
-              ng-click="lcBid.allocateFx(lcBid.selectedBids, bidForm)"
-              ng-if="lcBid.selectedBidNotDeleted(lcBid.selectedBids)">
-        </span>
+                    <option ng-if="lcBid.selectedBidsLen === 1 && lcBid.selectedBidNotDeleted(lcBid.selectedBids)"
+                            value="edit">
+                      Edit
+                    </option>
 
-        <span class="glyphicon glyphicon-info-sign  control-icon"
-              data-toggle="tooltip"
-              data-placement="bottom" title="View Bid"
-              ng-click="lcBid.viewBidDetail(lcBid.selectedBids)"></span>
+                    <option ng-if="lcBid.selectedBidsLen === 1 && !lcBid.selectedBidNotDeleted(lcBid.selectedBids)"
+                            value="reinstate">
+                      Reinstate
+                    </option>
 
-        <span class="glyphicon glyphicon-trash  control-icon"
-              data-toggle="tooltip"
-              data-placement="bottom" title="Trash bid"
-              ng-click="lcBid.trashOrReinstateBid(lcBid.selectedBids, 'delete')"
-              ng-if="lcBid.selectedBidNotDeleted(lcBid.selectedBids)">
-        </span>
-      </span>
+                    <option ng-if="lcBid.selectedBidsLen === 1 && lcBid.selectedBidNotDeleted(lcBid.selectedBids)"
+                            value="add-allocation">
+                      Add allocation
+                    </option>
+
+                    <option ng-if="lcBid.selectedBidsLen === 1" value="view-bids">
+                      View Bid
+                    </option>
+
+                    <option ng-if="lcBid.selectedBidsLen === 1 && lcBid.selectedBidNotDeleted(lcBid.selectedBids)"
+                            value="delete">
+                      Delete
+                    </option>
+
+                  </select>
+
+                  <span style="cursor: pointer" class="input-group-addon form-m-action-execute"
+                        ng-if="lcBid.action"
+                        ng-click="lcBid.doAction( lcBid.action, lcBid.selectedBids, bidForm )">
+                    <span>Go</span>
+                  </span>
+
+                  <span class="input-group-addon" ng-if="!lcBid.action"></span>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 </div>

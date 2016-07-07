@@ -18,7 +18,7 @@ function LcBidStateConfig($stateProvider) {
     .state( 'form_m.lc_bid', {
       kanmiiTitle: 'Bid Requests',
 
-      params: { },
+      params: {},
 
       views: {
         lcBid: {
@@ -48,11 +48,12 @@ LcBidDirectiveController.$inject = [
   'kanmiiUri',
   'urls',
   '$timeout',
+  '$window'
 ]
 
 function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore, LcBidRequest, xhrErrorDisplay,
                                   confirmationDialog, formMObject, resetForm2, moment, toISODate, ViewBidDetail,
-                                  kanmiiUri, urls, $timeout) {
+                                  kanmiiUri, urls, $timeout, $window) {
   var vm = this
   vm.formM = formMObject
   var title = 'New Bid Request'
@@ -114,7 +115,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     var text = ''
     bid.mf = formMObject.url
 
-    LcBidRequest.save( bid ).$promise.then( function (createdBid) {
+    LcBidRequest.save( bid ).$promise.then( function () {
       confirmationDialog.showDialog( { title: title, text: 'Bid created successfully: ' + text, infoOnly: true } )
       init()
       formMObject.setBids( bidsNewlySetCb )
@@ -177,7 +178,8 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
 
   vm.selectedBidNotDeleted = function selectedBidNotDeleted(selectedBids) {
     var bids = getSelectedBids( selectedBids )
-    return (bids.length === 1) && !bids[ 0 ].deleted_at
+    return (bids.length === 1
+           ) && !bids[ 0 ].deleted_at
   }
 
   vm.trashOrReinstateBid = function trashOrReinstateBid(selectedBids, action) {
@@ -189,9 +191,9 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     init()
     var bid = bids[ 0 ]
     var text = '\n' +
-      '\nApplicant  : ' + bid.applicant +
-      '\nForm M     : ' + bid.form_m_number +
-      '\nBid Amount : ' + bid.currency + ' ' + $filter( 'number' )( bid.amount, 2 )
+               '\nApplicant  : ' + bid.applicant +
+               '\nForm M     : ' + bid.form_m_number +
+               '\nBid Amount : ' + bid.currency + ' ' + $filter( 'number' )( bid.amount, 2 )
 
     var mf = '"' + bid.form_m_number + '"'
 
@@ -229,56 +231,59 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
 
     if ( !bidIsNotModified.amount ) {
       text += '\nBid Amount' +
-        '\n  before edit:    ' + ccy + $filter( 'number' )( vm.bidToEdit.amount, 2 ) +
-        '\n  after edit:     ' + ccy + $filter( 'number' )( vm.bid.amount, 2 )
+              '\n  before edit:    ' + ccy + $filter( 'number' )( vm.bidToEdit.amount, 2 ) +
+              '\n  after edit:     ' + ccy + $filter( 'number' )( vm.bid.amount, 2 )
     }
 
     if ( !bidIsNotModified.goods_description ) {
       text += '\nGoods description' +
-        '\n  before edit:    ' + vm.bidToEdit.goods_description +
-        '\n  after edit:     ' + vm.bid.goods_description
+              '\n  before edit:    ' + vm.bidToEdit.goods_description +
+              '\n  after edit:     ' + vm.bid.goods_description
     }
 
     if ( !bidIsNotModified.created_at ) {
       text += '\nDate created' +
-        '\n  before edit:    ' + toHumanDate( vm.bidToEdit.created_at ) +
-        '\n  after edit:     ' + toHumanDate( vm.bid.created_at )
+              '\n  before edit:    ' + toHumanDate( vm.bidToEdit.created_at ) +
+              '\n  after edit:     ' + toHumanDate( vm.bid.created_at )
     }
 
     if ( !bidIsNotModified.requested_at ) {
       text += '\nDate requested' +
-        '\n  before edit:    ' + toHumanDate( vm.bidToEdit.requested_at ) +
-        '\n  after edit:     ' + toHumanDate( vm.bid.requested_at )
+              '\n  before edit:    ' + toHumanDate( vm.bidToEdit.requested_at ) +
+              '\n  after edit:     ' + toHumanDate( vm.bid.requested_at )
     }
 
     if ( !bidIsNotModified.downloaded ) {
       text += '\nDownloaded' +
-        '\n  before edit:    ' + vm.bidToEdit.downloaded +
-        '\n  after edit:     ' + vm.bid.downloaded
+              '\n  before edit:    ' + vm.bidToEdit.downloaded +
+              '\n  after edit:     ' + vm.bid.downloaded
     }
 
     if ( !bidIsNotModified.rate ) {
       text += '\nRate' +
-        '\n  before edit:    ' + vm.bidToEdit.rate +
-        '\n  after edit:     ' + vm.bid.rate
+              '\n  before edit:    ' + vm.bidToEdit.rate +
+              '\n  after edit:     ' + vm.bid.rate
     }
 
     if ( !bidIsNotModified.bid_letter ) {
       text += '\nBid Letter' +
-        '\n  before edit:    ' + (vm.bidToEdit.bid_letter || false) +
-        '\n  after edit:     ' + vm.bid.bid_letter
+              '\n  before edit:    ' + (vm.bidToEdit.bid_letter || false
+              ) +
+              '\n  after edit:     ' + vm.bid.bid_letter
     }
 
     if ( !bidIsNotModified.credit_approval ) {
       text += '\nCredit Approval' +
-        '\n  before edit:    ' + (vm.bidToEdit.credit_approval || false) +
-        '\n  after edit:     ' + vm.bid.credit_approval
+              '\n  before edit:    ' + (vm.bidToEdit.credit_approval || false
+              ) +
+              '\n  after edit:     ' + vm.bid.credit_approval
     }
 
     if ( !bidIsNotModified.docs_complete ) {
       text += '\nDocumentation Complete' +
-        '\n  before edit:    ' + (vm.bidToEdit.docs_complete || false) +
-        '\n  after edit:     ' + vm.bid.docs_complete
+              '\n  before edit:    ' + (vm.bidToEdit.docs_complete || false
+              ) +
+              '\n  after edit:     ' + vm.bid.docs_complete
     }
 
     return text
@@ -288,7 +293,6 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     var title = 'Edit bid "' + vm.bidToEdit.form_m_number + '"'
     var bidIsNotModified = bidNotModified()
     var text = createEditBidMessage( bidIsNotModified )
-
 
     confirmationDialog.showDialog( {
       title: title,
@@ -356,11 +360,11 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
     }
 
     var text = '' +
-      '\nDeal number     : ' + result.deal_number +
-      '\nDeal date       : ' + $filter( 'date' )( result.allocated_on, 'dd-MMM-yyyy' ) +
-      '\nAmount allocated: ' + getAmount( result.amount_allocated ) +
-      '\nAmount utilized : ' + getAmount( result.amount_utilized ) +
-      '\nDate utilized   : ' + $filter( 'date' )( result.utilized_on, 'dd-MMM-yyyy' )
+               '\nDeal number     : ' + result.deal_number +
+               '\nDeal date       : ' + $filter( 'date' )( result.allocated_on, 'dd-MMM-yyyy' ) +
+               '\nAmount allocated: ' + getAmount( result.amount_allocated ) +
+               '\nAmount utilized : ' + getAmount( result.amount_utilized ) +
+               '\nDate utilized   : ' + $filter( 'date' )( result.utilized_on, 'dd-MMM-yyyy' )
 
     confirmationDialog.showDialog( { title: 'Allocation success', text: text, infoOnly: true } )
     init()
@@ -388,6 +392,49 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
       init()
       formMObject.setBids()
     }, 3000 )
+  }
+
+  vm.doAction = function doAction(action, selectedBids, bidForm) {
+    switch ( action ) {
+
+      case 'download':
+      {
+        $window.location.href = vm.downloadUrl( selectedBids )
+        vm.refreshBids()
+        break
+      }
+
+      case 'edit':
+      {
+        vm.onEditBid( selectedBids, bidForm )
+        break
+      }
+
+      case 'reinstate':
+      {
+        vm.trashOrReinstateBid( selectedBids, 'reinstate' )
+        break
+      }
+
+      case 'add-allocation':
+      {
+        vm.allocateFx( selectedBids, bidForm )
+        break
+      }
+
+      case 'view-bids':
+      {
+        vm.viewBidDetail( selectedBids )
+        break
+      }
+
+      case 'delete':
+      {
+        vm.trashOrReinstateBid( selectedBids, 'delete' )
+        break
+      }
+
+    }
   }
 
   function bidNotModified() {
