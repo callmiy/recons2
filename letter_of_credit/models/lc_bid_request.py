@@ -2,7 +2,6 @@ import json
 
 from django.db import models
 
-from adhocmodels.models import Currency
 from core_recons.models import FxDeal
 from core_recons.utilities import get_content_type_id, get_content_type_url
 from .form_m import FormM
@@ -83,15 +82,6 @@ class ConsolidatedLcBidRequest(models.Model):
     initial_allocated_amount = models.DecimalField(
             'Initial Allocated Amount', max_digits=20, decimal_places=2, default=0)
 
-    # Ideally, a treasury allocation object should be tied to a consolidated bid object. But in reality, business may
-    #  take the decision to tie a treasury allocation object to 2 or more consolidated bid object. This field will
-    # then be a mapping from the treasury allocation object database ID to the proportion of the amount of the
-    # treasury allocation object that will be tied to this consolidated bid object. This field will look like so:
-    # {
-    #   id: amount, id: amount
-    # }
-    allocations = models.TextField('Allocation mapping from ID to amount for this bid', null=True, blank=True)
-
     rate = models.CharField('Rate', max_length=200)
     maturity = models.DateField('Maturity Date', blank=True, null=True)
     goods_category = models.CharField('Category', max_length=200, blank=True, null=True)
@@ -111,6 +101,23 @@ class ConsolidatedLcBidRequest(models.Model):
     def __unicode__(self):
         return self.mf.__unicode__()
 
+    def get_allocations_dict(self):
+        return json.loads(self.allocations)
+
+    def sum_allocations(self):
+        current_allocations = 0
+        pk = str(self.pk)
+
+        for allocation in self.treasury_allocations.all():
+            allocation_dict = allocation.distribution_to_consolidated_bids_to_dict()
+            if pk in allocation_dict:
+                current_allocations += float(allocation_dict[pk])
+
+        return float(self.initial_allocated_amount) + current_allocations
+
+    def outstanding_amount(self):
+        return self.sum_bid_requests() - self.sum_allocations()
+
     def form_m_number(self):
         return self.mf.number
 
@@ -124,4 +131,4 @@ class ConsolidatedLcBidRequest(models.Model):
         return self.purpose or self.mf.goods_description
 
     def sum_bid_requests(self):
-        return sum([x.amount for x in self.bid_requests.all()])
+        return float(sum([x.amount for x in self.bid_requests.all()]))

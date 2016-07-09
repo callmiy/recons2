@@ -1,8 +1,24 @@
+import json
+
 from rest_framework import serializers
-from letter_of_credit.models import TreasuryAllocation
+from letter_of_credit.models import TreasuryAllocation, ConsolidatedLcBidRequest
+
+
+class DistributionToConsolidatedFieldSerializer(serializers.Field):
+    def to_internal_value(self, data):
+        return json.dumps(data)
+
+    def to_representation(self, value):
+        return json.loads(value)
 
 
 class TreasuryAllocationSerializer(serializers.HyperlinkedModelSerializer):
+    consolidated_bids = serializers.HyperlinkedRelatedField(
+            required=False, many=True, view_name='consolidatedlcbidrequest-detail',
+            queryset=ConsolidatedLcBidRequest.objects.all())
+
+    distribution_to_consolidated_bids = DistributionToConsolidatedFieldSerializer(required=False)
+
     class Meta:
         model = TreasuryAllocation
         fields = (
@@ -25,4 +41,5 @@ class TreasuryAllocationSerializer(serializers.HyperlinkedModelSerializer):
             'updated_at',
             'deleted_at',
             'consolidated_bids',
+            'distribution_to_consolidated_bids',
         )

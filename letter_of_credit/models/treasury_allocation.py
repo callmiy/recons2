@@ -1,3 +1,5 @@
+import json
+
 from django.db import models
 
 from letter_of_credit.models import ConsolidatedLcBidRequest
@@ -23,8 +25,17 @@ class TreasuryAllocation(models.Model):
     consolidated_bids = models.ManyToManyField(
             ConsolidatedLcBidRequest,
             verbose_name='Related Consolidated Bids',
-            related_name='consolidated_bid_requests'
+            related_name='treasury_allocations'
     )
+    # Ideally, a treasury allocation object should be tied to a consolidated bid object. But in reality, business may
+    #  take the decision to tie a treasury allocation object to 2 or more consolidated bid object. This field will
+    # then be a mapping from the consolidated bid object database ID to the proportion of the amount of the
+    # treasury allocation object that will be tied to this consolidated bid object. This field will look like so:
+    # {
+    #   id (of a consolidated bid): amount (that will be utilized by that consolidated bid), id: amount
+    # }
+    distribution_to_consolidated_bids = models.TextField(
+            'Mapping from ID to amount distributed to a consolidated bid object', default='{}')
 
     class Meta:
         db_table = 'treasury_allocation'
@@ -42,3 +53,6 @@ class TreasuryAllocation(models.Model):
         return '{}{:,.2f}'.format(sign, self.fcy_amount)
 
     fcy_amount_formatted.short_description = 'FCY Amount'
+
+    def distribution_to_consolidated_bids_to_dict(self):
+        return json.loads(self.distribution_to_consolidated_bids)

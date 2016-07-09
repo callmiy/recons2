@@ -199,6 +199,7 @@ function toISODate(moment) {
 require( './commons/toggle-dim-element' )
 require( './customer/customer.js' )
 require( './lc-bid-request/lc-bid-request.js' )
+require( './consolidated-lc-bid-request/consolidated-lc-bid-request.js' )
 require( './form-m/form-m.js' )
 require( './lc/lc.js' )
 require( './treasury-allocation/treasury-allocation.js' )

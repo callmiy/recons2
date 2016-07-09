@@ -47,12 +47,12 @@ class ConsolidatedLcBidRequestSerializer(serializers.HyperlinkedModelSerializer)
         fields = (
             'id',
             'url',
+            'form_m_number',
             'created_at',
             'requested_at',
             'deleted_at',
             'amount',
             'initial_allocated_amount',
-            'allocations',
             'rate',
             'maturity',
             'goods_category',
@@ -60,4 +60,8 @@ class ConsolidatedLcBidRequestSerializer(serializers.HyperlinkedModelSerializer)
             'status_label',
             'mf',
             'bid_requests',
+            'sum_bid_requests',
+            'sum_allocations',
+            'outstanding_amount',
+            'treasury_allocations',
         )

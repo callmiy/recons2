@@ -4,7 +4,7 @@
 
 var app = angular.module( 'upload-treasury-allocation', [
   'rootApp',
-  'lc-bid-request',
+  'consolidated-lc-bid-request',
   'lc-service',
   'treasury-allocation-service',
   'ngTable',
@@ -30,7 +30,7 @@ app.controller( 'uploadTreasuryAllocationDirectiveController', uploadTreasuryAll
 
 uploadTreasuryAllocationDirectiveController.$inject = [
   'baby',
-  'LcBidRequest',
+  'ConsolidatedLcBidRequest',
   'underscore',
   '$q',
   'LetterOfCredit',
@@ -44,9 +44,9 @@ uploadTreasuryAllocationDirectiveController.$inject = [
   'formMAppStore'
 ]
 
-function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, underscore, $q, LetterOfCredit, NgTableParams,
-                                                     TreasuryAllocation, toISODate, moment, spinnerService,
-                                                     confirmationDialog, $scope, formMAppStore) {
+function uploadTreasuryAllocationDirectiveController(baby, ConsolidatedLcBidRequest, underscore, $q, LetterOfCredit,
+                                                     NgTableParams, TreasuryAllocation, toISODate, moment,
+                                                     spinnerService, confirmationDialog, $scope, formMAppStore) {
   var vm = this  // jshint -W040
 
   var requiredBlotterHeaders = [
@@ -126,6 +126,7 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
 
         bidsFromServer = bidsMfRefMapping[ 0 ]
         var mfLcRefMapping = bidsMfRefMapping[ 1 ]
+
         vm.tableParams.dataset = attachBidsToAllocation( dataset, collateBidRequests( bidsFromServer ), mfLcRefMapping )
       } )
     }
@@ -192,31 +193,50 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
     /**
      *
      * @param {null|[]} mappingList
-     * @param {null|[]} bidList
-     * @returns {null|int}
+     * @param {null|[]} bidIds
+     * @returns {[]}
      */
-    function getMappedBid(mappingList, bidList) {
+    function getMappedBids(mappingList, bidIds) {
 
-      if ( !(mappingList && bidList
-        ) ) return null
-
-      for ( var i = 0; i < mappingList.length; i++ ) {
-        if ( mappingList[ i ] === null ) return getByKey( bidsFromServer, 'id', bidList[ i ] )
+      if ( !(mappingList && bidIds
+        ) ) {
+        return []
       }
 
-      return null
+      var bids = [],
+        bid
+
+      for ( var i = 0; i < mappingList.length; i++ ) {
+        if ( mappingList[ i ] === null ) {
+          bid = getByKey( bidsFromServer, 'id', bidIds[ i ] )
+          if ( bid ) bids.push( bid )
+        }
+      }
+
+      return bids
     }
 
-    var toBeSaved = [],
-      associatedBid
+    var toBeSavedList = [],
+      associatedBids,
+      mappedBids,
+      fcyAmount,
+      amountMapped,
+      toBeSaved
 
     vm.isSaving = true
     spinnerService.show( 'treasuryAllocationSpinner' )
 
     underscore.each( data, function (obj) {
-      associatedBid = getMappedBid( obj.original_requests_deleted, obj.bid_ids )
+      mappedBids = getMappedBids( obj.original_requests_deleted, obj.bid_ids )
 
-      toBeSaved.push( {
+      associatedBids = mappedBids.map( function (bid) {
+        return bid.url
+      } )
+
+      fcyAmount = obj.FCY_AMOUNT
+      amountMapped = null
+
+      toBeSaved = {
         deal_number: obj.TRANSACTION_DEAL_SLIP,
         transaction_type: obj.TRANSACTION_TYPE,
         product_type: obj.PRODUCT_TYPE,
@@ -226,15 +246,26 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
         client_category: obj.CLIENT_CATEGORY,
         source_of_fund: obj.SOURCE_OF_FUND,
         currency: obj.CURRENCY,
-        fcy_amount: obj.FCY_AMOUNT,
+        fcy_amount: fcyAmount,
         naira_rate: obj.RATE,
         deal_date: toISODate( obj.DEAL_DATE ),
         settlement_date: toISODate( obj.SETTLEMENT_DATE ),
-        original_request: associatedBid ? associatedBid.url : null
-      } )
+        consolidated_bids: associatedBids
+      }
+
+      //:TODO where one treasury allocation is mapped to multiple consolidated bid
+      //:TODO Where one consolidated bid has several treasury allocations mapped to it
+      if ( mappedBids.length ) {
+        var bid = mappedBids[ 0 ]
+        amountMapped = {}
+        amountMapped[ bid.id ] = fcyAmount
+        toBeSaved.distribution_to_consolidated_bids = amountMapped
+      }
+
+      toBeSavedList.push( toBeSaved )
     } )
 
-    TreasuryAllocation.saveMany( toBeSaved ).$promise.then( function (savedData) {
+    TreasuryAllocation.saveMany( toBeSavedList ).$promise.then( function (savedData) {
       confirmationDialog.showDialog( {
         title: 'Allocations successfully saved',
         text: savedData.length + ' allocations uploaded',
@@ -391,9 +422,9 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
 
     bids.forEach( function (bid) {
       mf = bid.form_m_number
-      amount = Number( bid.amount )
-      previousAllocations = bid.sum_allocations
-      previousOutstandings = bid.unallocated
+      amount = Number( bid.sum_bid_requests )
+      previousAllocations = Number( bid.sum_allocations )
+      previousOutstandings = Number( bid.outstanding_amount )
 
       if ( !underscore.has( result, mf ) ) {
         result[ mf ] = {
@@ -425,8 +456,8 @@ function uploadTreasuryAllocationDirectiveController(baby, LcBidRequest, undersc
   function getBidRequests(refs) {
     var deferred = $q.defer()
 
-    LcBidRequest.get( { q: refs.join( ',' ), num_rows: 5000 } ).$promise.then( function (fetchedBids) {
-      deferred.resolve( fetchedBids.count && fetchedBids.results || null )
+    ConsolidatedLcBidRequest.get( { q: refs.join( ',' ), num_rows: 5000 } ).$promise.then( function (fetchedBids) {
+      deferred.resolve( fetchedBids.count && fetchedBids.results || [] )
 
     }, function (xhr) {
       deferred.reject( xhr )
