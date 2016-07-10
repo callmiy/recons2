@@ -64,8 +64,7 @@
             <label class="control-label col-sm-3" for="bid-rate">Rate</label>
 
             <div class="col-sm-9">
-              <input type="text" class="form-control" id="bid-rate" name="bidRate" ng-model="lcBid.bid.rate"
-                     to-upper ng-required="lcBid.showBidForm"/>
+              <input type="text" class="form-control" id="bid-rate" name="bidRate" ng-model="lcBid.bid.rate" to-upper/>
 
               <div ng-messages="bidForm.bidRate.$error" role="alert">
                 <div ng-if="lcBid.isValid('bidRate')">

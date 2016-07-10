@@ -1,10 +1,9 @@
-import json
-
 from django.core.urlresolvers import reverse
 from django.db import models
 
 from core_recons.models import FxDeal
 from core_recons.utilities import get_content_type_id, get_content_type_url
+from letter_of_credit.letter_of_credit_commons import BidRequestStatus
 from .form_m import FormM
 
 
@@ -21,6 +20,7 @@ class LcBidRequest(models.Model):
     comment = models.TextField('Comment', null=True, blank=True)
     downloaded = models.BooleanField('Downloaded', default=False)
     maturity = models.DateField('Maturity Date', blank=True, null=True)
+    status = models.SmallIntegerField('Status', choices=BidRequestStatus.STATUSES, default=BidRequestStatus.CASH_BACKED)
 
     class Meta:
         db_table = 'lc_bid_request'
@@ -63,85 +63,3 @@ class LcBidRequest(models.Model):
 
     def url(self):
         return reverse('lcbidrequest-detail', kwargs={'pk': self.pk})
-
-
-class ConsolidatedLcBidRequest(models.Model):
-    CASH_BACKED = 0
-    MATURED_OBLIGATION = 1
-    LIQUIDITY_FUNDING = 2
-    STATUSES = (
-        (CASH_BACKED, 'CASH BACKED'),
-        (MATURED_OBLIGATION, 'MATURED OBLIGATION'),
-        (LIQUIDITY_FUNDING, 'LIQUIDITY FUNDING'),
-    )
-
-    mf = models.ForeignKey(FormM, verbose_name='Related Form M', related_name='consolidated_bids')
-    created_at = models.DateField('Date Created', auto_now_add=True)
-    requested_at = models.DateField('Date Request To Treasury', blank=True, null=True)
-    deleted_at = models.DateField('Date Deleted', blank=True, null=True)
-    amount = models.DecimalField('Amount', max_digits=20, decimal_places=2)
-
-    # new balance = amount - initial_allocated_amount - (new allocation from treasury allocation object represented by
-    #  the 'allocations' field below)
-    initial_allocated_amount = models.DecimalField(
-            'Initial Allocated Amount', max_digits=20, decimal_places=2, default=0)
-
-    rate = models.CharField('Rate', max_length=200)
-    maturity = models.DateField('Maturity Date', blank=True, null=True)
-    goods_category = models.CharField('Category', max_length=200, blank=True, null=True)
-    purpose = models.CharField('Purpose', max_length=300, blank=True, null=True)  # if different from goods description
-    status = models.SmallIntegerField('Status', choices=STATUSES)
-    account_numb = models.CharField('Account Number', max_length=10, null=True, blank=True)
-
-    class Meta:
-        db_table = 'consolidated_lc_bid_request'
-        app_label = 'letter_of_credit'
-        verbose_name = 'Consolidated Lc Bid Request'
-        verbose_name_plural = 'Consolidated Lc Bid Request'
-        unique_together = ('mf', 'status',)
-
-    def __unicode__(self):
-        return self.mf.__unicode__()
-
-    def get_allocations_dict(self):
-        return json.loads(self.allocations)
-
-    def sum_allocations(self):
-        current_allocations = 0
-        pk = str(self.pk)
-
-        for allocation in self.treasury_allocations.all():
-            allocation_dict = allocation.distribution_to_consolidated_bids_to_dict()
-            if pk in allocation_dict:
-                current_allocations += float(allocation_dict[pk])
-
-        return float(self.initial_allocated_amount) + current_allocations
-
-    def outstanding_amount(self):
-        return self.sum_bid_requests() - self.sum_allocations()
-
-    def form_m_number(self):
-        return self.mf.number
-
-    def customer_name(self):
-        return self.mf.applicant_name()
-
-    def currency(self):
-        return self.mf.currency.code
-
-    def goods_description(self):
-        return self.purpose or self.mf.goods_description
-
-    def sum_bid_requests(self):
-        return float(sum([x.amount for x in self.bid_requests()]))
-
-    def bid_requests(self):
-        if self.mf.deleted_at:
-            return []
-        return self.mf.bids.filter(deleted_at__isnull=True)
-
-    def bid_request_urls(self):
-        return [x.url() for x in self.bid_requests()]
-
-    def diff_amount_requests(self):
-        return float(self.amount) - self.sum_bid_requests()

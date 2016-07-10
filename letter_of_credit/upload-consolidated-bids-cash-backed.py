@@ -5,12 +5,14 @@ import django
 from collections import namedtuple
 from string import lowercase
 
+from letter_of_credit.letter_of_credit_commons import BidRequestStatus
+
 sys.path.insert(0, './..')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'recons.settings')
 
 django.setup()
 
-from letter_of_credit.models.lc_bid_request import ConsolidatedLcBidRequest
+from letter_of_credit.models.consolidated_lc_bid_request import ConsolidatedLcBidRequest
 from letter_of_credit.models import FormM, LcBidRequest
 
 cols = namedtuple('cols', list(lowercase))
@@ -28,7 +30,7 @@ for line in open('./../../cash-backed.txt').readlines():
         'amount': line[col.j].strip().replace(',', ''),
         'initial_allocated_amount': line[col.l].strip().replace(',', ''),
         'goods_category': line[col.s].strip(),
-        'status': ConsolidatedLcBidRequest.CASH_BACKED
+        'status': BidRequestStatus.CASH_BACKED
     }
 
     print ConsolidatedLcBidRequest.objects.create(**obj)

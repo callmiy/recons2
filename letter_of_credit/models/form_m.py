@@ -13,6 +13,7 @@ class FormMStatus(models.Model):
     description = models.CharField('Description', max_length=100)
 
     class Meta:
+        app_label = 'letter_of_credit'
         db_table = 'form_m_status'
         verbose_name = 'Form M Status'
         verbose_name_plural = 'Form M Status'
