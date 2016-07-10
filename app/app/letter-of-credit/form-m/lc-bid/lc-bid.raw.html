@@ -335,6 +335,11 @@
                   <select class="form-control" name="" id="selected-bids-actions" ng-model="lcBid.action">
                     <option value="">-----Select Action-----</option>
 
+                    <option ng-if="lcBid.selectedBidsLen === 1 && lcBid.selectedBidNotDeleted(lcBid.selectedBids)"
+                            value="delete">
+                      Delete Temporarily
+                    </option>
+
                     <option value="download">
                       Download
                     </option>
@@ -358,9 +363,8 @@
                       View Bid
                     </option>
 
-                    <option ng-if="lcBid.selectedBidsLen === 1 && lcBid.selectedBidNotDeleted(lcBid.selectedBids)"
-                            value="delete">
-                      Delete
+                    <option ng-if="lcBid.selectedBidsLen === 1" value="delete-permanent">
+                      Delete Permanently
                     </option>
 
                   </select>

@@ -182,7 +182,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
            ) && !bids[ 0 ].deleted_at
   }
 
-  vm.trashOrReinstateBid = function trashOrReinstateBid(selectedBids, action) {
+  function trashOrReinstateBid(selectedBids, action) {
     if ( vm.formM.deleted_at ) return
 
     var bids = getSelectedBids( selectedBids )
@@ -430,10 +430,55 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
 
       case 'delete':
       {
-        vm.trashOrReinstateBid( selectedBids, 'delete' )
+        trashOrReinstateBid( selectedBids, 'delete' )
         break
       }
 
+      case 'delete-permanent':
+      {
+        deleteBids( selectedBids )
+        break
+      }
+
+    }
+  }
+
+  function deleteBids(selectedBids) {
+    var bids = getSelectedBids( selectedBids )
+    if ( bids.length !== 1 ) return
+
+    init()
+    var bid = bids[ 0 ]
+    var text = '\n' +
+               '\nApplicant  : ' + bid.applicant +
+               '\nForm M     : ' + bid.form_m_number +
+               '\nBid Amount : ' + bid.currency + ' ' + $filter( 'number' )( bid.amount, 2 )
+
+    var mf = '"' + bid.form_m_number + '"'
+
+    confirmationDialog.showDialog( {
+      text: 'Sure you want to permanently delete bid.\nThis action is not reversible.\n' + text,
+      title: 'PERMANENTLY DELETE bid ' + mf
+
+    } ).then( function (answer) {
+      if ( answer ) {
+
+        LcBidRequest
+          .delete( { id: bid.id } )
+          .$promise.then( deleteBidSuccess, function deleteBidFailure(xhr) {
+          xhrErrorDisplay( xhr )
+        } )
+      }
+    } )
+
+    function deleteBidSuccess() {
+      confirmationDialog.showDialog( {
+        text: 'Bid permanently deleted:' + text,
+        title: 'Bid ' + mf + 'permanently deleted',
+        infoOnly: true
+      } )
+      formMObject.setBids()
+      vm.selectedBids = {}
     }
   }
 
