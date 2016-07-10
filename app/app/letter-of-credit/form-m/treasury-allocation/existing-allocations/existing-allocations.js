@@ -7,7 +7,8 @@ var app = angular.module( 'existing-allocations', [
   'consolidated-lc-bid-request',
   'lc-service',
   'treasury-allocation-service',
-  'ngTable'
+  'ngTable',
+  'consolidated-lc-bid-request'
 ] )
 
 app.directive( 'existingAllocations', existingAllocationsDirective )
@@ -30,10 +31,12 @@ ExistingAllocationsDirectiveController.$inject = [
   'underscore',
   'toISODate',
   'TreasuryAllocation',
-  'NgTableParams'
+  'NgTableParams',
+  'ConsolidatedLcBidRequest'
 ]
 
-function ExistingAllocationsDirectiveController(underscore, toISODate, TreasuryAllocation, NgTableParams) {
+function ExistingAllocationsDirectiveController(underscore, toISODate, TreasuryAllocation, NgTableParams,
+                                                ConsolidatedLcBidRequest) {
   var vm = this  // jshint -W040
   vm.isAllocationSearchOpen = true
 
@@ -68,7 +71,80 @@ function ExistingAllocationsDirectiveController(underscore, toISODate, TreasuryA
       if ( data.length ) {
         vm.tableParams = new NgTableParams( {}, { dataset: data } )
         vm.showSearchResult = true
+
+        getAttachedBids( data )
       }
+    } )
+  }
+
+  /**
+   *
+   * @param {[]} allocations
+   * @return {{}}
+   */
+  function mapBidIdsToAllocation(allocations) {
+    var bidIdAllocationMapping = {},
+      idRegexp = new RegExp( "/(\\d+)/?$" ),
+      bidIds = [],
+      bidId,
+      bids,
+      allocationId,
+      allocationsArray
+
+    allocations.forEach( function (allocation) {
+      bids = allocation.consolidated_bids
+
+      if ( !bids.length ) return
+
+      allocationId = allocation.id
+
+      bids.forEach( function (url) {
+        bidId = idRegexp.exec( url )[ 1 ]
+        bidIds.push( bidId )
+
+        if ( !underscore.has( bidIdAllocationMapping, bidId ) ) bidIdAllocationMapping[ bidId ] = [ allocationId ]
+
+        else {
+          allocationsArray = bidIdAllocationMapping[ bidId ]
+          bidIdAllocationMapping[ bidId ] = allocationsArray.concat( [ allocationId ] )
+        }
+      } )
+
+    } )
+
+    return {
+      mapping: bidIdAllocationMapping, bidIds: bidIds
+    }
+  }
+
+  /**
+   *
+   * @param {[]} allocations
+   * @param {[]} bids
+   * @param {{}} mapping
+   * @return {[]}
+   */
+  function mapAllocationsToBids(allocations, bids, mapping) {
+    throw new Error( 'for every allocation that has associated bids, attach those bids to the allocation' )
+  }
+
+  /**
+   *
+   * @param {[]} allocations
+   */
+  function getAttachedBids(allocations) {
+    var mappingIds = mapBidIdsToAllocation( allocations ),
+      mapping = mappingIds.mapping,
+      bidIds = mappingIds.bidIds
+
+    ConsolidatedLcBidRequest
+      .getPaginated( { pk: bidIds.join( ',' ), num_rows: 1000 } )
+      .$promise.then( function (bids) {
+
+      mapAllocationsToBids( allocations, bids, mapping )
+
+    }, function (xhr) {
+      console.log( xhr )
     } )
   }
 }

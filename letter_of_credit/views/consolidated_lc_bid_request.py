@@ -19,6 +19,7 @@ class ConsolidatedLcBidRequestPagination(pagination.PageNumberPagination):
 
 class ConsolidatedLcBidRequestFilter(django_filters.FilterSet):
     q = django_filters.MethodFilter()
+    pk = django_filters.MethodFilter()
     mf = django_filters.CharFilter(lookup_type='icontains', name='mf__number')
     applicant = django_filters.CharFilter(name='mf__applicant__id')
     amount = django_filters.CharFilter(name='amount')
@@ -26,7 +27,7 @@ class ConsolidatedLcBidRequestFilter(django_filters.FilterSet):
 
     class Meta:
         model = ConsolidatedLcBidRequest
-        fields = ('mf', 'applicant', 'amount', 'lc_number', 'q',)
+        fields = ('mf', 'applicant', 'amount', 'lc_number', 'q', 'pk',)
 
     def filter_q(self, qs, param):
         refs_mf = []
@@ -40,6 +41,12 @@ class ConsolidatedLcBidRequestFilter(django_filters.FilterSet):
                 refs_lc.append(ref)
 
         return qs.filter(Q(mf__number__in=refs_mf) | Q(mf__lc__lc_number__in=refs_lc))
+
+    def filter_pk(self, qs, param):
+        if param:
+            return qs.filter(pk__in=param.split(','))
+
+        return qs
 
 
 class ConsolidatedLcBidRequestListCreateAPIView(generics.ListCreateAPIView):
