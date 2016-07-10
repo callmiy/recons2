@@ -18,6 +18,7 @@ class CoreAppsView(View):
             'lcBidRequestAPIUrl': reverse('lcbidrequest-list'),
             'consolidatedLcBidRequestAPIUrl': reverse('consolidatedlcbidrequest-list'),
             'lcBidRequestDownloadUrl': reverse('lcbidrequest-download'),
+            'consolidatedLcBidRequestDownloadUrl': reverse('consolidated-lc-bid-request-download'),
             'lcIssueAPIUrl': reverse('lcissue-list'),
             'lcIssueConcreteAPIUrl': reverse('lcissueconcrete-list'),
             'formMAPIUrl': reverse('formm-list'),

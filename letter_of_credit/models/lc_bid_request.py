@@ -1,5 +1,6 @@
 import json
 
+from django.core.urlresolvers import reverse
 from django.db import models
 
 from core_recons.models import FxDeal
@@ -60,6 +61,9 @@ class LcBidRequest(models.Model):
     def unallocated(self):
         return self.amount - self.sum_allocations()
 
+    def url(self):
+        return reverse('lcbidrequest-detail', kwargs={'pk': self.pk})
+
 
 class ConsolidatedLcBidRequest(models.Model):
     CASH_BACKED = 0
@@ -88,8 +92,6 @@ class ConsolidatedLcBidRequest(models.Model):
     purpose = models.CharField('Purpose', max_length=300, blank=True, null=True)  # if different from goods description
     status = models.SmallIntegerField('Status', choices=STATUSES)
     account_numb = models.CharField('Account Number', max_length=10, null=True, blank=True)
-    bid_requests = models.ManyToManyField(
-            LcBidRequest, verbose_name='Related Bid Requests', related_name='consolidated_bids')
 
     class Meta:
         db_table = 'consolidated_lc_bid_request'
@@ -131,4 +133,15 @@ class ConsolidatedLcBidRequest(models.Model):
         return self.purpose or self.mf.goods_description
 
     def sum_bid_requests(self):
-        return float(sum([x.amount for x in self.bid_requests.all()]))
+        return float(sum([x.amount for x in self.bid_requests()]))
+
+    def bid_requests(self):
+        if self.mf.deleted_at:
+            return []
+        return self.mf.bids.filter(deleted_at__isnull=True)
+
+    def bid_request_urls(self):
+        return [x.url() for x in self.bid_requests()]
+
+    def diff_amount_requests(self):
+        return float(self.amount) - self.sum_bid_requests()

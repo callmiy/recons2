@@ -11,6 +11,7 @@
               <select class="form-control" name="" id="treasury-allocation-actions"
                       ng-model="treasuryAllocation.action">
                 <option value="">-----Select Action-----</option>
+                <option value="download-bids">Download Bids</option>
                 <option value="upload-allocations">Upload allocations</option>
                 <option value="get-allocations">Get existing allocations</option>
               </select>
@@ -22,4 +23,5 @@
   </div>
 
   <div ng-if="treasuryAllocation.action === 'upload-allocations'" upload-treasury-allocation></div>
+  <div ng-if="treasuryAllocation.action === 'download-bids'" allocation-download-bids></div>
 </div>

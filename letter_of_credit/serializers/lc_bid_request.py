@@ -59,7 +59,7 @@ class ConsolidatedLcBidRequestSerializer(serializers.HyperlinkedModelSerializer)
             'purpose',
             'status_label',
             'mf',
-            'bid_requests',
+            'bid_request_urls',
             'sum_bid_requests',
             'sum_allocations',
             'outstanding_amount',

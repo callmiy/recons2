@@ -13,21 +13,6 @@ django.setup()
 from letter_of_credit.models.lc_bid_request import ConsolidatedLcBidRequest
 from letter_of_credit.models import FormM, LcBidRequest
 
-
-def get_bid_requests_str(number):
-    bids = LcBidRequest.objects.filter(mf__number=number)
-
-    if not bids.exists():
-        return None
-
-    bids_obj = {}
-
-    for bid in bids:
-        bids_obj[str(bid.id)] = float(bid.amount)
-
-    return json.dumps(bids_obj)
-
-
 cols = namedtuple('cols', list(lowercase))
 col = cols(*range(0, len(lowercase)))
 
@@ -43,10 +28,7 @@ for line in open('./../../cash-backed.txt').readlines():
         'amount': line[col.j].strip().replace(',', ''),
         'initial_allocated_amount': line[col.l].strip().replace(',', ''),
         'goods_category': line[col.s].strip(),
-        # 'bid_requests': get_bid_requests_str(mf_number),
         'status': ConsolidatedLcBidRequest.CASH_BACKED
     }
 
-    consol = ConsolidatedLcBidRequest.objects.create(**obj)
-    consol.bid_requests.add(*list(LcBidRequest.objects.filter(mf__number=mf_number)))
-    print consol
+    print ConsolidatedLcBidRequest.objects.create(**obj)

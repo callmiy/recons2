@@ -28,7 +28,8 @@ from .views import (
     TreasuryAllocationListCreateAPIView,
     TreasuryAllocationRetrieveUpdateDestroyAPIView,
     ConsolidatedLcBidRequestUpdateAPIView,
-    ConsolidatedLcBidRequestListCreateAPIView)
+    ConsolidatedLcBidRequestListCreateAPIView,
+    DownloadConsolidatedBidsView)
 
 urlpatterns = patterns(
         # <editor-fold description='home view and upload'>
@@ -159,6 +160,9 @@ urlpatterns += patterns(
         url(r'^consolidated-lc-bid-request/(?P<pk>\d+)/?$',
             login_required(ConsolidatedLcBidRequestUpdateAPIView.as_view()),
             name='consolidatedlcbidrequest-detail'),
+
+        url(r'^consolidated-lc-bid-request/download/?$', login_required(DownloadConsolidatedBidsView.as_view()),
+            name='consolidated-lc-bid-request-download'),
 )
 
 # treasury allocation

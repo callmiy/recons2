@@ -1,5 +1,10 @@
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
+from collections import namedtuple
+from string import lowercase
+
+Cols = namedtuple('Cols', list(lowercase))
+col = Cols(*range(1, len(lowercase) + 1))
 
 digits_char = [str(x) for x in range(10)]
 
