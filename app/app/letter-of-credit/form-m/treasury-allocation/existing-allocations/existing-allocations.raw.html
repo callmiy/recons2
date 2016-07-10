@@ -73,51 +73,56 @@
     </uib-accordion>
   </div>
 
-  <div class="search-allocations-result treasury-allocations-table-display">
+  <div class="search-allocations-result treasury-allocations-table-display"
+       ng-if="existingAllocations.showSearchResult">
+
     <table ng-table="existingAllocations.tableParams"
            class="table table-bordered table-condensed table-responsive table-striped">
 
       <tbody>
-        <tr ng-repeat="allocationObj in $data track by allocationObj.index"
+        <tr ng-repeat="allocationObj in $data track by allocationObj.id"
             ng-class="{'pasted-bid-row-matched': allocationObj.original_requests}"
         >
 
           <td data-title="'S/N'">{$$index + 1$}</td>
 
-          <td title="'DEAL NO'" filter="{TRANSACTION_DEAL_SLIP: 'text'}">
-            {$::allocationObj.TRANSACTION_DEAL_SLIP$}
+          <td title="'DEAL NO'" filter="{deal_number: 'text'}">
+            {$::allocationObj.deal_number$}
           </td>
 
-          <td data-title="'SOURCE'" sortable="'SOURCE_OF_FUND'">{$::allocationObj.SOURCE_OF_FUND$}</td>
+          <td data-title="'SOURCE'" sortable="'source_of_fund'">{$::allocationObj.source_of_fund$}</td>
 
-          <td data-title="'DEAL DATE'" sortable="'DEAL_DATE'">
-            {$::allocationObj.DEAL_DATE | date:'dd-MMM-yyyy'$}
+          <td data-title="'DEAL DATE'" sortable="'deal_date'">
+            {$::allocationObj.deal_date | date:'dd-MMM-yyyy'$}
           </td>
 
-          <td data-title="'SETTLEMENT DATE'" sortable="'SETTLEMENT_DATE'">
-            {$::allocationObj.SETTLEMENT_DATE | date:'dd-MMM-yyyy'$}
+          <td data-title="'SETTLEMENT DATE'" sortable="'settlement_date'">
+            {$::allocationObj.settlement_date | date:'dd-MMM-yyyy'$}
           </td>
 
-          <td data-title="'TYPE'" sortable="'TRANSACTION_TYPE'">{$::allocationObj.TRANSACTION_TYPE$}</td>
+          <td data-title="'TYPE'" sortable="'transaction_type'">{$::allocationObj.transaction_type$}</td>
 
-          <td data-title="'CATEGORY'" sortable="'CLIENT_CATEGORY'" filter="{CLIENT_CATEGORY:'text'}">
-            {$ allocationObj.CLIENT_CATEGORY$}
+          <td data-title="'CATEGORY'" sortable="'client_category'" filter="{client_category:'text'}">
+            {$ allocationObj.client_category$}
           </td>
 
-          <td data-title="'RATE'" sortable="'RATE'">{$::allocationObj.RATE $}</td>
-
-          <td data-title="'CCY'" sortable="'CURRENCY'" filter="{CURRENCY:'text'}">{$::allocationObj.CURRENCY $}</td>
-
-          <td data-title="'CUSTOMER NAME'" sortable="'NAME_NO_REF'" filter="{NAME_NO_REF:'text'}">
-            {$allocationObj.NAME_NO_REF $}
+          <td class="td-number" data-title="'RATE'" sortable="'naira_rate'">
+            {$::allocationObj.naira_rate $}
           </td>
 
-          <td data-title="'REFERENCE'" sortable="'REF'" filter="{REF :'text'}">
-            {$allocationObj.REF $}
+          <td data-title="'CCY'" sortable="'currency'" filter="{currency:'text'}">{$::allocationObj.currency $}</td>
+
+          <td data-title="'CUSTOMER NAME'" sortable="'customer_name_no_ref'" filter="{customer_name_no_ref:'text'}">
+            {$allocationObj.customer_name_no_ref $}
           </td>
 
-          <td data-title="'CURRENT ALLOCATION'" sortable="'FCY_AMOUNT'" filter="{FCY_AMOUNT: 'number'}">
-            {$::allocationObj.FCY_AMOUNT |number:2$}
+          <td data-title="'REFERENCE'" sortable="'ref'" filter="{ref :'text'}">
+            {$allocationObj.ref $}
+          </td>
+
+          <td class="td-number" data-title="'CURRENT ALLOCATION'" sortable="'fcy_amount'"
+              filter="{fcy_amount: 'number'}">
+            {$::allocationObj.fcy_amount |number:2$}
           </td>
 
           <td style="min-width: 135px;" data-title="'ORIGINAL REQUEST'" filter="{original_requests :'number'}">

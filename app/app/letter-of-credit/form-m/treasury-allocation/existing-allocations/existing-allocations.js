@@ -6,7 +6,8 @@ var app = angular.module( 'existing-allocations', [
   'rootApp',
   'consolidated-lc-bid-request',
   'lc-service',
-  'treasury-allocation-service'
+  'treasury-allocation-service',
+  'ngTable'
 ] )
 
 app.directive( 'existingAllocations', existingAllocationsDirective )
@@ -27,10 +28,12 @@ app.controller( 'ExistingAllocationsDirectiveController', ExistingAllocationsDir
 
 ExistingAllocationsDirectiveController.$inject = [
   'underscore',
-  'toISODate'
+  'toISODate',
+  'TreasuryAllocation',
+  'NgTableParams'
 ]
 
-function ExistingAllocationsDirectiveController(underscore, toISODate) {
+function ExistingAllocationsDirectiveController(underscore, toISODate, TreasuryAllocation, NgTableParams) {
   var vm = this  // jshint -W040
   vm.isAllocationSearchOpen = true
 
@@ -45,11 +48,27 @@ function ExistingAllocationsDirectiveController(underscore, toISODate) {
   }
 
   vm.doSearch = function doSearch(searchObj) {
+    vm.showSearchResult = false
+
     if ( typeof searchObj === 'undefined' ) {
       vm.search = null
       return
     }
-    console.log( 'search = ', searchObj )
-    if ( underscore.isEmpty( searchObj ) ) return
+
+    var searchParams = {}
+
+    if ( underscore.isObject( searchObj ) ) {
+      if ( searchObj.startDate ) searchParams.deal_start_date = toISODate( searchObj.startDate )
+      if ( searchObj.endDate ) searchParams.deal_end_date = toISODate( searchObj.endDate )
+      if ( searchObj.ref ) searchParams.ref = searchObj.ref.trim()
+      if ( searchObj.dealNo ) searchParams.deal_number = searchObj.dealNo.trim()
+    }
+
+    TreasuryAllocation.query( searchParams ).$promise.then( function (data) {
+      if ( data.length ) {
+        vm.tableParams = new NgTableParams( {}, { dataset: data } )
+        vm.showSearchResult = true
+      }
+    } )
   }
 }

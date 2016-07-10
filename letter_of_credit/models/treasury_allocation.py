@@ -25,7 +25,8 @@ class TreasuryAllocation(models.Model):
     consolidated_bids = models.ManyToManyField(
             ConsolidatedLcBidRequest,
             verbose_name='Related Consolidated Bids',
-            related_name='treasury_allocations'
+            related_name='treasury_allocations',
+            blank=True,
     )
     # Ideally, a treasury allocation object should be tied to a consolidated bid object. But in reality, business may
     #  take the decision to tie a treasury allocation object to 2 or more consolidated bid object. This field will

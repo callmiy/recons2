@@ -13,20 +13,43 @@ logger = logging.getLogger('recons_logger')
 
 
 class TreasuryAllocationFilter(django_filters.FilterSet):
-    # ct = django_filters.CharFilter(name='content_type__pk')
     pk = django_filters.CharFilter(name='object_id')
     not_deleted = django_filters.MethodFilter()
+    deal_start_date = django_filters.MethodFilter()
+    deal_end_date = django_filters.MethodFilter()
+    settlement_start_date = django_filters.MethodFilter()
+    settlement_end_date = django_filters.MethodFilter()
+    ref = django_filters.CharFilter(lookup_type='icontains', name='ref')
+    deal_number = django_filters.CharFilter(lookup_type='icontains', name='deal_number')
 
     class Meta:
         model = TreasuryAllocation
-        fields = ('pk',)
+        fields = (
+            'pk', 'deal_start_date', 'deal_end_date', 'settlement_start_date', 'settlement_end_date', 'ref',
+            'deal_number',
+        )
 
-    def filter_not_deleted(self, qs, param):
-        if param == 'true':
-            return qs.filter(deleted_at__isnull=True)
+    def filter_deal_start_date(self, qs, param):
+        if param:
+            return qs.filter(deal_date__gte=param)
 
-        if param == 'false':
-            return qs.filter(deleted_at__isnull=False)
+        return qs
+
+    def filter_deal_end_date(self, qs, param):
+        if param:
+            return qs.filter(deal_date__lte=param)
+
+        return qs
+
+    def filter_settlement_start_date(self, qs, param):
+        if param:
+            return qs.filter(settlement_date__gte=param)
+
+        return qs
+
+    def filter_settlement_end_date(self, qs, param):
+        if param:
+            return qs.filter(settlement_date__lte=param)
 
         return qs
 
