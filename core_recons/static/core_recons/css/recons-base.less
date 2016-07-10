@@ -53,7 +53,7 @@ body {
   margin: 10px 15px;
 }
 
-.hide{
+.hide {
   display: none;
 }
 
@@ -251,6 +251,29 @@ form.align-vertical {
   text-align: right;
 }
 
-.td-center{
+.td-center {
   text-align: center;
+}
+
+//angular bootstrap accordion reset
+uib-accordion {
+  .panel-body {
+    padding: 8px 2px 2px;
+  }
+
+  .panel-heading {
+    padding: 5px;
+  }
+
+  .panel-title > a.accordion-toggle {
+    font-size: 12px;
+    text-decoration: none;
+    outline: none;
+  }
+}
+
+//angular ng table directive
+.ng-table th.filter .input-filter {
+  height: 18px;
+  min-height: 18px;
 }

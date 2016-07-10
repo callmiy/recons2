@@ -1,0 +1,102 @@
+@import (once) "./../../../../../../bower_components/bootstrap/less/variables";
+@import (once) "./../../../../../../bower_components/bootstrap/less/mixins/vendor-prefixes";
+@import (once) "./../../../../../../bower_components/bootstrap/less/mixins/forms";
+
+.existing-allocations-directive-container {
+  input[type=text],
+  input[type=email],
+  input[type=url],
+  input[type=password],
+  textarea {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-right-color: #eee;
+    border-bottom-color: #eee;
+    padding: 2px;
+
+    &:focus {
+      .form-control-focus()
+    }
+  }
+
+  label {
+    display: block;
+    color: #431e1e;
+    font-size: 0.9em;
+    text-align: left;
+    padding: 0;
+  }
+
+  .the-input-group {
+    display: flex;
+
+    & > input {
+      order: 0;
+    }
+
+    & > .the-input-group-add-on {
+      order: 1;
+      padding: 1px 12px;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1;
+      color: #555;
+      text-align: center;
+    }
+  }
+
+  .kanmii-input-group {
+    & + .kanmii-input-group {
+      margin-top: 15px;
+    }
+
+    display: flex;
+
+    & > div {
+      width: 100%;
+
+      & + div {
+        margin-left: 10px;
+      }
+    }
+  }
+
+  @media all and (min-width: 700px) {
+    .kanmii-input-group {
+
+      & + .kanmii-input-group {
+        margin-top: 10px;
+      }
+
+      & > .group {
+        display: flex;
+
+        & > label {
+          width: 20%;
+          padding-top: 5px;
+        }
+
+        & > .the-input-group, label + input {
+          width: 80%;
+        }
+      }
+    }
+
+    .search-allocation-inputs {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .start-end-dates, .deal-no-ref {
+      width: 100%;
+    }
+  }
+
+  @media all and (min-width: 850px) {
+    .search-allocation-container {
+      max-width: 550px;
+    }
+  }
+}

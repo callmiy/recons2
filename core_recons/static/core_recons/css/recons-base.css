@@ -175,3 +175,18 @@ form.align-vertical .submit-row {
 .td-center {
   text-align: center;
 }
+uib-accordion .panel-body {
+  padding: 8px 2px 2px;
+}
+uib-accordion .panel-heading {
+  padding: 5px;
+}
+uib-accordion .panel-title > a.accordion-toggle {
+  font-size: 12px;
+  text-decoration: none;
+  outline: none;
+}
+.ng-table th.filter .input-filter {
+  height: 18px;
+  min-height: 18px;
+}
