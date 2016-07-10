@@ -1,12 +1,30 @@
-{% load static %}<!doctype html><html lang="en"><head><meta charset="UTF-8"><title>{% block title %}Home{% endblock title %} - Trade App</title><link rel="stylesheet" href="{% static 'core_recons/css/compiled.min.css' %}"><link rel="shortcut icon" href="{% static 'favicon.ico' %}">{% block page_css %}{% endblock page_css %}<script src="{% static 'core_recons/js/initial/compiled.min.js' %}"></script>{% block page_js_up %}<script>
+{% load static %}<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="initial-scale=1"><title>{% block title %}Home{% endblock title %} - Trade App</title><link rel="stylesheet" href="{% static 'core_recons/css/compiled.min.css' %}"><link rel="shortcut icon" href="{% static 'favicon.ico' %}">{% block page_css %}{% endblock page_css %}<script src="{% static 'core_recons/js/initial/compiled.min.js' %}"></script>{% block page_js_up %}<script>
       var staticPrefix = '{% static "" %}';
       var app = angular.module( 'tradeApp', [] );
       app.value( 'urls', JSON.parse( '{{ urls | escapejs }}' || '{}' ) );
       app.constant( 'staticPrefix', staticPrefix );
       app.value( 'formMCoverTypes', JSON.parse( '{{ form_m_cover_types | escapejs }}' || '[]' ) );
     </script>{% verbatim %}<script>
-    //ngTable uses interpolate symbol "{{  }}" in templates and does not work with custom interpolate symbol. Below fixes this
-      angular.module( "ngTable" ).service("$InterpolateUpdateService", function ($templateCache, $interpolate) {'use strict'; this.changeGridInterpolate = function () {var templates = ['ng-table/filterRow.html', 'ng-table/filters/number.html', 'ng-table/filters/select-multiple.html', 'ng-table/filters/select.html', 'ng-table/filters/text.html', 'ng-table/groupRow.html', 'ng-table/header.html', 'ng-table/pager.html', 'ng-table/sorterRow.html']; var start = $interpolate.startSymbol(); var end = $interpolate.endSymbol(); for ( var i = 0; i < templates.length; i++ ) {var template = templates[ i ]; var curTemplate = $templateCache.get( template ); if ( start !== "{{" ) {curTemplate = curTemplate.replace( /\{\{/g, start ); } if ( end !== "}}" ) {curTemplate = curTemplate.replace( /\}\}/g, end ); } $templateCache.put( template, curTemplate ); } }; } ); angular.module( 'ngTable' ).run( function ($InterpolateUpdateService) {'use strict'; $InterpolateUpdateService.changeGridInterpolate(); } );
+      //ngTable uses interpolate symbol "{{  }}" in templates and does not work with custom interpolate symbol. Below fixes this
+      angular.module( "ngTable" ).service( "$InterpolateUpdateService", function ($templateCache, $interpolate) {
+        'use strict';
+        this.changeGridInterpolate = function () {
+          var templates = [ 'ng-table/filterRow.html', 'ng-table/filters/number.html', 'ng-table/filters/select-multiple.html', 'ng-table/filters/select.html', 'ng-table/filters/text.html', 'ng-table/groupRow.html', 'ng-table/header.html', 'ng-table/pager.html', 'ng-table/sorterRow.html' ];
+          var start = $interpolate.startSymbol();
+          var end = $interpolate.endSymbol();
+          for ( var i = 0; i < templates.length; i++ ) {
+            var template = templates[ i ];
+            var curTemplate = $templateCache.get( template );
+            if ( start !== "{{" ) {curTemplate = curTemplate.replace( /\{\{/g, start ); }
+            if ( end !== "}}" ) {curTemplate = curTemplate.replace( /\}\}/g, end ); }
+            $templateCache.put( template, curTemplate );
+          }
+        };
+      } );
+      angular.module( 'ngTable' ).run( function ($InterpolateUpdateService) {
+        'use strict';
+        $InterpolateUpdateService.changeGridInterpolate();
+      } );
     </script>{% endverbatim %} {% endblock page_js_up %}</head><body>{% block main_nav_top %} {% include 'core_recons/top-nav.html' %} {% endblock main_nav_top %}<div class="container-fluid">{% if not user.is_anonymous %} {% block page_content %} {% include 'core_recons/main-menu-tree.html' %} {% endblock page_content %} {% endif %}</div><script>
     $( function () {
       $.datepicker.setDefaults( { dateFormat: "dd-mm-yy" } );
