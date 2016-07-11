@@ -32,13 +32,16 @@ ExistingAllocationsDirectiveController.$inject = [
   'toISODate',
   'TreasuryAllocation',
   'NgTableParams',
-  'ConsolidatedLcBidRequest'
+  'ConsolidatedLcBidRequest',
+  'getByKey',
+  '$q'
 ]
 
 function ExistingAllocationsDirectiveController(underscore, toISODate, TreasuryAllocation, NgTableParams,
-                                                ConsolidatedLcBidRequest) {
+                                                ConsolidatedLcBidRequest, getByKey, $q) {
   var vm = this  // jshint -W040
   vm.isAllocationSearchOpen = true
+  vm.search = {}
 
   vm.datePickerIsOpenFor = {
     startDate: false,
@@ -53,8 +56,9 @@ function ExistingAllocationsDirectiveController(underscore, toISODate, TreasuryA
   vm.doSearch = function doSearch(searchObj) {
     vm.showSearchResult = false
 
-    if ( typeof searchObj === 'undefined' ) {
-      vm.search = null
+    // user clicked reset button
+    if ( !searchObj ) {
+      vm.search = {}
       return
     }
 
@@ -72,7 +76,15 @@ function ExistingAllocationsDirectiveController(underscore, toISODate, TreasuryA
         vm.tableParams = new NgTableParams( {}, { dataset: data } )
         vm.showSearchResult = true
 
-        getAttachedBids( data )
+        getAttachedBids( data ).then( function (allocations) {
+          vm.tableParams.dataset = allocations
+
+          throw new Error(
+            'make table rows with attached bids green. How to treat allocation.distribution_to_consolidated_bids?' )
+
+        }, function (xhr) {
+          console.log( xhr )
+        } )
       }
     } )
   }
@@ -125,7 +137,65 @@ function ExistingAllocationsDirectiveController(underscore, toISODate, TreasuryA
    * @return {[]}
    */
   function mapAllocationsToBids(allocations, bids, mapping) {
-    throw new Error( 'for every allocation that has associated bids, attach those bids to the allocation' )
+    var allocationIds,
+      bidId,
+      allocation
+
+    bids.forEach( function (bid) {
+      bidId = bid.id
+
+      if ( underscore.has( mapping, bidId ) ) {
+        allocationIds = mapping[ bidId ]
+        allocationIds.forEach( function (allocationId) {
+          allocation = getByKey( allocations, 'id', allocationId )
+
+          if ( allocation ) {
+            allocations[ allocations.indexOf( allocation ) ] = attachBidToAllocation( allocation, bid )
+          }
+        } )
+      }
+    } )
+
+    return allocations
+  }
+
+  /**
+   * For every bid deemed mapped to allocation, insert the bid original requests, previous allocations and outstandings
+   * @param {{}} allocation
+   * @param {{}} bid
+   * @return {{}}
+   */
+  function attachBidToAllocation(allocation, bid) {
+    var amount = Number( bid.sum_bid_requests ),
+      previousAllocations = Number( bid.sum_allocations ),
+      previousOutstandings = Number( bid.outstanding_amount ),
+      allocatedAmount = Number( allocation.fcy_amount ),
+      bidId = bid.id
+
+    // we will always make sales allocation a negative number
+    if ( allocation.transaction_type.toLowerCase() === 'sale' ) allocatedAmount = -1 * allocatedAmount
+
+    if ( !underscore.has( allocation, 'original_requests' ) ) allocation.original_requests = [ amount ]
+    else allocation.original_requests.push( amount )
+
+    if ( !underscore.has( allocation, 'previous_allocations' ) ) allocation.previous_allocations = [ previousAllocations ]
+    else allocation.previous_allocations.push( previousAllocations )
+
+    if ( !underscore.has( allocation, 'previous_outstandings' ) ) allocation.previous_outstandings = [ previousOutstandings ]
+    else allocation.previous_outstandings.push( previousOutstandings )
+
+    if ( !underscore.has( allocation, 'current_outstandings' ) ) {
+      allocation.current_outstandings = [ previousOutstandings ]
+
+    } else allocation.current_outstandings.push( previousOutstandings )
+
+    if ( !underscore.has( allocation, 'bid_ids' ) ) allocation.bid_ids = [ bidId ]
+    else allocation.bid_ids.push( bid.id )
+
+    if ( !underscore.has( allocation, 'original_requests_deleted' ) ) allocation.original_requests_deleted = [ null ]
+    else allocation.original_requests_deleted.push( null )
+
+    return allocation
   }
 
   /**
@@ -135,16 +205,20 @@ function ExistingAllocationsDirectiveController(underscore, toISODate, TreasuryA
   function getAttachedBids(allocations) {
     var mappingIds = mapBidIdsToAllocation( allocations ),
       mapping = mappingIds.mapping,
-      bidIds = mappingIds.bidIds
+      bidIds = mappingIds.bidIds,
+      deferred = $q.defer()
 
     ConsolidatedLcBidRequest
       .getPaginated( { pk: bidIds.join( ',' ), num_rows: 1000 } )
-      .$promise.then( function (bids) {
+      .$promise.then( function (data) {
 
-      mapAllocationsToBids( allocations, bids, mapping )
+      if ( data.count ) deferred.resolve( mapAllocationsToBids( allocations, data.results, mapping ) )
+      deferred.resolve( allocations )
 
     }, function (xhr) {
-      console.log( xhr )
+      deferred.reject( xhr )
     } )
+
+    return deferred.promise
   }
 }
