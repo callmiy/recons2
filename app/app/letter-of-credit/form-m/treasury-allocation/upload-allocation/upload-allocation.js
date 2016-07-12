@@ -52,15 +52,19 @@ function uploadTreasuryAllocationDirectiveController(baby, ConsolidatedLcBidRequ
                                                      getByKey, collateBidRequests) {
   var vm = this  // jshint -W040
 
-  var requiredBlotterHeaders = [
-      'TRANSACTION_DEAL_SLIP',
-      'DEAL_DATE',
-      'SETTLEMENT_DATE',
-      'TRANSACTION_TYPE',
-      'RATE',
-      'CURRENCY',
-      'FCY_AMOUNT'
-    ],
+  var requiredBlotterHeaders = {
+      TRANSACTION_DEAL_SLIP: 'deal_number',
+      DEAL_DATE: 'deal_date',
+      SETTLEMENT_DATE: 'settlement_date',
+      TRANSACTION_TYPE: 'transaction_type',
+      RATE: 'naira_rate',
+      CURRENCY: 'currency',
+      FCY_AMOUNT: 'fcy_amount',
+      PRODUCT_TYPE: 'product_type',
+      CUSTOMER_NAME: 'customer_name',
+      CLIENT_CATEGORY: 'client_category',
+      SOURCE_OF_FUND: 'source_of_fund'
+    },
     initAttributes = {
       showPasteForm: true,
       isSaving: false,
@@ -107,320 +111,110 @@ function uploadTreasuryAllocationDirectiveController(baby, ConsolidatedLcBidRequ
 
     if ( !vm.pastedBlotter ) return
 
-    var invalidHeaders = getInvalidPastedTextHeader( vm.pastedBlotter, requiredBlotterHeaders )
+    var parsed = parsePastedBids( vm.pastedBlotter, requiredBlotterHeaders )
 
-    if ( invalidHeaders.length ) {
-      vm.invalidPastedTextMsg = 'Pasted text missing headers:\n' + invalidHeaders.map( function (header) {
+    if ( parsed.error ) {
+      vm.invalidPastedTextMsg = 'Pasted text missing headers:\n' + parsed.error.map( function (header) {
           return '  - ' + header
         } ).join( '\n' )
       return
     }
 
+    var dataSet = parsed.data,
+      refs = parsed.refs
+
+    savePastedBlotter( dataSet )
+
+    vm.tableParams = new NgTableParams( { sorting: { REF: 'desc' }, count: 1000000 }, { dataset: dataSet, counts: [] } )
     vm.showParsedPastedBid = true
 
-    var parsed = parsePastedBids( vm.pastedBlotter ),
-      dataset = parsed[ 0 ],
-      refs = parsed[ 1 ]
-
-    vm.tableParams = new NgTableParams( { sorting: { REF: 'desc' }, count: 1000000 }, { dataset: dataset, counts: [] } )
-
-    if ( refs.length ) {
-      $q.all( [ getBidRequests( refs ), getMfRefFromLcRef( refs ) ] ).then( function (bidsMfRefMapping) {
-
-        bidsFromServer = bidsMfRefMapping[ 0 ]
-        var mfLcRefMapping = bidsMfRefMapping[ 1 ]
-
-        vm.tableParams.dataset = attachBidsToAllocation( dataset, collateBidRequests( bidsFromServer ), mfLcRefMapping )
-      } )
-    }
+    //if ( refs.length ) {
+    //  $q.all( [ getBidRequests( refs ), getMfRefFromLcRef( refs ) ] ).then( function (bidsMfRefMapping) {
+    //
+    //    bidsFromServer = bidsMfRefMapping[ 0 ]
+    //    var mfLcRefMapping = bidsMfRefMapping[ 1 ]
+    //
+    //    vm.tableParams.dataset = attachBidsToAllocation( dataset, collateBidRequests( bidsFromServer ),
+    // mfLcRefMapping ) } ) }
   }
 
   /**
-   * Allocations are mapped to existing bid requests (original requests). The user will determine if this mapping is
-   * valid. This is especially true for situations where more than one original requests is mapped to one allocation.
-   * In this regard, user will determine which singular request should be validly mapped to the allocation. This
-   * function will mark an original request marked to an allocation as invalid (unmap) for this allocation. User can
-   * also reinstate an already unmapped allocation
-   * @param {int|String} allocationIndex - the index of allocation in the collection of allocations
-   *   (vm.tableParams.data)
-   * @param {int|String} requestIndex - the index of the original request to be mapped or unmapped
+   *
+   * @param {[]} dataList
    */
-  vm.toggleMapOriginalRequest = function toggleMapOriginalRequest(allocationIndex, requestIndex) {
-    var obj, current
-    for ( var i = 0; i < vm.tableParams.data.length; i++ ) {
-      obj = vm.tableParams.data[ i ]
+  function savePastedBlotter(dataList) {
+    var dataClone
 
-      if ( obj.index == allocationIndex ) { // jshint ignore:line
-        current = obj.original_requests_deleted[ requestIndex ]
+    TreasuryAllocation.saveMany( dataList.map( function (data) {
+      dataClone = angular.copy( data )
+      dataClone.deal_date = toISODate( dataClone.deal_date )
+      dataClone.settlement_date = toISODate( dataClone.settlement_date )
 
-        if ( current === null ) obj.original_requests_deleted[ requestIndex ] = requestIndex
-        else obj.original_requests_deleted[ requestIndex ] = null
+      return dataClone
 
-        return
-      }
-    }
-  }
-
-  /**
-   * We only show the save button when there is no allocation that has more than one original request mapped to it.
-   * @param {[]} data - array of allocations (vm.tableParams.data)
-   * @returns {boolean}
-   */
-  vm.showSaveBtn = function showSaveBtn(data) {
-    function countNulls(list) {
-      return list.filter( function (val) {
-        return val === null
-      } ).length
-    }
-
-    if ( !data ) return false
-
-    var obj
-
-    for ( var key in data ) {
-      if ( data.hasOwnProperty( key ) ) {
-        obj = data[ key ]
-
-        if ( underscore.has( obj, 'original_requests_deleted' ) ) {
-
-          if ( countNulls( obj.original_requests_deleted ) > 1 ) return false
-        }
-      }
-    }
-
-    return true
-  }
-
-  vm.saveAllocations = function saveAllocations(data) {
-
-    /**
-     *
-     * @param {null|[]} mappingList
-     * @param {null|[]} bidIds
-     * @returns {[]}
-     */
-    function getMappedBids(mappingList, bidIds) {
-
-      if ( !(mappingList && bidIds
-        ) ) {
-        return []
-      }
-
-      var bids = [],
-        bid
-
-      for ( var i = 0; i < mappingList.length; i++ ) {
-        if ( mappingList[ i ] === null ) {
-          bid = getByKey( bidsFromServer, 'id', bidIds[ i ] )
-          if ( bid ) bids.push( bid )
-        }
-      }
-
-      return bids
-    }
-
-    var toBeSavedList = [],
-      associatedBids,
-      mappedBids,
-      fcyAmount,
-      amountMapped,
-      toBeSaved
-
-    vm.isSaving = true
-    spinnerService.show( 'treasuryAllocationSpinner' )
-
-    underscore.each( data, function (obj) {
-      mappedBids = getMappedBids( obj.original_requests_deleted, obj.bid_ids )
-
-      associatedBids = mappedBids.map( function (bid) {
-        return bid.url
-      } )
-
-      fcyAmount = obj.FCY_AMOUNT
-      amountMapped = null
-
-      toBeSaved = {
-        deal_number: obj.TRANSACTION_DEAL_SLIP,
-        transaction_type: obj.TRANSACTION_TYPE,
-        product_type: obj.PRODUCT_TYPE,
-        customer_name: obj.CUSTOMER_NAME,
-        customer_name_no_ref: obj.NAME_NO_REF,
-        ref: obj.REF,
-        client_category: obj.CLIENT_CATEGORY,
-        source_of_fund: obj.SOURCE_OF_FUND,
-        currency: obj.CURRENCY,
-        fcy_amount: fcyAmount,
-        naira_rate: obj.RATE,
-        deal_date: toISODate( obj.DEAL_DATE ),
-        settlement_date: toISODate( obj.SETTLEMENT_DATE ),
-        consolidated_bids: associatedBids
-      }
-
-      //:TODO where one treasury allocation is mapped to multiple consolidated bid
-      //:TODO Where one consolidated bid has several treasury allocations mapped to it
-      if ( mappedBids.length ) {
-        var bid = mappedBids[ 0 ]
-        amountMapped = {}
-        amountMapped[ bid.id ] = fcyAmount
-        toBeSaved.distribution_to_consolidated_bids = amountMapped
-      }
-
-      toBeSavedList.push( toBeSaved )
-    } )
-
-    TreasuryAllocation.saveMany( toBeSavedList ).$promise.then( function (savedData) {
-      confirmationDialog.showDialog( {
-        title: 'Allocations successfully saved',
-        text: savedData.length + ' allocations uploaded',
-        infoOnly: true
-
-      } ).then( function () {
-        init( {} )
-        $scope.$parent.treasuryAllocation.action = null
-
-      } )
-
+    } ) ).$promise.then( function (savedData) {
+      console.log( savedData )
     }, function (xhr) {
-      confirmationDialog.showDialog( {
-        title: 'Error',
-        text: 'An error occurred while saving allocations.\nThis error has been logged.\nPlease inform admin.',
-        infoOnly: true
-      } )
-
       console.log( 'xhr = ', xhr ) //TODO: remove console logging
 
-    } ).finally( function () {
-      vm.isSaving = false
-      spinnerService.hide( 'treasuryAllocationSpinner' )
     } )
+
+    throw new Error( 'draw ng table of saved data and rejected data' )
+
   }
 
   /**
    *
    * @param {String} text
-   * @returns {*[]}
+   * @param {{}} requiredHeadersMap
+   * @returns {{}}
    */
-  function parsePastedBids(text) {
+  function parsePastedBids(text, requiredHeadersMap) {
     var cleanedData,
       ref,
       refs = [],
       result = [],
-      index = 1
+      index = 1,
+      rowData,
+      requiredHeadersInRowData,
+      requiredHeadersKeys,
+      missingRequiredHeaders = []
 
-    baby.parse( text.trim(), {
-      delimiter: '\t', header: true, step: function (row) {
-        cleanedData = cleanPastedBids( row.data[ 0 ] )
-        cleanedData.index = index++
-        ref = cleanedData.REF
+    try {
+      baby.parse( text.trim(), {
+        delimiter: '\t', header: true, step: function (row) {
+          rowData = row.data[ 0 ]
+          requiredHeadersKeys = underscore.keys( requiredHeadersMap )
+          requiredHeadersInRowData = underscore.intersection( underscore.keys( rowData ), requiredHeadersKeys )
+          missingRequiredHeaders = underscore.difference( requiredHeadersKeys, requiredHeadersInRowData )
 
-        if ( ref ) refs.push( ref )
+          if ( missingRequiredHeaders.length ) throw new Error( 'INVALID-PASTED-HEADERS' )
 
-        result.push( cleanedData )
+          cleanedData = cleanPastedBids( rowData, requiredHeadersMap )
+          cleanedData.index = index++
+          ref = cleanedData.ref
+
+          if ( ref ) refs.push( ref )
+
+          result.push( cleanedData )
+        }
+      } )
+    } catch ( e ) {
+      if ( e.message === 'INVALID-PASTED-HEADERS' ) {
+        return { error: missingRequiredHeaders }
       }
-    } )
+    }
 
-    return [ result, refs ]
-  }
-
-  function getMfRefFromLcRef(refs) {
-    var deferred = $q.defer()
-
-    var lcReferences = refs.filter( function (ref) {
-      return ref.indexOf( 'MF20' ) === -1
-    } )
-
-    if ( !lcReferences.length ) return deferred.resolve( {} )
-
-    LetterOfCredit.get( {
-      lc_numbers: lcReferences.join( ',' ),
-      fields: 'mf,lc_number'
-
-    } ).$promise.then( function (lcList) {
-      var result = {}
-
-      if ( lcList.count ) {
-        lcList.results.forEach( function (lc) {
-          result[ lc.lc_number ] = lc.mf
-        } )
-      }
-      deferred.resolve( result )
-
-    }, function (xhr) {
-      deferred.reject( xhr )
-    } )
-
-    return deferred.promise
+    return { data: result, refs: refs }
   }
 
   /**
-   *
-   * @param {[]} currentAllocations
-   * @param {{}} collatedBids - existing bids retrieved from database
-   * @param {{}} lcMfMapping
-   * @returns {[]}
-   */
-  function attachBidsToAllocation(currentAllocations, collatedBids, lcMfMapping) {
-    var ref, currentOutstandings, collatedBid, allocatedAmount
-
-    underscore.each( currentAllocations, function (allocation) {
-      ref = allocation.REF
-
-      if ( ref.indexOf( 'ILC' ) === 0 ) {
-        ref = lcMfMapping[ ref ]
-      }
-
-      if ( underscore.has( collatedBids, ref ) ) {
-        currentOutstandings = []
-        collatedBid = collatedBids[ ref ]
-        allocatedAmount = allocation.FCY_AMOUNT
-        // we will always make sales allocation a negative number
-        if ( allocation.TRANSACTION_TYPE.toLowerCase() === 'sale' ) allocatedAmount = -1 * allocatedAmount
-
-        allocation.original_requests = collatedBid.original_requests
-        allocation.previous_allocations = collatedBid.previous_allocations
-        allocation.previous_outstandings = collatedBid.previous_outstandings
-        allocation.bid_ids = collatedBid.bid_ids
-        allocation.original_requests_deleted = collatedBid.original_requests_deleted
-
-        collatedBid.previous_outstandings.forEach( function (prev) {
-          //the current outstanding is previous outstanding less the current allocation sale. But we do sum below since
-          // sales is a negative number
-          // TODO: how do I handle allocations which are repurchases?
-          // TODO: how do I handle charges and other allocations (sales and purchases) that should not reduce the
-          // outstanding allocation
-          currentOutstandings.push( Number( prev ) + allocatedAmount )
-        } )
-
-        allocation.current_outstandings = currentOutstandings
-      }
-    } )
-
-    return currentAllocations
-  }
-
-  /**
-   *
-   * @param {[]} refs
-   */
-  function getBidRequests(refs) {
-    var deferred = $q.defer()
-
-    ConsolidatedLcBidRequest.get( { q: refs.join( ',' ), num_rows: 5000 } ).$promise.then( function (fetchedBids) {
-      deferred.resolve( fetchedBids.count && fetchedBids.results || [] )
-
-    }, function (xhr) {
-      deferred.reject( xhr )
-    } )
-
-    return deferred.promise
-  }
-
-  /**
-   * takes each bid data and clean then according to the cleaning rules
+   * takes each bid data and clean then according to the cleaning rules. Then transform the keys into suitable ones
    * @param {{}} data
+   * @param {{}} headersMap
    * @returns {{}} the input data now cleaned
    */
-  function cleanPastedBids(data) {
+  function cleanPastedBids(data, headersMap) {
     var refName
 
     underscore.each( data, function (val, key) {
@@ -430,8 +224,8 @@ function uploadTreasuryAllocationDirectiveController(baby, ConsolidatedLcBidRequ
         val = val.replace( /"/g, '' )
         data.CUSTOMER_NAME = val
         refName = getFormMLcRef( val )
-        data.REF = refName[ 0 ]
-        data.NAME_NO_REF = refName[ 1 ]
+        data.ref = refName[ 0 ]
+        data.customer_name_no_ref = refName[ 1 ]
       }
 
       if ( key === 'FCY_AMOUNT' ) {
@@ -443,6 +237,11 @@ function uploadTreasuryAllocationDirectiveController(baby, ConsolidatedLcBidRequ
       }
     } )
 
+    underscore.each( headersMap, function (val, key) {
+      data[ val ] = data[ key ]
+      delete data[ key ]
+    } )
+
     return data
   }
 
@@ -452,23 +251,6 @@ function uploadTreasuryAllocationDirectiveController(baby, ConsolidatedLcBidRequ
       ref = exec ? exec[ 1 ] : ''
 
     return [ ref, val.replace( ref, '' ).trim() ]
-  }
-
-  /**
-   *
-   * @param {String} text
-   * @param {[]} requiredHeaders
-   * @returns {[]}
-   */
-  function getInvalidPastedTextHeader(text, requiredHeaders) {
-    var invalidHeaders = []
-
-    for ( var i = 0; i < requiredHeaders.length; i++ ) {
-      var header = requiredHeaders[ i ];
-      if ( text.indexOf( header ) === -1 ) invalidHeaders.push( header )
-    }
-
-    return invalidHeaders
   }
 
   function getParams() {
