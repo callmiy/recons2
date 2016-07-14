@@ -143,24 +143,81 @@ function uploadTreasuryAllocationDirectiveController(baby, ConsolidatedLcBidRequ
    * @param {[]} dataList
    */
   function savePastedBlotter(dataList) {
-    var dataClone
+    var dataClone, dataToSave
 
-    TreasuryAllocation.saveMany( dataList.map( function (data) {
+    dataToSave = dataList.map( function (data) {
       dataClone = angular.copy( data )
       dataClone.deal_date = toISODate( dataClone.deal_date )
       dataClone.settlement_date = toISODate( dataClone.settlement_date )
 
       return dataClone
 
-    } ) ).$promise.then( function (savedData) {
-      console.log( savedData )
-    }, function (xhr) {
-      console.log( 'xhr = ', xhr ) //TODO: remove console logging
-
     } )
 
-    throw new Error( 'draw ng table of saved data and rejected data' )
+    TreasuryAllocation.saveMany( dataToSave ).$promise.then( function (savedData) {
+      console.log( savedData )
 
+    }, function (xhr) {
+
+      if ( xhr.status === 400 ) {
+        console.log( handleSave400Error( xhr.data, dataToSave ) )
+        throw  new Error( 'display table of rejected data with reason' )
+      }
+
+    } )
+  }
+
+  /**
+   * For a 400 xhr error, extract all the errors and put in a an array, then return array of errors. If no error,
+   * return null.
+   *
+   * @param {{}} errorObj
+   * @param {{}} rejectedData
+   * @returns {null|Array}
+   */
+  function extract400Errors(errorObj, rejectedData) {
+    if ( underscore.isEmpty( errorObj ) ) return null
+
+    var errorList = []
+
+    if ( underscore.has( errorObj, 'non_field_errors' ) ) {
+      errorObj.non_field_errors.forEach( function (error) {
+        errorList.push( error )
+      } )
+
+      delete errorObj.non_field_errors
+    }
+
+    underscore.each( errorObj, function (val, key) {
+      if ( underscore.has( rejectedData, key ) ) {
+
+        val.forEach( function (theVal) {
+          errorList.push( key + ' - ' + theVal )
+        } )
+      }
+    } )
+
+    return errorList
+  }
+
+  /**
+   *
+   * @param {[]} errorList
+   * @param {[]} rejectedDataList
+   * @return {[]}
+   */
+  function handleSave400Error(errorList, rejectedDataList) {
+    var i, errorObj, rejectedData, errors
+
+    for ( i = 0; i < errorList.length; i++ ) {
+      errorObj = errorList[ i ]
+      rejectedData = rejectedDataList[ i ]
+      errors = extract400Errors( errorObj, rejectedData )
+
+      if ( errors ) rejectedData.errors = errors
+    }
+
+    return rejectedDataList
   }
 
   /**
@@ -177,14 +234,13 @@ function uploadTreasuryAllocationDirectiveController(baby, ConsolidatedLcBidRequ
       index = 1,
       rowData,
       requiredHeadersInRowData,
-      requiredHeadersKeys,
+      requiredHeadersKeys = underscore.keys( requiredHeadersMap ),
       missingRequiredHeaders = []
 
     try {
       baby.parse( text.trim(), {
         delimiter: '\t', header: true, step: function (row) {
           rowData = row.data[ 0 ]
-          requiredHeadersKeys = underscore.keys( requiredHeadersMap )
           requiredHeadersInRowData = underscore.intersection( underscore.keys( rowData ), requiredHeadersKeys )
           missingRequiredHeaders = underscore.difference( requiredHeadersKeys, requiredHeadersInRowData )
 
@@ -204,6 +260,9 @@ function uploadTreasuryAllocationDirectiveController(baby, ConsolidatedLcBidRequ
         return { error: missingRequiredHeaders }
       }
     }
+
+    //baby-parse could not parse the text and did not throw error
+    if ( !result.length ) return { error: requiredHeadersKeys }
 
     return { data: result, refs: refs }
   }
@@ -229,7 +288,7 @@ function uploadTreasuryAllocationDirectiveController(baby, ConsolidatedLcBidRequ
       }
 
       if ( key === 'FCY_AMOUNT' ) {
-        data.FCY_AMOUNT = Math.abs( Number( val ) )
+        data.FCY_AMOUNT = Math.abs( Number( val.replace( /[\(\)\s]/g, '' ) ) )
       }
 
       if ( key.indexOf( '_DATE' ) > 1 ) {

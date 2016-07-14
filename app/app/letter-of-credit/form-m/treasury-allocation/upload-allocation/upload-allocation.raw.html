@@ -36,7 +36,8 @@
     </uib-accordion-group>
   </uib-accordion>
 
-  <div ng-if="uploadTreasuryAllocation.showParsedPastedBid" class="parsed-pasted-bid-table-container">
+  <div ng-if="uploadTreasuryAllocation.showParsedPastedBid"
+       class="bid-table-container bid-table">
 
     <div ng-if="uploadTreasuryAllocation.showSaveBtn(uploadTreasuryAllocation.tableParams.dataset)"
          class="save-parsed-allocation-btn-container">
@@ -138,5 +139,29 @@
         </tbody>
       </table>
     </div>
+  </div>
+
+  <div ng-if="uploadTreasuryAllocation.blotterParseError" class="bid-table-container">
+    <table class="table table-bordered table-condensed table-responsive table-striped">
+      <thead>
+        <tr>
+          <th>S/N</th>
+          <th>DEAL NO</th>
+          <th>DEAL DATE</th>
+          <th>TYPE</th>
+          <th>AMOUNT</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr ng-repeat="row in uploadTreasuryAllocation.rejectedDataList">
+          <td>{$$index +1$}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
