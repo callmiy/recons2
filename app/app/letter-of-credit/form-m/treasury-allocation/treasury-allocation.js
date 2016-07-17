@@ -6,7 +6,7 @@ var app = angular.module( 'treasury-allocation', [
   'ui.router',
   'upload-treasury-allocation',
   'allocation-download-bids',
-  'existing-allocations',
+  'search-allocations',
   'rootApp'
 ] )
 

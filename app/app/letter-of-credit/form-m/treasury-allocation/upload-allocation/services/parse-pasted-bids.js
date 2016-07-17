@@ -21,8 +21,6 @@ function parsePastedBids(underscore, moment, baby) {
    */
   function parse(text, requiredHeadersMap) {
     var cleanedData,
-      ref,
-      refs = [],
       result = [],
       index = 1,
       rowData,
@@ -41,10 +39,6 @@ function parsePastedBids(underscore, moment, baby) {
 
           cleanedData = cleanPastedBids( rowData, requiredHeadersMap )
           cleanedData.index = index++
-          ref = cleanedData.ref
-
-          if ( ref ) refs.push( ref )
-
           result.push( cleanedData )
         }
       } )
@@ -57,7 +51,7 @@ function parsePastedBids(underscore, moment, baby) {
     //baby-parse could not parse the text and did not throw error
     if ( !result.length ) return { error: requiredHeadersKeys }
 
-    return { data: result, refs: refs }
+    return { data: result }
   }
 
   /**

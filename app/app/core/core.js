@@ -215,27 +215,3 @@ function toISODate(moment) {
     return dtObj ? moment( dtObj ).format( 'YYYY-MM-DD' ) : null
   }
 }
-
-require( './commons/toggle-dim-element' )
-require( './customer/customer.js' )
-require( './lc-bid-request/lc-bid-request.js' )
-require( './consolidated-lc-bid-request/consolidated-lc-bid-request.js' )
-require( './form-m/form-m.js' )
-require( './lc/lc.js' )
-require( './treasury-allocation/treasury-allocation.js' )
-require( './comment/comment.js' )
-require( './fx-deal/fx-deal.js' )
-require( './attachment/attachment.js' )
-require( './lc-cover/lc-cover.js' )
-require( './upload-form-m/upload-form-m.js' )
-require( './lc-issue/lc-issue.js' )
-require( './commons/number-format.js' )
-require( './commons/to-upper.js' )
-require( './commons/toggle-bg-color' )
-require( './pager-nav/pager-nav.js' )
-require( './form-validators/form-validators.js' )
-require( './model-table/model-table.js' )
-require( './commons/commons.services.js' )
-require( './search-lc' )
-require( './confirmation-dialog/confirmation-dialog.js' )
-require( './complex-object-validator/complex-object-validator.js' )

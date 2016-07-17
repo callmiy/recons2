@@ -6,8 +6,8 @@ var app = angular.module( 'upload-treasury-allocation', [
   'rootApp',
   'consolidated-lc-bid-request',
   'lc-service',
+  'existing-allocations',
   'treasury-allocation-service',
-  'ngTable',
   'angularSpinners',
   'confirmation-dialog'
 ] )
@@ -32,7 +32,6 @@ uploadTreasuryAllocationDirectiveController.$inject = [
   'parsePastedBids',
   'saveBlotter',
   'underscore',
-  'NgTableParams',
   '$scope',
   'formMAppStore',
   'requiredBlotterHeaders',
@@ -40,7 +39,7 @@ uploadTreasuryAllocationDirectiveController.$inject = [
   'makeInvalidBlotterHeadersMsg'
 ]
 
-function uploadTreasuryAllocationDirectiveController(parsePastedBids, saveBlotter, underscore, NgTableParams, $scope,
+function uploadTreasuryAllocationDirectiveController(parsePastedBids, saveBlotter, underscore, $scope,
                                                      formMAppStore, requiredBlotterHeaders, initAttributes,
                                                      makeInvalidBlotterHeadersMsg) {
   var vm = this  // jshint -W040
@@ -78,7 +77,7 @@ function uploadTreasuryAllocationDirectiveController(parsePastedBids, saveBlotte
   vm.onBlotterPasted = function onBlotterPasted() {
     // always reset bids from server, invalid blotter text message, and hide allocation table
     bidsFromServer = []
-    vm.showParsedPastedBid = false
+    vm.allocationList = null
     vm.rejectedDataList = null
     vm.invalidPastedTextMsg = ''
 
@@ -91,30 +90,14 @@ function uploadTreasuryAllocationDirectiveController(parsePastedBids, saveBlotte
       return
     }
 
-    var dataSet = parsed.data,
-      refs = parsed.refs
+    var dataSet = parsed.data
 
     saveBlotter( dataSet ).then( function (savedDataList) {
-      console.log( 'savedDataList = ', savedDataList )
-      vm.tableParams = new NgTableParams(
-        { sorting: { REF: 'desc' }, count: 1000000 },
-        { dataset: savedDataList, counts: [] }
-      )
-
-      vm.showParsedPastedBid = true
+      vm.allocationList = savedDataList
 
     }, function (rejectedDataList) {
       vm.rejectedDataList = rejectedDataList
     } )
-
-    //if ( refs.length ) {
-    //  $q.all( [ getBidRequests( refs ), getMfRefFromLcRef( refs ) ] ).then( function (bidsMfRefMapping) {
-    //
-    //    bidsFromServer = bidsMfRefMapping[ 0 ]
-    //    var mfLcRefMapping = bidsMfRefMapping[ 1 ]
-    //
-    //    vm.tableParams.dataset = attachBidsToAllocation( dataset, collateBidRequests( bidsFromServer ),
-    // mfLcRefMapping ) } ) }
   }
 
   function getParams() {

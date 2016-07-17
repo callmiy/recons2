@@ -17,11 +17,14 @@ existingAllocationsDirective.$inject = []
 
 function existingAllocationsDirective() {
   return {
-    restrict: 'A',
+    restrict: 'E',
     templateUrl: require( 'commons' )
       .buildUrl( 'letter-of-credit', 'form-m/treasury-allocation/existing-allocations/existing-allocations.html' ),
-    scope: false,
-    controller: 'ExistingAllocationsDirectiveController as existingAllocations'
+    controller: 'ExistingAllocationsDirectiveController as existingAllocations',
+    scope: true,
+    bindToController: {
+      allocationList: '='
+    }
   }
 }
 
@@ -30,64 +33,21 @@ app.controller( 'ExistingAllocationsDirectiveController', ExistingAllocationsDir
 ExistingAllocationsDirectiveController.$inject = [
   'underscore',
   'toISODate',
-  'TreasuryAllocation',
+  'searchTreasuryAllocation',
   'NgTableParams',
   'ConsolidatedLcBidRequest',
   'getByKey',
   '$q'
 ]
 
-function ExistingAllocationsDirectiveController(underscore, toISODate, TreasuryAllocation, NgTableParams,
+function ExistingAllocationsDirectiveController(underscore, toISODate, searchTreasuryAllocation, NgTableParams,
                                                 ConsolidatedLcBidRequest, getByKey, $q) {
   var vm = this  // jshint -W040
-  vm.isAllocationSearchOpen = true
-  vm.search = {}
 
-  vm.datePickerIsOpenFor = {
-    startDate: false,
-    endDate: false
-  }
-
-  vm.datePickerFormat = 'dd-MMM-yyyy'
-  vm.openDatePickerFor = function openDatePickerFor(element) {
-    vm.datePickerIsOpenFor[ element ] = true
-  }
-
-  vm.doSearch = function doSearch(searchObj) {
-    vm.showSearchResult = false
-
-    // user clicked reset button
-    if ( !searchObj ) {
-      vm.search = {}
-      return
-    }
-
-    var searchParams = {}
-
-    if ( underscore.isObject( searchObj ) ) {
-      if ( searchObj.startDate ) searchParams.deal_start_date = toISODate( searchObj.startDate )
-      if ( searchObj.endDate ) searchParams.deal_end_date = toISODate( searchObj.endDate )
-      if ( searchObj.ref ) searchParams.ref = searchObj.ref.trim()
-      if ( searchObj.dealNo ) searchParams.deal_number = searchObj.dealNo.trim()
-    }
-
-    TreasuryAllocation.query( searchParams ).$promise.then( function (data) {
-      if ( data.length ) {
-        vm.tableParams = new NgTableParams( {}, { dataset: data } )
-        vm.showSearchResult = true
-
-        getAttachedBids( data ).then( function (allocations) {
-          vm.tableParams.dataset = allocations
-
-          throw new Error(
-            'make table rows with attached bids green. How to treat allocation.distribution_to_consolidated_bids?' )
-
-        }, function (xhr) {
-          console.log( xhr )
-        } )
-      }
-    } )
-  }
+  vm.tableParams = new NgTableParams(
+    { sorting: { ref: 'desc' }, count: 1000000 },
+    { dataset: vm.allocationList, counts: [] }
+  )
 
   /**
    *

@@ -21,8 +21,7 @@ app.value( 'requiredBlotterHeaders', {
 app.value( 'initAttributes', {
   showPasteForm: true,
   isSaving: false,
-  showParsedPastedBid: false,
-  tableParams: null,
+  allocationList: null,
   rejectedDataList: null,
   pastedBlotter: '',
   invalidPastedTextMsg: ''

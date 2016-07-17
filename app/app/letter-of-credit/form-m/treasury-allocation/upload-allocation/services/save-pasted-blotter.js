@@ -10,11 +10,10 @@ saveBlotter.$inject = [
   '$q',
   'toISODate',
   'TreasuryAllocation',
-  'underscore',
-  'getByKey'
+  'underscore'
 ]
 
-function saveBlotter($q, toISODate, TreasuryAllocation, underscore, getByKey) {
+function saveBlotter($q, toISODate, TreasuryAllocation, underscore) {
 
   /**
    *
@@ -33,14 +32,8 @@ function saveBlotter($q, toISODate, TreasuryAllocation, underscore, getByKey) {
     } )
 
     TreasuryAllocation.saveMany( dataToSave ).$promise.then( function (savedDataList) {
-      var originalData
 
-      deferred.resolve( savedDataList.map( function (data) {
-        originalData = getByKey( dataList, 'deal_number', data.deal_number )
-        data.index = originalData.index
-
-        return data
-      } ) )
+      deferred.resolve( savedDataList )
 
     }, function (xhr) {
 
