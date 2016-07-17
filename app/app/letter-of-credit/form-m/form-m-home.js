@@ -4,7 +4,6 @@
 
 require( './add-form-m/form-m-object.js' )
 require( './add-form-m/add-form-m.js' )
-require( './treasury-allocation/treasury-allocation.js' )
 require( './lc-bid/lc-bid.js' )
 require( './bids/bids.js' )
 require( './list-form-m/list-form-m.js' )

@@ -136,7 +136,7 @@ app.factory( 'getByKey', getByKey )
 function getByKey() {
   /**
    * Searches a array of mapping and if list[key] == keyVal, returns the mapping for which the statement is true. If
-   * the statement is not true for any member of the list, return null
+   * the statement is not true for any member of the list, returns null
    * @param {[]} list - array of the form [{}, {}, {},...]
    * @param {String|Number|*} key - a potential property of any of the member of the array
    * @param {String|Number|*} keyVal - the value of the property of a member of the array

@@ -2,10 +2,6 @@
 
 /*jshint camelcase:false*/
 
-require( './upload-allocation/upload-allocation.js' )
-require( './download-bids/download-bids.js' )
-require( './existing-allocations/existing-allocations.js' )
-
 var app = angular.module( 'treasury-allocation', [
   'ui.router',
   'upload-treasury-allocation',
