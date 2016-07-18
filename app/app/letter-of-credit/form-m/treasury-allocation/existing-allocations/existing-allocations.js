@@ -37,17 +37,25 @@ ExistingAllocationsDirectiveController.$inject = [
   'NgTableParams',
   'ConsolidatedLcBidRequest',
   'getByKey',
-  '$q'
+  '$q',
+  'attachBidsToAllocation'
 ]
 
 function ExistingAllocationsDirectiveController(underscore, toISODate, searchTreasuryAllocation, NgTableParams,
-                                                ConsolidatedLcBidRequest, getByKey, $q) {
+                                                ConsolidatedLcBidRequest, getByKey, $q, attachBidsToAllocation) {
   var vm = this  // jshint -W040
 
-  vm.tableParams = new NgTableParams(
-    { sorting: { ref: 'desc' }, count: 1000000 },
-    { dataset: vm.allocationList, counts: [] }
-  )
+  attachBidsToAllocation( angular.copy( vm.allocationList ) ).then( function (allocations) {
+    vm.allocationList = allocations
+
+    vm.tableParams = new NgTableParams(
+      { sorting: { ref: 'desc' }, count: 1000000 },
+      { dataset: vm.allocationList, counts: [] }
+    )
+
+  } ).finally( function () {
+    //vm.tableParams.dataset = vm.allocationList
+  } )
 
   /**
    *

@@ -51,16 +51,9 @@
           </td>
 
           <td style="min-width: 135px;" data-title="'ORIGINAL REQUEST'" filter="{original_requests :'number'}">
-              <span class="original-request-row"
-                    ng-repeat="req in allocationObj.original_requests"
-                    ng-class="{'multiple-requests': (allocationObj.original_requests.length > 1), 'deleted': (allocationObj.original_requests_deleted[$index] == $index)}">
-
-                {$::req |number:2$}
-
-                <span class="glyphicon remove-add-bid-icons"
-                      ng-class="{'glyphicon-remove': (allocationObj.original_requests_deleted[$index] != $index), 'glyphicon-plus-sign': (allocationObj.original_requests_deleted[$index] == $index)}"
-                      ng-click="uploadTreasuryAllocation.toggleMapOriginalRequest(allocationObj.index, $index)"></span>
-              </span>
+            <display-bids-for-allocation
+                allocation="allocationObj"
+                attr-type="original-request"></display-bids-for-allocation>
           </td>
 
           <td data-title="'PREVIOUS ALLOCATIONS'" filter="{previous_allocations :'number'}">

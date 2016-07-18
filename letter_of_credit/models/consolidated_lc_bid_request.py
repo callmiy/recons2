@@ -96,6 +96,7 @@ class ConsolidatedLcBidRequest(models.Model):
         1. there is no existing instance with same mf number as the lc bid request instance passed in as argument
         2. the lc bid request instance has been requested (its requested_at attribute is not None)
 
+        :type lc_bid: LcBidRequest
         :param lc_bid: The Lc bid request instance from which a consolidated Lc bid request will be created
         """
         requested_at = lc_bid.requested_at

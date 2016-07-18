@@ -31,3 +31,5 @@ require( './letter-of-credit/form-m/treasury-allocation/upload-allocation/servic
 require( './letter-of-credit/form-m/treasury-allocation/upload-allocation/services/parse-pasted-bids.js' )
 require( './letter-of-credit/form-m/treasury-allocation/upload-allocation/services/index.js' )
 require( './letter-of-credit/form-m/treasury-allocation/treasury-allocation.js' )
+require( './letter-of-credit/form-m/treasury-allocation/services/attach-bids-to-allocations.js' )
+require( './letter-of-credit/form-m/treasury-allocation/display-bids-for-allocation/display-bids-for-allocation.js' )

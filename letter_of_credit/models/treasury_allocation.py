@@ -28,12 +28,13 @@ class TreasuryAllocation(models.Model):
             related_name='treasury_allocations',
             blank=True,
     )
+
     # Ideally, a treasury allocation object should be tied to a consolidated bid object. But in reality, business may
     #  take the decision to tie a treasury allocation object to 2 or more consolidated bid object. This field will
     # then be a mapping from the consolidated bid object database ID to the proportion of the amount of the
     # treasury allocation object that will be tied to this consolidated bid object. This field will look like so:
     # {
-    #   id (of a consolidated bid): amount (that will be utilized by that consolidated bid), id: amount
+    #   id (of a consolidated bid): amount (that will be utilized by that consolidated bid): amount
     # }
     distribution_to_consolidated_bids = models.TextField(
             'Mapping from ID to amount distributed to a consolidated bid object', default='{}')
