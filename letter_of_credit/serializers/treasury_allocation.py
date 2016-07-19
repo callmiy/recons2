@@ -6,10 +6,33 @@ from letter_of_credit.models import TreasuryAllocation, ConsolidatedLcBidRequest
 
 class DistributionToConsolidatedFieldSerializer(serializers.Field):
     def to_internal_value(self, data):
-        return json.dumps(data)
+        internal_value = {}
+
+        for bid in data:
+            internal_value[bid['id']] = bid['portion_of_allocation']
+
+        return json.dumps(internal_value)
 
     def to_representation(self, value):
-        return json.loads(value)
+        bid_distribution = json.loads(value)
+
+        if len(bid_distribution) == 0:
+            return []
+
+        returned = []
+
+        for bid_id in bid_distribution:
+            bid = ConsolidatedLcBidRequest.objects.get(pk=bid_id)
+            returned.append({
+                'id': bid_id,
+                'url': bid.url(),
+                'portion_of_allocation': bid_distribution[bid_id],
+                'sum_bid_requests': bid.sum_bid_requests(),
+                'sum_allocations': bid.sum_allocations(),
+                'outstanding_amount': bid.outstanding_amount(),
+            })
+
+        return returned
 
 
 class TreasuryAllocationSerializer(serializers.HyperlinkedModelSerializer):

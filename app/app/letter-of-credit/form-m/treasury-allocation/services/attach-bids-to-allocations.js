@@ -5,13 +5,9 @@
 var app = angular.module( 'treasury-allocation' )
 
 app.factory( 'attachBidsToAllocation', attachBidsToAllocation )
-attachBidsToAllocation.$inject = [
-  'ConsolidatedLcBidRequest',
-  'underscore',
-  '$q'
-]
+attachBidsToAllocation.$inject = []
 
-function attachBidsToAllocation(ConsolidatedLcBidRequest, underscore, $q) {
+function attachBidsToAllocation() {
 
   /**
    *
@@ -19,37 +15,35 @@ function attachBidsToAllocation(ConsolidatedLcBidRequest, underscore, $q) {
    * @return {*}
    */
   function attach(allocationList) {
-    var bidIdAmountMapping,
-      deferred = $q.defer(),
-      returned = []
+    var distributionToBids, totalAllocations, originalRequests, bidIds, outstandingAmounts, newOutstandingAmounts
 
-    allocationList.forEach( function (allocation) {
-      bidIdAmountMapping = allocation.distribution_to_consolidated_bids
+    return allocationList.map( function (allocation) {
+      distributionToBids = allocation.distribution_to_consolidated_bids
 
-      if ( underscore.isEmpty( bidIdAmountMapping ) ) {
-        returned.push( allocation )
-        return
-      }
+      if ( distributionToBids.length === 0 ) return allocation
 
-      var bids = []
+      originalRequests = []
+      bidIds = []
+      totalAllocations = []
+      outstandingAmounts = []
+      newOutstandingAmounts = []
 
-      ConsolidatedLcBidRequest.getPaginated( { pk: underscore.keys( bidIdAmountMapping ).join( ',' ) } )
-        .$promise.then( function (bidObj) {
-
-        bidObj.results.forEach( function (bid) {
-          bids.push( bid )
-        } )
-
-        allocation.bids = bids
-
-      } ).finally( function () {
-        returned.push( allocation )
+      distributionToBids.forEach( function (bid) {
+        totalAllocations.push( bid.sum_allocations )
+        originalRequests.push( bid.sum_bid_requests )
+        bidIds.push( bid.id )
+        outstandingAmounts.push( bid.outstanding_amount )
+        newOutstandingAmounts.push( bid.outstanding_amount )
       } )
+
+      allocation.originalRequests = originalRequests
+      allocation.totalAllocations = totalAllocations
+      allocation.outstandingAmounts = outstandingAmounts
+      allocation.newOutstandingAmounts = newOutstandingAmounts
+      allocation.bidIds = bidIds
+
+      return allocation
     } )
-
-    deferred.resolve( returned )
-
-    return deferred.promise
   }
 
   return attach

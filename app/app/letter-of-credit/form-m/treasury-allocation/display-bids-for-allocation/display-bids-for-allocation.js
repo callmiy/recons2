@@ -24,9 +24,7 @@ DisplayBidsForAllocation.$inject = [ '$scope', '$attrs', 'underscore' ]
 function DisplayBidsForAllocation($scope, $attr, underscore) {
   var vm = this
 
-  var allocation = $scope.$eval( $attr.allocation ),
-    bids = allocation.bids
+  var allocation = $scope.$eval( $attr.allocation )
 
   console.log( 'allocation = ', allocation )
-  console.log( 'bids = ', bids, '\n\n' )
 }

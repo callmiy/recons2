@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.db import models
 
 from letter_of_credit.letter_of_credit_commons import BidRequestStatus
@@ -83,10 +84,18 @@ class ConsolidatedLcBidRequest(models.Model):
     def bid_request_urls(self):
         return [x.url() for x in self.bid_requests()]
 
-    def diff_amount_requests(self):
+    def diff_amount_requests(self):  # TODO: to be removed when deployed to production and data is certified stable
         if self.amount:
             return float(self.amount) - self.sum_bid_requests()
         return 0
+
+    def url(self):
+        return reverse(
+                'consolidatedlcbidrequest-detail',
+                kwargs={
+                    'pk': self.pk
+                }
+        )
 
     @classmethod
     def create_from_lc_bid(cls, lc_bid):
