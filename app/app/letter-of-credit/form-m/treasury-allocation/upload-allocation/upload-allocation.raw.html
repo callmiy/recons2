@@ -27,11 +27,14 @@
         {$uploadTreasuryAllocation.invalidPastedTextMsg$}
       </uib-alert>
 
-      <form ng-show="uploadTreasuryAllocation.showPasteForm" class="form-horizontal" role="form"
-            name="pasteBlotterForm">
-    <textarea style="height: 350px;" name="pasteBlotterText" id="paste-blotter " class="form-control"
-              placeholder="copy and paste from blotter" ng-model="uploadTreasuryAllocation.pastedBlotter"
-              ng-change="uploadTreasuryAllocation.onBlotterPasted()"></textarea>
+      <form class="form-horizontal" role="form" name="pasteBlotterForm"
+            ng-show="uploadTreasuryAllocation.showPasteForm"
+            ng-class="{'allocations-saving': uploadTreasuryAllocation.isSaving}">
+
+      <textarea style="height: 350px;" name="pasteBlotterText" id="paste-blotter "
+                class="form-control allocations-saving"
+                placeholder="copy and paste from blotter" ng-model="uploadTreasuryAllocation.pastedBlotter"
+                ng-change="uploadTreasuryAllocation.onBlotterPasted()"></textarea>
       </form>
     </uib-accordion-group>
   </uib-accordion>
@@ -69,8 +72,9 @@
             <span style="color: green;font-weight: 900; font-size: 1.3em;"
                   ng-if="!row.errors">Data ok - can be saved!</span>
 
-            <span style="color: #c7254e;" ng-repeat="rowError in row.errors">
-              Cannot be saved: {$rowError$}
+            <span ng-if="row.errors" style="color: #c7254e; display: block; margin-left: 30px">Cannot be saved: </span>
+            <span style="color: #c7254e; display: block" ng-repeat="rowError in row.errors">
+              {$rowError$}
             </span>
           </td>
         </tr>

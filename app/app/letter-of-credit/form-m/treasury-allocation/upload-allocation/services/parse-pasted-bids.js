@@ -61,7 +61,7 @@ function parsePastedBids(underscore, moment, baby) {
    * @returns {{}} the input data now cleaned
    */
   function cleanPastedBids(data, headersMap) {
-    var refName
+    var refName, fcyAmount
 
     underscore.each( data, function (val, key) {
       data[ key ] = val.trim()
@@ -75,7 +75,11 @@ function parsePastedBids(underscore, moment, baby) {
       }
 
       if ( key === 'FCY_AMOUNT' ) {
-        data.FCY_AMOUNT = Math.abs( Number( val.replace( /[\(\)\s]/g, '' ) ) )
+        fcyAmount = Math.abs( Number( val.replace( /[,\(\)\s]/g, '' ) ) )
+
+        if ( !fcyAmount || isNaN( fcyAmount ) ) fcyAmount = val
+
+        data.FCY_AMOUNT = fcyAmount
       }
 
       if ( key.indexOf( '_DATE' ) > 1 ) {

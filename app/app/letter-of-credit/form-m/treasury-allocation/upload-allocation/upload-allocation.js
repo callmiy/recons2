@@ -92,11 +92,15 @@ function uploadTreasuryAllocationDirectiveController(parsePastedBids, saveBlotte
 
     var dataSet = parsed.data
 
+    vm.isSaving = true
     saveBlotter( dataSet ).then( function (savedDataList) {
       vm.allocationList = savedDataList
 
     }, function (rejectedDataList) {
       vm.rejectedDataList = rejectedDataList
+
+    } ).finally( function () {
+      vm.isSaving = false
     } )
   }
 
