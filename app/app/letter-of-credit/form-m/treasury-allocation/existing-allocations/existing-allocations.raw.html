@@ -57,21 +57,16 @@
 
             <span class="original-request-row"
                   ng-repeat="req in allocationObj.originalRequests"
-                  ng-class="{'multiple-requests': (allocationObj.originalRequests.length > 1), 'deleted': (allocationObj.originalRequestsDeleted[$index] == $index)}">
+                  ng-class="{'multiple-requests': (allocationObj.originalRequests.length > 1), 'deleted': (allocationObj.originalRequestsEdited[$index] == $index)}">
 
                 {$::req |number:2$}
-
-              <span class="glyphicon remove-add-bid-icons"
-                    ng-class="{'glyphicon-remove': (allocationObj.originalRequestsDeleted[$index] != $index), 'glyphicon-plus-sign': (allocationObj.originalRequestsDeleted[$index] == $index)}"
-                    ng-click="uploadTreasuryAllocation.toggleMapOriginalRequest(allocationObj.index, $index)">
-              </span>
             </span>
           </td>
 
           <td data-title="'TOTAL ALLOCATIONS'" filter="{totalAllocations :'number'}">
             <span class="original-request-row"
                   ng-repeat="req in allocationObj.totalAllocations"
-                  ng-class="{'multiple-requests': (allocationObj.originalRequests.length > 1), 'deleted': (allocationObj.originalRequestsDeleted[$index] == $index)}">
+                  ng-class="{'multiple-requests': (allocationObj.originalRequests.length > 1), 'deleted': (allocationObj.originalRequestsEdited[$index] == $index)}">
                 {$::req |number:2$}
             </span>
           </td>
@@ -79,14 +74,14 @@
           <td data-title="'AMOUNT OUTSTANDING'" filter="{outstandingAmounts :'number'}">
             <span class="original-request-row"
                   ng-repeat="req in allocationObj.outstandingAmounts"
-                  ng-class="{'multiple-requests': (allocationObj.originalRequests.length > 1), 'deleted': (allocationObj.originalRequestsDeleted[$index] == $index)}">
+                  ng-class="{'multiple-requests': (allocationObj.originalRequests.length > 1), 'deleted': (allocationObj.originalRequestsEdited[$index] == $index)}">
                 {$::req |number:2$}
             </span>
           </td>
 
           <td data-title="'NEW OUTSTANDING'" sortable="'newOutstandingAmounts'">
               <span class="original-request-row" ng-repeat="req in allocationObj.newOutstandingAmounts"
-                    ng-class="{'multiple-requests': (allocationObj.originalRequests.length > 1), 'deleted': (allocationObj.originalRequestsDeleted[$index] == $index)}">
+                    ng-class="{'multiple-requests': (allocationObj.originalRequests.length > 1), 'deleted': (allocationObj.originalRequestsEdited[$index] == $index)}">
                 {$req |number:2$}
               </span>
           </td>

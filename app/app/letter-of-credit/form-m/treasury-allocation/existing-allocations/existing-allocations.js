@@ -43,4 +43,6 @@ function ExistingAllocationsDirectiveController(NgTableParams, attachBidsToAlloc
     { sorting: { ref: 'desc' }, count: 1000000 },
     { dataset: vm.allocationList, counts: [] }
   )
+
+  throw new Error( 'code directive to edit allocation bids!' )
 }

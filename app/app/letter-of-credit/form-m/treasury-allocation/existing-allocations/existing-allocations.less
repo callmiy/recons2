@@ -8,6 +8,10 @@
     display: block;
     margin-bottom: 5px;
 
+    &:last-child {
+      margin-bottom: 0;
+    }
+
     &.multiple-requests {
       padding: 2px;
       font-size: 90%;
@@ -19,21 +23,6 @@
     &.deleted {
       text-decoration: line-through;
       color: #c7254e;
-    }
-
-    .remove-add-bid-icons {
-      padding: 0 4px 0 15px;
-      font-size: 90%;
-      cursor: pointer;
-
-      &.glyphicon-remove { color: #c7254e; }
-
-      &.glyphicon-plus-sign { color: #06ac06; }
-
-    }
-
-    &:last-child {
-      margin-bottom: 0;
     }
   }
 }

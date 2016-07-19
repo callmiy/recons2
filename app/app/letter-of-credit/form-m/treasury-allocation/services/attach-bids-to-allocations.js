@@ -15,7 +15,14 @@ function attachBidsToAllocation() {
    * @return {*}
    */
   function attach(allocationList) {
-    var distributionToBids, totalAllocations, originalRequests, bidIds, outstandingAmounts, newOutstandingAmounts
+    var distributionToBids,
+      totalAllocations,
+      originalRequests,
+      bidIds,
+      outstandingAmounts,
+      newOutstandingAmounts,
+      originalRequestsEdited // we keep track of whether the bid is deleted i.e user decides the bid should not be
+                              // mapped to the allocation
 
     return allocationList.map( function (allocation) {
       distributionToBids = allocation.distribution_to_consolidated_bids
@@ -27,6 +34,7 @@ function attachBidsToAllocation() {
       totalAllocations = []
       outstandingAmounts = []
       newOutstandingAmounts = []
+      originalRequestsEdited = []
 
       distributionToBids.forEach( function (bid) {
         totalAllocations.push( bid.sum_allocations )
@@ -34,6 +42,7 @@ function attachBidsToAllocation() {
         bidIds.push( bid.id )
         outstandingAmounts.push( bid.outstanding_amount )
         newOutstandingAmounts.push( bid.outstanding_amount )
+        originalRequestsEdited.push( null )
       } )
 
       allocation.originalRequests = originalRequests
@@ -41,6 +50,7 @@ function attachBidsToAllocation() {
       allocation.outstandingAmounts = outstandingAmounts
       allocation.newOutstandingAmounts = newOutstandingAmounts
       allocation.bidIds = bidIds
+      allocation.originalRequestsEdited = originalRequestsEdited
 
       return allocation
     } )
