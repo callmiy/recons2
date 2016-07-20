@@ -3,12 +3,8 @@
 /*jshint camelcase:false*/
 
 var app = angular.module( 'existing-allocations', [
-  'rootApp',
-  'consolidated-lc-bid-request',
-  'lc-service',
   'treasury-allocation-service',
-  'ngTable',
-  'consolidated-lc-bid-request'
+  'ngTable'
 ] )
 
 app.directive( 'existingAllocations', existingAllocationsDirective )
@@ -43,6 +39,4 @@ function ExistingAllocationsDirectiveController(NgTableParams, attachBidsToAlloc
     { sorting: { ref: 'desc' } },
     { dataset: vm.allocationList }
   )
-
-  //throw new Error( 'code directive to edit allocation bids!' )
 }

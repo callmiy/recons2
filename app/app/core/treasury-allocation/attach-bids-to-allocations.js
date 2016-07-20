@@ -2,7 +2,7 @@
 
 /*jshint camelcase:false*/
 
-var app = angular.module( 'treasury-allocation' )
+var app = angular.module( 'treasury-allocation-service' )
 
 app.factory( 'attachBidsToAllocation', attachBidsToAllocation )
 attachBidsToAllocation.$inject = []
@@ -14,7 +14,7 @@ function attachBidsToAllocation() {
    * @param {[]} allocationList
    * @return {*}
    */
-  function attach(allocationList) {
+  function attach(allocationList)  {
     var distributionToBids,
       totalAllocations,
       originalRequests,

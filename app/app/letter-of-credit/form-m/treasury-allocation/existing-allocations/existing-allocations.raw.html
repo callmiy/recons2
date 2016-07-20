@@ -1,4 +1,14 @@
 <div class="existing-allocations-directive-container">
+
+  <div class="allocation-form-container" ng-if="existingAllocations.showEditAllocationForm">
+    <span class="close-btn" ng-click="existingAllocations.dismissEditAllocationForm()">&times;</span>
+
+    <div edit-allocation
+         allocation="existingAllocations.allocationToEdit"
+         on-edited="existingAllocations.onAllocationEdited(allocation)">
+    </div>
+  </div>
+
   <div class="search-allocations-result treasury-allocations-table-display">
 
     <table ng-table="existingAllocations.tableParams"
@@ -7,6 +17,7 @@
       <tbody>
         <tr ng-repeat="allocationObj in $data track by allocationObj.id"
             ng-class="{'bid-row-matched': allocationObj.originalRequests}"
+            ng-dblclick="existingAllocations.editAllocation(allocationObj)"
         >
 
           <td data-title="'S/N'">{$$index + 1$}</td>
@@ -55,33 +66,30 @@
                 allocation="allocationObj"
                 attr-type="original-request"></display-bids-for-allocation> -->
 
-            <span class="original-request-row"
-                  ng-repeat="req in allocationObj.originalRequests"
-                  ng-class="{'multiple-requests': (allocationObj.originalRequests.length > 1), 'deleted': (allocationObj.originalRequestsEdited[$index] == $index)}">
+            <span class="original-request-row td-number"
+                  ng-repeat="req in allocationObj.originalRequests">
 
                 {$::req |number:2$}
             </span>
           </td>
 
           <td data-title="'TOTAL ALLOCATIONS'" filter="{totalAllocations :'number'}">
-            <span class="original-request-row"
-                  ng-repeat="req in allocationObj.totalAllocations"
-                  ng-class="{'multiple-requests': (allocationObj.originalRequests.length > 1), 'deleted': (allocationObj.originalRequestsEdited[$index] == $index)}">
+            <span class="original-request-row td-number"
+                  ng-repeat="req in allocationObj.totalAllocations">
                 {$::req |number:2$}
             </span>
           </td>
 
           <td data-title="'AMOUNT OUTSTANDING'" filter="{outstandingAmounts :'number'}">
-            <span class="original-request-row"
-                  ng-repeat="req in allocationObj.outstandingAmounts"
-                  ng-class="{'multiple-requests': (allocationObj.originalRequests.length > 1), 'deleted': (allocationObj.originalRequestsEdited[$index] == $index)}">
+            <span class="original-request-row td-number"
+                  ng-repeat="req in allocationObj.outstandingAmounts">
                 {$::req |number:2$}
             </span>
           </td>
 
           <td data-title="'NEW OUTSTANDING'" sortable="'newOutstandingAmounts'">
-              <span class="original-request-row" ng-repeat="req in allocationObj.newOutstandingAmounts"
-                    ng-class="{'multiple-requests': (allocationObj.originalRequests.length > 1), 'deleted': (allocationObj.originalRequestsEdited[$index] == $index)}">
+              <span class="original-request-row td-number"
+                    ng-repeat="req in allocationObj.newOutstandingAmounts">
                 {$req |number:2$}
               </span>
           </td>

@@ -2,20 +2,20 @@
 
 /*jshint camelcase:false*/
 
-var app = angular.module('add-fx-allocation', [
+var app = angular.module( 'add-fx-allocation', [
   'fx-deal-service',
   'rootApp',
   'complex-object-validator'
-])
+] )
 
-app.directive('addFxAllocation', addFxAllocationDirective)
+app.directive( 'addFxAllocation', addFxAllocationDirective )
 
 addFxAllocationDirective.$inject = []
 
 function addFxAllocationDirective() {
   return {
     restrict: 'AE',
-    template: require('./add-deal.html'),
+    template: require( './add-deal.html' ),
     scope: true,
     bindToController: {
       initialDealProps: '=',
@@ -26,18 +26,17 @@ function addFxAllocationDirective() {
   }
 }
 
-app.controller('addFxAllocationController', addFxAllocationController)
+app.controller( 'addFxAllocationController', addFxAllocationController )
 addFxAllocationController.$inject = [
-  'underscore',
   'getTypeAheadCurrency',
   'resetForm2',
   'toISODate',
   'FxDeal'
 ]
-function addFxAllocationController(underscore, getTypeAheadCurrency, resetForm2, toISODate, FxDeal) {
+function addFxAllocationController(getTypeAheadCurrency, resetForm2, toISODate, FxDeal) {
   var vm = this //jshint -W040
 
-  var initialDealProps = vm.initialDealProps ? angular.copy(vm.initialDealProps) : {}
+  var initialDealProps = vm.initialDealProps ? angular.copy( vm.initialDealProps ) : {}
 
   init()
   function init() {
@@ -59,39 +58,39 @@ function addFxAllocationController(underscore, getTypeAheadCurrency, resetForm2,
   }
 
   vm.disableSubmitBtn = function disableSubmitBtn(form) {
-    if (form.$invalid) return true
-    if (vm.deal.amount_utilized && !vm.deal.utilized_on) return true
+    if ( form.$invalid ) return true
+    if ( vm.deal.amount_utilized && !vm.deal.utilized_on ) return true
 
-    return (!vm.deal.amount_utilized && vm.deal.utilized_on)
+    return (!vm.deal.amount_utilized && vm.deal.utilized_on
+    )
   }
 
   vm.getCurrency = getTypeAheadCurrency
   vm.datePickerFormat = 'dd-MMM-yyyy'
   vm.openDatePickerFor = function openDatePickerFor(element) {
-    vm.datePickerIsOpenFor[element] = true
+    vm.datePickerIsOpenFor[ element ] = true
   }
 
   vm.clearForm = function clearForm(form) {
-    resetForm2(form)
+    resetForm2( form )
     init()
   }
 
   vm.saveDeal = function saveDeal(deal) {
-    deal = angular.copy(deal)
-    deal.allocated_on = toISODate(deal.allocated_on)
-    deal.utilized_on = toISODate(deal.utilized_on)
+    deal = angular.copy( deal )
+    deal.allocated_on = toISODate( deal.allocated_on )
+    deal.utilized_on = toISODate( deal.utilized_on )
     deal.currency = deal.currency.url
 
-    new FxDeal(deal).$save(function (data) {
-      vm.onFxAllocated({result: data})
+    new FxDeal( deal ).$save( function (data) {
+      vm.onFxAllocated( { result: data } )
     }, function (error) {
-      vm.onFxAllocated({result: error})
-    })
+      vm.onFxAllocated( { result: error } )
+    } )
   }
 }
 
-
-app.directive('requiredTogether', requiredTogether)
+app.directive( 'requiredTogether', requiredTogether )
 
 function requiredTogether() {
   return {
@@ -99,11 +98,11 @@ function requiredTogether() {
     require: 'ngModel',
     link: function ($scope, element, attributes, ctrl) {
       ctrl.$validators.requiredTogether = function () {
-        if (attributes.required) return true
+        if ( attributes.required ) return true
         else {
           var relatedTo = attributes.kmRelatedTo
-          if (ctrl.$modelValue) {
-            console.log($scope.$eval(relatedTo))
+          if ( ctrl.$modelValue ) {
+            console.log( $scope.$eval( relatedTo ) )
           }
         }
 
