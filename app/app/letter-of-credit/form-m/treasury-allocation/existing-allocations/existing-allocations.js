@@ -27,11 +27,12 @@ function existingAllocationsDirective() {
 app.controller( 'ExistingAllocationsDirectiveController', ExistingAllocationsDirectiveController )
 
 ExistingAllocationsDirectiveController.$inject = [
+  '$log',
   'NgTableParams',
   'attachBidsToAllocation'
 ]
 
-function ExistingAllocationsDirectiveController(NgTableParams, attachBidsToAllocation) {
+function ExistingAllocationsDirectiveController($log, NgTableParams, attachBidsToAllocation) {
   var vm = this  // jshint -W040
 
   vm.allocationList = attachBidsToAllocation( vm.allocationList )
@@ -39,4 +40,21 @@ function ExistingAllocationsDirectiveController(NgTableParams, attachBidsToAlloc
     { sorting: { ref: 'desc' } },
     { dataset: vm.allocationList }
   )
+
+  vm.editAllocation = function editAllocation(allocation) {
+    $log.log( allocation )
+    vm.allocationToEdit = allocation
+    vm.showEditAllocationForm = true
+  }
+
+  vm.dismissEditAllocationForm = function dismissEditAllocationForm() {
+    vm.showEditAllocationForm = false
+    vm.allocationToEdit = null
+  }
+
+  vm.onAllocationEdited = function onAllocationEdited() {
+
+  }
 }
+
+

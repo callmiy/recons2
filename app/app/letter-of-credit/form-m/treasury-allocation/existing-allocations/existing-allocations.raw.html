@@ -1,6 +1,6 @@
 <div class="existing-allocations-directive-container">
 
-  <div class="allocation-form-container" ng-if="existingAllocations.showEditAllocationForm">
+  <div class="edit-allocation-container" ng-if="existingAllocations.showEditAllocationForm">
     <span class="close-btn" ng-click="existingAllocations.dismissEditAllocationForm()">&times;</span>
 
     <div edit-allocation
@@ -15,7 +15,8 @@
            class="table table-bordered table-condensed table-responsive table-striped allocation-table">
 
       <tbody>
-        <tr ng-repeat="allocationObj in $data track by allocationObj.id"
+        <tr style="cursor: pointer;"
+            ng-repeat="allocationObj in $data track by allocationObj.id"
             ng-class="{'bid-row-matched': allocationObj.originalRequests}"
             ng-dblclick="existingAllocations.editAllocation(allocationObj)"
         >
