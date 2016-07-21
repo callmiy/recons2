@@ -7,6 +7,7 @@ from django.dispatch import receiver
 from letter_of_credit.models.treasury_allocation import TreasuryAllocation
 from letter_of_credit.models.consolidated_lc_bid_request import ConsolidatedLcBidRequest
 
+raise Exception('treasure should create and validate allocation to bids')
 
 @receiver(post_save, sender='letter_of_credit.TreasuryAllocation', dispatch_uid='1468778059.359ulkkcnxnwem05s5k')
 def treasury_allocation_finished_saving(sender, **kwargs):
@@ -29,3 +30,8 @@ def treasury_allocation_finished_saving(sender, **kwargs):
                 bid.id: float(instance.fcy_amount)
             })
             instance.save()
+
+    else:
+        if instance.ref:
+            for bid in instance.consolidated_bids.all():
+                pass

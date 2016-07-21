@@ -21,6 +21,8 @@ ajax_lookup_channels = {
 
     'form_m': ('letter_of_credit.lookups', 'FormMLookup'),
 
-    'lc': ('letter_of_credit.lookups', 'LCRegisterLookup')
+    'lc': ('letter_of_credit.lookups', 'LCRegisterLookup'),
+
+    'consolidated_bid': ('letter_of_credit.lookups', 'ConsolidatedLcBidRequestLookup'),
 
 }

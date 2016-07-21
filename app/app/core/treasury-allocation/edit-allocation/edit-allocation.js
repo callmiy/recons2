@@ -6,9 +6,16 @@ var app = angular.module( 'treasury-allocation-service' )
 
 app.directive( 'editAllocation', editAllocationDirective )
 
-editAllocationDirective.$inject = []
+editAllocationDirective.$inject = [ '$log' ]
 
-function editAllocationDirective() {
+function editAllocationDirective($log) {
+
+  function editAllocationDirectiveLink(scope, element, attributes, controller) {
+    element.find( '.add-bid' ).on( 'click', function () {
+      $log.log( controller )
+    } )
+  }
+
   return {
     restrict: 'AE',
     templateUrl: require( 'commons' ).buildUrl( 'core', 'treasury-allocation/edit-allocation/edit-allocation.html' ),
@@ -18,7 +25,8 @@ function editAllocationDirective() {
       kmTitle: '=',
       onEdited: '&'
     },
-    controller: 'editAllocationController as editAllocation'
+    controller: 'editAllocationController as editAllocation',
+    link: editAllocationDirectiveLink
   }
 }
 

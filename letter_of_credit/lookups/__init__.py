@@ -1,6 +1,6 @@
 from ajax_select import LookupChannel
 from django.db.models import Q
-from letter_of_credit.models import FormMCover, FormM, LCRegister
+from letter_of_credit.models import FormMCover, FormM, LCRegister, ConsolidatedLcBidRequest
 
 
 class FormMCoverLookup(LookupChannel):
@@ -26,3 +26,14 @@ class LCRegisterLookup(LookupChannel):
 
     def get_query(self, q, request):
         return LCRegister.objects.filter(Q(lc_number__icontains=q))
+
+
+class ConsolidatedLcBidRequestLookup(LookupChannel):
+    model = ConsolidatedLcBidRequest
+
+    def get_query(self, q, request):
+        return ConsolidatedLcBidRequest.objects.filter(
+                Q(mf__number__icontains=q) |
+                Q(mf__applicant__name__icontains=q) |
+                Q(mf__lc__lc_number__contains=q)
+        )
