@@ -30,6 +30,7 @@ class DistributionToConsolidatedFieldSerializer(serializers.Field):
                 'sum_bid_requests': bid.sum_bid_requests(),
                 'sum_allocations': bid.sum_allocations(),
                 'outstanding_amount': bid.outstanding_amount(),
+                'form_m_number': bid.form_m_number(),
             })
 
         return returned

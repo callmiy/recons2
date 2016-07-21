@@ -27,4 +27,9 @@ editAllocationController.$inject = [ '$log' ]
 
 function editAllocationController($log) {
   var vm = this //jshint -W040
+  $log.log( vm.allocation )
+
+  vm.save = function save(bids) {
+    $log.log( bids )
+  }
 }

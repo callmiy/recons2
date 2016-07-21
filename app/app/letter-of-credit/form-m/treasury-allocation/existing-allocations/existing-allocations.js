@@ -42,7 +42,6 @@ function ExistingAllocationsDirectiveController($log, NgTableParams, attachBidsT
   )
 
   vm.editAllocation = function editAllocation(allocation) {
-    $log.log( allocation )
     vm.allocationToEdit = allocation
     vm.showEditAllocationForm = true
   }
