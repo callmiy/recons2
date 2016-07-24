@@ -21,12 +21,16 @@
     }
 
     & > label {
-      flex: 1;
+
+      &:first-of-type {
+        flex: 2;
+      }
       margin-bottom: 0;
       color: #6b6363;
 
-      & + label {
+      &:last-of-type {
         margin-left: 5px;
+        flex: 1;
       }
 
       & > input {

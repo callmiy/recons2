@@ -32,29 +32,19 @@ getConsolidatedLcBidRequest.$inject = [ 'ConsolidatedLcBidRequest' ]
 function getConsolidatedLcBidRequest(ConsolidatedLcBidRequest) {
 
   /**
-   * Given a string
+   * Given a string which is the substring of form M or lc number of some consolidated bids, get the corresponding
+   * consolidated bids and optionally transform the bids using transformFn
    *
    * @param {String} query
-   * @param {undefined|Array} fields
+   * @param {undefined|Function} transformFn
    * @returns {*}
    */
-  function doGetConsolidatedLcBidRequest(query, fields) {
+  function doGetConsolidatedLcBidRequest(query, transformFn) {
 
     return ConsolidatedLcBidRequest.getPaginated( { q: query } ).$promise.then( function (data) {
-      var results = data.results,
-        obj
+      var results = data.results
 
-      if ( fields ) {
-        results = results.map( function (item) {
-          obj = {}
-
-          fields.forEach( function (field) {
-            obj[ field ] = item[ field ]
-          } )
-
-          return obj
-        } )
-      }
+      if ( transformFn ) results = transformFn( results )
 
       return results
     } )

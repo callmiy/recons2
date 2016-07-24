@@ -4,6 +4,40 @@
 
 var underscore = require( 'underscore' )
 
+var bidAttributes = [
+  'id',
+  'url',
+  'sum_bid_requests',
+  'sum_allocations',
+  'outstanding_amount',
+  'form_m_number',
+  'lc_number',
+]
+
+/**
+ *
+ * @param {Array} bids
+ * @param {Array} attributes
+ * @returns {Array}
+ */
+function transformRawBids(bids, attributes) {
+  var obj
+
+  bids = angular.copy( bids )
+
+  bids.forEach( function (bid) {
+    obj = {}
+
+    attributes.forEach( function (attribute) {
+      obj[ attribute ] = bid[ attribute ]
+    } )
+
+    return obj
+  } )
+
+  return formatBids( bids )
+}
+
 /**
  *
  * @param {[]} bids
@@ -93,5 +127,7 @@ module.exports = {
   formatBids: formatBids,
   addBid: addBid,
   removeBid: removeBid,
-  bidsChanged: bidsChanged
+  bidsChanged: bidsChanged,
+  transformRawBids: transformRawBids,
+  bidAttributes: bidAttributes
 }

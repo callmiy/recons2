@@ -35,22 +35,17 @@ function editAllocationController($log, saveAllocation, getConsolidatedLcBidRequ
   vm.allocation = angular.copy( vm.allocation ) //we should not mutate the original allocation
   vm.bids = utilities.formatBids( vm.allocation.distribution_to_consolidated_bids )
   var originalBids = angular.copy( vm.bids ) //we store the original bids in case user hits cancel button
-  var bidAttributes = [
-    'id',
-    'url',
-    'sum_bid_requests',
-    'sum_allocations',
-    'outstanding_amount',
-    'form_m_number',
-    'lc_number',
-  ]
-
-  throw new Error( 'get bids from consolidated lc bid request should take a function that will transform the query' +
-                   ' results. this is required so that the bids returned to edit allocation is of the form suitable' +
-                   ' for it' )
 
   vm.getBids = function getBids(query) {
-    return getConsolidatedLcBidRequest( query, bidAttributes )
+    return getConsolidatedLcBidRequest( query, function transformRawBids(bids) {
+      return utilities.transformRawBids( bids, utilities.bidAttributes )
+    } )
+  }
+
+  throw new Error( 'figure out how to set bid.ref model to a string and the bid should be the result of type ahead' )
+  vm.bidRefGetterSetter = function bidRefGetterSetter(val) {
+    if ( !arguments.length ) return null
+
   }
 
   vm.save = function save(bids) {
