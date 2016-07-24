@@ -64,4 +64,5 @@ class ConsolidatedLcBidRequestSerializer(serializers.HyperlinkedModelSerializer)
             'sum_allocations',
             'outstanding_amount',
             'treasury_allocations',
+            'lc_number',
         )

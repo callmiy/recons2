@@ -27,9 +27,6 @@ body {
 .navbar-default ul.nav.navbar-nav li a {
   color: #F5FBFB;
 }
-.container-fluid {
-  margin: 10px 15px;
-}
 .hide {
   display: none;
 }

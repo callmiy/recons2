@@ -7,7 +7,6 @@ from django.dispatch import receiver
 from letter_of_credit.models.treasury_allocation import TreasuryAllocation
 from letter_of_credit.models.consolidated_lc_bid_request import ConsolidatedLcBidRequest
 
-raise Exception('treasure should create and validate allocation to bids')
 
 @receiver(post_save, sender='letter_of_credit.TreasuryAllocation', dispatch_uid='1468778059.359ulkkcnxnwem05s5k')
 def treasury_allocation_finished_saving(sender, **kwargs):
@@ -20,18 +19,17 @@ def treasury_allocation_finished_saving(sender, **kwargs):
     """
     instance = kwargs['instance']  # type: TreasuryAllocation
 
-    if kwargs['created'] and instance.ref:
-        qs = ConsolidatedLcBidRequest.objects.filter(Q(mf__number=instance.ref) | Q(mf__lc__lc_number=instance.ref))
+    if kwargs['created']:
+        if instance.ref:
+            qs = ConsolidatedLcBidRequest.objects.filter(Q(mf__number=instance.ref) | Q(mf__lc__lc_number=instance.ref))
 
-        if qs.exists():
-            bid = qs[0]
-            instance.consolidated_bids.add(bid)
-            instance.distribution_to_consolidated_bids = json.dumps({
-                bid.id: float(instance.fcy_amount)
-            })
-            instance.save()
+            if qs.exists():
+                bid = qs[0]
+                instance.consolidated_bids.add(bid)
+                instance.distribution_to_consolidated_bids = json.dumps({
+                    bid.id: float(instance.fcy_amount)
+                })
+                instance.save()
 
     else:
-        if instance.ref:
-            for bid in instance.consolidated_bids.all():
-                pass
+        pass

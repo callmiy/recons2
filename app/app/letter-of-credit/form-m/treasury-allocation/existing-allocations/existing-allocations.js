@@ -34,6 +34,7 @@ ExistingAllocationsDirectiveController.$inject = [
 
 function ExistingAllocationsDirectiveController($log, NgTableParams, attachBidsToAllocation) {
   var vm = this  // jshint -W040
+  var oldFilter = {}
 
   vm.allocationList = attachBidsToAllocation( vm.allocationList )
   vm.tableParams = new NgTableParams(
@@ -44,15 +45,19 @@ function ExistingAllocationsDirectiveController($log, NgTableParams, attachBidsT
   vm.editAllocation = function editAllocation(allocation) {
     vm.allocationToEdit = allocation
     vm.showEditAllocationForm = true
+    oldFilter = angular.copy( vm.tableParams.filter() )
+    vm.tableParams.filter( { deal_number: allocation.deal_number } )
   }
 
   vm.dismissEditAllocationForm = function dismissEditAllocationForm() {
     vm.showEditAllocationForm = false
     vm.allocationToEdit = null
+    vm.tableParams.filter( angular.copy( oldFilter ) )
+    oldFilter = {}
   }
 
-  vm.onAllocationEdited = function onAllocationEdited() {
-
+  vm.onAllocationEdited = function onAllocationEdited(allocation) {
+    vm.dismissEditAllocationForm()
   }
 }
 

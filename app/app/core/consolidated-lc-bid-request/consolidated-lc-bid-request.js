@@ -25,3 +25,40 @@ function ConsolidatedLcBidRequest($resource, urls) {
     }
   )
 }
+
+app.factory( 'getConsolidatedLcBidRequest', getConsolidatedLcBidRequest )
+getConsolidatedLcBidRequest.$inject = [ 'ConsolidatedLcBidRequest' ]
+
+function getConsolidatedLcBidRequest(ConsolidatedLcBidRequest) {
+
+  /**
+   * Given a string
+   *
+   * @param {String} query
+   * @param {undefined|Array} fields
+   * @returns {*}
+   */
+  function doGetConsolidatedLcBidRequest(query, fields) {
+
+    return ConsolidatedLcBidRequest.getPaginated( { q: query } ).$promise.then( function (data) {
+      var results = data.results,
+        obj
+
+      if ( fields ) {
+        results = results.map( function (item) {
+          obj = {}
+
+          fields.forEach( function (field) {
+            obj[ field ] = item[ field ]
+          } )
+
+          return obj
+        } )
+      }
+
+      return results
+    } )
+  }
+
+  return doGetConsolidatedLcBidRequest
+}

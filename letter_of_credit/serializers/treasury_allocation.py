@@ -19,11 +19,11 @@ class DistributionToConsolidatedFieldSerializer(serializers.Field):
         if len(bid_distribution) == 0:
             return []
 
-        returned = []
+        bid_distributions = []
 
         for bid_id in bid_distribution:
             bid = ConsolidatedLcBidRequest.objects.get(pk=bid_id)
-            returned.append({
+            bid_distributions.append({
                 'id': bid_id,
                 'url': bid.url(),
                 'portion_of_allocation': bid_distribution[bid_id],
@@ -31,9 +31,10 @@ class DistributionToConsolidatedFieldSerializer(serializers.Field):
                 'sum_allocations': bid.sum_allocations(),
                 'outstanding_amount': bid.outstanding_amount(),
                 'form_m_number': bid.form_m_number(),
+                'lc_number': bid.lc_number(),
             })
 
-        return returned
+        return bid_distributions
 
 
 class TreasuryAllocationSerializer(serializers.HyperlinkedModelSerializer):

@@ -89,6 +89,12 @@ class ConsolidatedLcBidRequest(models.Model):
             return float(self.amount) - self.sum_bid_requests()
         return 0
 
+    def lc_number(self):
+        lc = self.mf.lc
+        if lc:
+            return lc.lc_number
+        return None
+
     def url(self):
         return reverse(
                 'consolidatedlcbidrequest-detail',

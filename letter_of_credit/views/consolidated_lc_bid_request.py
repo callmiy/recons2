@@ -18,18 +18,19 @@ class ConsolidatedLcBidRequestPagination(pagination.PageNumberPagination):
 
 
 class ConsolidatedLcBidRequestFilter(django_filters.FilterSet):
+    lc_mf_list = django_filters.MethodFilter()
     q = django_filters.MethodFilter()
     pk = django_filters.MethodFilter()
     mf = django_filters.CharFilter(lookup_type='icontains', name='mf__number')
-    applicant = django_filters.CharFilter(name='mf__applicant__id')
+    applicant = django_filters.CharFilter(name='mf__applicant__name')
     amount = django_filters.CharFilter(name='amount')
     lc_number = django_filters.CharFilter(name='mf__lc__lc_number', lookup_type='icontains')
 
     class Meta:
         model = ConsolidatedLcBidRequest
-        fields = ('mf', 'applicant', 'amount', 'lc_number', 'q', 'pk',)
+        fields = ('mf', 'applicant', 'amount', 'lc_number', 'lc_mf_list', 'pk', 'q',)
 
-    def filter_q(self, qs, param):
+    def filter_lc_mf_list(self, qs, param):
         refs_mf = []
         refs_lc = []
 
@@ -45,6 +46,16 @@ class ConsolidatedLcBidRequestFilter(django_filters.FilterSet):
     def filter_pk(self, qs, param):
         if param:
             return qs.filter(pk__in=param.split(','))
+
+        return qs
+
+    def filter_q(self, qs, param):
+        if param:
+            return qs.filter(
+                    Q(mf__number__icontains=param) |
+                    Q(mf__lc__lc_number__icontains=param) |
+                    Q(mf__applicant__name__icontains=param)
+            )
 
         return qs
 

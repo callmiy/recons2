@@ -2,7 +2,10 @@
 
 /*jshint camelcase:false*/
 
-var app = angular.module( 'treasury-allocation-service', [ 'rootApp' ] )
+var app = angular.module( 'treasury-allocation-service', [
+  'rootApp',
+  'consolidated-lc-bid-request'
+] )
 
 app.factory( 'TreasuryAllocation', TreasuryAllocation )
 TreasuryAllocation.$inject = [ '$resource', 'urls' ]
