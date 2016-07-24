@@ -18,6 +18,7 @@
                    typeahead-min-length="6"
                    typeahead-select-on-exact="true"
                    typeahead-select-on-blur="true"
+                   typeahead-on-select="editAllocation.onSelectBid($item, $model, $label, $event)"
                    uib-typeahead="theBid as theBid.ref for theBid in editAllocation.getBids($viewValue)"
             />
           </label>

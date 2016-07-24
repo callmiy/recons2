@@ -17,6 +17,31 @@ var bidAttributes = [
 /**
  *
  * @param {Array} bids
+ * @param {{}} model
+ * @returns {Array}
+ */
+function transformSelectedBids(bids, model) {
+  bids = angular.copy( bids )
+  var index
+
+  for ( index = 0; index < bids.length; index++ ) {
+    var bid = bids[ index ]
+
+    if ( !underscore.isObject( bid.ref ) ) continue
+
+    if ( underscore.isEqual( bid.ref, model ) ) {
+      bids[ index ] = model
+      break
+    }
+
+  }
+
+  return formatBids( bids )
+}
+
+/**
+ *
+ * @param {Array} bids
  * @param {Array} attributes
  * @returns {Array}
  */
@@ -25,7 +50,7 @@ function transformRawBids(bids, attributes) {
 
   bids = angular.copy( bids )
 
-  bids.forEach( function (bid) {
+  bids = bids.map( function (bid) {
     obj = {}
 
     attributes.forEach( function (attribute) {
@@ -68,7 +93,9 @@ function formatBids(bids) {
     mf = bid.form_m_number || ''
     lc = bid.lc_number || ''
 
-    if ( mf || lc ) { bid.ref = mf + ' ' + lc}
+    if ( mf || lc ) {
+      bid.ref = (mf + ' ' + lc).trim()
+    }
 
     bids[ index ] = bid
   }
@@ -129,5 +156,6 @@ module.exports = {
   removeBid: removeBid,
   bidsChanged: bidsChanged,
   transformRawBids: transformRawBids,
-  bidAttributes: bidAttributes
+  bidAttributes: bidAttributes,
+  transformSelectedBids: transformSelectedBids
 }

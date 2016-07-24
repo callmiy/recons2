@@ -36,16 +36,16 @@ function editAllocationController($log, saveAllocation, getConsolidatedLcBidRequ
   vm.bids = utilities.formatBids( vm.allocation.distribution_to_consolidated_bids )
   var originalBids = angular.copy( vm.bids ) //we store the original bids in case user hits cancel button
 
+  throw new Error( 'code whether original bids have changed so we can save bids' )
+
   vm.getBids = function getBids(query) {
     return getConsolidatedLcBidRequest( query, function transformRawBids(bids) {
       return utilities.transformRawBids( bids, utilities.bidAttributes )
     } )
   }
 
-  throw new Error( 'figure out how to set bid.ref model to a string and the bid should be the result of type ahead' )
-  vm.bidRefGetterSetter = function bidRefGetterSetter(val) {
-    if ( !arguments.length ) return null
-
+  vm.onSelectBid = function onSelectBid($item, $model) {
+    vm.bids = utilities.transformSelectedBids( vm.bids, $model )
   }
 
   vm.save = function save(bids) {
