@@ -31,7 +31,7 @@ function parsePastedBids(underscore, moment, baby) {
     try {
       baby.parse( text.trim(), {
         delimiter: '\t', header: true, step: function (row) {
-          rowData = row.data[ 0 ]
+          rowData = cleanHeaders( row.data[ 0 ] )
           requiredHeadersInRowData = underscore.intersection( underscore.keys( rowData ), requiredHeadersKeys )
           missingRequiredHeaders = underscore.difference( requiredHeadersKeys, requiredHeadersInRowData )
 
@@ -51,7 +51,26 @@ function parsePastedBids(underscore, moment, baby) {
     //baby-parse could not parse the text and did not throw error
     if ( !result.length ) return { error: requiredHeadersKeys }
 
+    console.log( 'result length = ', result.length )
+
     return { data: result }
+  }
+
+  /**
+   * Sometimes the blotter headers (which will be the keys of the row data) contain undesirable chars such as [\s "]. We
+   * format the headers to remove these
+   * @param {{}} rowData
+   * @returns {{}}
+   */
+  function cleanHeaders(rowData) {
+    var obj = {},
+      toBeRemovedRe = /[\s"]/g
+
+    underscore.each( rowData, function (val, key) {
+      obj[ key.replace( toBeRemovedRe, '' ) ] = val
+    } )
+
+    return obj
   }
 
   /**
@@ -61,13 +80,37 @@ function parsePastedBids(underscore, moment, baby) {
    * @returns {{}} the input data now cleaned
    */
   function cleanPastedBids(data, headersMap) {
+
+    /**
+     * Convert to number and optionally decimal places
+     * @param {number|String} val - the value to be converted to floating point number
+     * @param {null|number} precision - the precision
+     * @returns {number}
+     */
+    function toNumber(val, precision) {
+      val = Number( val.replace( /[,\(\)\s]/g, '' ) )
+
+      if ( precision !== null && typeof precision !== 'undefined' ) {
+        val = Number( val.toFixed( precision ) )
+      }
+
+      return val
+    }
+
     var refName, fcyAmount
 
     underscore.each( data, function (val, key) {
-      data[ key ] = val.trim()
+      val = val.replace( /"?\s*?(.+)?\s*"?/ig, function (matched, text) {
+        return text.trim()
+      } )
+
+      data[ key ] = val
+
+      if ( key === 'RATE' ) {
+        data.RATE = toNumber( val, 4 )
+      }
 
       if ( key === 'CUSTOMER_NAME' ) {
-        val = val.replace( /"/g, '' )
         data.CUSTOMER_NAME = val
         refName = getFormMLcRef( val )
         data.ref = refName[ 0 ]
@@ -75,7 +118,7 @@ function parsePastedBids(underscore, moment, baby) {
       }
 
       if ( key === 'FCY_AMOUNT' ) {
-        fcyAmount = Math.abs( Number( val.replace( /[,\(\)\s]/g, '' ) ) )
+        fcyAmount = Math.abs( toNumber( val ) )
 
         if ( !fcyAmount || isNaN( fcyAmount ) ) fcyAmount = val
 
@@ -98,7 +141,7 @@ function parsePastedBids(underscore, moment, baby) {
   function getFormMLcRef(val) {
     var FORM_M_LC_REGEXP = new RegExp( "((MF20\\d+)|(ILC[A-Z]+\\d+))", 'ig' ),
       exec = FORM_M_LC_REGEXP.exec( val ),
-      ref = exec ? exec[ 1 ] : ''
+      ref = exec ? exec[ 1 ].trim() : ''
 
     return [ ref, val.replace( ref, '' ).trim() ]
   }

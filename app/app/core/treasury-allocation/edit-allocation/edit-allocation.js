@@ -36,7 +36,7 @@ function editAllocationController($log, saveAllocation, getConsolidatedLcBidRequ
   vm.bids = utilities.formatBids( vm.allocation.distribution_to_consolidated_bids )
   var originalBids = angular.copy( vm.bids ) //we store the original bids in case user hits cancel button
 
-  throw new Error( 'code whether original bids have changed so we can save bids' )
+  // throw new Error( 'code whether original bids have changed so we can save bids' )
 
   vm.getBids = function getBids(query) {
     return getConsolidatedLcBidRequest( query, function transformRawBids(bids) {

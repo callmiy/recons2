@@ -83,6 +83,8 @@ function uploadTreasuryAllocationDirectiveController(parsePastedBids, saveBlotte
 
     if ( !vm.pastedBlotter ) return
 
+    // vm.pastedBlotter = vm.pastedBlotter.replace(/\s*"\s*/g, '').trim()
+
     var parsed = parsePastedBids( vm.pastedBlotter, requiredBlotterHeaders )
 
     if ( parsed.error ) {
