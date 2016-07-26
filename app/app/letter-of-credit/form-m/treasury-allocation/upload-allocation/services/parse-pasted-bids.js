@@ -43,6 +43,7 @@ function parsePastedBids(underscore, moment, baby) {
         }
       } )
     } catch ( e ) {
+      console.log( 'error parsing pasted blotter = ', e, '\n\n\n' )
       if ( e.message === 'INVALID-PASTED-HEADERS' ) {
         return { error: missingRequiredHeaders }
       }
@@ -50,8 +51,6 @@ function parsePastedBids(underscore, moment, baby) {
 
     //baby-parse could not parse the text and did not throw error
     if ( !result.length ) return { error: requiredHeadersKeys }
-
-    console.log( 'result length = ', result.length )
 
     return { data: result }
   }
@@ -100,11 +99,11 @@ function parsePastedBids(underscore, moment, baby) {
     var refName, fcyAmount
 
     underscore.each( data, function (val, key) {
-      val = val.replace( /"?\s*?(.+)?\s*"?/ig, function (matched, text) {
-        return text.trim()
+      val = val.replace( /"\s*?(.+)?\s*"/ig, function (matched, text) {
+        return text
       } )
 
-      data[ key ] = val
+      data[ key ] = val.trim()
 
       if ( key === 'RATE' ) {
         data.RATE = toNumber( val, 4 )
