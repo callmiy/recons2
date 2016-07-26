@@ -27,10 +27,11 @@
         {$uploadTreasuryAllocation.invalidPastedTextMsg$}
       </uib-alert>
 
-      <div ng-class="{'allocations-saving': uploadTreasuryAllocation.isSaving}"></div>
-
-      <form class="form-horizontal" role="form" name="pasteBlotterForm"
+      <form style="position: relative;" class="form-horizontal" role="form" name="pasteBlotterForm"
             ng-show="uploadTreasuryAllocation.showPasteForm">
+
+        <span us-spinner="{radius:30, width:8, length: 16, color: '#56ba4a'}"
+              spinner-key="{$::uploadTreasuryAllocation.spinnerName$}"></span>
 
       <textarea style="height: 350px;" name="pasteBlotterText" id="paste-blotter "
                 class="form-control"

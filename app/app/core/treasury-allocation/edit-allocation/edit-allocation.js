@@ -36,7 +36,9 @@ function editAllocationController($log, saveAllocation, getConsolidatedLcBidRequ
   vm.bids = utilities.formatBids( vm.allocation.distribution_to_consolidated_bids )
   var originalBids = angular.copy( vm.bids ) //we store the original bids in case user hits cancel button
 
-  // throw new Error( 'code whether original bids have changed so we can save bids' )
+  throw new Error( 'allocation now uses -ve for sales and this should reflect accordingly. additionally, all actions' +
+                   ' required to dismiss edit allocation interface should reside with this directive. this means we' +
+                   ' should remove such from say - existing allocation (the &times; ui)' )
 
   vm.getBids = function getBids(query) {
     return getConsolidatedLcBidRequest( query, function transformRawBids(bids) {

@@ -101,13 +101,3 @@
     </table>
   </div>
 </div>
-
-<div ng-if="existingAllocations.showSaveBtn(existingAllocations.tableParams.dataset)"
-     class="save-parsed-allocation-btn-container">
-
-  <button class="btn btn-success" ng-disabled="existingAllocations.isSaving"
-          ng-click="existingAllocations.saveAllocations(existingAllocations.tableParams.dataset)">
-    {$existingAllocations.isSaving ? 'Saving...' : 'Save'$}
-    <spinner name="treasuryAllocationSpinner" img-src="{$$root.spinnerImgSrc$}"></spinner>
-  </button>
-</div>

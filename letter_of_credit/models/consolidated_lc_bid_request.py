@@ -59,7 +59,7 @@ class ConsolidatedLcBidRequest(models.Model):
         return float(self.initial_allocated_amount) + current_allocations
 
     def outstanding_amount(self):
-        return self.sum_bid_requests() - self.sum_allocations()
+        return self.sum_bid_requests() + self.sum_allocations()
 
     def form_m_number(self):
         return self.mf.number

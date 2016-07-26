@@ -72,6 +72,7 @@ gulp.task( 'initial-css', function () {
 
 gulp.task( 'initial-js', function () {
   return gulp.src( bower + '/jquery/dist/jquery.js' )
+    .pipe( plugins.addSrc.append( bower + '/spin.js/spin.js' ) )
     .pipe( plugins.addSrc.append( bower + '/angular/angular.js' ) )
     .pipe( plugins.addSrc.append( bower + '/angular-route/angular-route.js' ) )
     .pipe( plugins.addSrc.append( bower + '/angular-animate/angular-animate.js' ) )
@@ -83,7 +84,7 @@ gulp.task( 'initial-js', function () {
     .pipe( plugins.addSrc.append( bower + '/angular-bootstrap/ui-bootstrap-tpls.js' ) )
     .pipe( plugins.addSrc.append( bower + '/angular-modal-service/dst/angular-modal-service.js' ) )
     .pipe( plugins.addSrc.append( bower + '/ng-table/dist/ng-table.js' ) )
-    .pipe( plugins.addSrc.append( bower + '/angular-spinners/dist/angular-spinners.js' ) )
+    .pipe( plugins.addSrc.append( bower + '/angular-spinner/angular-spinner.js' ) )
     .pipe( plugins.addSrc.append( bower + '/bootstrap/dist/js/bootstrap.js' ) )
     .pipe( plugins.addSrc.append( bower + '/jquery-ui/jquery-ui.js' ) )
     .pipe( plugins.addSrc.append( bower + '/papa-parse/papaparse.js' ) )

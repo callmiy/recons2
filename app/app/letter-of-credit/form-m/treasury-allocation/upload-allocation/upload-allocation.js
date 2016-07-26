@@ -8,7 +8,7 @@ var app = angular.module( 'upload-treasury-allocation', [
   'lc-service',
   'existing-allocations',
   'treasury-allocation-service',
-  'angularSpinners',
+  'angularSpinner',
   'confirmation-dialog'
 ] )
 
@@ -36,14 +36,15 @@ uploadTreasuryAllocationDirectiveController.$inject = [
   'formMAppStore',
   'requiredBlotterHeaders',
   'initAttributes',
-  'makeInvalidBlotterHeadersMsg'
+  'makeInvalidBlotterHeadersMsg',
+  'usSpinnerService'
 ]
 
 function uploadTreasuryAllocationDirectiveController(parsePastedBids, saveBlotter, underscore, $scope,
                                                      formMAppStore, requiredBlotterHeaders, initAttributes,
-                                                     makeInvalidBlotterHeadersMsg) {
+                                                     makeInvalidBlotterHeadersMsg, usSpinnerService) {
   var vm = this  // jshint -W040
-
+  vm.spinnerName = 'uploadTreasuryAllocationSavingSpinner'
   var bidsFromServer
 
   init( $scope.$parent.treasuryAllocation.uploadAllocationParams )
@@ -93,8 +94,8 @@ function uploadTreasuryAllocationDirectiveController(parsePastedBids, saveBlotte
     }
 
     var dataSet = parsed.data
+    usSpinnerService.spin( vm.spinnerName )
 
-    vm.isSaving = true
     saveBlotter( dataSet ).then( function (savedDataList) {
       vm.allocationList = savedDataList
 
@@ -102,7 +103,8 @@ function uploadTreasuryAllocationDirectiveController(parsePastedBids, saveBlotte
       vm.rejectedDataList = rejectedDataList
 
     } ).finally( function () {
-      vm.isSaving = false
+      usSpinnerService.stop( vm.spinnerName )
+      vm.showPasteForm = false
     } )
   }
 

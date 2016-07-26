@@ -120,6 +120,7 @@ function parsePastedBids(underscore, moment, baby) {
         fcyAmount = Math.abs( toNumber( val ) )
 
         if ( !fcyAmount || isNaN( fcyAmount ) ) fcyAmount = val
+        else if ( data.TRANSACTION_TYPE.toLowerCase() === 'sale' ) fcyAmount = -1 * fcyAmount
 
         data.FCY_AMOUNT = fcyAmount
       }

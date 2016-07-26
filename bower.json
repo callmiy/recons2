@@ -44,6 +44,6 @@
     "angular": "1.4.4",
     "angular-sanitize": "1.4.4",
     "ng-table": "^1.0.0",
-    "angular-spinners": "^3.1.2"
+    "angular-spinner": "^0.8.1"
   }
 }

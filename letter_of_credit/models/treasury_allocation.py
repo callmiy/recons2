@@ -51,8 +51,7 @@ class TreasuryAllocation(models.Model):
         super(TreasuryAllocation, self).save(*args, **kwargs)
 
     def fcy_amount_formatted(self):
-        sign = '-' if self.transaction_type.lower() == 'sale' else ''
-        return '{}{:,.2f}'.format(sign, self.fcy_amount)
+        return '{:,.2f}'.format(self.fcy_amount)
 
     fcy_amount_formatted.short_description = 'FCY Amount'
 
