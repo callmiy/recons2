@@ -64,7 +64,7 @@ function transformRawBids(bids, attributes) {
 }
 
 /**
- *
+ * We can only distribute an allocation
  * @param {[]} bids
  * @param {Number} amount
  * @return Boolean
@@ -75,7 +75,7 @@ function allocationCanBeDistributed(bids, amount) {
     return memo + num
   }, 0 )
 
-  return amount > sumDistributions
+  return Math.abs( amount ) > Math.abs( sumDistributions )
 }
 
 /**
@@ -94,7 +94,8 @@ function formatBids(bids) {
     lc = bid.lc_number || ''
 
     if ( mf || lc ) {
-      bid.ref = (mf + ' ' + lc).trim()
+      bid.ref = (mf + ' ' + lc
+      ).trim()
     }
 
     bids[ index ] = bid

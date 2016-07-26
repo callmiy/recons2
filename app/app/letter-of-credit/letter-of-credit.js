@@ -1,6 +1,5 @@
 "use strict";
 
-require('./form-m/form-m-home.js')
 require('./lc/lc.js')
 
 var rootCommons = require('commons')

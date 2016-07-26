@@ -22,20 +22,9 @@ var app = angular.module( 'form-m',
     'add-form-m-form-m-object',
     'ngSanitize',
     'lc-bid',
-    'treasury-allocation'
+    'treasury-allocation',
+    'form-m-app-store'
   ] )
-
-
-/**
- * Basically for storing the formM number of the current form M when in formM.add view
- */
-app.value( 'formMAppStore', {
-  formMNumber: null,
-  treasuryAllocation: {
-    uploadAllocationParams: {},
-    treasuryAllocationParams: {}
-  }
-} )
 
 app.config( formMURLConfig )
 formMURLConfig.$inject = [ '$stateProvider' ]
@@ -54,8 +43,16 @@ function formMURLConfig($stateProvider) {
 }
 
 app.controller( 'FormMController', FormMController )
-FormMController.$inject = [ '$state', '$scope', 'formMAppStore', '$rootScope' ]
-function FormMController($state, $scope, formMAppStore, $rootScope) {
+FormMController.$inject = [
+  '$state',
+  '$scope',
+  'formMAppStore',
+  '$rootScope',
+  'restoreTreasuryAllocationApp',
+  'restoreFormMApp'
+]
+
+function FormMController($state, $scope, formMAppStore, $rootScope, restoreTreasuryAllocationApp, restoreFormMApp) {
   var vm = this
 
   var listFormMTab = {
@@ -141,16 +138,7 @@ function FormMController($state, $scope, formMAppStore, $rootScope) {
   }
 
   $rootScope.$on( '$stateChangeStart', function (evt, toState, toParams) {
-    if ( toState.name === 'form_m.add' ) {
-      if ( !toParams.formM ) {
-        toParams.formM = formMAppStore.formMNumber
-        toParams.showSummary = null;
-      }
-    }
-
-    if ( toState.name === 'form_m.treasury_allocation' ) {
-      toParams.uploadAllocationParams = formMAppStore.treasuryAllocation.uploadAllocationParams
-      toParams.treasuryAllocationParams = formMAppStore.treasuryAllocation.treasuryAllocationParams
-    }
+    restoreFormMApp( toState, toParams )
+    restoreTreasuryAllocationApp( toState, toParams )
   } )
 }
