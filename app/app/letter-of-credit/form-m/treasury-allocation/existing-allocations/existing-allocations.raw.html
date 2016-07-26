@@ -1,9 +1,6 @@
 <div class="existing-allocations-directive-container">
 
   <div class="edit-allocation-container" ng-if="existingAllocations.showEditAllocationForm">
-    <span class="close-btn"
-          ng-click="existingAllocations.dismissEditAllocationForm()">&times;</span>
-
     <div edit-allocation
          allocation="existingAllocations.allocationToEdit"
          on-edited="existingAllocations.onAllocationEdited(allocation)">

@@ -49,15 +49,11 @@ function ExistingAllocationsDirectiveController($log, NgTableParams, attachBidsT
     vm.tableParams.filter( { deal_number: allocation.deal_number } )
   }
 
-  vm.dismissEditAllocationForm = function dismissEditAllocationForm() {
+  vm.onAllocationEdited = function onAllocationEdited(allocation) {
     vm.showEditAllocationForm = false
     vm.allocationToEdit = null
     vm.tableParams.filter( angular.copy( oldFilter ) )
     oldFilter = {}
-  }
-
-  vm.onAllocationEdited = function onAllocationEdited(allocation) {
-    vm.dismissEditAllocationForm()
   }
 }
 
