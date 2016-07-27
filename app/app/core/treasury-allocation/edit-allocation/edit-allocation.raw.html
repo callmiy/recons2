@@ -1,5 +1,5 @@
 <div class="edit-allocation-directive-container">
-  <form class="" role="form">
+  <form class="" role="form" autocomplete="off">
     <fieldset ng-form name="editAllocationForm">
       <legend>Edit FX Allocation:
         {$::editAllocation.allocation.deal_number$}/
@@ -15,16 +15,19 @@
           <label for="bid-form-m-number">
             <input type="text" id="bid-form-m-number"
                    ng-model="bid.ref"
+                   ng-model-optionsx="{getterSetter: true}"
+                   typeahead-editable="false"
                    typeahead-min-length="6"
                    typeahead-select-on-exact="true"
-                   typeahead-select-on-blur="true"
                    typeahead-on-select="editAllocation.onSelectBid($item, $model, $label, $event)"
                    uib-typeahead="theBid as theBid.ref for theBid in editAllocation.getBids($viewValue)"
             />
           </label>
 
           <label for="bid-amount">
-            <input type="text" id="bid-amount" ng-model="bid.portion_of_allocation" ng-disabled="!bid.ref"
+            <input type="text" id="bid-amount" placeholder="Utilization Amount"
+                   ng-model="bid.portion_of_allocation"
+                   ng-disabled="!bid.ref"
                    number-format
             />
           </label>
@@ -34,6 +37,8 @@
           </span>
         </li>
       </ul>
+
+      <div class="errors" ng-if="editAllocation.errors">{$editAllocation.errors$}</div>
 
       <div class="control-buttons">
         <div>

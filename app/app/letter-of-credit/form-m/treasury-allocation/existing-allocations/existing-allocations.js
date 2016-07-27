@@ -3,7 +3,6 @@
 /*jshint camelcase:false*/
 
 var attachBidsToAllocation = require( './../../../../core/treasury-allocation/attach-bids-to-allocations.js' )
-var initialState = require( './initial-state.js' )
 
 var app = angular.module( 'existing-allocations', [
   'treasury-allocation-service',
@@ -38,32 +37,13 @@ function ExistingAllocationsDirectiveController($log, NgTableParams) {
   var vm = this  // jshint -W040
   var oldFilter = {}
 
-  throw new Error( 'finish state restoration codes' )
+  //:TODO 'finish state restoration codes
 
-  init( $scope.$parent.treasuryAllocation.existingAllocationParams )
-
-  /**
-   *
-   * @param {{}} params
-   */
-  function init(params) {
-    if ( underscore.isEmpty( params ) ) {
-      underscore.each( initialState, function (val, attr) {
-        vm[ attr ] = val
-      } )
-
-      vm.allocationList = attachBidsToAllocation( vm.allocationList )
-      vm.tableParams = new NgTableParams(
-        { sorting: { ref: 'desc' } },
-        { dataset: vm.allocationList }
-      )
-
-    } else {
-      underscore.each( initialState, function (val, attr) {
-        vm[ attr ] = params[ attr ]
-      } )
-    }
-  }
+  vm.allocationList = attachBidsToAllocation( vm.allocationList )
+  vm.tableParams = new NgTableParams(
+    { sorting: { ref: 'desc' } },
+    { dataset: vm.allocationList }
+  )
 
   vm.editAllocation = function editAllocation(allocation) {
     vm.allocationToEdit = allocation

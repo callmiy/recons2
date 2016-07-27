@@ -36,6 +36,8 @@ function editAllocationController($log, saveAllocation, getConsolidatedLcBidRequ
   vm.bids = utilities.formatBids( vm.allocation.distribution_to_consolidated_bids )
   var originalBids = angular.copy( vm.bids ) //we store the original bids in case user hits cancel button
 
+  throw new Error( 'bidsCanBeSaved should be merged into get validation error and should return errors array' )
+
   vm.getBids = function getBids(query) {
     return getConsolidatedLcBidRequest( query, function transformRawBids(bids) {
       return utilities.transformRawBids( bids, utilities.bidAttributes )
@@ -46,8 +48,28 @@ function editAllocationController($log, saveAllocation, getConsolidatedLcBidRequ
     vm.bids = utilities.transformSelectedBids( vm.bids, $model )
   }
 
+  //vm.refGetterSetter = function refGetterSetter(index) {
+  //
+  //  console.log( 'index = ', index )
+  //
+  //  return function (model) {
+  //    if ( arguments.length ) {
+  //      console.log( 'model = ', model )
+  //      vm.bids = utilities.transformSelectedBids( vm.bids, model )
+  //      console.log( 'vm.bids = ', vm.bids )
+  //    }
+  //
+  //    return vm.bids[ index ].ref
+  //  }
+  //}
+
   vm.save = function save(bids) {
-    utilities.bidsChanged( bids, originalBids )
+    vm.errors = null
+    var errors = utilities.getAllocationDistributionErrors( bids, vm.allocation.fcy_amount )
+
+    if ( errors.length ) vm.errors = utilities.getErrorText( errors )
+
+    utilities.bidsCanBeSaved( bids, originalBids )
   }
 
   vm.addBid = function addBid() {
