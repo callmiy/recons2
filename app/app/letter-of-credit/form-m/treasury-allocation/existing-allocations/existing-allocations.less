@@ -1,6 +1,16 @@
 .existing-allocations-directive-container {
-  .allocation-table > tbody > tr.bid-row-matched {
-    background: #cbf4cb;
+  .allocation-table {
+    & > tbody > tr.bid-row-matched {
+      background: #cbf4cb;
+    }
+
+    & > thead > tr {
+      & > th {
+        &:nth-child(4) {
+          min-width: 80px;
+        }
+      }
+    }
   }
 
   //original request row is currently a span

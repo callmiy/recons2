@@ -8,8 +8,9 @@ app.factory( 'saveAllocation', saveAllocation )
 saveAllocation.$inject = [ 'TreasuryAllocation' ]
 
 function saveAllocation(TreasuryAllocation) {
-  function save() {
-    console.log( 'TreasuryAllocation = ', TreasuryAllocation )
+
+  function save(allocation) {
+    return TreasuryAllocation.save( allocation ).$promise
   }
 
   return save

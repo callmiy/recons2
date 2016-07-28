@@ -57,6 +57,7 @@ function ExistingAllocationsDirectiveController($log, NgTableParams) {
     vm.allocationToEdit = null
     vm.tableParams.filter( angular.copy( oldFilter ) )
     oldFilter = {}
+    console.log( 'allocation edit success = ', allocation )
   }
 }
 

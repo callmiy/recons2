@@ -1,9 +1,10 @@
+import json
+
 from django.core.urlresolvers import reverse
 from django.db import models
 
 from letter_of_credit.letter_of_credit_commons import BidRequestStatus
 from .form_m import FormM
-import json
 
 
 class ConsolidatedLcBidRequest(models.Model):
@@ -56,7 +57,7 @@ class ConsolidatedLcBidRequest(models.Model):
             if pk in allocation_dict:
                 current_allocations += float(allocation_dict[pk])
 
-        return float(self.initial_allocated_amount) + current_allocations
+        return -1 * (abs(float(self.initial_allocated_amount)) + abs(current_allocations))
 
     def outstanding_amount(self):
         return self.sum_bid_requests() + self.sum_allocations()

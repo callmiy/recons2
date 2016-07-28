@@ -136,11 +136,12 @@ function removeBid(bids, index) {
 /**
  * We check whether each bid has the required attributes and the portion of allocation amount is of the proper form
  * for the bid - this check is necessary before bids can be saved
- * @param {Array} bids
+ * @param {Array} newBids
+ * @param {Array} originalBids
  * @param {Number} allocationAmount
  * @returns {Array} - we return array of codes denoting the errors or empty array if no errors
  */
-function getAllocationDistributionErrors(bids, allocationAmount) {
+function getAllocationDistributionErrors(newBids, originalBids, allocationAmount) {
   var attributes,
     attributesDiff,
     utilization,
@@ -152,8 +153,7 @@ function getAllocationDistributionErrors(bids, allocationAmount) {
     ] )
 
   try {
-    underscore.each( bids, function (bid) {
-      //console.log( 'bid = ', bid )
+    underscore.each( newBids, function (bid) {
       utilization = bid.portion_of_allocation
 
       if ( !utilization ) {
@@ -180,6 +180,12 @@ function getAllocationDistributionErrors(bids, allocationAmount) {
   }
 
   if ( sumDistributions > Math.abs( allocationAmount ) ) return [ 'distribution_is_greater' ]
+
+  //if length of new bids is greater than lenght of original bids, then bids have changed and we don't need to
+  // compare old bids array to new bids array
+  if ( newBids.length <= originalBids.length && bidsAreTheSame( newBids, originalBids ) ) {
+    return [ 'nothing_has_changed' ]
+  }
 
   return errors
 }
@@ -224,23 +230,6 @@ function bidsAreTheSame(bids1, bids2) {
 }
 
 /**
- *
- * @param {Array} newBids
- * @param {Array} originalBids
- * @returns {boolean}
- */
-function bidsCanBeSaved(newBids, originalBids) {
-  var newBidsLen = newBids.length,
-    originalBidsLen = originalBids.length
-
-  //we have attached at least one extra allocation
-  if ( newBidsLen > originalBidsLen ) return true
-  if ( bidsAreTheSame( newBids, originalBids ) ) return false
-
-  return true
-}
-
-/**
  * Given an array of errors from validation of user's distribution of an allocation, get the string that will be
  * displayed to user to inform about error
  * @param {Array} errors
@@ -249,8 +238,10 @@ function bidsCanBeSaved(newBids, originalBids) {
 function getErrorText(errors) {
   var text
   if ( underscore.contains( errors, 'utilization' ) ) text = 'Error in utilization!'
-
   else if ( underscore.contains( errors, 'distribution_is_greater' ) ) text = 'Utilization more than allocated amount!'
+  else if ( underscore.contains( errors, 'nothing_has_changed' ) ) {
+    text = 'Nothing has changed - you may want to dismiss edit!'
+  }
 
   return text
 }
@@ -260,7 +251,6 @@ module.exports = {
   formatBids: formatBids,
   addBid: addBid,
   removeBid: removeBid,
-  bidsCanBeSaved: bidsCanBeSaved,
   transformRawBids: transformRawBids,
   bidAttributes: bidAttributes,
   transformSelectedBids: transformSelectedBids,
