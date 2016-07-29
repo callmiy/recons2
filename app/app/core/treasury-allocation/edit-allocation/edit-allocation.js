@@ -60,7 +60,7 @@ function editAllocationController($log, saveAllocation, getConsolidatedLcBidRequ
     vm.allocation.distribution_to_consolidated_bids = bids
 
     saveAllocation( vm.allocation ).then( function (allocation) {
-      vm.exit( null, allocation )
+      vm.exit( allocation, true )
     } )
 
   }
@@ -79,12 +79,12 @@ function editAllocationController($log, saveAllocation, getConsolidatedLcBidRequ
 
   /**
    *
-   * @param {String} type
-   * @param allocation
+   * @param {{}} allocation
+   * @param {*} edited
    */
-  vm.exit = function exit(type, allocation) {
-    if ( type === 'dismiss' ) vm.allocation.distribution_to_consolidated_bids = originalBids
+  vm.exit = function exit(allocation, edited) {
+    if ( !edited ) vm.allocation.distribution_to_consolidated_bids = originalBids
 
-    vm.onEdited( { allocation: allocation } )
+    vm.onEdited( { allocation: allocation, edited: edited } )
   }
 }

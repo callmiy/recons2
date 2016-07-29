@@ -10,7 +10,7 @@ saveAllocation.$inject = [ 'TreasuryAllocation' ]
 function saveAllocation(TreasuryAllocation) {
 
   function save(allocation) {
-    return TreasuryAllocation.save( allocation ).$promise
+    return TreasuryAllocation.put( allocation ).$promise
   }
 
   return save

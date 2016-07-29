@@ -1,12 +1,6 @@
 import json
-
 from rest_framework import serializers
-from rest_framework.parsers import JSONParser
-from django.utils.six import BytesIO
-
 from letter_of_credit.models import TreasuryAllocation, ConsolidatedLcBidRequest
-
-raise Exception('fix can not save allocation from drf')
 
 
 class DistributionToConsolidatedFieldSerializer(serializers.Field):
@@ -14,7 +8,7 @@ class DistributionToConsolidatedFieldSerializer(serializers.Field):
         internal_value = {}
 
         if isinstance(data, basestring):
-            data = JSONParser().parse(data)
+            data = eval(data)
 
         for bid in data:
             print '\n\n\nbid = ', type(bid), '\n\n\n'
