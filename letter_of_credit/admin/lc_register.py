@@ -51,6 +51,7 @@ class LCRegisterAdmin(AjaxSelectAdmin):
             ('mf', 'Form M Number'),
             ('expiry_date', 'Expiry Date'),
             ('advising_bank', 'Advising Bank'),
+            ('mt_730_received_at', 'Date MT730 Received')
         )
 
         sheet.cell(row=1, column=1, value='S/N').font = font
