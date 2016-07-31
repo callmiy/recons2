@@ -8,6 +8,7 @@ var app = angular.module( 'search-allocations', [
   'lc-service',
   'treasury-allocation-service',
   'existing-allocations',
+  'angularSpinner',
   'ngTable',
   'consolidated-lc-bid-request'
 ] )
@@ -29,11 +30,13 @@ function searchAllocationsDirective() {
 app.controller( 'SearchAllocationsDirectiveController', SearchAllocationsDirectiveController )
 
 SearchAllocationsDirectiveController.$inject = [
-  'searchTreasuryAllocation'
+  'searchTreasuryAllocation',
+  'usSpinnerService'
 ]
 
-function SearchAllocationsDirectiveController(searchTreasuryAllocation) {
+function SearchAllocationsDirectiveController(searchTreasuryAllocation, usSpinnerService) {
   var vm = this  // jshint -W040
+  vm.spinnerName = 'searchingAllocationsSpinner'
   vm.isAllocationSearchOpen = true
   vm.search = {}
 
@@ -55,11 +58,15 @@ function SearchAllocationsDirectiveController(searchTreasuryAllocation) {
       return
     }
 
+    usSpinnerService.spin( vm.spinnerName )
     searchTreasuryAllocation( searchObj ).then( function (data) {
       if ( data.length ) {
         vm.allocationList = data
         vm.showSearchResult = true
+        vm.isAllocationSearchOpen = false
       }
+    } ).finally( function () {
+      usSpinnerService.stop( vm.spinnerName )
     } )
   }
 }

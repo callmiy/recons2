@@ -2,8 +2,6 @@
 
 /*jshint camelcase:false*/
 
-var attachBidsToAllocation = require( './../../../../core/treasury-allocation/attach-bids-to-allocations.js' )
-//var getByKey = require( './../../../../core/get-by-key.js' )
 var utilities = require( './utilities.js' )
 
 var app = angular.module( 'existing-allocations', [
@@ -41,7 +39,7 @@ function ExistingAllocationsDirectiveController($log, NgTableParams) {
 
   //:TODO 'finish state restoration codes
 
-  vm.allocationList = attachBidsToAllocation( vm.allocationList )
+  vm.allocationList = utilities.attachBidsToAllocations( vm.allocationList )
   vm.tableParams = new NgTableParams(
     { sorting: { ref: 'desc' } },
     { dataset: vm.allocationList }
@@ -54,11 +52,14 @@ function ExistingAllocationsDirectiveController($log, NgTableParams) {
     vm.tableParams.filter( { deal_number: allocation.deal_number } )
   }
 
-  throw new Error( 'insert edited allocation into tableparams properly' )
   vm.onAllocationEdited = function onAllocationEdited(allocation, edited) {
+
     if ( edited ) {
-      vm.tableParams.data = utilities.insertAllocation( allocation, vm.tableParams.data )
-      console.log( 'vm.tableParams.data = ', vm.tableParams.data )
+      vm.tableParams.settings( {
+        dataset: utilities.replaceAllocation(
+          utilities.attachBidsToAllocation( allocation ), vm.tableParams.settings().dataset
+        )
+      } )
     }
 
     vm.showEditAllocationForm = false

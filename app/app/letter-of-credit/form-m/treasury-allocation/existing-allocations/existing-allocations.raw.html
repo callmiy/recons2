@@ -3,7 +3,7 @@
   <div class="edit-allocation-container" ng-if="existingAllocations.showEditAllocationForm">
     <div edit-allocation
          allocation="existingAllocations.allocationToEdit"
-         on-edited="existingAllocations.onAllocationEdited(allocation)">
+         on-edited="existingAllocations.onAllocationEdited(allocation, edited)">
     </div>
   </div>
 
@@ -85,14 +85,6 @@
                 {$::req |number:2$}
             </span>
           </td>
-
-          <td data-title="'NEW OUTSTANDING'" sortable="'newOutstandingAmounts'">
-              <span class="original-request-row td-number"
-                    ng-repeat="req in allocationObj.newOutstandingAmounts">
-                {$req |number:2$}
-              </span>
-          </td>
-
         </tr>
       </tbody>
     </table>
