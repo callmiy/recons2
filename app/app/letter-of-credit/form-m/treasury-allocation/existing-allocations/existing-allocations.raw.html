@@ -72,6 +72,13 @@
             </span>
           </td>
 
+          <td data-title="'CURRENT DISTRIBUTION'">
+            <span class="original-request-row td-number"
+                  ng-repeat="req in allocationObj.distributions">
+              {$::req |number:2$}
+            </span>
+          </td>
+
           <td data-title="'TOTAL ALLOCATIONS'" filter="{totalAllocations :'number'}">
             <span class="original-request-row td-number"
                   ng-repeat="req in allocationObj.totalAllocations">

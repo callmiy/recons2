@@ -2,16 +2,26 @@
 
 /*jshint camelcase:false*/
 
+var underscore = require( 'underscore' )
+
 /**
  *
- * @param {{}} allocation
+ * @param {Array} allocations
  * @param {Array} allocationList
  * @returns {Array}
  */
-function replaceAllocation(allocation, allocationList) {
+function replaceAllocations(allocations, allocationList) {
+  var allocId,
+    obj = {}
+
+  allocations.forEach( function (allocation) {
+    obj[ allocation.id ] = allocation
+  } )
+
   return allocationList.map( function (alloc) {
+    allocId = alloc.id
     /** @namespace allocation.id */
-    if ( alloc.id === allocation.id ) return allocation
+    if ( underscore.has( obj, allocId ) ) return obj[ allocId ]
     return alloc
   } )
 
@@ -28,6 +38,7 @@ function replaceAllocation(allocation, allocationList) {
  * @param {Array} allocation.totalAllocations
  * @param {Array} allocation.outstandingAmounts
  * @param {Array} allocation.originalRequestsFormsM
+ * @param {Array} allocation.distributions
  * @returns {{}}
  */
 function attachBidsToAllocation(allocation) {
@@ -39,18 +50,21 @@ function attachBidsToAllocation(allocation) {
   var totalAllocations = []
   var outstandingAmounts = []
   var originalRequestsFormsM = []
+  var distributions = []
 
   distributionToBids.forEach( function (bid) {
     totalAllocations.push( bid.sum_allocations )
     originalRequests.push( bid.sum_bid_requests )
     outstandingAmounts.push( bid.outstanding_amount )
     originalRequestsFormsM.push( bid.form_m_number )
+    distributions.push( bid.portion_of_allocation )
   } )
 
   allocation.originalRequests = originalRequests
   allocation.totalAllocations = totalAllocations
   allocation.outstandingAmounts = outstandingAmounts
   allocation.originalRequestsFormsM = originalRequestsFormsM
+  allocation.distributions = distributions
 
   return allocation
 }
@@ -67,7 +81,7 @@ function attachBidsToAllocations(allocationList) {
 }
 
 module.exports = {
-  replaceAllocation: replaceAllocation,
+  replaceAllocations: replaceAllocations,
   attachBidsToAllocations: attachBidsToAllocations,
   attachBidsToAllocation: attachBidsToAllocation
 }
