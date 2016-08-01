@@ -17,10 +17,17 @@ function replaceAllocation(allocation, allocationList) {
 
 }
 
+/** @namespace bid.sum_allocations */
+/** @namespace bid.sum_bid_requests */
+/** @namespace bid.outstanding_amount */
 /**
  *
  * @param {{}} allocation
  * @param {Array} allocation.distribution_to_consolidated_bids
+ * @param {Array} allocation.originalRequests
+ * @param {Array} allocation.totalAllocations
+ * @param {Array} allocation.outstandingAmounts
+ * @param {Array} allocation.originalRequestsFormsM
  * @returns {{}}
  */
 function attachBidsToAllocation(allocation) {
@@ -31,19 +38,19 @@ function attachBidsToAllocation(allocation) {
   var originalRequests = []
   var totalAllocations = []
   var outstandingAmounts = []
-  var originalRequestsEdited = []
+  var originalRequestsFormsM = []
 
   distributionToBids.forEach( function (bid) {
     totalAllocations.push( bid.sum_allocations )
     originalRequests.push( bid.sum_bid_requests )
     outstandingAmounts.push( bid.outstanding_amount )
-    originalRequestsEdited.push( null )
+    originalRequestsFormsM.push( bid.form_m_number )
   } )
 
   allocation.originalRequests = originalRequests
   allocation.totalAllocations = totalAllocations
   allocation.outstandingAmounts = outstandingAmounts
-  allocation.originalRequestsEdited = originalRequestsEdited
+  allocation.originalRequestsFormsM = originalRequestsFormsM
 
   return allocation
 }

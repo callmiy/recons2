@@ -15,6 +15,7 @@ logger = logging.getLogger('recons_logger')
 class TreasuryAllocationFilter(django_filters.FilterSet):
     pk = django_filters.CharFilter(name='object_id')
     not_deleted = django_filters.MethodFilter()
+    consolidated_bids = django_filters.MethodFilter()
     deal_start_date = django_filters.MethodFilter()
     deal_end_date = django_filters.MethodFilter()
     settlement_start_date = django_filters.MethodFilter()
@@ -26,8 +27,19 @@ class TreasuryAllocationFilter(django_filters.FilterSet):
         model = TreasuryAllocation
         fields = (
             'pk', 'deal_start_date', 'deal_end_date', 'settlement_start_date', 'settlement_end_date', 'ref',
-            'deal_number',
+            'deal_number', 'consolidated_bids',
         )
+
+    def filter_consolidated_bids(self, qs, param):
+        """
+        :param qs:
+        :type param: str
+        :return:
+        """
+        if param:
+            return qs.filter(consolidated_bids__in=param.split(','))
+
+        return qs
 
     def filter_deal_start_date(self, qs, param):
         if param:

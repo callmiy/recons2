@@ -60,15 +60,15 @@
             {$::allocationObj.fcy_amount |number:2$}
           </td>
 
-          <td style="min-width: 135px;" data-title="'ORIGINAL REQUEST'" filter="{originalRequests :'number'}">
-            <!--<display-bids-for-allocation
-                allocation="allocationObj"
-                attr-type="original-request"></display-bids-for-allocation> -->
-
+          <td data-title="'ORIGINAL REQUEST'" filter="{originalRequests :'number'}">
             <span class="original-request-row td-number"
                   ng-repeat="req in allocationObj.originalRequests">
 
-                {$::req |number:2$}
+              <span ng-class="{'original-request-form-m-number': (allocationObj.originalRequests.length > 1)}">
+                {$::allocationObj.originalRequestsFormsM[$index]$}
+              </span>
+
+              <span class="original-request-amount">{$::req |number:2$}</span>
             </span>
           </td>
 
@@ -79,7 +79,7 @@
             </span>
           </td>
 
-          <td data-title="'AMOUNT OUTSTANDING'" filter="{outstandingAmounts :'number'}">
+          <td data-title="'AMOUNT OUTSTANDING'" filter="{outstandingAmounts :'number'}" sortable="'outstandingAmounts'">
             <span class="original-request-row td-number"
                   ng-repeat="req in allocationObj.outstandingAmounts">
                 {$::req |number:2$}

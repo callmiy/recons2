@@ -54,6 +54,7 @@ class ConsolidatedLcBidRequest(models.Model):
 
         for allocation in self.treasury_allocations.all():
             allocation_dict = allocation.distribution_to_consolidated_bids_to_dict()
+            # print '\n\nallocation_dict = ', allocation_dict, '\n'
             if pk in allocation_dict:
                 current_allocations += float(allocation_dict[pk])
 

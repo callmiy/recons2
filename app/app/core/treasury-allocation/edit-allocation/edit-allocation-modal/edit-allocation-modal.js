@@ -4,11 +4,14 @@ var app = angular.module( 'treasury-allocation-service' )
 
 app.controller( 'editAllocationModalController', editAllocationModalController )
 editAllocationModalController.$inject = [
-  '$uibModalInstance'
+  '$uibModalInstance',
+  'edited'
 ]
 
-function editAllocationModalController($uibModalInstance) {
+function editAllocationModalController($uibModalInstance, edited) {
   var vm = this //jshint -W040
+
+  vm.text = edited ? 'Allocation edited successfully!' : 'Allocation has not been edited - do you wish to exit?'
 
   vm.ok = function ok() {
     $uibModalInstance.close( true )
@@ -23,7 +26,7 @@ app.factory( 'editAllocationModal', editAllocationModal )
 editAllocationModal.$inject = [ '$uibModal' ]
 
 function editAllocationModal($uibModal) {
-  function modalInstance() {
+  function modalInstance(edited) {
     return $uibModal.open( {
       templateUrl: require( 'commons' ).buildUrl(
         'core',
@@ -31,7 +34,13 @@ function editAllocationModal($uibModal) {
 
       controller: 'editAllocationModalController as editAllocationModal',
 
-      size: 'sm'
+      size: 'sm',
+
+      resolve: {
+        edited: function () {
+          return edited
+        }
+      }
     } )
   }
 

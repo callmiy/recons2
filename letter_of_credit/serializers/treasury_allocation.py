@@ -11,7 +11,6 @@ class DistributionToConsolidatedFieldSerializer(serializers.Field):
             data = eval(data)
 
         for bid in data:
-            print '\n\n\nbid = ', type(bid), '\n\n\n'
             internal_value[bid['id']] = -1 * abs(bid['portion_of_allocation'])
 
         return json.dumps(internal_value)

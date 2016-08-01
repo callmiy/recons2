@@ -2,6 +2,7 @@
 
 /*jshint camelcase:false*/
 
+var underscore = require( 'underscore' )
 var utilities = require( './utilities.js' )
 var app = angular.module( 'treasury-allocation-service' )
 
@@ -57,6 +58,7 @@ function editAllocationController($log, saveAllocation, getConsolidatedLcBidRequ
     }
 
     vm.allocation.distribution_to_consolidated_bids = bids
+    vm.allocation.consolidated_bids = underscore.pluck( bids, 'url' )
 
     saveAllocation( vm.allocation ).then( function (allocation) {
       vm.exit( allocation, true )
@@ -82,9 +84,14 @@ function editAllocationController($log, saveAllocation, getConsolidatedLcBidRequ
    * @param {*} edited
    */
   vm.exit = function exit(allocation, edited) {
-    if ( !edited ) vm.allocation.distribution_to_consolidated_bids = originalBids
+    editAllocationModal( edited ).result.then( function (result) {
+      if ( !result ) return
 
-    vm.onEdited( { allocation: allocation, edited: edited } )
+      if ( !edited ) vm.allocation.distribution_to_consolidated_bids = originalBids
+
+      vm.onEdited( { allocation: allocation, edited: edited } )
+
+    } )
   }
 }
 

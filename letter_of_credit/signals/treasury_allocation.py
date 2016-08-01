@@ -8,6 +8,22 @@ from letter_of_credit.models.treasury_allocation import TreasuryAllocation
 from letter_of_credit.models.consolidated_lc_bid_request import ConsolidatedLcBidRequest
 
 
+def add_initial_consolidated_bids(allocation):
+    """
+    :type allocation: TreasuryAllocation
+    :return:
+    """
+    qs = ConsolidatedLcBidRequest.objects.filter(Q(mf__number=allocation.ref) | Q(mf__lc__lc_number=allocation.ref))
+
+    if qs.exists():
+        bid = qs[0]
+        allocation.consolidated_bids.add(bid)
+        allocation.distribution_to_consolidated_bids = json.dumps({
+            bid.id: float(allocation.fcy_amount)
+        })
+        allocation.save()
+
+
 @receiver(post_save, sender='letter_of_credit.TreasuryAllocation', dispatch_uid='1468778059.359ulkkcnxnwem05s5k')
 def treasury_allocation_finished_saving(sender, **kwargs):
     """
@@ -21,15 +37,7 @@ def treasury_allocation_finished_saving(sender, **kwargs):
 
     if kwargs['created']:
         if instance.ref:
-            qs = ConsolidatedLcBidRequest.objects.filter(Q(mf__number=instance.ref) | Q(mf__lc__lc_number=instance.ref))
-
-            if qs.exists():
-                bid = qs[0]
-                instance.consolidated_bids.add(bid)
-                instance.distribution_to_consolidated_bids = json.dumps({
-                    bid.id: float(instance.fcy_amount)
-                })
-                instance.save()
+            add_initial_consolidated_bids(instance)
 
     else:
         pass

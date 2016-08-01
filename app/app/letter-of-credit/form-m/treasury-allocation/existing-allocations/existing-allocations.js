@@ -52,6 +52,10 @@ function ExistingAllocationsDirectiveController($log, NgTableParams) {
     vm.tableParams.filter( { deal_number: allocation.deal_number } )
   }
 
+  throw new Error( 'when allocation edited, it is possible that a bid attached to an allocation has now been' +
+                   ' distributed to another allocation. With the current code, only the newly edited allocation shows' +
+                   ' correct amount allocated and outstanding for this bid, but we would like that all allocations' +
+                   ' that reference this bid be updated - please code this use case' )
   vm.onAllocationEdited = function onAllocationEdited(allocation, edited) {
 
     if ( edited ) {
