@@ -47,10 +47,15 @@ class UploadLcCommissionView(View):
                 logger.info('%s using raw data from client:\n%s', log_prefix, data)
                 lc_number = data['lc_ref'].strip(' \n\r')
                 lc_qs = LCRegister.objects.filter(lc_number=lc_number)
+                lc = None
 
                 if lc_qs.exists():
                     logging.info('%s LC already exists in database and commission will be created: %s', log_prefix,
                                  lc_number)
+                    lc = lc_qs[0]
+                    if not lc.acct_numb:
+                        lc.acct_numb = data['acct_numb']
+                        lc.save()
                 else:
                     list_lc_not_uploaded.append(lc_number)
                     logging.warn('%s LC does not exist yet in database: %s', log_prefix, lc_number)

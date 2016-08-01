@@ -29,11 +29,11 @@ class LCRegister(models.Model):
     brn_name = models.CharField('Branch Name', max_length=200, null=True, blank=True)
     brn_obj = models.ForeignKey(Branch, null=True, blank=True)
     sector = models.CharField(
-        'Sector',
-        choices=(('CBG', 'CBG',), ('COMMERCIAL', 'COMMERCIAL',)),
-        max_length=11,
-        null=True,
-        blank=True
+            'Sector',
+            choices=(('CBG', 'CBG',), ('COMMERCIAL', 'COMMERCIAL',)),
+            max_length=11,
+            null=True,
+            blank=True
     )
     status = models.CharField('Status', max_length=3, default='LIV')
     mt_730_received_at = models.DateField('MT 730 Received', null=True, blank=True)
@@ -55,12 +55,7 @@ class LCRegister(models.Model):
 
     def update_acct_numb(self):
         if not self.acct_numb:
-            for lc in LCRegister.objects.filter(applicant=self.applicant, acct_numb__isnull=False):
-                acct_numb = lc.acct_numb
-                if acct_numb:
-                    self.acct_numb = acct_numb
-                    self.save()
-                    return True
+            pass
         return False
 
     def issues(self):
