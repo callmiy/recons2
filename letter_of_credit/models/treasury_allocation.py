@@ -45,6 +45,7 @@ class TreasuryAllocation(models.Model):
         verbose_name = 'Treasury Allocation'
         verbose_name_plural = 'Treasury Allocation'
         unique_together = ('deal_number', 'deal_date', 'transaction_type',)
+        ordering = ('deal_date',)
 
     def save(self, *args, **kwargs):
         self.customer_name = self.customer_name.strip(' \n\t\r\v"')

@@ -13,5 +13,6 @@ def lc_bid_request_finished_saving(sender, **kwargs):
     :param kwargs:
     :return:
     """
-    instance = kwargs['instance']  # type: LcBidRequest
+    pass
+    # instance = kwargs['instance']  # type: LcBidRequest
     # ConsolidatedLcBidRequest.create_from_lc_bid(instance):TODO - open this up when we go live finally finally
