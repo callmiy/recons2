@@ -9,20 +9,22 @@ body {
   margin: 5px;
 }
 .navbar-default {
-  background-color: #417690;
+  background: #3b95b0;
 }
 .navbar-default .navbar-brand {
   color: #E8E37E;
 }
-.navbar-default ul.nav.navbar-nav li.active a {
-  background-color: #418999;
-}
-.navbar-default ul.nav.navbar-nav li.active a:hover {
-  background-color: #417690;
+.navbar-default ul.nav.navbar-nav li.open > a {
+  background-color: rgba(59, 149, 176, 0.25);
+  color: #3b95b0;
 }
 .navbar-default ul.nav.navbar-nav li.dropdown a .caret {
   border-top-color: white;
   border-bottom-color: white;
+}
+.navbar-default ul.nav.navbar-nav li.dropdown .dropdown-menu,
+.navbar-default ul.nav.navbar-nav li.dropdown .dropdown-menu {
+  background: #3b95b0;
 }
 .navbar-default ul.nav.navbar-nav li a {
   color: #F5FBFB;
@@ -189,4 +191,22 @@ uib-accordion .panel-title > a.accordion-toggle {
 }
 .modal-backdrop {
   background-color: #c7c7c7;
+}
+.panel-default {
+  border-color: #399ebd;
+}
+.panel-default > .panel-heading {
+  color: #fff;
+  background-color: #399ebd;
+  border-color: #16677f;
+}
+.nav-tabs > li.active > a,
+.nav-tabs > li.active a:focus,
+.nav-tabs > li.active a:hover {
+  background-color: rgba(59, 149, 176, 0.25);
+  color: #135366;
+}
+.nav-tabs > li > a {
+  background: #3b95b0;
+  color: white;
 }

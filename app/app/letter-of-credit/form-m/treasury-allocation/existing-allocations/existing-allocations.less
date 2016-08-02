@@ -1,11 +1,21 @@
 .existing-allocations-directive-container {
   .allocation-table {
     & > tbody > tr.bid-row-matched {
-      background: #cbf4cb;
+      background-color: rgba(59, 149, 176, 0.25);
+      color: #3b95b0;
     }
 
     & > thead > tr {
       & > th {
+        background: #3b95b0;
+        color: white;
+
+        &.sortable.sort-desc {
+          background-color: rgba(59, 149, 176, 0.25);
+          //text-shadow: 0 1px 1px rgba(255, 255, 255, .75);
+          color: #3b95b0;
+        }
+
         &:nth-child(4) {
           min-width: 80px;
         }

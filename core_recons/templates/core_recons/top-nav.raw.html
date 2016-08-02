@@ -16,8 +16,9 @@
     <div id="navbar" class="navbar-collapse collapse in" aria-expanded="true">
       <ul class="nav navbar-nav">
         <li><a href="/">Home</a></li>
+
         {% if not user.is_anonymous %}
-          <li class="dropdown active">
+          <li class="dropdown">
             <a href="" class="dropdown-toggle" data-toggle="dropdown">Select An Action<b class="caret"></b></a>
 
             <ul class="dropdown-menu">
@@ -50,8 +51,8 @@
 
               <li class="dropdown-submenu"><a href>Admin</a>
                 <ul class="dropdown-menu">
-                  <a href="/admin/adhocmodels/accountnumber/">Account Number</a>
-                  <li><a href="/admin/">Admin Home</a></li>
+                  <li><a href="/admin/adhocmodels/accountnumber/" tabindex="-1">Account Number</a></li>
+                  <li><a href="/admin/" tabindex="-1">Admin Home</a></li>
                 </ul>
               </li>
             </ul>
