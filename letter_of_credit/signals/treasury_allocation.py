@@ -36,7 +36,7 @@ def treasury_allocation_finished_saving(sender, **kwargs):
     instance = kwargs['instance']  # type: TreasuryAllocation
 
     if kwargs['created']:
-        if instance.ref:
+        if instance.ref and instance.product_type == 'SPOT':
             add_initial_consolidated_bids(instance)
 
     else:

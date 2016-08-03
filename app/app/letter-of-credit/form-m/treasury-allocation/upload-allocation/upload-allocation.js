@@ -94,7 +94,7 @@ function uploadTreasuryAllocationDirectiveController(parsePastedBids, saveBlotte
     }
 
     var dataSet = parsed.data
-    var spinner = spinnerModal( 'Uploading allocations.....please wait...' )
+    var spinner = spinnerModal( 'Uploading allocations..' )
 
     saveBlotter( dataSet ).then( function (savedDataList) {
       vm.allocationList = savedDataList
@@ -115,7 +115,6 @@ function uploadTreasuryAllocationDirectiveController(parsePastedBids, saveBlotte
       obj[ attr ] = vm[ attr ]
     } )
 
-    console.log( 'getParams() = ', obj )
     return obj
   }
 

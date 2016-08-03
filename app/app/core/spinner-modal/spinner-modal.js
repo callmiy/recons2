@@ -23,6 +23,7 @@ function spinnerModal($uibModal) {
       controller: 'spinnerModalController as spinnerModal',
       keyboard: false,
       windowClass: 'spinner-modal',
+      backdrop: 'static',
       size: 'sm',
       resolve: {
         title: function () {
