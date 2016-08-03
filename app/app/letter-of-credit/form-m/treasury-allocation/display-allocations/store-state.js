@@ -31,7 +31,7 @@ function onParamsChanged(vm, oldFilter, formMAppStore) {
 
   return function storeExistingAllocation() {
     //console.log( 'setNgTableParams( vm.tableParams ) = ', setNgTableParams( vm.tableParams ) )
-    formMAppStore.treasuryAllocation.existingAllocationParams = {
+    formMAppStore.treasuryAllocation.displayAllocationParams = {
       ngTableParams: setNgTableParams( vm.tableParams ),
       showEditAllocationForm: vm.showEditAllocationForm,
       allocationToEdit: vm.allocationToEdit,

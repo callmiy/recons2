@@ -5,21 +5,21 @@
 var utilities = require( './utilities.js' )
 var stateStore = require( './store-state.js' )
 
-var app = angular.module( 'existing-allocations', [
+var app = angular.module( 'display-allocations', [
   'treasury-allocation-service',
   'ngTable'
 ] )
 
-app.directive( 'existingAllocations', existingAllocationsDirective )
+app.directive( 'displayAllocations', displayAllocationsDirective )
 
-existingAllocationsDirective.$inject = []
+displayAllocationsDirective.$inject = []
 
-function existingAllocationsDirective() {
+function displayAllocationsDirective() {
   return {
     restrict: 'E',
     templateUrl: require( 'commons' )
-      .buildUrl( 'letter-of-credit', 'form-m/treasury-allocation/existing-allocations/existing-allocations.html' ),
-    controller: 'ExistingAllocationsDirectiveController as existingAllocations',
+      .buildUrl( 'letter-of-credit', 'form-m/treasury-allocation/display-allocations/display-allocations.html' ),
+    controller: 'DisplayAllocationsDirectiveController as displayAllocations',
     scope: true,
     bindToController: {
       allocationList: '='
@@ -32,9 +32,9 @@ function existingAllocationsDirective() {
   }
 }
 
-app.controller( 'ExistingAllocationsDirectiveController', ExistingAllocationsDirectiveController )
+app.controller( 'DisplayAllocationsDirectiveController', DisplayAllocationsDirectiveController )
 
-ExistingAllocationsDirectiveController.$inject = [
+DisplayAllocationsDirectiveController.$inject = [
   '$log',
   'NgTableParams',
   'getAllocationsForBids',
@@ -42,7 +42,7 @@ ExistingAllocationsDirectiveController.$inject = [
   'formMAppStore'
 ]
 
-function ExistingAllocationsDirectiveController($log, NgTableParams, getAllocationsForBids, $scope, formMAppStore) {
+function DisplayAllocationsDirectiveController($log, NgTableParams, getAllocationsForBids, $scope, formMAppStore) {
   var vm = this  // jshint -W040
   var oldFilter = {}
 
@@ -51,7 +51,7 @@ function ExistingAllocationsDirectiveController($log, NgTableParams, getAllocati
 
   vm.allocationList = utilities.attachBidsToAllocations( vm.allocationList )
   stateStore.setState(
-    $scope.$parent.treasuryAllocation.existingAllocationParams, vm, oldFilter, NgTableParams
+    $scope.$parent.treasuryAllocation.displayAllocationParams, vm, oldFilter, NgTableParams
   )
 
   vm.editAllocation = function editAllocation(allocation) {
@@ -80,7 +80,7 @@ function ExistingAllocationsDirectiveController($log, NgTableParams, getAllocati
   }
 
   $scope.$on( 'init-display', function () {
-    $scope.$parent.treasuryAllocation.existingAllocationParams = {}
+    $scope.$parent.treasuryAllocation.displayAllocationParams = {}
   } )
 
   $scope.$watch(

@@ -1,22 +1,22 @@
 <div class="existing-allocations-directive-container">
 
-  <div class="edit-allocation-container" ng-if="existingAllocations.showEditAllocationForm">
+  <div class="edit-allocation-container" ng-if="displayAllocations.showEditAllocationForm">
     <div edit-allocation
-         allocation="existingAllocations.allocationToEdit"
-         on-edited="existingAllocations.onAllocationEdited(allocation, edited)">
+         allocation="displayAllocations.allocationToEdit"
+         on-edited="displayAllocations.onAllocationEdited(allocation, edited)">
     </div>
   </div>
 
   <div class="search-allocations-result treasury-allocations-table-display">
 
-    <table ng-table="existingAllocations.tableParams"
+    <table ng-table="displayAllocations.tableParams"
            class="table table-bordered table-condensed table-responsive table-striped allocation-table">
 
       <tbody>
         <tr style="cursor: pointer;"
             ng-repeat="allocationObj in $data track by allocationObj.id"
             ng-class="{'bid-row-matched': allocationObj.originalRequests}"
-            ng-dblclick="existingAllocations.editAllocation(allocationObj)"
+            ng-dblclick="displayAllocations.editAllocation(allocationObj)"
         >
 
           <td data-title="'S/N'">{$$index + 1$}</td>

@@ -3,7 +3,7 @@
 /*jshint camelcase:false*/
 
 var underscore = require( 'underscore' )
-var app = angular.module( 'existing-allocations' )
+var app = angular.module( 'display-allocations' )
 
 app.factory( 'getAllocationsForBids', getAllocationsForBids )
 getAllocationsForBids.$inject = [ 'TreasuryAllocation' ]

@@ -9,7 +9,7 @@ var app = angular.module( 'search-allocations', [
   'consolidated-lc-bid-request',
   'lc-service',
   'treasury-allocation-service',
-  'existing-allocations',
+  'display-allocations',
   'ngTable',
   'consolidated-lc-bid-request',
   'spinner-modal'

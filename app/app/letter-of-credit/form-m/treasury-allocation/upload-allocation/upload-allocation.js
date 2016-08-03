@@ -6,7 +6,7 @@ var app = angular.module( 'upload-treasury-allocation', [
   'rootApp',
   'consolidated-lc-bid-request',
   'lc-service',
-  'existing-allocations',
+  'display-allocations',
   'treasury-allocation-service',
   'spinner-modal',
   'confirmation-dialog'
