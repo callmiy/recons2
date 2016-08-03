@@ -5,7 +5,8 @@ var underscore = require( 'underscore' )
 function setNgTableParams(tableParams) {
   return {
     filter: tableParams.filter(),
-    sorting: tableParams.sorting()
+    sorting: tableParams.sorting(),
+    data: tableParams.data
   }
 }
 
@@ -29,7 +30,7 @@ function getParams(vm, oldFilter) {
  */
 function onParamsChanged(vm, oldFilter, formMAppStore) {
 
-  return function storeExistingAllocationParams() {
+  return function storeExistingAllocation() {
     formMAppStore.treasuryAllocation.existingAllocationParams = {
       ngTableParams: setNgTableParams( vm.tableParams ),
       showEditAllocationForm: vm.showEditAllocationForm,
@@ -46,7 +47,8 @@ function getNgTableParams(params) {
   }
 
   return {
-    params: { sorting: params.sorting, filter: params.filter }
+    params: { sorting: params.sorting, filter: params.filter },
+    data: params.data
   }
 }
 
@@ -63,13 +65,19 @@ function setState(stateParams, vm, oldFilter, NgTableParams) {
     vm.showEditAllocationForm = false
     vm.allocationToEdit = null
 
+    vm.tableParams = new NgTableParams(
+      { sorting: { ref: 'desc' } },
+      { dataset: vm.allocationList }
+    )
+
     return
   }
 
-  //var params = getNgTableParams( stateParams.ngTableParams )
-  //vm.tableParams = new NgTableParams( params.params, { dataset: vm.allocationList } )
-  //vm.showEditAllocationForm = stateParams.showEditAllocationForm
-  //vm.allocationToEdit = stateParams.allocationToEdit
+  var params = getNgTableParams( stateParams.ngTableParams )
+  vm.tableParams = new NgTableParams( params.params, { dataset: vm.allocationList } )
+  vm.tableParams.data = params.data
+  vm.showEditAllocationForm = stateParams.showEditAllocationForm
+  vm.allocationToEdit = stateParams.allocationToEdit
   oldFilter = stateParams.oldFilter
 }
 

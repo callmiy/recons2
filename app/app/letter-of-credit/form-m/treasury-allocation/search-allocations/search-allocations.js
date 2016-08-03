@@ -57,6 +57,8 @@ function SearchAllocationsDirectiveController(searchTreasuryAllocation, spinnerM
     vm.showSearchResult = false
     vm.allocationList = null
 
+    $scope.$broadcast( 'init-display', 'init' )
+
     if ( searchObj === 'reset' ) {
       vm.search = {}
       return
