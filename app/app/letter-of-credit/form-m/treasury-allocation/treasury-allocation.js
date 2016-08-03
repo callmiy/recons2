@@ -21,7 +21,8 @@ function treasuryAllocationConfig($stateProvider) {
       params: {
         uploadAllocationParams: {},
         treasuryAllocationParams: {},
-        existingAllocationParams: {}
+        existingAllocationParams: {},
+        searchAllocationParams: {}
       },
 
       views: {
@@ -46,6 +47,7 @@ function TreasuryAllocationController($stateParams, $scope, formMAppStore) {
 
   vm.uploadAllocationParams = $stateParams.uploadAllocationParams
   vm.existingAllocationParams = $stateParams.existingAllocationParams
+  vm.searchAllocationParams = $stateParams.searchAllocationParams
   var treasuryAllocationParams = $stateParams.treasuryAllocationParams
   vm.action = treasuryAllocationParams.action
 

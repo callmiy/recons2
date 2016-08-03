@@ -13,6 +13,7 @@ body {
 }
 .navbar-default .navbar-brand {
   color: #E8E37E;
+  padding: 5px 15px 0;
 }
 .navbar-default ul.nav.navbar-nav li.open > a {
   background-color: rgba(59, 149, 176, 0.25);
@@ -28,6 +29,7 @@ body {
 }
 .navbar-default ul.nav.navbar-nav li a {
   color: #F5FBFB;
+  padding: 5px 15px 0;
 }
 .hide {
   display: none;
@@ -209,4 +211,7 @@ uib-accordion .panel-title > a.accordion-toggle {
 .nav-tabs > li > a {
   background: #3b95b0;
   color: white;
+  padding: 6px 5px;
+  min-width: 60px;
+  text-align: center;
 }

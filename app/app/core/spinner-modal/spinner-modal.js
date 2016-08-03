@@ -21,6 +21,7 @@ function spinnerModal($uibModal) {
     return $uibModal.open( {
       templateUrl: require( 'commons' ).buildUrl( 'core', 'spinner-modal/spinner-modal.html' ),
       controller: 'spinnerModalController as spinnerModal',
+      keyboard: false,
       windowClass: 'spinner-modal',
       size: 'sm',
       resolve: {

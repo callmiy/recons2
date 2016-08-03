@@ -2,6 +2,8 @@
 
 /*jshint camelcase:false*/
 
+var stateStore = require( './store-state.js' )
+
 var app = angular.module( 'search-allocations', [
   'rootApp',
   'consolidated-lc-bid-request',
@@ -31,34 +33,36 @@ app.controller( 'SearchAllocationsDirectiveController', SearchAllocationsDirecti
 
 SearchAllocationsDirectiveController.$inject = [
   'searchTreasuryAllocation',
-  'spinnerModal'
+  'spinnerModal',
+  'formMAppStore',
+  '$scope'
 ]
 
-function SearchAllocationsDirectiveController(searchTreasuryAllocation, spinnerModal) {
+function SearchAllocationsDirectiveController(searchTreasuryAllocation, spinnerModal, formMAppStore, $scope) {
   var vm = this  // jshint -W040
   vm.spinnerName = 'searchingAllocationsSpinner'
-  vm.isAllocationSearchOpen = true
-  vm.search = {}
-
+  vm.datePickerFormat = 'dd-MMM-yyyy'
   vm.datePickerIsOpenFor = {
     startDate: false,
     endDate: false
   }
 
-  vm.datePickerFormat = 'dd-MMM-yyyy'
+  stateStore.setState( $scope.$parent.treasuryAllocation.searchAllocationParams, vm )
+
   vm.openDatePickerFor = function openDatePickerFor(element) {
     vm.datePickerIsOpenFor[ element ] = true
   }
 
   vm.doSearch = function doSearch(searchObj) {
     vm.showSearchResult = false
+    vm.allocationList = null
 
     if ( searchObj === 'reset' ) {
       vm.search = {}
       return
     }
 
-    var spinner = spinnerModal( 'Fetching allocations.....please wait...' )
+    var spinner = spinnerModal( 'Fetching allocations...' )
     searchTreasuryAllocation( searchObj ).then( function (data) {
       if ( data.length ) {
         vm.allocationList = data
@@ -69,4 +73,6 @@ function SearchAllocationsDirectiveController(searchTreasuryAllocation, spinnerM
       spinner.dismiss()
     } )
   }
+
+  $scope.$watch( stateStore.getParams( vm ), stateStore.onParamsChanged( vm, formMAppStore ), true )
 }

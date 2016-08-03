@@ -1,27 +1,80 @@
+"use strict";
+
 var underscore = require( 'underscore' )
 
-function getParams(vm, initialState) {
-  return function () {
-    var obj = {}
-
-    underscore.each( initialState, function (val, attr) {
-      obj[ attr ] = vm[ attr ]
-    } )
-    return obj
+function setNgTableParams(tableParams) {
+  return {
+    filter: tableParams.filter(),
+    sorting: tableParams.sorting()
   }
 }
 
-function onParamsChanged(vm, initialState, formMAppStore) {
-  var obj = {}
+function getParams(vm, oldFilter) {
+  return function getExistingAllocationParams() {
+    return {
+      ngTableParams: setNgTableParams( vm.tableParams ),
+      showEditAllocationForm: vm.showEditAllocationForm,
+      allocationToEdit: vm.allocationToEdit,
+      oldFilter: oldFilter
+    }
+  }
+}
 
-  underscore.each( initialState, function (val, attr) {
-    obj[ attr ] = vm[ attr ]
-  } )
+/**
+ * We will watch some states of this directive, and when they change, we store than into our app store so that they
+ * can be restored later when user navigates away and comes back to our this directive/router state
+ * @param vm
+ * @param oldFilter
+ * @param formMAppStore
+ */
+function onParamsChanged(vm, oldFilter, formMAppStore) {
 
-  formMAppStore.treasuryAllocation.uploadAllocationParams = obj
+  return function storeExistingAllocationParams() {
+    formMAppStore.treasuryAllocation.existingAllocationParams = {
+      ngTableParams: setNgTableParams( vm.tableParams ),
+      showEditAllocationForm: vm.showEditAllocationForm,
+      allocationToEdit: vm.allocationToEdit,
+      oldFilter: oldFilter
+    }
+  }
+}
+
+function getNgTableParams(params) {
+
+  if ( underscore.isEmpty( params ) ) return {
+    params: { sorting: { ref: 'desc' } }
+  }
+
+  return {
+    params: { sorting: params.sorting, filter: params.filter }
+  }
+}
+
+/**
+ *
+ * @param stateParams
+ * @param vm
+ * @param oldFilter
+ * @param NgTableParams
+ */
+function setState(stateParams, vm, oldFilter, NgTableParams) {
+
+  if ( underscore.isEmpty( stateParams ) ) {
+    vm.showEditAllocationForm = false
+    vm.allocationToEdit = null
+
+    return
+  }
+
+  //var params = getNgTableParams( stateParams.ngTableParams )
+  //vm.tableParams = new NgTableParams( params.params, { dataset: vm.allocationList } )
+  //vm.showEditAllocationForm = stateParams.showEditAllocationForm
+  //vm.allocationToEdit = stateParams.allocationToEdit
+  oldFilter = stateParams.oldFilter
 }
 
 module.exports = {
   getParams: getParams,
-  onParamsChanged: onParamsChanged
+  onParamsChanged: onParamsChanged,
+  setState: setState
 }

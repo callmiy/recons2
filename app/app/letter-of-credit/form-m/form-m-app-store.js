@@ -7,7 +7,8 @@ app.value( 'formMAppStore', {
   treasuryAllocation: {
     uploadAllocationParams: {},
     treasuryAllocationParams: {},
-    existingAllocationParams: {}
+    existingAllocationParams: {},
+    searchAllocationParams: {}
   }
 } )
 
@@ -20,6 +21,7 @@ function restoreTreasuryAllocationApp(formMAppStore) {
       toParams.uploadAllocationParams = formMAppStore.treasuryAllocation.uploadAllocationParams
       toParams.treasuryAllocationParams = formMAppStore.treasuryAllocation.treasuryAllocationParams
       toParams.existingAllocationParams = formMAppStore.treasuryAllocation.existingAllocationParams
+      toParams.searchAllocationParams = formMAppStore.treasuryAllocation.searchAllocationParams
     }
   }
 

@@ -3,6 +3,7 @@
 /*jshint camelcase:false*/
 
 var utilities = require( './utilities.js' )
+var stateStore = require( './store-state.js' )
 
 var app = angular.module( 'existing-allocations', [
   'treasury-allocation-service',
@@ -31,16 +32,21 @@ app.controller( 'ExistingAllocationsDirectiveController', ExistingAllocationsDir
 ExistingAllocationsDirectiveController.$inject = [
   '$log',
   'NgTableParams',
-  'getAllocationsForBids'
+  'getAllocationsForBids',
+  '$scope',
+  'formMAppStore'
 ]
 
-function ExistingAllocationsDirectiveController($log, NgTableParams, getAllocationsForBids) {
+function ExistingAllocationsDirectiveController($log, NgTableParams, getAllocationsForBids, $scope, formMAppStore) {
   var vm = this  // jshint -W040
   var oldFilter = {}
 
   //:TODO 'finish state restoration codes
 
   vm.allocationList = utilities.attachBidsToAllocations( vm.allocationList )
+  stateStore.setState(
+    $scope.$parent.treasuryAllocation.existingAllocationParams, vm, oldFilter, NgTableParams
+  )
   vm.tableParams = new NgTableParams(
     { sorting: { ref: 'desc' } },
     { dataset: vm.allocationList }
@@ -70,6 +76,10 @@ function ExistingAllocationsDirectiveController($log, NgTableParams, getAllocati
     vm.tableParams.filter( angular.copy( oldFilter ) )
     oldFilter = {}
   }
+
+  $scope.$watch(
+    stateStore.getParams( vm, oldFilter ),
+    stateStore.onParamsChanged( vm, oldFilter, formMAppStore ),
+    true
+  )
 }
-
-

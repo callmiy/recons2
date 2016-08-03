@@ -51,9 +51,10 @@ function uploadTreasuryAllocationDirectiveController(parsePastedBids, saveBlotte
   /**
    *
    * @param {{}} uploadAllocationParams
+   * @param {Array} uploadAllocationParams.bidsFromServer
    */
   function init(uploadAllocationParams) {
-    if ( underscore.isEmpty( uploadAllocationParams ) ) {
+    if ( underscore.isEmpty( uploadAllocationParams ) ) { // we are not restoring states
       underscore.each( initAttributes, function (val, attr) {
         vm[ attr ] = val
       } )
@@ -113,6 +114,8 @@ function uploadTreasuryAllocationDirectiveController(parsePastedBids, saveBlotte
     underscore.each( initAttributes, function (val, attr) {
       obj[ attr ] = vm[ attr ]
     } )
+
+    console.log( 'getParams() = ', obj )
     return obj
   }
 
