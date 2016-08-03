@@ -23,6 +23,11 @@ function existingAllocationsDirective() {
     scope: true,
     bindToController: {
       allocationList: '='
+    },
+    link: function (scope) {
+      scope.$on( '$destroy', function () {
+        //console.log( 'destroy  = ', 'destroy' )
+      } )
     }
   }
 }
@@ -41,6 +46,7 @@ function ExistingAllocationsDirectiveController($log, NgTableParams, getAllocati
   var vm = this  // jshint -W040
   var oldFilter = {}
 
+  throw new Error( 'finish state restoration codes' )
   //:TODO 'finish state restoration codes
 
   vm.allocationList = utilities.attachBidsToAllocations( vm.allocationList )
