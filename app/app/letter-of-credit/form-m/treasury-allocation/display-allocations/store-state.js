@@ -55,6 +55,7 @@ function restoreState(stateParams, vm, NgTableParams) {
   vm.allocationToEdit = stateParams.allocationToEdit
   vm.selectedAllocations = stateParams.selectedAllocations
   vm.oldFilter = stateParams.oldFilter
+  stateParams = {}
 }
 
 module.exports = {

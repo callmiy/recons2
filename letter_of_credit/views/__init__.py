@@ -35,6 +35,8 @@ from .download_consolidated_bids import DownloadConsolidatedBidsView
 
 from .treasury_allocation import TreasuryAllocationListCreateAPIView, TreasuryAllocationRetrieveUpdateDestroyAPIView
 
+from .download_allocations import DownloadAllocationsView
+
 from .consolidated_lc_bid_request import ConsolidatedLcBidRequestListCreateAPIView, \
     ConsolidatedLcBidRequestUpdateAPIView
 
@@ -51,6 +53,7 @@ from .lc_commission import UploadLcCommissionView
 
 class AppHomeView(CoreAppsView):
     def get(self, request):
-        context = {'urls': self.get_core_app_urls()}
+        context = {
+            'urls': self.get_core_app_urls()}
         context.update(self.get_form_m_cover_types())
         return render(request, 'app/index.html', context)

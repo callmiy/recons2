@@ -31,8 +31,10 @@ class CoreAppsView(View):
             'attachmentAPIUrl': reverse('attachment-list'),
             'attachmentFileAPIUrl': reverse('attachmentfile-list'),
             'treasuryAllocationAPIUrl': reverse('treasuryallocation-list'),
+            'DownloadTreasuryAllocationAPIUrl': reverse('download-treasury-allocations'),
         })
 
     @staticmethod
     def get_form_m_cover_types():
-        return {'form_m_cover_types': json.dumps(FormMCover.COVER_TYPES)}
+        return {
+            'form_m_cover_types': json.dumps(FormMCover.COVER_TYPES)}

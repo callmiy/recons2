@@ -1,12 +1,17 @@
-from datetime import datetime, date
-
+from datetime import datetime
 from django.http import HttpResponse
 from django.views.generic import View
 from openpyxl import Workbook
-from openpyxl.styles import Font, Alignment
+from openpyxl.styles import Font, Alignment, Border, Side
+from openpyxl.styles.numbers import FORMAT_NUMBER_COMMA_SEPARATED1
 from openpyxl.writer.excel import save_virtual_workbook
 
 from letter_of_credit.models import TreasuryAllocation
+
+border = Border(top=Side(border_style='thin', color='FF000000'),
+                right=Side(border_style='thin', color='FF000000'),
+                bottom=Side(border_style='thin', color='FF000000'),
+                left=Side(border_style='thin', color='FF000000'))
 
 
 class DownloadAllocationsView(View):
@@ -14,46 +19,63 @@ class DownloadAllocationsView(View):
         font = Font(bold=True, name='Rockwell')
         alignment = Alignment(wrap_text=True, horizontal='center', vertical='center')
 
-        header_col_1 = sheet.cell(row=1, column=1, value='S/N')
-        header_col_1.font = font
-        header_col_1.alignment = alignment
+        s = sheet.cell(row=1, column=1, value='S/N')
+        s.font = font
+        s.alignment = alignment
+        s.border = border
+        sheet.column_dimensions['A'].width = 5
 
-        header_col_1 = sheet.cell(row=1, column=2, value='DEAL NO.')
-        header_col_1.font = font
-        header_col_1.alignment = alignment
+        s = sheet.cell(row=1, column=2, value='DEAL NO.')
+        s.font = font
+        s.alignment = alignment
+        s.border = border
+        sheet.column_dimensions['B'].width = 11.9
 
         s = sheet.cell(row=1, column=3, value='SOURCE')
         s.font = font
         s.alignment = alignment
+        s.border = border
+        sheet.column_dimensions['C'].width = 10
 
         s = sheet.cell(row=1, column=4, value='DEAL DATE')
         s.font = font
         s.alignment = alignment
+        s.border = border
+        sheet.column_dimensions['D'].width = 10.5
 
         s = sheet.cell(row=1, column=5, value='REF')
         s.font = font
         s.alignment = alignment
+        s.border = border
+        sheet.column_dimensions['E'].width = 14.8
 
         s = sheet.cell(row=1, column=6, value='NAME')
         s.font = font
         s.alignment = alignment
+        s.border = border
+        sheet.column_dimensions['F'].width = 23
 
         s = sheet.cell(row=1, column=7, value='CCY')
         s.font = font
         s.alignment = alignment
+        s.border = border
+        sheet.column_dimensions['G'].width = 6
 
         s = sheet.cell(row=1, column=8, value='AMOUNT')
         s.font = font
         s.alignment = alignment
+        s.border = border
+        sheet.column_dimensions['H'].width = 12.3
 
         s = sheet.cell(row=1, column=9, value='RATE')
         s.font = font
+        s.border = border
         s.alignment = alignment
 
     def get(self, request):
         wb = Workbook()
         file_name = '%s.xlsx' % datetime.now().strftime('fx-deals-%Y-%m-%d-%H-%S-%f')
-        allocation_ids = request.GET.getlist('bid_ids')
+        allocation_ids = request.GET.getlist('allocation_ids')
 
         if allocation_ids:
             qs = TreasuryAllocation.objects.filter(pk__in=allocation_ids)
@@ -66,38 +88,35 @@ class DownloadAllocationsView(View):
         row_index = 1
 
         for allocation in qs:
-            mf = allocation.mf
-            applicant = mf.applicant
-            sheet.cell(
-                    row=row, column=1, value='' and date.today().strftime('%d-%b-%Y') or row_index)
-            sheet.cell(row=row, column=2, value=mf.number)
+            c = sheet.cell(row=row, column=1, value=row_index)
+            c.border = border
 
-            lc_number = 'NEW LC'
-            lc = mf.lc
+            c = sheet.cell(row=row, column=2, value=allocation.deal_number)
+            c.border = c.border = border
 
-            if lc:
-                lc_number = lc.lc_number
+            c = sheet.cell(row=row, column=3, value=allocation.source_of_fund)
+            c.border = border
 
-            sheet.cell(row=row, column=3, value=lc_number)
-            sheet.cell(row=row, column=4, value=applicant.name)
-            sheet.cell(row=row, column=5, value=mf.currency.code)
+            c = sheet.cell(row=row, column=4, value=allocation.deal_date)
+            c.number_format = 'dd/mm/yyyy'
+            c.border = border
 
-            total_allocation = sum([allocation['amount_allocated'] for allocation in allocation.allocations()])
-            outstanding_bid_amount = allocation.amount - total_allocation
-            sheet.cell(row=row, column=6, value=mf.amount)
-            sheet.cell(row=row, column=7, value=outstanding_bid_amount)
-            sheet.cell(row=row, column=8, value=total_allocation)
-            sheet.cell(row=row, column=9, value=outstanding_bid_amount)
+            c = sheet.cell(row=row, column=5, value=allocation.ref)
+            c.border = border
 
-            acct = ''
-            acct_numbers_qs = applicant.acct_numbers
+            c = sheet.cell(row=row, column=6, value=allocation.customer_name_no_ref)
+            c.border = border
 
-            if acct_numbers_qs:
-                acct = acct_numbers_qs[0].nuban
+            c = sheet.cell(row=row, column=7, value=allocation.currency)
+            c.border = border
 
-            sheet.cell(row=row, column=10, value=acct)
-            sheet.cell(row=row, column=11, value=mf.goods_description)
-            sheet.cell(row=row, column=12, value='CASH BACKED')
+            c = sheet.cell(row=row, column=8, value=abs(allocation.fcy_amount))
+            c.number_format = FORMAT_NUMBER_COMMA_SEPARATED1
+            c.border = border
+
+            c = sheet.cell(row=row, column=9, value=allocation.naira_rate)
+            c.number_format = '#,##0.0000'
+            c.border = border
 
             row += 1
             row_index += 1

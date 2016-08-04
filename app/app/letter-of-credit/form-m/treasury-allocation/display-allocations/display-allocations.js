@@ -36,7 +36,7 @@ function displayAllocationsDirective(formMAppStore) {
   function link(scope, $elm, attrs, ctrl) {
     scope.$on( '$destroy', function () {
       if ( ctrl.clearStore === true ) {
-        formMAppStore.treasuryAllocation.displayAllocationParams = null
+        formMAppStore.treasuryAllocation.displayAllocationParams = {}
         return
       }
 
@@ -64,15 +64,13 @@ DisplayAllocationsDirectiveController.$inject = [
   'NgTableParams',
   'getAllocationsForBids',
   '$scope',
-  'formMAppStore'
+  'urls',
+  '$window'
 ]
 
-function DisplayAllocationsDirectiveController($log, NgTableParams, getAllocationsForBids, $scope) {
+function DisplayAllocationsDirectiveController($log, NgTableParams, getAllocationsForBids, $scope, urls, $window) {
   var vm = this  // jshint -W040
   vm.oldFilter = {}
-
-  //throw new Error( 'finish state restoration codes' )
-  //:TODO finish code for destroying model when single action option is showing e.g edit
 
   vm.allocationList = utilities.attachBidsToAllocations( vm.allocationList )
   stateStore.restoreState(
@@ -89,14 +87,14 @@ function DisplayAllocationsDirectiveController($log, NgTableParams, getAllocatio
 
       case 'download':
       {
-        vm.editAllocation()
+        vm.download()
         break
       }
     }
   }
 
   vm.download = function download() {
-
+    $window.location.href = utilities.getDownloadUrl( vm.selectedIds, urls )
   }
 
   vm.editAllocation = function editAllocation() {

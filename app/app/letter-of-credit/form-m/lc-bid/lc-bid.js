@@ -51,6 +51,7 @@ LcBidDirectiveController.$inject = [
   '$window'
 ]
 
+/** @namespace urls.lcBidRequestDownloadUrl */
 function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore, LcBidRequest, xhrErrorDisplay,
                                   confirmationDialog, formMObject, resetForm2, moment, toISODate, ViewBidDetail,
                                   kanmiiUri, urls, $timeout, $window) {
@@ -495,10 +496,6 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
       requested_at: angular.equals( vm.bidToEdit.requested_at, vm.bid.requested_at ),
       docs_complete: vm.bidToEdit.docs_complete === vm.bid.docs_complete
     }
-  }
-
-  function bidDocumentationComplete() {
-    return vm.bid.rate && vm.bid.bid_letter && vm.bid.credit_approval
   }
 
   function getBidFromId(id) {

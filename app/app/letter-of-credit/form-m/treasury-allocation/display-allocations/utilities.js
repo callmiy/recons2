@@ -3,6 +3,7 @@
 /*jshint camelcase:false*/
 
 var underscore = require( 'underscore' )
+var uri = require( 'urijs' )
 
 /**
  *
@@ -95,9 +96,22 @@ function getSelectedIds(selections) {
   return selectedIds
 }
 
+/** @namespace urls.DownloadTreasuryAllocationAPIUrl */
+/**
+ *
+ * @param {Array} allocationIds
+ * @param {{}} urls
+ * @returns {string}
+ */
+function getDownloadUrl(allocationIds, urls) {
+  var url = uri( urls.DownloadTreasuryAllocationAPIUrl )
+  return url.search( { allocation_ids: allocationIds } ).toString()
+}
+
 module.exports = {
   replaceAllocations: replaceAllocations,
   attachBidsToAllocations: attachBidsToAllocations,
   attachBidsToAllocation: attachBidsToAllocation,
-  getSelectedIds: getSelectedIds
+  getSelectedIds: getSelectedIds,
+  getDownloadUrl: getDownloadUrl
 }
