@@ -11,17 +11,19 @@ var app = angular.module( 'display-allocations', [
   'ngTable'
 ] )
 
-app.directive( 'singleAllocationAction', singleAllocationAction )
-function singleAllocationAction() {
-  function link($scope, $elm, attrs, ngModelCtrl) {
-    $scope.$on( '$destroy', function () {
+app.directive( 'kmNullModelOnDestroy', kmNullModelOnDestroy )
+function kmNullModelOnDestroy() {
+  function link(scope, $elm, attrs, ngModelCtrl) {
+
+    scope.$on( '$destroy', function () {
+      ngModelCtrl.$setViewValue( '' )
       ngModelCtrl.$modelValue = null
     } )
   }
 
   return {
     restrict: 'A',
-    require: '^^ngModel',
+    require: '^ngModel',
     link: link
   }
 }
