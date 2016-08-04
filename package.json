@@ -51,6 +51,7 @@
   "dependencies": {
     "babyparse": "^0.4.6",
     "moment": "^2.13.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "urijs": "^1.18.1"
   }
 }

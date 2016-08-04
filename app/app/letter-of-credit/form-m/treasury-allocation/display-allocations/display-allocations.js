@@ -67,7 +67,7 @@ DisplayAllocationsDirectiveController.$inject = [
   'formMAppStore'
 ]
 
-function DisplayAllocationsDirectiveController($log, NgTableParams, getAllocationsForBids, $scope, formMAppStore) {
+function DisplayAllocationsDirectiveController($log, NgTableParams, getAllocationsForBids, $scope) {
   var vm = this  // jshint -W040
   vm.oldFilter = {}
 
@@ -86,7 +86,17 @@ function DisplayAllocationsDirectiveController($log, NgTableParams, getAllocatio
         vm.editAllocation()
         break
       }
+
+      case 'download':
+      {
+        vm.editAllocation()
+        break
+      }
     }
+  }
+
+  vm.download = function download() {
+
   }
 
   vm.editAllocation = function editAllocation() {
