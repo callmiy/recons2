@@ -30,9 +30,20 @@ function kmNullModelOnDestroy() {
 
 app.directive( 'displayAllocations', displayAllocationsDirective )
 
-displayAllocationsDirective.$inject = []
+displayAllocationsDirective.$inject = [ 'formMAppStore' ]
 
-function displayAllocationsDirective() {
+function displayAllocationsDirective(formMAppStore) {
+  function link(scope, $elm, attrs, ctrl) {
+    scope.$on( '$destroy', function () {
+      if ( ctrl.clearStore === true ) {
+        formMAppStore.treasuryAllocation.displayAllocationParams = null
+        return
+      }
+
+      stateStore.storeSate( ctrl, formMAppStore )
+    } )
+  }
+
   return {
     restrict: 'E',
     templateUrl: require( 'commons' )
@@ -42,11 +53,7 @@ function displayAllocationsDirective() {
     bindToController: {
       allocationList: '='
     },
-    link: function (scope) {
-      scope.$on( '$destroy', function () {
-        //console.log( 'destroy  = ', 'destroy' )
-      } )
-    }
+    link: link
   }
 }
 
@@ -62,14 +69,14 @@ DisplayAllocationsDirectiveController.$inject = [
 
 function DisplayAllocationsDirectiveController($log, NgTableParams, getAllocationsForBids, $scope, formMAppStore) {
   var vm = this  // jshint -W040
-  var oldFilter = {}
+  vm.oldFilter = {}
 
   //throw new Error( 'finish state restoration codes' )
   //:TODO finish code for destroying model when single action option is showing e.g edit
 
   vm.allocationList = utilities.attachBidsToAllocations( vm.allocationList )
-  stateStore.setState(
-    $scope.$parent.treasuryAllocation.displayAllocationParams, vm, oldFilter, NgTableParams
+  stateStore.restoreState(
+    $scope.$parent.treasuryAllocation.displayAllocationParams, vm, NgTableParams
   )
 
   vm.doAction = function doAction(action) {
@@ -86,7 +93,7 @@ function DisplayAllocationsDirectiveController($log, NgTableParams, getAllocatio
     var allocation = getByKey( vm.tableParams.data, 'id', vm.selectedIds[ 0 ] )
     vm.allocationToEdit = allocation
     vm.showEditAllocationForm = true
-    oldFilter = angular.copy( vm.tableParams.filter() )
+    vm.oldFilter = angular.copy( vm.tableParams.filter() )
     vm.tableParams.filter( { deal_number: allocation.deal_number } )
   }
 
@@ -104,8 +111,8 @@ function DisplayAllocationsDirectiveController($log, NgTableParams, getAllocatio
 
     vm.showEditAllocationForm = false
     vm.allocationToEdit = null
-    vm.tableParams.filter( angular.copy( oldFilter ) )
-    oldFilter = {}
+    vm.tableParams.filter( angular.copy( vm.oldFilter ) )
+    vm.oldFilter = {}
   }
 
   vm.isChecked = function isChecked(allocation) {
@@ -113,6 +120,7 @@ function DisplayAllocationsDirectiveController($log, NgTableParams, getAllocatio
   }
 
   $scope.$on( 'init-display', function () {
+    vm.clearStore = true
     $scope.$parent.treasuryAllocation.displayAllocationParams = {}
   } )
 
@@ -123,10 +131,4 @@ function DisplayAllocationsDirectiveController($log, NgTableParams, getAllocatio
     vm.selectedIds = utilities.getSelectedIds( selections )
 
   }, true )
-
-  $scope.$watch(
-    stateStore.getParams( vm, oldFilter ),
-    stateStore.onParamsChanged( vm, oldFilter, formMAppStore ),
-    true
-  )
 }
