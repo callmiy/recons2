@@ -2,14 +2,29 @@
 
 /*jshint camelcase:false*/
 
-var underscore = require( 'underscore' )
 var utilities = require( './utilities.js' )
 var stateStore = require( './store-state.js' )
+var getByKey = require( './../../../../core/get-by-key.js' )
 
 var app = angular.module( 'display-allocations', [
   'treasury-allocation-service',
   'ngTable'
 ] )
+
+app.directive( 'singleAllocationAction', singleAllocationAction )
+function singleAllocationAction() {
+  function link($scope, $elm, attrs, ngModelCtrl) {
+    $scope.$on( '$destroy', function () {
+      ngModelCtrl.$modelValue = null
+    } )
+  }
+
+  return {
+    restrict: 'A',
+    require: '^^ngModel',
+    link: link
+  }
+}
 
 app.directive( 'displayAllocations', displayAllocationsDirective )
 
@@ -48,14 +63,25 @@ function DisplayAllocationsDirectiveController($log, NgTableParams, getAllocatio
   var oldFilter = {}
 
   //throw new Error( 'finish state restoration codes' )
-  //:TODO 'finish state restoration codes
+  //:TODO finish code for destroying model when single action option is showing e.g edit
 
   vm.allocationList = utilities.attachBidsToAllocations( vm.allocationList )
   stateStore.setState(
     $scope.$parent.treasuryAllocation.displayAllocationParams, vm, oldFilter, NgTableParams
   )
 
-  vm.editAllocation = function editAllocation(allocation) {
+  vm.doAction = function doAction(action) {
+    switch ( action ) {
+      case 'edit':
+      {
+        vm.editAllocation()
+        break
+      }
+    }
+  }
+
+  vm.editAllocation = function editAllocation() {
+    var allocation = getByKey( vm.tableParams.data, 'id', vm.selectedIds[ 0 ] )
     vm.allocationToEdit = allocation
     vm.showEditAllocationForm = true
     oldFilter = angular.copy( vm.tableParams.filter() )
@@ -87,6 +113,14 @@ function DisplayAllocationsDirectiveController($log, NgTableParams, getAllocatio
   $scope.$on( 'init-display', function () {
     $scope.$parent.treasuryAllocation.displayAllocationParams = {}
   } )
+
+  $scope.$watch( function () {
+    return vm.selectedAllocations
+
+  }, function (selections) {
+    vm.selectedIds = utilities.getSelectedIds( selections )
+
+  }, true )
 
   $scope.$watch(
     stateStore.getParams( vm, oldFilter ),

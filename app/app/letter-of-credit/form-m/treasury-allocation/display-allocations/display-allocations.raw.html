@@ -7,7 +7,45 @@
     </div>
   </div>
 
-  <div class="search-allocations-result treasury-allocations-table-display">
+  <div class="action-container"
+       ng-if="displayAllocations.selectedIds.length && !displayAllocations.showEditAllocationForm">
+    <form class="form-horizontal">
+      <div class="row">
+        <div class="col-sm-4">
+          <div class="form-group">
+            <label style="text-align: right;" class="control-label col-sm-3" for="selected-allocations-actions">
+              Select Action
+            </label>
+
+            <div class="col-sm-9">
+              <div class="input-group">
+                <select name="" id="selected-allocations-actions" class="form-control"
+                        ng-model="displayAllocations.action">
+                  <option value="">-----Select Action-----</option>
+
+                  <option ng-if="displayAllocations.selectedIds.length === 1" single-allocation-action value="edit">
+                    Edit
+                  </option>
+
+                  <option value="download"> Download</option>
+                </select>
+
+                <span style="cursor: pointer" class="input-group-addon form-m-action-execute"
+                      ng-if="displayAllocations.action"
+                      ng-click="displayAllocations.doAction( displayAllocations.action )">
+                  <span>Go</span>
+                </span>
+
+                <span class="input-group-addon" ng-if="!displayAllocations.action"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="display-allocations-table-container treasury-allocations-table-display">
 
     <table ng-table="displayAllocations.tableParams"
            class="table table-bordered table-condensed table-responsive table-striped allocation-table">
@@ -16,7 +54,6 @@
         <tr style="cursor: pointer;"
             ng-repeat="allocationObj in $data track by allocationObj.id"
             ng-class="{'bid-row-matched': allocationObj.originalRequests, 'allocation-checked': displayAllocations.isChecked(allocationObj)}"
-            ng-dblclick="displayAllocations.editAllocation(allocationObj)"
         >
           <td>
             <input type="checkbox"

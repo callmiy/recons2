@@ -80,8 +80,24 @@ function attachBidsToAllocations(allocationList) {
   } )
 }
 
+/**
+ *
+ * @param {{}} selections
+ * @returns {Array}
+ */
+function getSelectedIds(selections) {
+  var selectedIds = []
+
+  underscore.each( selections, function (checked, id) {
+    if ( checked ) selectedIds.push( +id )
+  } )
+
+  return selectedIds
+}
+
 module.exports = {
   replaceAllocations: replaceAllocations,
   attachBidsToAllocations: attachBidsToAllocations,
-  attachBidsToAllocation: attachBidsToAllocation
+  attachBidsToAllocation: attachBidsToAllocation,
+  getSelectedIds: getSelectedIds
 }
