@@ -15,9 +15,14 @@
       <tbody>
         <tr style="cursor: pointer;"
             ng-repeat="allocationObj in $data track by allocationObj.id"
-            ng-class="{'bid-row-matched': allocationObj.originalRequests}"
+            ng-class="{'bid-row-matched': allocationObj.originalRequests, 'allocation-checked': displayAllocations.isChecked(allocationObj)}"
             ng-dblclick="displayAllocations.editAllocation(allocationObj)"
         >
+          <td>
+            <input type="checkbox"
+                   ng-model="displayAllocations.selectedAllocations[allocationObj.id]"
+                   ng-attr-name="{$'displayAllocations' + allocationObj.id$}">
+          </td>
 
           <td data-title="'S/N'">{$$index + 1$}</td>
 

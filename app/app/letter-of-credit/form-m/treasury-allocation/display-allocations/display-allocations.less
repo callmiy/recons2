@@ -1,8 +1,14 @@
 .existing-allocations-directive-container {
   .allocation-table {
-    & > tbody > tr.bid-row-matched {
-      background-color: rgba(59, 149, 176, 0.25);
-      color: #3b95b0;
+    & > tbody > tr {
+      &.bid-row-matched {
+        background-color: rgba(59, 149, 176, 0.25);
+        color: #3b95b0;
+      }
+
+      &.allocation-checked {
+        background-color: #FFE3E3;
+      }
     }
 
     & > thead > tr {

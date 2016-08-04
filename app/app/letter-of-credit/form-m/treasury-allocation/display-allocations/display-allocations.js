@@ -2,6 +2,7 @@
 
 /*jshint camelcase:false*/
 
+var underscore = require( 'underscore' )
 var utilities = require( './utilities.js' )
 var stateStore = require( './store-state.js' )
 
@@ -77,6 +78,10 @@ function DisplayAllocationsDirectiveController($log, NgTableParams, getAllocatio
     vm.allocationToEdit = null
     vm.tableParams.filter( angular.copy( oldFilter ) )
     oldFilter = {}
+  }
+
+  vm.isChecked = function isChecked(allocation) {
+    return vm.selectedAllocations[ allocation.id ]
   }
 
   $scope.$on( 'init-display', function () {

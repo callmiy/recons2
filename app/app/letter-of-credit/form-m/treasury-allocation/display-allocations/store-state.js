@@ -59,6 +59,7 @@ function getNgTableParams(params) {
  * @param NgTableParams
  */
 function setState(stateParams, vm, oldFilter, NgTableParams) {
+  vm.selectedAllocations = {}
   vm.tableParams = new NgTableParams( { sorting: { ref: 'desc' } }, { dataset: vm.allocationList } )
 
   if ( underscore.isEmpty( stateParams ) ) {
