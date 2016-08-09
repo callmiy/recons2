@@ -2,33 +2,18 @@
 
 var underscore = require( 'underscore' )
 
-function getParams(vm) {
-  return function getSearchAllocationParams() {
-    return {
-      isAllocationSearchOpen: vm.isAllocationSearchOpen,
-      search: vm.search,
-      allocationList: vm.allocationList,
-      showSearchResult: vm.showSearchResult
-    }
-  }
-}
-
 /**
  * We will watch some states of this directive, and when they change, we store than into our app store so that they
  * can be restored later when user navigates away and comes back to our this directive/router state
  * @param vm
- * @param oldFilter
  * @param formMAppStore
  */
-function onParamsChanged(vm, formMAppStore) {
-
-  return function storeSearchAllocationParams() {
-    formMAppStore.treasuryAllocation.searchAllocationParams = {
-      isAllocationSearchOpen: vm.isAllocationSearchOpen,
-      search: vm.search,
-      allocationList: vm.allocationList,
-      showSearchResult: vm.showSearchResult
-    }
+function storeSate(vm, formMAppStore) {
+  formMAppStore.treasuryAllocation.searchAllocationParams = {
+    isAllocationSearchOpen: vm.isAllocationSearchOpen,
+    search: angular.copy( vm.search ),
+    allocationList: angular.copy( vm.allocationList ),
+    showSearchResult: vm.showSearchResult
   }
 }
 
@@ -36,8 +21,6 @@ function onParamsChanged(vm, formMAppStore) {
  *
  * @param stateParams
  * @param vm
- * @param oldFilter
- * @param NgTableParams
  */
 function setState(stateParams, vm) {
   if ( underscore.isEmpty( stateParams ) ) {
@@ -53,10 +36,11 @@ function setState(stateParams, vm) {
   vm.search = stateParams.search
   vm.allocationList = stateParams.allocationList
   vm.showSearchResult = stateParams.showSearchResult
+
+  stateParams = null
 }
 
 module.exports = {
-  getParams: getParams,
-  onParamsChanged: onParamsChanged,
-  setState: setState
+  setState: setState,
+  storeSate: storeSate
 }

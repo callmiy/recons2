@@ -17,15 +17,22 @@ var app = angular.module( 'search-allocations', [
 
 app.directive( 'searchAllocations', searchAllocationsDirective )
 
-searchAllocationsDirective.$inject = []
+searchAllocationsDirective.$inject = [ 'formMAppStore' ]
 
-function searchAllocationsDirective() {
+function searchAllocationsDirective(formMAppStore) {
+  function link(scope, $elm, attrs, ctrl) {
+    scope.$on( '$destroy', function () {
+      stateStore.storeSate( ctrl, formMAppStore )
+    } )
+  }
+
   return {
     restrict: 'AE',
     templateUrl: require( 'commons' )
       .buildUrl( 'letter-of-credit', 'form-m/treasury-allocation/search-allocations/search-allocations.html' ),
     scope: false,
-    controller: 'SearchAllocationsDirectiveController as searchAllocations'
+    controller: 'SearchAllocationsDirectiveController as searchAllocations',
+    link: link
   }
 }
 
@@ -34,11 +41,10 @@ app.controller( 'SearchAllocationsDirectiveController', SearchAllocationsDirecti
 SearchAllocationsDirectiveController.$inject = [
   'searchTreasuryAllocation',
   'spinnerModal',
-  'formMAppStore',
   '$scope'
 ]
 
-function SearchAllocationsDirectiveController(searchTreasuryAllocation, spinnerModal, formMAppStore, $scope) {
+function SearchAllocationsDirectiveController(searchTreasuryAllocation, spinnerModal, $scope) {
   var vm = this  // jshint -W040
   vm.spinnerName = 'searchingAllocationsSpinner'
   vm.datePickerFormat = 'dd-MMM-yyyy'
@@ -75,6 +81,4 @@ function SearchAllocationsDirectiveController(searchTreasuryAllocation, spinnerM
       spinner.dismiss()
     } )
   }
-
-  $scope.$watch( stateStore.getParams( vm ), stateStore.onParamsChanged( vm, formMAppStore ), true )
 }
