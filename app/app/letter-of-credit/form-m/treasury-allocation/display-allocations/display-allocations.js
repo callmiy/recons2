@@ -2,6 +2,7 @@
 
 /*jshint camelcase:false*/
 
+var underscore = require( 'underscore' )
 var utilities = require( './utilities.js' )
 var stateStore = require( './store-state.js' )
 var getByKey = require( './../../../../core/get-by-key.js' )
@@ -90,11 +91,23 @@ function DisplayAllocationsDirectiveController($log, NgTableParams, getAllocatio
         vm.download()
         break
       }
+
+      case 'download-all':
+      {
+        vm.download( 'all' )
+        break
+      }
     }
   }
 
-  vm.download = function download() {
-    $window.location.href = utilities.getDownloadUrl( vm.selectedIds, urls )
+  /**
+   *
+   * @param all
+   */
+  vm.download = function download(all) {
+    $window.location.href = utilities.getDownloadUrl(
+      all ? underscore.pluck( vm.allocationList, 'id' ) : vm.selectedIds, urls
+    )
   }
 
   vm.editAllocation = function editAllocation() {

@@ -110,7 +110,7 @@ class DownloadAllocationsView(View):
             c = sheet.cell(row=row, column=7, value=allocation.currency)
             c.border = border
 
-            c = sheet.cell(row=row, column=8, value=abs(allocation.fcy_amount))
+            c = sheet.cell(row=row, column=8, value=(-1 * allocation.fcy_amount))
             c.number_format = FORMAT_NUMBER_COMMA_SEPARATED1
             c.border = border
 

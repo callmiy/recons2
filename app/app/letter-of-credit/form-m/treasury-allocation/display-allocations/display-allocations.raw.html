@@ -7,8 +7,7 @@
     </div>
   </div>
 
-  <div class="action-container"
-       ng-if="displayAllocations.selectedIds.length && !displayAllocations.showEditAllocationForm">
+  <div class="action-container" ng-if="!displayAllocations.showEditAllocationForm">
     <form class="form-horizontal">
       <div class="row">
         <div class="col-sm-4">
@@ -24,11 +23,13 @@
                         ng-model="displayAllocations.action">
                   <option value="">-----Select Action-----</option>
 
+                  <option value="download-all"> Download All</option>
+
                   <option ng-if="displayAllocations.selectedIds.length === 1" km-null-model-on-destroy value="edit">
                     Edit
                   </option>
 
-                  <option value="download"> Download</option>
+                  <option ng-if="displayAllocations.selectedIds.length" value="download"> Download</option>
                 </select>
 
                 <span style="cursor: pointer" class="input-group-addon form-m-action-execute"
