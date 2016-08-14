@@ -140,7 +140,6 @@ function parsePastedBids(text) {
       }
     } )
   } catch ( e ) {
-    console.log( 'error parsing pasted blotter = ', e, '\n\n\n' )
     if ( e.message === 'INVALID-PASTED-HEADERS' ) {
       return { error: missingRequiredHeaders }
     }

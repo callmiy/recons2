@@ -37,8 +37,6 @@ function saveBlotter($q, toISODate, TreasuryAllocation, underscore) {
 
     }, function (xhr) {
 
-      console.log( 'saving blotter xhr = ', xhr );
-
       if ( xhr.status === 400 ) {
         deferred.reject( handleSave400Error( xhr.data, dataToSave ) )
       }

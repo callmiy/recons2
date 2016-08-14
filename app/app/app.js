@@ -33,6 +33,7 @@ require( './letter-of-credit/form-m/treasury-allocation/display-allocations/disp
 require( './letter-of-credit/form-m/treasury-allocation/display-allocations/services/index.js' )
 require( './letter-of-credit/form-m/treasury-allocation/search-allocations/search-allocations.js' )
 require( './letter-of-credit/form-m/treasury-allocation/upload-allocation/upload-allocation.js' )
+require( './letter-of-credit/form-m/treasury-allocation/upload-allocation/upload-allocation-error-display/upload-allocation-error-display.js' )
 require( './letter-of-credit/form-m/treasury-allocation/upload-allocation/save-pasted-blotter.js' )
 require( './letter-of-credit/form-m/treasury-allocation/treasury-allocation.js' )
 require( './letter-of-credit/form-m/treasury-allocation/display-bids-for-allocation/display-bids-for-allocation.js' )
