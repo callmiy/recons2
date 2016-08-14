@@ -2,6 +2,9 @@
 
 /*jshint camelcase:false*/
 
+var stateStore = require( './store-state.js' )
+var utilities = require( './utilities.js' )
+
 var app = angular.module( 'upload-treasury-allocation', [
   'rootApp',
   'consolidated-lc-bid-request',
@@ -13,62 +16,37 @@ var app = angular.module( 'upload-treasury-allocation', [
 ] )
 
 app.directive( 'uploadTreasuryAllocation', uploadTreasuryAllocationDirective )
+uploadTreasuryAllocationDirective.$inject = [ 'formMAppStore' ]
 
-uploadTreasuryAllocationDirective.$inject = []
+function uploadTreasuryAllocationDirective(formMAppStore) {
+  function link(scope, $elm, attrs, ctrl) {
+    scope.$on( '$destroy', function () {
+      stateStore.storeSate( ctrl, formMAppStore )
+    } )
+  }
 
-function uploadTreasuryAllocationDirective() {
   return {
     restrict: 'A',
     templateUrl: require( 'commons' )
       .buildUrl( 'letter-of-credit', 'form-m/treasury-allocation/upload-allocation/upload-allocation.html' ),
     scope: false,
-    controller: 'uploadTreasuryAllocationDirectiveController as uploadTreasuryAllocation'
+    controller: 'uploadTreasuryAllocationDirectiveController as uploadTreasuryAllocation',
+    link: link
   }
 }
 
 app.controller( 'uploadTreasuryAllocationDirectiveController', uploadTreasuryAllocationDirectiveController )
 
 uploadTreasuryAllocationDirectiveController.$inject = [
-  'parsePastedBids',
   'saveBlotter',
-  'underscore',
-  '$scope',
   'formMAppStore',
-  'requiredBlotterHeaders',
-  'initAttributes',
-  'makeInvalidBlotterHeadersMsg',
   'spinnerModal'
 ]
 
-function uploadTreasuryAllocationDirectiveController(parsePastedBids, saveBlotter, underscore, $scope,
-                                                     formMAppStore, requiredBlotterHeaders, initAttributes,
-                                                     makeInvalidBlotterHeadersMsg, spinnerModal) {
+function uploadTreasuryAllocationDirectiveController(saveBlotter, formMAppStore, spinnerModal) {
   var vm = this  // jshint -W040
-  var bidsFromServer
 
-  init( $scope.$parent.treasuryAllocation.uploadAllocationParams )
-
-  /**
-   *
-   * @param {{}} uploadAllocationParams
-   * @param {Array} uploadAllocationParams.bidsFromServer
-   */
-  function init(uploadAllocationParams) {
-    if ( underscore.isEmpty( uploadAllocationParams ) ) { // we are not restoring states
-      underscore.each( initAttributes, function (val, attr) {
-        vm[ attr ] = val
-      } )
-
-      bidsFromServer = []
-
-    } else {
-      underscore.each( initAttributes, function (val, attr) {
-        vm[ attr ] = uploadAllocationParams[ attr ]
-      } )
-
-      bidsFromServer = uploadAllocationParams.bidsFromServer
-    }
-  }
+  stateStore.setState( formMAppStore, vm )
 
   vm.closeBlotterPasteAlert = function closeBlotterPasteAlert() {
     vm.invalidPastedTextMsg = null
@@ -77,19 +55,17 @@ function uploadTreasuryAllocationDirectiveController(parsePastedBids, saveBlotte
 
   vm.onBlotterPasted = function onBlotterPasted() {
     // always reset bids from server, invalid blotter text message, and hide allocation table
-    bidsFromServer = []
+    vm.bidsFromServer = []
     vm.allocationList = null
     vm.rejectedDataList = null
     vm.invalidPastedTextMsg = ''
 
     if ( !vm.pastedBlotter ) return
 
-    // vm.pastedBlotter = vm.pastedBlotter.replace(/\s*"\s*/g, '').trim()
-
-    var parsed = parsePastedBids( vm.pastedBlotter, requiredBlotterHeaders )
+    var parsed = utilities.parsePastedBids( vm.pastedBlotter )
 
     if ( parsed.error ) {
-      vm.invalidPastedTextMsg = makeInvalidBlotterHeadersMsg( parsed.error )
+      vm.invalidPastedTextMsg = utilities.makeInvalidBlotterHeadersMsg( parsed.error )
       return
     }
 
@@ -107,28 +83,4 @@ function uploadTreasuryAllocationDirectiveController(parsePastedBids, saveBlotte
       vm.showPasteForm = false
     } )
   }
-
-  function getParams() {
-    var obj = {}
-
-    underscore.each( initAttributes, function (val, attr) {
-      obj[ attr ] = vm[ attr ]
-    } )
-
-    return obj
-  }
-
-  function onParamsChanged() {
-    var obj = {
-      bidsFromServer: bidsFromServer
-    }
-
-    underscore.each( initAttributes, function (val, attr) {
-      obj[ attr ] = vm[ attr ]
-    } )
-
-    formMAppStore.treasuryAllocation.uploadAllocationParams = obj
-  }
-
-  $scope.$watch( getParams, onParamsChanged, true )
 }

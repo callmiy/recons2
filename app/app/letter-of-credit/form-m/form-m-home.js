@@ -28,6 +28,7 @@ var app = angular.module( 'form-m',
 
 app.config( formMURLConfig )
 formMURLConfig.$inject = [ '$stateProvider' ]
+
 function formMURLConfig($stateProvider) {
 
   $stateProvider

@@ -37,7 +37,7 @@ function displayAllocationsDirective(formMAppStore) {
   function link(scope, $elm, attrs, ctrl) {
     scope.$on( '$destroy', function () {
       if ( ctrl.clearStore === true ) {
-        formMAppStore.treasuryAllocation.displayAllocationParams = {}
+        formMAppStore.displayAllocationParams = null
         return
       }
 
@@ -61,22 +61,21 @@ function displayAllocationsDirective(formMAppStore) {
 app.controller( 'DisplayAllocationsDirectiveController', DisplayAllocationsDirectiveController )
 
 DisplayAllocationsDirectiveController.$inject = [
-  '$log',
   'NgTableParams',
   'getAllocationsForBids',
   '$scope',
   'urls',
-  '$window'
+  '$window',
+  'formMAppStore'
 ]
 
-function DisplayAllocationsDirectiveController($log, NgTableParams, getAllocationsForBids, $scope, urls, $window) {
+function DisplayAllocationsDirectiveController(NgTableParams, getAllocationsForBids, $scope, urls, $window,
+                                               formMAppStore) {
   var vm = this  // jshint -W040
   vm.oldFilter = {}
 
   vm.allocationList = utilities.attachBidsToAllocations( vm.allocationList )
-  stateStore.restoreState(
-    $scope.$parent.treasuryAllocation.displayAllocationParams, vm, NgTableParams
-  )
+  stateStore.restoreState( formMAppStore, vm, NgTableParams )
 
   vm.doAction = function doAction(action) {
     switch ( action ) {
@@ -142,7 +141,6 @@ function DisplayAllocationsDirectiveController($log, NgTableParams, getAllocatio
 
   $scope.$on( 'init-display', function () {
     vm.clearStore = true
-    $scope.$parent.treasuryAllocation.displayAllocationParams = {}
   } )
 
   $scope.$watch( function () {

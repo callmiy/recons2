@@ -2,58 +2,16 @@
 
 /*jshint camelcase:false*/
 
-var app = angular.module( 'upload-treasury-allocation' )
+var underscore = require( 'underscore' )
+var moment = require( 'moment' )
+var baby = require( 'babyparse' )
 
-app.factory( 'parsePastedBids', parsePastedBids )
-parsePastedBids.$inject = [
-  'underscore',
-  'moment',
-  'baby'
-]
-
-function parsePastedBids(underscore, moment, baby) {
-
-  /**
-   *
-   * @param {String} text
-   * @param {{}} requiredHeadersMap
-   * @returns {{}}
-   */
-  function parse(text, requiredHeadersMap) {
-    var cleanedData,
-      result = [],
-      index = 1,
-      rowData,
-      requiredHeadersInRowData,
-      requiredHeadersKeys = underscore.keys( requiredHeadersMap ),
-      missingRequiredHeaders = []
-
-    try {
-      baby.parse( text.trim(), {
-        delimiter: '\t', header: true, step: function (row) {
-          rowData = cleanHeaders( row.data[ 0 ] )
-          requiredHeadersInRowData = underscore.intersection( underscore.keys( rowData ), requiredHeadersKeys )
-          missingRequiredHeaders = underscore.difference( requiredHeadersKeys, requiredHeadersInRowData )
-
-          if ( missingRequiredHeaders.length ) throw new Error( 'INVALID-PASTED-HEADERS' )
-
-          cleanedData = cleanPastedBids( rowData, requiredHeadersMap )
-          cleanedData.index = index++
-          result.push( cleanedData )
-        }
-      } )
-    } catch ( e ) {
-      console.log( 'error parsing pasted blotter = ', e, '\n\n\n' )
-      if ( e.message === 'INVALID-PASTED-HEADERS' ) {
-        return { error: missingRequiredHeaders }
-      }
-    }
-
-    //baby-parse could not parse the text and did not throw error
-    if ( !result.length ) return { error: requiredHeadersKeys }
-
-    return { data: result }
-  }
+/**
+ *
+ * @param {String} text
+ * @returns {{}}
+ */
+function parsePastedBids(text) {
 
   /**
    * Sometimes the blotter headers (which will be the keys of the row data) contain undesirable chars such as [\s "]. We
@@ -146,5 +104,63 @@ function parsePastedBids(underscore, moment, baby) {
     return [ ref, val.replace( ref, '' ).trim() ]
   }
 
-  return parse
+  var requiredHeadersMap = {
+      TRANSACTION_DEAL_SLIP: 'deal_number',
+      DEAL_DATE: 'deal_date',
+      SETTLEMENT_DATE: 'settlement_date',
+      TRANSACTION_TYPE: 'transaction_type',
+      RATE: 'naira_rate',
+      CURRENCY: 'currency',
+      FCY_AMOUNT: 'fcy_amount',
+      PRODUCT_TYPE: 'product_type',
+      CUSTOMER_NAME: 'customer_name',
+      CLIENT_CATEGORY: 'client_category',
+      SOURCE_OF_FUND: 'source_of_fund'
+    },
+    cleanedData,
+    result = [],
+    index = 1,
+    rowData,
+    requiredHeadersInRowData,
+    requiredHeadersKeys = underscore.keys( requiredHeadersMap ),
+    missingRequiredHeaders = []
+
+  try {
+    baby.parse( text.trim(), {
+      delimiter: '\t', header: true, step: function (row) {
+        rowData = cleanHeaders( row.data[ 0 ] )
+        requiredHeadersInRowData = underscore.intersection( underscore.keys( rowData ), requiredHeadersKeys )
+        missingRequiredHeaders = underscore.difference( requiredHeadersKeys, requiredHeadersInRowData )
+
+        if ( missingRequiredHeaders.length ) throw new Error( 'INVALID-PASTED-HEADERS' )
+
+        cleanedData = cleanPastedBids( rowData, requiredHeadersMap )
+        cleanedData.index = index++
+        result.push( cleanedData )
+      }
+    } )
+  } catch ( e ) {
+    console.log( 'error parsing pasted blotter = ', e, '\n\n\n' )
+    if ( e.message === 'INVALID-PASTED-HEADERS' ) {
+      return { error: missingRequiredHeaders }
+    }
+  }
+
+  //baby-parse could not parse the text and did not throw error
+  if ( !result.length ) return { error: requiredHeadersKeys }
+
+  return { data: result }
+}
+
+function makeInvalidBlotterHeadersMsg(errors) {
+
+  return 'Pasted text missing headers:\n' + errors.map( function (header) {
+      return '  - ' + header
+    } ).join( '\n' )
+
+}
+
+module.exports = {
+  parsePastedBids: parsePastedBids,
+  makeInvalidBlotterHeadersMsg: makeInvalidBlotterHeadersMsg
 }

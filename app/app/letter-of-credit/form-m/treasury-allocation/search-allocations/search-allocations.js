@@ -41,10 +41,11 @@ app.controller( 'SearchAllocationsDirectiveController', SearchAllocationsDirecti
 SearchAllocationsDirectiveController.$inject = [
   'searchTreasuryAllocation',
   'spinnerModal',
+  'formMAppStore',
   '$scope'
 ]
 
-function SearchAllocationsDirectiveController(searchTreasuryAllocation, spinnerModal, $scope) {
+function SearchAllocationsDirectiveController(searchTreasuryAllocation, spinnerModal, formMAppStore, $scope) {
   var vm = this  // jshint -W040
   vm.spinnerName = 'searchingAllocationsSpinner'
   vm.datePickerFormat = 'dd-MMM-yyyy'
@@ -53,7 +54,7 @@ function SearchAllocationsDirectiveController(searchTreasuryAllocation, spinnerM
     endDate: false
   }
 
-  stateStore.setState( $scope.$parent.treasuryAllocation.searchAllocationParams, vm )
+  stateStore.setState( formMAppStore, vm )
 
   vm.openDatePickerFor = function openDatePickerFor(element) {
     vm.datePickerIsOpenFor[ element ] = true

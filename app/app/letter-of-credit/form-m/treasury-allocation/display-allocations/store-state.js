@@ -21,7 +21,7 @@ function getNgTableParams(params) {
 }
 
 function storeSate(vm, formMAppStore) {
-  formMAppStore.treasuryAllocation.displayAllocationParams = {
+  formMAppStore.displayAllocationParams = {
     ngTableParams: setNgTableParams( vm.tableParams ),
     showEditAllocationForm: vm.showEditAllocationForm,
     allocationToEdit: angular.copy( vm.allocationToEdit ),
@@ -31,29 +31,29 @@ function storeSate(vm, formMAppStore) {
 
 /**
  *
- * @param stateParams
- * @param vm
- * @param oldFilter
- * @param NgTableParams
+ * @param {{}} formMAppStore
+ * @param  vm
+ * @param  NgTableParams
  */
-function restoreState(stateParams, vm, NgTableParams) {
+function restoreState(formMAppStore, vm, NgTableParams) {
   vm.tableParams = new NgTableParams( { sorting: { ref: 'desc' } }, { dataset: vm.allocationList } )
   vm.selectedAllocations = {}
+  var displayAllocationParams = formMAppStore.displayAllocationParams
 
-  if ( underscore.isEmpty( stateParams ) ) {
+  if ( underscore.isEmpty( displayAllocationParams ) ) {
     vm.showEditAllocationForm = false
     vm.allocationToEdit = null
 
     return
   }
 
-  var params = getNgTableParams( stateParams.ngTableParams )
+  var params = getNgTableParams( displayAllocationParams.ngTableParams )
   vm.tableParams.filter( params.params.filter )
   vm.tableParams.sorting( params.params.sorting )
-  vm.showEditAllocationForm = stateParams.showEditAllocationForm
-  vm.allocationToEdit = stateParams.allocationToEdit
-  vm.oldFilter = stateParams.oldFilter
-  stateParams = null
+  vm.showEditAllocationForm = displayAllocationParams.showEditAllocationForm
+  vm.allocationToEdit = displayAllocationParams.allocationToEdit
+  vm.oldFilter = displayAllocationParams.oldFilter
+  formMAppStore.displayAllocationParams = null
 }
 
 module.exports = {

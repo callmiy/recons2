@@ -9,7 +9,7 @@ var underscore = require( 'underscore' )
  * @param formMAppStore
  */
 function storeSate(vm, formMAppStore) {
-  formMAppStore.treasuryAllocation.searchAllocationParams = {
+  formMAppStore.searchAllocationParams = {
     isAllocationSearchOpen: vm.isAllocationSearchOpen,
     search: angular.copy( vm.search ),
     allocationList: angular.copy( vm.allocationList ),
@@ -19,11 +19,13 @@ function storeSate(vm, formMAppStore) {
 
 /**
  *
- * @param stateParams
+ * @param formMAppStore
  * @param vm
  */
-function setState(stateParams, vm) {
-  if ( underscore.isEmpty( stateParams ) ) {
+function setState(formMAppStore, vm) {
+  var searchAllocationParams = formMAppStore.searchAllocationParams
+
+  if ( underscore.isEmpty( searchAllocationParams ) ) {
     vm.isAllocationSearchOpen = true
     vm.search = {}
     vm.allocationList = []
@@ -32,12 +34,11 @@ function setState(stateParams, vm) {
     return
   }
 
-  vm.isAllocationSearchOpen = stateParams.isAllocationSearchOpen
-  vm.search = stateParams.search
-  vm.allocationList = stateParams.allocationList
-  vm.showSearchResult = stateParams.showSearchResult
-
-  stateParams = null
+  vm.isAllocationSearchOpen = searchAllocationParams.isAllocationSearchOpen
+  vm.search = searchAllocationParams.search
+  vm.allocationList = searchAllocationParams.allocationList
+  vm.showSearchResult = searchAllocationParams.showSearchResult
+  formMAppStore.searchAllocationParams = null
 }
 
 module.exports = {

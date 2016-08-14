@@ -12,6 +12,7 @@ var app = angular.module( 'treasury-allocation', [
 
 app.config( treasuryAllocationConfig )
 treasuryAllocationConfig.$inject = [ '$stateProvider' ]
+
 function treasuryAllocationConfig($stateProvider) {
   $stateProvider
     .state( 'form_m.treasury_allocation', {
@@ -19,10 +20,7 @@ function treasuryAllocationConfig($stateProvider) {
       kanmiiTitle: 'Allocations',
 
       params: {
-        uploadAllocationParams: {},
-        treasuryAllocationParams: {},
-        displayAllocationParams: {},
-        searchAllocationParams: {}
+        treasuryAllocationParams: {}
       },
 
       views: {
@@ -45,9 +43,6 @@ TreasuryAllocationController.$inject = [
 function TreasuryAllocationController($stateParams, $scope, formMAppStore) {
   var vm = this
 
-  vm.uploadAllocationParams = $stateParams.uploadAllocationParams
-  vm.displayAllocationParams = $stateParams.displayAllocationParams
-  vm.searchAllocationParams = $stateParams.searchAllocationParams
   var treasuryAllocationParams = $stateParams.treasuryAllocationParams
   vm.action = treasuryAllocationParams.action
 
