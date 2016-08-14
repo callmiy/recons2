@@ -2,6 +2,8 @@
 
 /*jshint camelcase:false*/
 
+var store = require( './store-state' )
+
 var app = angular.module( 'add-fx-allocation', [
   'fx-deal-service',
   'rootApp',
@@ -9,10 +11,20 @@ var app = angular.module( 'add-fx-allocation', [
 ] )
 
 app.directive( 'addFxAllocation', addFxAllocationDirective )
+addFxAllocationDirective.$inject = [ 'addDealStore' ]
 
-addFxAllocationDirective.$inject = []
+function addFxAllocationDirective(addDealStore) {
+  function link(scope, $elm, attrs, ctrl) {
+    scope.$on( '$destroy', function () {
+      if ( ctrl.doNoSaveState === true ) {
+        addDealStore.dealStore = null
+        return
+      }
 
-function addFxAllocationDirective() {
+      store.storeState( ctrl, addDealStore )
+    } )
+  }
+
   return {
     restrict: 'AE',
     template: require( './add-deal.html' ),
@@ -22,7 +34,8 @@ function addFxAllocationDirective() {
       kmTitle: '=',
       onFxAllocated: '&'
     },
-    controller: 'addFxAllocationController as fxDeal'
+    controller: 'addFxAllocationController as fxDeal',
+    link: link
   }
 }
 
@@ -31,31 +44,21 @@ addFxAllocationController.$inject = [
   'getTypeAheadCurrency',
   'resetForm2',
   'toISODate',
-  'FxDeal'
+  'FxDeal',
+  'addDealStore',
+  '$scope'
 ]
-function addFxAllocationController(getTypeAheadCurrency, resetForm2, toISODate, FxDeal) {
+function addFxAllocationController(getTypeAheadCurrency, resetForm2, toISODate, FxDeal, addDealStore, $scope) {
   var vm = this //jshint -W040
 
   var initialDealProps = vm.initialDealProps ? angular.copy( vm.initialDealProps ) : {}
 
   init()
   function init() {
-    vm.deal = {
-      deal_number: null,
-      currency: initialDealProps.currency ? initialDealProps.currency : null,
-      amount_allocated: initialDealProps.amount_allocated ? initialDealProps.amount_allocated : null,
-      allocated_on: new Date(),
-      amount_utilized: initialDealProps.amount_utilized ? initialDealProps.amount_utilized : null,
-      utilized_on: new Date(),
-      content_type: initialDealProps.content_type,
-      object_id: initialDealProps.object_id
-    }
-
-    vm.datePickerIsOpenFor = {
-      dealDate: false,
-      dealDateUtilized: false
-    }
+    store.init( vm, initialDealProps )
   }
+
+  store.setState( addDealStore, vm, initialDealProps )
 
   vm.disableSubmitBtn = function disableSubmitBtn(form) {
     if ( form.$invalid ) return true
@@ -82,32 +85,19 @@ function addFxAllocationController(getTypeAheadCurrency, resetForm2, toISODate, 
     deal.utilized_on = toISODate( deal.utilized_on )
     deal.currency = deal.currency.url
 
-    new FxDeal( deal ).$save( function (data) {
+    FxDeal.save( deal ).$promise.then( function (data) {
       vm.onFxAllocated( { result: data } )
     }, function (error) {
       vm.onFxAllocated( { result: error } )
+
+    } ).finally( function () {
+      vm.doNoSaveState = true
     } )
   }
+
+  $scope.$on( 'add-deal-do-not-save', function () {
+    vm.doNoSaveState = true
+  } )
 }
 
-app.directive( 'requiredTogether', requiredTogether )
-
-function requiredTogether() {
-  return {
-    restrict: 'A',
-    require: 'ngModel',
-    link: function ($scope, element, attributes, ctrl) {
-      ctrl.$validators.requiredTogether = function () {
-        if ( attributes.required ) return true
-        else {
-          var relatedTo = attributes.kmRelatedTo
-          if ( ctrl.$modelValue ) {
-            console.log( $scope.$eval( relatedTo ) )
-          }
-        }
-
-        return true
-      }
-    }
-  }
-}
+require( './add-deal-store' )

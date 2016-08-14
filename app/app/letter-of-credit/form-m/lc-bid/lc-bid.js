@@ -2,6 +2,8 @@
 
 /*jshint camelcase:false*/
 
+var store = require( './store-state' )
+
 var app = angular.module( 'lc-bid', [
   'rootApp',
   'add-fx-allocation',
@@ -48,34 +50,33 @@ LcBidDirectiveController.$inject = [
   'kanmiiUri',
   'urls',
   '$timeout',
-  '$window'
+  '$window',
+  '$rootScope',
+  'formMAppStore'
 ]
 
 /** @namespace urls.lcBidRequestDownloadUrl */
 function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore, LcBidRequest, xhrErrorDisplay,
                                   confirmationDialog, formMObject, resetForm2, moment, toISODate, ViewBidDetail,
-                                  kanmiiUri, urls, $timeout, $window) {
+                                  kanmiiUri, urls, $timeout, $window, $rootScope, formMAppStore) {
   var vm = this
   vm.formM = formMObject
   var title = 'New Bid Request'
-  vm.selectedBids = {}
   var bidFormCtrlNames = [ 'bidAmount', 'bidGoodsDescription', 'bidRate' ]
 
   init()
   function init(form) {
-    vm.datePickerIsOpen = {
-      bidRequestedDate: false,
-      bidCreatedDate: false
-    }
-    vm.title = title
-    vm.showBidForm = false
-    vm.formM.showEditBid = false
-    vm.bidToEdit = null
-    vm.bid = {}
-    vm.showAllocateFx = false
-
+    store.init( vm, title )
     if ( form ) resetForm2( form, [ { form: form, elements: bidFormCtrlNames } ] )
   }
+
+  store.setState( formMAppStore, vm, title )
+
+  $rootScope.$on( '$stateChangeSuccess', function (evt, toState, toParams, fromState) {
+    if ( fromState.name === 'form_m.lc_bid' ) {
+      store.storeState( vm, formMAppStore )
+    }
+  } )
 
   vm.openDatePicker = function openDatePicker(prop) {
     underscore.each( vm.datePickerIsOpen, function (val, key) {
@@ -373,6 +374,7 @@ function LcBidDirectiveController($scope, $filter, formFieldIsValid, underscore,
   }
 
   vm.dismissShowAllocateFxForm = function dismissShowAllocateFxForm() {
+    $scope.$broadcast( 'add-deal-do-not-save', '' )
     vm.showAllocateFx = false
   }
 
