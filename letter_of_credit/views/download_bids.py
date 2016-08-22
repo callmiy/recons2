@@ -14,66 +14,77 @@ class DownloadBidsView(View):
         font = Font(bold=True, name='Rockwell')
         alignment = Alignment(wrap_text=True, horizontal='center', vertical='center')
 
-        header_col_1 = sheet.cell(row=1, column=1, value='DATE')
+        header_col_1 = sheet.cell(row=1, column=1, value='S/N')
         header_col_1.font = font
         header_col_1.alignment = alignment
 
-        s = sheet.cell(row=1, column=2, value='FORM M NUMBER')
-        s.font = font
-        s.alignment = alignment
+        header_col_1 = sheet.cell(row=1, column=2, value='DATE')
+        header_col_1.font = font
+        header_col_1.alignment = alignment
 
         s = sheet.cell(row=1, column=3, value='LC/BC REF')
         s.font = font
         s.alignment = alignment
 
-        s = sheet.cell(row=1, column=4, value='CUSTOMER NAME')
+        s = sheet.cell(row=1, column=4, value='FORM M NUMBER')
         s.font = font
         s.alignment = alignment
 
-        s = sheet.cell(row=1, column=5, value='CURRENCY')
+        s = sheet.cell(row=1, column=5, value='RATE')
         s.font = font
         s.alignment = alignment
 
-        s = sheet.cell(row=1, column=6, value='LC VALUE')
+        s = sheet.cell(row=1, column=6, value='CUSTOMER NAME')
         s.font = font
         s.alignment = alignment
 
-        s = sheet.cell(row=1, column=7, value='ACTUAL BID AMOUNT')
+        s = sheet.cell(row=1, column=7, value='CURRENCY')
         s.font = font
         s.alignment = alignment
 
-        s = sheet.cell(row=1, column=8, value='FX ALLOCATION')
+        s = sheet.cell(row=1, column=8, value='LC VALUE')
         s.font = font
         s.alignment = alignment
 
-        s = sheet.cell(row=1, column=9, value='OUTSTANDING BALANCE')
+        s = sheet.cell(row=1, column=9, value='ACTUAL BID AMOUNT')
         s.font = font
         s.alignment = alignment
 
-        s = sheet.cell(row=1, column=10, value='ACCOUNT NOS')
+        s = sheet.cell(row=1, column=10, value='FX ALLOCATION')
         s.font = font
         s.alignment = alignment
 
-        s = sheet.cell(row=1, column=11, value='ITEM OF IMPORT')
+        s = sheet.cell(row=1, column=11, value='')
         s.font = font
         s.alignment = alignment
 
-        s = sheet.cell(row=1, column=12, value='MATURITY DATE')
+        s = sheet.cell(row=1, column=12, value='OUTSTANDING BALANCE')
         s.font = font
         s.alignment = alignment
 
-        s = sheet.cell(row=1, column=13, value='CATEGORY')
+        s = sheet.cell(row=1, column=13, value='ACCOUNT NOS')
+        s.font = font
+        s.alignment = alignment
+
+        s = sheet.cell(row=1, column=14, value='ITEM OF IMPORT')
+        s.font = font
+        s.alignment = alignment
+
+        s = sheet.cell(row=1, column=15, value='MATURITY DATE')
+        s.font = font
+        s.alignment = alignment
+
+        s = sheet.cell(row=1, column=16, value='CATEGORY')
         s.font = font
         s.alignment = alignment
 
         if not mark_as_downloaded:
             # we are downloading all bids
-            header_col_1.value = 'S/N'
-            s = sheet.cell(row=1, column=14, value='DATE SENT TO TREASURY')
+            s = sheet.cell(row=1, column=17, value='DATE SENT TO TREASURY')
             s.font = font
             s.alignment = alignment
 
-            s = sheet.cell(row=1, column=15, value='REMARK')
+            s = sheet.cell(row=1, column=18, value='REMARK')
             s.font = font
             s.alignment = alignment
 
@@ -98,10 +109,9 @@ class DownloadBidsView(View):
             for bid in LcBidRequest.objects.filter(pk__in=bid_ids):
                 mf = bid.mf
                 applicant = mf.applicant
-                sheet.cell(
-                        row=row, column=1, value=mark_as_downloaded and date.today().strftime('%d-%b-%Y') or row_index)
-                sheet.cell(row=row, column=2, value=mf.number)
 
+                sheet.cell(row=row, column=1, value=row_index)
+                sheet.cell(row=row, column=2, value=date.today().strftime('%d-%b-%Y'))
                 lc_number = 'NEW LC'
                 lc = mf.lc
 
@@ -109,25 +119,26 @@ class DownloadBidsView(View):
                     lc_number = lc.lc_number
 
                 sheet.cell(row=row, column=3, value=lc_number)
-                sheet.cell(row=row, column=4, value=applicant.name)
-                sheet.cell(row=row, column=5, value=mf.currency.code)
-
+                sheet.cell(row=row, column=4, value=mf.number)
+                sheet.cell(row=row, column=5, value=bid.rate)
+                sheet.cell(row=row, column=6, value=applicant.name)
+                sheet.cell(row=row, column=7, value=mf.currency.code)
                 total_allocation = sum([allocation['amount_allocated'] for allocation in bid.allocations()])
                 outstanding_bid_amount = bid.amount - total_allocation
-                sheet.cell(row=row, column=6, value=mf.amount)
-                sheet.cell(row=row, column=7, value=outstanding_bid_amount)
-                sheet.cell(row=row, column=8, value=total_allocation)
-                sheet.cell(row=row, column=9, value=outstanding_bid_amount)
-
+                sheet.cell(row=row, column=8, value=mf.amount)
+                sheet.cell(row=row, column=9, value=bid.amount)
+                sheet.cell(row=row, column=10, value=total_allocation)
+                sheet.cell(row=row, column=11, value='')
+                sheet.cell(row=row, column=12, value=outstanding_bid_amount)
                 acct = ''
                 acct_numbers_qs = applicant.acct_numbers
 
                 if acct_numbers_qs:
                     acct = acct_numbers_qs[0].nuban
 
-                sheet.cell(row=row, column=10, value=acct)
-                sheet.cell(row=row, column=11, value=mf.goods_description)
-                sheet.cell(row=row, column=12, value='CASH BACKED')
+                sheet.cell(row=row, column=13, value=acct)
+                sheet.cell(row=row, column=14, value=mf.goods_description)
+                sheet.cell(row=row, column=15, value='CASH BACKED')
 
                 if not mark_as_downloaded:
                     remark = ''
@@ -137,8 +148,8 @@ class DownloadBidsView(View):
                     elif mf.deleted_at:
                         remark = 'form M cancelled'
 
-                    sheet.cell(row=row, column=14, value=bid.requested_at)
-                    sheet.cell(row=row, column=15, value=remark)
+                    sheet.cell(row=row, column=17, value=bid.requested_at)
+                    sheet.cell(row=row, column=18, value=remark)
 
                 row += 1
                 row_index += 1
