@@ -72,6 +72,21 @@ class DownloadAllocationsView(View):
         s.border = border
         s.alignment = alignment
 
+        s = sheet.cell(row=1, column=10, value='CLIENT CATEGORY')
+        s.font = font
+        s.border = border
+        s.alignment = alignment
+
+        s = sheet.cell(row=1, column=11, value='PRODUCT TYPE')
+        s.font = font
+        s.border = border
+        s.alignment = alignment
+
+        s = sheet.cell(row=1, column=12, value='TRANSACTION TYPE')
+        s.font = font
+        s.border = border
+        s.alignment = alignment
+
     def get(self, request):
         wb = Workbook()
         file_name = '%s.xlsx' % datetime.now().strftime('fx-deals-%Y-%m-%d-%H-%S-%f')
@@ -116,6 +131,15 @@ class DownloadAllocationsView(View):
 
             c = sheet.cell(row=row, column=9, value=allocation.naira_rate)
             c.number_format = '#,##0.0000'
+            c.border = border
+
+            c = sheet.cell(row=row, column=10, value=allocation.client_category)
+            c.border = border
+
+            c = sheet.cell(row=row, column=11, value=allocation.product_type)
+            c.border = border
+
+            c = sheet.cell(row=row, column=12, value=allocation.transaction_type)
             c.border = border
 
             row += 1
