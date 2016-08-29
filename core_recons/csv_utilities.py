@@ -12,7 +12,7 @@ col = Cols(*range(44))
 
 BA_RE = re.compile(r'(BA|CB)\d+', re.IGNORECASE)
 MF_RE = re.compile(r'MF\d+', re.IGNORECASE)
-LC_REF_RE = re.compile(r'(ILCL|026L)[A-Z]{3}\d+', re.IGNORECASE)
+LC_REF_RE = re.compile(r'(ILCL|026L)[A-Z]{2,3}\d+(?:/\d+)?', re.IGNORECASE)
 
 DATE_RE = re.compile(
         r'(?P<d>\d{1,2})[\s\\/-](?P<m>([a-z]{3}|\d{1,2}))[\s\\/-](?P<y>\d{2,4})',

@@ -3,6 +3,7 @@ from django.db.models import Sum
 from contingent_report.models.ti_flex_recons import TIFlexRecons
 from letter_of_credit.models import LCRegister
 from datetime import timedelta
+from core_recons.csv_utilities import LC_REF_RE
 
 
 class LCClass(models.Model):
@@ -131,6 +132,12 @@ class ContingentReport(models.Model):
 
     def insert_ti_ref(self):
         if not self.ti_ref and self.flex_module != 'RE':
+            ti_ref_search = LC_REF_RE.search(self.narration)
+
+            if ti_ref_search:
+                self.ti_ref = ti_ref_search.group()
+                return True
+
             for ref in TIFlexRecons.objects.filter(flex_ref=self.flex_ref):
                 self.ti_ref = ref.ti_ref
                 return True
