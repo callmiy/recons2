@@ -1,0 +1,63 @@
+{% extends 'core_recons/recons-base.html' %}
+{% load static %}
+
+{% block page_css %}
+  <link rel="stylesheet" href="{% static 'core_recons/css/extract-pattern.min.css' %}">
+{% endblock %}
+
+{% block page_content %}
+  <form class="" method="post" id="extract-pattern-form"> {% csrf_token %}
+    <div class="">
+      <label class="" for="selected-pattern">Pattern for:</label>
+      <select name="selected-pattern" id="selected-pattern">
+        <option value="">---------------------</option>
+        <option value="form-m">Form M</option>
+        <option value="letter-of-credit">Letter Of Credit</option>
+        <option value="form-m-lc">Form M or LC</option>
+      </select>
+    </div>
+    <div class="text-area clearfix">
+      <div class="raw-text-container">
+        <label class="raw-text-label" for="raw-text">Raw text</label>
+        <textarea class="raw-text" name="raw-text" id="raw-text">{{ raw_text }}</textarea>
+      </div>
+
+      <span class="raw-text-control">Extract: </span>
+
+      <div class="result-text-container">
+        <label class="result-text-label" for="result-text">Result</label>
+        <textarea class="result-text" name="result-text" id="result-text">{{ extracted }}</textarea>
+      </div>
+    </div>
+  </form>
+
+  <div class="message-area">
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne">
+          <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true"
+               aria-controls="collapseOne">
+              SWIFT Text
+            </a>
+          </h4>
+        </div>
+
+        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            <label class="sr-only" for="swift-messages">Swift Messages</label>
+            <textarea style="display: none; height: 600px" id="swift-messages" class="form-control"></textarea>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <label class="sr-only" for="swift-messages-20">Swift Messages</label>
+    <textarea style="display: none; height: 200px; margin-top: 50px" id="swift-messages-20"
+              class="form-control"></textarea>
+  </div>
+{% endblock %}
+{% block page_js %}
+  <script src="{% static 'core_recons/js/extract-pattern.min.js' %}"></script>
+{% endblock page_js %}

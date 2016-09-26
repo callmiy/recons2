@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 
 from core_recons.views.attachment import AttachmentListCreateAPIView, AttachmentRetrieveUpdateDestroyAPIView, \
     AttachmentFileListCreateAPIView, AttachmentFileRetrieveUpdateDestroyAPIView, attachment_file_download_view
+from core_recons.views.extract_pattern import ExtractPattern
 from .views import (
     ContentTypeListCreateAPIView,
     ContentTypeRetrieveUpdateDestroyAPIView,
@@ -75,3 +76,11 @@ urlpatterns += patterns(
             login_required(attachment_file_download_view),
             name='download-attachment-file'),
 )
+
+# Extract Pattern
+urlpatterns += patterns(
+        '',
+
+        url(r'^extract-pattern/?$', login_required(ExtractPattern.as_view()), name='extract-pattern'),
+)
+
