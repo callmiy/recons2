@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="PYTHON_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="django" name="Django">
+      <configuration>
+        <option name="rootFolder" value="$MODULE_DIR$" />
+        <option name="settingsModule" value="recons/settings.py" />
+        <option name="manageScript" value="manage.py" />
+        <option name="environment" value="&lt;map/&gt;" />
+        <option name="doNotUseTestRunner" value="false" />
+        <option name="trackFilePattern" value="migrations" />
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$" />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+  <component name="TemplatesService">
+    <option name="TEMPLATE_CONFIGURATION" value="Django" />
+    <option name="TEMPLATE_FOLDERS">
+      <list>
+        <option value="$MODULE_DIR$/app/app" />
+        <option value="$MODULE_DIR$/app/app/core/commons" />
+        <option value="$MODULE_DIR$/app/app/core/fx-deal/add-deal" />
+        <option value="$MODULE_DIR$/app/app/core/customer/add-customer" />
+        <option value="$MODULE_DIR$/app/app/core/customer/add-customer2" />
+        <option value="$MODULE_DIR$/app/app/core/pager-nav" />
+        <option value="$MODULE_DIR$/app/app/core/search-lc" />
+        <option value="$MODULE_DIR$/app/app/core/attachment" />
+        <option value="$MODULE_DIR$/app/app/core/attachment/add-attachment" />
+        <option value="$MODULE_DIR$/app/app/core/model-table" />
+        <option value="$MODULE_DIR$/app/app/core/spinner-modal" />
+        <option value="$MODULE_DIR$/app/app/core/lc-bid-request" />
+        <option value="$MODULE_DIR$/app/app/core/confirmation-dialog" />
+        <option value="$MODULE_DIR$/app/app/core/treasury-allocation/edit-allocation" />
+        <option value="$MODULE_DIR$/app/app/core/treasury-allocation/edit-allocation/edit-allocation-modal" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/lc" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/lc/lc-detail" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/lc/search-lc" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/bids" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/bids/search-bids" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/bids/display-pending-bid" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/lc-bid" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/add-form-m" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/add-form-m/comment" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/add-form-m/lc-cover" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/add-form-m/lc-issue" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/add-form-m/attachment" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/list-form-m" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/search-form-m" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/upload-form-m" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/upload-form-m/search-uploaded-form-m" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/treasury-allocation" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/treasury-allocation/download-bids" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/treasury-allocation/upload-allocation" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/treasury-allocation/upload-allocation/upload-allocation-error-display" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/treasury-allocation/search-allocations" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/treasury-allocation/display-allocations" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/treasury-allocation/display-bids-for-allocation" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/display-uploaded-form-m-modal" />
+        <option value="$MODULE_DIR$/app/app/letter-of-credit/form-m/search-detailed-or-uploaded-form-m" />
+        <option value="$MODULE_DIR$/chgs/templates" />
+        <option value="$MODULE_DIR$/chgs/templates/chgs" />
+        <option value="$MODULE_DIR$/ibdint/templates/ibdint" />
+        <option value="$MODULE_DIR$/recons/templates/admin" />
+        <option value="$MODULE_DIR$/lcavail/templates/lcavail" />
+        <option value="$MODULE_DIR$/postentry/templates/postentry" />
+        <option value="$MODULE_DIR$/unmatched/templates/unmatched" />
+        <option value="$MODULE_DIR$/unmatched/templates/unmatched/forms/clirec" />
+        <option value="$MODULE_DIR$/rateupload/templates/rateupload" />
+        <option value="$MODULE_DIR$/undrawnbal/templates" />
+        <option value="$MODULE_DIR$/core_recons/templates/core_recons" />
+        <option value="$MODULE_DIR$/core_recons/templates/registration" />
+        <option value="$MODULE_DIR$/letter_of_credit/templates/letter_of_credit" />
+        <option value="$MODULE_DIR$/letter_of_credit/templates/letter_of_credit/lc-register" />
+        <option value="$MODULE_DIR$/letter_of_credit/templates/letter_of_credit/lc_commission" />
+        <option value="$MODULE_DIR$/letter_of_credit/templates/letter_of_credit/process_swift" />
+        <option value="$MODULE_DIR$/letter_of_credit/templates/letter_of_credit/uploaded-form-m" />
+        <option value="$MODULE_DIR$/contingent_report/templates/contingent_report" />
+      </list>
+    </option>
+  </component>
+</module>
